@@ -105,7 +105,7 @@ Reglas para todas las tareas:
   `PUT /api/sesion/contrasena`: reglas, contador de errores en la sesión, cierre al quinto error y `UPDATE` condicionado al hash leído.
   Hecho cuando: los e2e verifican el cambio exitoso (con cambio pendiente incluido), el 400 por contraseña actual incorrecta y por cada regla, el 401 con el mensaje de RF-38 al quinto error, y que un usuario con cambio pendiente recibe 403 en cualquier otra ruta protegida.
 
-- [ ] **T23 — DTO de gestión de cuentas** [RF-3, RF-5 a RF-7]
+- [x] **T23 — DTO de gestión de cuentas** [RF-3, RF-5 a RF-7]
   DTO de alta (con `cliente` condicionado a `tipoPersona`), modificación (sin DNI, CUIT ni tipo de persona), contraseña temporal y consulta del listado.
   Hecho cuando: los tests unitarios con `class-validator` verifican campos exigidos y rechazados para persona física y jurídica, y que enviar `dni`, `cuit` o `tipoPersona` en la modificación falla.
 
