@@ -7,11 +7,13 @@ import {
   Post,
   Req,
   Res,
+  UnauthorizedException,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { toUsuarioPropio, type UsuarioPropio } from '../usuarios/usuario-propio.js';
 import { AuthenticationService } from './autenticacion.service.js';
-import { setSessionCookies } from './cookies-de-sesion.js';
+import { REFRESH_TOKEN_COOKIE } from './constantes.js';
+import { clearSessionCookies, setSessionCookies } from './cookies-de-sesion.js';
 import { Public } from './decoradores.js';
 import { LoginDto } from './dto/ingresar.dto.js';
 import { LoginAttemptLimiter } from './limitador-intentos.service.js';
@@ -42,5 +44,25 @@ export class SessionController {
     const result = await this.authentication.login(body.email, body.contrasena);
     setSessionCookies(response, result);
     return toUsuarioPropio(result.usuario);
+  }
+
+  /**
+   * Renovación con la cookie de renovación (RF-12, RF-15). Es pública porque se usa justo
+   * cuando el token de acceso venció. Si falla, borra las cookies.
+   */
+  @Public()
+  @Post('renovar')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async refresh(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
+    try {
+      const tokens = await this.authentication.refresh(request.cookies?.[REFRESH_TOKEN_COOKIE]);
+      setSessionCookies(response, tokens);
+    } catch (error) {
+      if (error instanceof UnauthorizedException) clearSessionCookies(response);
+      throw error;
+    }
   }
 }

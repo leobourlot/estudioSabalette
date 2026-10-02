@@ -11,7 +11,7 @@ import type { Request } from 'express';
 import { Repository } from 'typeorm';
 import { Sesion } from '../usuarios/sesion.entity.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
-import { ACCESS_TOKEN_COOKIE } from './constantes.js';
+import { ACCESS_TOKEN_COOKIE, INVALID_SESSION_MESSAGE } from './constantes.js';
 import { IS_PUBLIC_KEY } from './decoradores.js';
 
 export interface AccessTokenPayload {
@@ -23,8 +23,6 @@ export interface AuthenticatedRequest extends Request {
   usuario?: Usuario;
   sesion?: Sesion;
 }
-
-const INVALID_SESSION_MESSAGE = 'Tu sesión no es válida o venció. Volvé a ingresar';
 
 /**
  * Guard global: toda ruta exige sesión salvo las marcadas con @Public() (RF-18).

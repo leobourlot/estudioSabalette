@@ -192,7 +192,8 @@ renovar(cookie refresh_token):
   si h != sesión.tokenHash: 401
   si usuario inactivo: 401
   nuevo = aleatorio(32)
-  sesión.tokenAnteriorHash = h; sesión.tokenHash = sha256(nuevo); sesión.venceEn = ahora + 7 días
+  UPDATE sesión SET tokenAnteriorHash = h, tokenHash = sha256(nuevo), venceEn = ahora + 7 días
+    WHERE id = sid AND tokenHash = h                 // si otra petición rotó primero: 401
   setear cookies nuevas
 ```
 

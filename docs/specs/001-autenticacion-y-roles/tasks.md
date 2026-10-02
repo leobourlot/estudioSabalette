@@ -93,7 +93,7 @@ Reglas para todas las tareas:
   `POST /api/sesion/ingresar` en `sesion.controller.ts` con el limitador y las cookies `access_token` y `refresh_token` (`httpOnly`, `Secure`, `SameSite=Lax`, rutas del plan).
   Hecho cuando: los e2e verifican 200 con `UsuarioPropio` y cookies con sus atributos, 401 genérico en los tres casos de RF-9, y 429 al superar los límites con distintas IP simuladas por `X-Forwarded-For`.
 
-- [ ] **T20 — Renovación** [RF-12, RF-15]
+- [x] **T20 — Renovación** [RF-12, RF-15]
   `POST /api/sesion/renovar`: rotación del secreto, `venceEn` a 7 días y detección de reúso con `tokenAnteriorHash`.
   Hecho cuando: los e2e verifican que renovar entrega cookies nuevas, que presentar el token reemplazado revoca la sesión y responde 401, y que una sesión vencida responde 401.
 

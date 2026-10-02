@@ -7,16 +7,25 @@ import { Sesion } from '../usuarios/sesion.entity.js';
 import { Usuario } from '../usuarios/usuario.entity.js';
 import { normalizeEmail } from '../usuarios/validadores/normalizar.js';
 import type { AccessTokenPayload } from './autenticacion.guard.js';
-import { ACCESS_TOKEN_TTL_SECONDS, SESSION_TTL_MS } from './constantes.js';
+import { ACCESS_TOKEN_TTL_SECONDS, INVALID_SESSION_MESSAGE, SESSION_TTL_MS } from './constantes.js';
 import { PasswordsService } from './contrasenas.service.js';
-import { createSessionSecret, formatRefreshToken, hashSessionSecret } from './tokens.js';
+import {
+  createSessionSecret,
+  formatRefreshToken,
+  hashSessionSecret,
+  parseRefreshToken,
+  sameHash,
+} from './tokens.js';
 
 export const INVALID_CREDENTIALS_MESSAGE = 'Email o contraseña incorrectos';
 
-export interface LoginResult {
-  usuario: Usuario;
+export interface SessionTokens {
   accessToken: string;
   refreshToken: string;
+}
+
+export interface LoginResult extends SessionTokens {
+  usuario: Usuario;
 }
 
 @Injectable()
@@ -70,12 +79,60 @@ export class AuthenticationService {
       relations: { cliente: true },
     });
     if (!usuario) throw new UnauthorizedException(INVALID_CREDENTIALS_MESSAGE);
-
-    const payload: AccessTokenPayload = { sub: credentials.id, sid: session.id };
     return {
       usuario,
-      accessToken: await this.jwt.signAsync(payload, { expiresIn: ACCESS_TOKEN_TTL_SECONDS }),
+      accessToken: await this.signAccessToken(credentials.id, session.id),
       refreshToken: formatRefreshToken(session.id, secret),
     };
+  }
+
+  /**
+   * Renovación con el token de renovación (RF-12, RF-15): rota el secreto y corre el
+   * vencimiento a 7 días. Si se presenta el secreto ya reemplazado, revoca la sesión.
+   */
+  async refresh(refreshToken: unknown): Promise<SessionTokens> {
+    const parsed = parseRefreshToken(refreshToken);
+    if (!parsed) throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
+
+    const session = await this.sessions.findOne({
+      where: { id: parsed.sessionId },
+      relations: { usuario: true },
+    });
+    const now = new Date();
+    if (!session || session.revocadaEn !== null || session.venceEn.getTime() <= now.getTime()) {
+      throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
+    }
+
+    const presentedHash = hashSessionSecret(parsed.secret);
+    if (sameHash(presentedHash, session.tokenAnteriorHash)) {
+      // Reúso de un secreto ya rotado: la credencial pudo ser robada.
+      await this.sessions.update(session.id, { revocadaEn: now });
+      throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
+    }
+    if (!sameHash(presentedHash, session.tokenHash) || !session.usuario?.activo) {
+      throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
+    }
+
+    const secret = createSessionSecret();
+    // Condicionado al hash leído: si otra petición rotó primero, esta no pisa su secreto.
+    const result = await this.sessions.update(
+      { id: session.id, tokenHash: session.tokenHash },
+      {
+        tokenAnteriorHash: session.tokenHash,
+        tokenHash: hashSessionSecret(secret),
+        venceEn: new Date(now.getTime() + SESSION_TTL_MS),
+      },
+    );
+    if (result.affected !== 1) throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
+
+    return {
+      accessToken: await this.signAccessToken(session.usuarioId, session.id),
+      refreshToken: formatRefreshToken(session.id, secret),
+    };
+  }
+
+  private signAccessToken(userId: number, sessionId: number): Promise<string> {
+    const payload: AccessTokenPayload = { sub: userId, sid: sessionId };
+    return this.jwt.signAsync(payload, { expiresIn: ACCESS_TOKEN_TTL_SECONDS });
   }
 }

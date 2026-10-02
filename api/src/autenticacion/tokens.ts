@@ -1,4 +1,4 @@
-import { createHash, randomBytes } from 'node:crypto';
+import { createHash, randomBytes, timingSafeEqual } from 'node:crypto';
 
 /** Secreto aleatorio de 32 bytes para el token de renovación. */
 export function createSessionSecret(): string {
@@ -13,7 +13,21 @@ export function hashSessionSecret(secret: string): string {
   return createHash('sha256').update(secret).digest('hex');
 }
 
+/** Compara dos hashes en tiempo constante. */
+export function sameHash(hash: string, stored: string | null): boolean {
+  if (stored === null || stored.length !== hash.length) return false;
+  return timingSafeEqual(Buffer.from(hash), Buffer.from(stored));
+}
+
 /** Token de renovación: `<id de sesión>.<secreto>`. */
 export function formatRefreshToken(sessionId: number, secret: string): string {
   return `${sessionId}.${secret}`;
+}
+
+/** Lee un token de renovación; devuelve null si el formato no es válido. */
+export function parseRefreshToken(token: unknown): { sessionId: number; secret: string } | null {
+  if (typeof token !== 'string') return null;
+  const match = /^([1-9]\d*)\.([A-Za-z0-9_-]+)$/.exec(token);
+  if (!match) return null;
+  return { sessionId: Number(match[1]), secret: match[2] };
 }
