@@ -14,6 +14,7 @@ import { ACCESS_TOKEN_TTL_SECONDS } from './constantes.js';
 import { PasswordsService } from './contrasenas.service.js';
 import { LoginAttemptLimiter } from './limitador-intentos.service.js';
 import { RolesGuard } from './roles.guard.js';
+import { SessionController } from './sesion.controller.js';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { RolesGuard } from './roles.guard.js';
       }),
     }),
   ],
+  controllers: [SessionController],
   providers: [
     AuthenticationService,
     PasswordsService,

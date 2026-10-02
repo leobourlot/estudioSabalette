@@ -1,7 +1,8 @@
-import { ValidationPipe } from '@nestjs/common';
+import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
+import { formatValidationErrors } from './configuracion/errores-de-validacion.js';
 import type { Environment } from './configuracion/validar-entorno.js';
 
 /**
@@ -21,7 +22,12 @@ export function configureApp(app: NestExpressApplication): void {
   app.use(cookieParser());
 
   app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }),
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      exceptionFactory: (errors) => new BadRequestException(formatValidationErrors(errors)),
+    }),
   );
 
   // Con una función, a un origen no permitido no se le envía ningún encabezado CORS.

@@ -89,7 +89,7 @@ Reglas para todas las tareas:
   `autenticacion.service.ts` (ingresar): normalización, comparación contra hash ficticio si el email no existe, revocación de sesiones anteriores, limpieza de sesiones viejas, creación de sesión, `ultimoIngreso`.
   Hecho cuando: los tests unitarios verifican el error genérico para email inexistente, contraseña incorrecta y cuenta desactivada, y que un ingreso exitoso revoca la sesión anterior.
 
-- [ ] **T19 — Endpoint de ingreso** [RF-8 a RF-10]
+- [x] **T19 — Endpoint de ingreso** [RF-8 a RF-10]
   `POST /api/sesion/ingresar` en `sesion.controller.ts` con el limitador y las cookies `access_token` y `refresh_token` (`httpOnly`, `Secure`, `SameSite=Lax`, rutas del plan).
   Hecho cuando: los e2e verifican 200 con `UsuarioPropio` y cookies con sus atributos, 401 genérico en los tres casos de RF-9, y 429 al superar los límites con distintas IP simuladas por `X-Forwarded-For`.
 

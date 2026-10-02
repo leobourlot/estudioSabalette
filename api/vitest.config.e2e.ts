@@ -6,5 +6,9 @@ export default defineConfig({
     root: './',
     include: ['test/**/*.e2e-spec.ts'],
     fileParallelism: false,
+    // Como en Easypanel: un proxy delante, así los tests simulan IPs con X-Forwarded-For.
+    // Va acá y no en el código de los tests porque ConfigModule lee el entorno al importar
+    // AppModule; las variables del proceso tienen prioridad sobre las de .env.test.
+    env: { TRUST_PROXY_HOPS: '1' },
   },
 });

@@ -99,7 +99,7 @@ La migración crea las tres tablas con sus índices y es reversible (`down` las 
 
 ## Contrato de la API
 
-Todas las respuestas de error usan el formato por defecto de NestJS (`statusCode`, `message`), con `message` en español. Los errores de validación devuelven en `message` un arreglo con un mensaje por campo. Los cuerpos con campos desconocidos responden 400.
+Todas las respuestas de error usan el formato por defecto de NestJS (`statusCode`, `message`), con `message` en español. Los errores de validación devuelven en `message` un arreglo con un mensaje por campo. Los cuerpos con campos desconocidos responden 400 con "El campo <nombre> no está permitido" (`configuracion/errores-de-validacion.ts` traduce el único mensaje que class-validator genera en inglés).
 
 ### Sesión — `/api/sesion` [RF-8 a RF-17, RF-35 a RF-39]
 
