@@ -68,6 +68,22 @@ export class UsersController {
     return this.users.reactivate(actor, id, body.contrasenaTemporal);
   }
 
+  @Post(':id/restablecer-contrasena')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  resetPassword(
+    @CurrentUser() actor: Usuario,
+    @Param('id', UserIdPipe) id: number,
+    @Body() body: TemporaryPasswordDto,
+  ): Promise<void> {
+    return this.users.resetPassword(actor, id, body.contrasenaTemporal);
+  }
+
+  @Post(':id/liberar-email')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  releaseEmail(@CurrentUser() actor: Usuario, @Param('id', UserIdPipe) id: number): Promise<void> {
+    return this.users.releaseEmail(actor, id);
+  }
+
   @Patch(':id')
   update(
     @CurrentUser() actor: Usuario,

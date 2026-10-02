@@ -217,6 +217,50 @@ export class UsersService {
   }
 
   /**
+   * Restablecimiento de contraseña (RF-33): guarda la temporal, deja pendiente el cambio y
+   * cierra la sesión. Un cambio propio simultáneo no lo pisa: ese guardado está condicionado
+   * al hash que leyó, que este restablecimiento ya reemplazó.
+   */
+  async resetPassword(actor: Usuario, id: number, temporaryPassword: string): Promise<void> {
+    const target = await this.findWithDetail(id);
+    throwIfDenied(checkAccountAction(actor, target, 'resetPassword'));
+
+    const passwordViolation = this.passwords.findRuleViolation(temporaryPassword);
+    if (passwordViolation) throw new BadRequestException(passwordViolation);
+
+    const contrasenaHash = await this.passwords.hash(temporaryPassword);
+    const now = new Date();
+    await this.dataSource.transaction(async (manager) => {
+      await manager.update(Usuario, target.id, {
+        contrasenaHash,
+        debeCambiarContrasena: true,
+        modificadoPorId: actor.id,
+        modificadoEn: now,
+      });
+      await manager.update(
+        Sesion,
+        { usuarioId: target.id, revocadaEn: IsNull() },
+        { revocadaEn: now },
+      );
+    });
+  }
+
+  /**
+   * Liberación del email de una cuenta desactivada (RF-24), para poder usarlo en otra
+   * cuenta. Para reactivarla después hay que asignarle un email nuevo.
+   */
+  async releaseEmail(actor: Usuario, id: number): Promise<void> {
+    const target = await this.findWithDetail(id);
+    throwIfDenied(checkAccountAction(actor, target, 'releaseEmail'));
+
+    await this.users.update(target.id, {
+      email: null,
+      modificadoPorId: actor.id,
+      modificadoEn: new Date(),
+    });
+  }
+
+  /**
    * Busca en apellido, nombre y razón social. Si el texto parece un DNI o CUIT (solo dígitos
    * una vez quitados puntos, guiones y espacios), busca también en esos campos.
    */

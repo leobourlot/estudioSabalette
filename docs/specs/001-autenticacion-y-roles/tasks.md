@@ -129,7 +129,7 @@ Reglas para todas las tareas:
   `POST …/desactivar` y `POST …/reactivar` (exige email y contraseña temporal).
   Hecho cuando: los e2e verifican que un usuario desactivado con sesión abierta recibe 401 en su próxima petición, que reactivar deja el cambio pendiente y que reactivar una cuenta sin email responde 409.
 
-- [ ] **T29 — Restablecimiento y liberación de email** [RF-24, RF-33]
+- [x] **T29 — Restablecimiento y liberación de email** [RF-24, RF-33]
   `POST …/restablecer-contrasena` y `POST …/liberar-email` (solo administradores, solo cuentas desactivadas).
   Hecho cuando: los e2e verifican que restablecer cierra la sesión y deja el cambio pendiente, que un cambio de contraseña con el hash anterior no pisa un restablecimiento, y que después de liberar un email se puede crear otra cuenta con él.
 
