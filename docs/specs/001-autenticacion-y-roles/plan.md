@@ -26,7 +26,7 @@ Todavía no existe código. Esta fase deja el proyecto listo para implementar la
 | Carpeta | Contenido | RF |
 |---|---|---|
 | `configuracion/` | Lectura y validación de variables de entorno. La API no arranca si falta alguna. | — |
-| `base-de-datos/` | Configuración de TypeORM y `data-source.ts` para el CLI de migraciones. | — |
+| `base-de-datos/` | Configuración de TypeORM, `data-source.ts` para el CLI de migraciones y `esquema.ts` con la lista única de entidades y migraciones. | — |
 | `migraciones/` | Migración `crear-usuarios-clientes-y-sesiones`. | RF-1 a RF-4 |
 | `autenticacion/` | `sesion.controller.ts`, `autenticacion.service.ts` (ingreso, renovación, cierre), `contrasenas.service.ts` (hash, verificación y reglas), `limitador-intentos.service.ts`, guards y decoradores. | RF-8 a RF-19, RF-36 a RF-40 |
 | `usuarios/` | Entidades `usuario.entity.ts`, `cliente.entity.ts` y `sesion.entity.ts`, `usuarios.controller.ts`, `usuarios.service.ts` (reglas de gestión), `dto/` y `validadores/` (DNI, CUIT, email, longitudes). | RF-1 a RF-7, RF-21 a RF-35 |
@@ -74,7 +74,7 @@ Las fechas se guardan en `DATETIME` con la conexión configurada en `-03:00` (Bu
 |---|---|---|
 | `usuarioId` | int | PK y FK a `usuarios` |
 | `tipoPersona` | enum `fisica`, `juridica` | Inmutable. RF-7 |
-| `dni` | char(8), nullable, único | Solo personas físicas. Inmutable. |
+| `dni` | varchar(8), nullable, único | Solo personas físicas (7 u 8 dígitos). Inmutable. |
 | `cuit` | char(11), nullable, único | Solo personas jurídicas. Inmutable. |
 | `razonSocial` | varchar(55), nullable | Solo personas jurídicas. |
 | `telefono` | varchar(15), nullable | |
@@ -316,6 +316,7 @@ Compartir la promesa de renovación evita que varias peticiones simultáneas de 
 | `@nestjs/jwt` | Firmar y verificar el token de acceso. | Passport + passport-jwt: dos dependencias más para lo que resuelve un guard propio. Token opaco único: la rotación dentro de peticiones simultáneas produce falsos reúsos. |
 | `bcrypt` | Hash de contraseñas (costo 12). | `argon2`: no tiene límite de bytes, pero con contraseñas ASCII de hasta 64 caracteres ese límite no se alcanza, y bcrypt es la elección del estudio. `bcryptjs`: más lento, al estar escrito en JavaScript puro. |
 | `cookie-parser` | Leer las cookies de sesión. | Parsear el encabezado a mano. |
+| `@types/cookie-parser` | Tipos de `cookie-parser` para TypeScript estricto. | — |
 | `class-validator`, `class-transformer` | DTO validados con el `ValidationPipe` (`whitelist`, `forbidNonWhitelisted`, `transform`). | Zod: requiere un pipe propio y duplica lo que Nest ya integra. |
 | `vitest`, `@nestjs/testing`, `supertest` | Tests unitarios y e2e de la API. | Jest: NestJS 12 es solo ESM y Jest lo soporta de forma experimental; Vitest es lo que trae NestJS 12 y es el mismo motor que web. |
 | `@types/node`, `@types/express`, `@types/supertest` | Definiciones de tipos para compilar la API y los e2e con TypeScript estricto. | — |

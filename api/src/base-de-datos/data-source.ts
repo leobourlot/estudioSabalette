@@ -1,9 +1,10 @@
 import { DataSource } from 'typeorm';
 import { validateEnvironment } from '../configuracion/validar-entorno.js';
+import { ENTITIES, MIGRATIONS } from './esquema.js';
 import { buildDataSourceOptions } from './opciones-base-de-datos.js';
 
 // Solo lo usa el CLI de TypeORM (scripts migration:*), sobre el código compilado en dist/.
-// Las rutas son relativas a api/, que es donde pnpm ejecuta los scripts.
+// El archivo .env se busca en api/, que es donde pnpm ejecuta los scripts.
 const envFile = process.env.NODE_ENV === 'test' ? '.env.test' : '.env';
 try {
   process.loadEnvFile(envFile);
@@ -14,6 +15,6 @@ try {
 
 export default new DataSource({
   ...buildDataSourceOptions(validateEnvironment(process.env)),
-  entities: ['dist/**/*.entity.js'],
-  migrations: ['dist/migraciones/*.js'],
+  entities: ENTITIES,
+  migrations: MIGRATIONS,
 });

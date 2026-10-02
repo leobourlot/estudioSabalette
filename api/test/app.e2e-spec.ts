@@ -1,30 +1,20 @@
-import { afterEach, beforeEach, describe, it } from 'vitest';
-import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import type { NestExpressApplication } from '@nestjs/platform-express';
 import request from 'supertest';
-import { App } from 'supertest/types.js';
-import { AppController } from './../src/app.controller.js';
-import { AppService } from './../src/app.service.js';
+import { afterAll, beforeAll, describe, it } from 'vitest';
+import { createTestApp } from './utilidades/aplicacion-de-tests.js';
 
 describe('AppController (e2e)', () => {
-  let app: INestApplication<App>;
+  let app: NestExpressApplication;
 
-  beforeEach(async () => {
-    // Ejemplo sin AppModule para no depender de .env.test; T12 arma la base real de los e2e.
-    const moduleFixture: TestingModule = await Test.createTestingModule({
-      controllers: [AppController],
-      providers: [AppService],
-    }).compile();
-
-    app = moduleFixture.createNestApplication();
-    await app.init();
+  beforeAll(async () => {
+    app = await createTestApp();
   });
 
-  it('/ (GET)', () => {
-    return request(app.getHttpServer()).get('/').expect(200).expect('Hello World!');
+  afterAll(async () => {
+    await app?.close();
   });
 
-  afterEach(async () => {
-    await app.close();
+  it('GET /api', () => {
+    return request(app.getHttpServer()).get('/api').expect(200).expect('Hello World!');
   });
 });

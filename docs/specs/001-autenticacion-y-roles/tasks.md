@@ -47,25 +47,25 @@ Reglas para todas las tareas:
   `base-de-datos/` con TypeORM y mysql2 (`synchronize: false`, `timezone: '-03:00'`), `data-source.ts` para el CLI y scripts `migration:create`, `migration:generate`, `migration:run` y `migration:revert`. Requiere P2 y P3.
   Hecho cuando: `pnpm --filter api migration:run` corre sin errores contra la base de desarrollo.
 
-- [ ] **T9 — Scripts de la raíz de punta a punta**
+- [x] **T9 — Scripts de la raíz de punta a punta**
   Ajustar los scripts para que funcionen desde la raíz, en Windows y en rutas con espacios y paréntesis.
   Hecho cuando: desde la raíz, `pnpm dev` levanta web y api, y `pnpm test` y `pnpm lint` pasan en los dos paquetes.
 
 ## api
 
-- [ ] **T10 — Entidades** [RF-1 a RF-4, RF-7]
+- [x] **T10 — Entidades** [RF-1 a RF-4, RF-7]
   `usuario.entity.ts`, `cliente.entity.ts` y `sesion.entity.ts` con los campos, tipos e índices del plan.
   Hecho cuando: la api compila y un test unitario verifica que el enum de roles y el de tipo de persona tienen exactamente los valores del plan.
 
-- [ ] **T11 — Migración inicial** [RF-1 a RF-4]
+- [x] **T11 — Migración inicial** [RF-1 a RF-4]
   Migración `crear-usuarios-clientes-y-sesiones` con las tres tablas, índices únicos (`email`, `dni`, `cuit`) y claves foráneas.
   Hecho cuando: un test e2e corre `up` sobre la base de tests vacía, verifica que existen las tablas y corre `down` sin errores.
 
-- [ ] **T12 — Arranque compartido y base de los e2e** [RNF de seguridad y validación]
+- [x] **T12 — Arranque compartido y base de los e2e** [RNF de seguridad y validación]
   Función `configureApp(app)` usada por `main.ts` y por los tests: `cookie-parser`, `trust proxy` con `TRUST_PROXY_HOPS`, `ValidationPipe` (`whitelist`, `forbidNonWhitelisted`, `transform`) y CORS con `FRONTEND_ORIGINS` y credenciales. Utilidad de e2e que migra la base de tests y vacía las tablas.
   Hecho cuando: un e2e verifica que un origen de `FRONTEND_ORIGINS` recibe `Access-Control-Allow-Credentials` y que otro origen no recibe encabezados CORS.
 
-- [ ] **T13 — Validadores** [RF-5, RF-6]
+- [x] **T13 — Validadores** [RF-5, RF-6]
   `usuarios/validadores/`: normalización de email y de DNI/CUIT, DNI de 7 u 8 dígitos, CUIT con dígito verificador, email `texto@texto.texto`, largos de 55 y 15 caracteres.
   Hecho cuando: los tests unitarios cubren casos válidos e inválidos de cada validador, incluidos DNI y CUIT con puntos, guiones y espacios.
 
