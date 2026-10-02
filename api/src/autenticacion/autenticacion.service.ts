@@ -131,6 +131,34 @@ export class AuthenticationService {
     };
   }
 
+  /**
+   * Cierre de sesión (RF-16) con el token de renovación, que sigue disponible aunque el de
+   * acceso haya vencido. Solo revoca si el secreto corresponde; si no, no hace nada.
+   */
+  async logout(refreshToken: unknown): Promise<void> {
+    const parsed = parseRefreshToken(refreshToken);
+    if (!parsed) return;
+
+    const session = await this.sessions.findOne({ where: { id: parsed.sessionId } });
+    if (
+      session &&
+      session.revocadaEn === null &&
+      sameHash(hashSessionSecret(parsed.secret), session.tokenHash)
+    ) {
+      await this.sessions.update(session.id, { revocadaEn: new Date() });
+    }
+  }
+
+  /** Usuario con sus datos de cliente, para responder sus datos propios (RF-35). */
+  async findOwnUser(userId: number): Promise<Usuario> {
+    const usuario = await this.users.findOne({
+      where: { id: userId },
+      relations: { cliente: true },
+    });
+    if (!usuario) throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
+    return usuario;
+  }
+
   private signAccessToken(userId: number, sessionId: number): Promise<string> {
     const payload: AccessTokenPayload = { sub: userId, sid: sessionId };
     return this.jwt.signAsync(payload, { expiresIn: ACCESS_TOKEN_TTL_SECONDS });

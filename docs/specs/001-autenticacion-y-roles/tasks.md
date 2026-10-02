@@ -97,7 +97,7 @@ Reglas para todas las tareas:
   `POST /api/sesion/renovar`: rotación del secreto, `venceEn` a 7 días y detección de reúso con `tokenAnteriorHash`.
   Hecho cuando: los e2e verifican que renovar entrega cookies nuevas, que presentar el token reemplazado revoca la sesión y responde 401, y que una sesión vencida responde 401.
 
-- [ ] **T21 — Cierre, usuario propio y sesión única** [RF-13, RF-16, RF-35]
+- [x] **T21 — Cierre, usuario propio y sesión única** [RF-13, RF-16, RF-35]
   `POST /api/sesion/cerrar` (público, con la cookie de renovación) y `GET /api/sesion/usuario`.
   Hecho cuando: los e2e verifican que cerrar funciona aun con el token de acceso vencido y borra las cookies, que `GET /usuario` devuelve `UsuarioPropio` sin hash, y que un segundo ingreso deja al primero con 401.
 
