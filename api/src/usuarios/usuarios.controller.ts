@@ -5,12 +5,14 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import { CreateUserDto } from './dto/crear-usuario.dto.js';
 import { ListUsersQueryDto } from './dto/listar-usuarios.dto.js';
+import { UpdateUserDto } from './dto/modificar-usuario.dto.js';
 import type { UsuarioDetalle } from './usuario-detalle.js';
 import type { Usuario } from './usuario.entity.js';
 import { USERS_MESSAGES, type UserPage, UsersService } from './usuarios.service.js';
@@ -45,5 +47,14 @@ export class UsersController {
   @Post()
   create(@CurrentUser() actor: Usuario, @Body() body: CreateUserDto): Promise<UsuarioDetalle> {
     return this.users.create(actor, body);
+  }
+
+  @Patch(':id')
+  update(
+    @CurrentUser() actor: Usuario,
+    @Param('id', UserIdPipe) id: number,
+    @Body() body: UpdateUserDto,
+  ): Promise<UsuarioDetalle> {
+    return this.users.update(actor, id, body);
   }
 }

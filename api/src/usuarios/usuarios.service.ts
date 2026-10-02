@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   Brackets,
   DataSource,
+  IsNull,
   QueryFailedError,
   Repository,
   type SelectQueryBuilder,
@@ -17,7 +18,9 @@ import { PasswordsService } from '../autenticacion/contrasenas.service.js';
 import { Cliente } from './cliente.entity.js';
 import type { CreateUserDto } from './dto/crear-usuario.dto.js';
 import type { ListUsersQueryDto } from './dto/listar-usuarios.dto.js';
+import type { UpdateUserDto } from './dto/modificar-usuario.dto.js';
 import { checkAccountAction, checkCreate, type PolicyDecision } from './permisos-gestion.js';
+import { Sesion } from './sesion.entity.js';
 import { toUsuarioDetalle, type UsuarioDetalle } from './usuario-detalle.js';
 import { Usuario } from './usuario.entity.js';
 import { normalizeDocumentNumber } from './validadores/normalizar.js';
@@ -41,7 +44,16 @@ export const USERS_MESSAGES = {
   documentOfDeactivatedClient:
     'Ya existe un cliente con ese DNI o CUIT. Está desactivado: reactivalo en lugar de crear uno nuevo',
   notFound: 'No existe esa cuenta',
+  clientDataOnStaff: 'Solo las cuentas de clientes llevan datos de cliente',
+  businessNameOnNaturalPerson: 'La razón social solo corresponde a personas jurídicas',
 } as const;
+
+/** Quita las claves sin valor (undefined); null se conserva porque significa "borrar". */
+function definedOnly<T extends Record<string, unknown>>(values: T): Partial<T> {
+  return Object.fromEntries(
+    Object.entries(values).filter(([, value]) => value !== undefined),
+  ) as Partial<T>;
+}
 
 /** Convierte una decisión de permisos-gestion en la respuesta HTTP correspondiente. */
 function throwIfDenied(decision: PolicyDecision): void {
@@ -99,6 +111,62 @@ export class UsersService {
     const usuario = await this.findWithDetail(id);
     throwIfDenied(checkAccountAction(actor, usuario, 'view'));
     return toUsuarioDetalle(usuario);
+  }
+
+  /**
+   * Modificación parcial (RF-27, RF-28, RF-31). Registra quién modificó. Si cambia el email
+   * de otra cuenta, cierra su sesión; un cambio de rol no la cierra: rige en la siguiente
+   * petición porque el guard relee el usuario (RF-14).
+   */
+  async update(actor: Usuario, id: number, dto: UpdateUserDto): Promise<UsuarioDetalle> {
+    const target = await this.findWithDetail(id);
+    const emailChanged = dto.email !== undefined && dto.email !== target.email;
+    throwIfDenied(
+      checkAccountAction(actor, target, 'update', { email: emailChanged, rol: dto.rol }),
+    );
+
+    if (dto.cliente) {
+      if (!target.cliente) throw new BadRequestException(USERS_MESSAGES.clientDataOnStaff);
+      if (dto.cliente.razonSocial !== undefined && target.cliente.tipoPersona !== 'juridica') {
+        throw new BadRequestException(USERS_MESSAGES.businessNameOnNaturalPerson);
+      }
+    }
+    if (emailChanged) await this.assertEmailAvailable(dto.email!, target.id);
+
+    const now = new Date();
+    try {
+      await this.dataSource.transaction(async (manager) => {
+        await manager.update(Usuario, target.id, {
+          ...definedOnly({
+            email: dto.email,
+            nombre: dto.nombre,
+            apellido: dto.apellido,
+            rol: dto.rol,
+          }),
+          modificadoPorId: actor.id,
+          modificadoEn: now,
+        });
+        const clientChanges = definedOnly({
+          razonSocial: dto.cliente?.razonSocial,
+          telefono: dto.cliente?.telefono,
+          domicilio: dto.cliente?.domicilio,
+        });
+        if (Object.keys(clientChanges).length > 0) {
+          await manager.update(Cliente, target.id, clientChanges);
+        }
+        if (emailChanged && target.id !== actor.id) {
+          await manager.update(
+            Sesion,
+            { usuarioId: target.id, revocadaEn: IsNull() },
+            { revocadaEn: now },
+          );
+        }
+      });
+    } catch (error) {
+      throw this.translateDuplicate(error);
+    }
+
+    return toUsuarioDetalle(await this.findWithDetail(target.id));
   }
 
   /**

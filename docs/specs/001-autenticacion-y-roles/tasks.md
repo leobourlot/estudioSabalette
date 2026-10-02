@@ -121,7 +121,7 @@ Reglas para todas las tareas:
   `GET /api/panel/usuarios` (20 por página, orden, buscador y filtros; rol forzado a cliente para abogados) y `GET /api/panel/usuarios/:id` con auditoría.
   Hecho cuando: los e2e verifican orden, paginado, búsqueda por apellido y por DNI con puntos, que un abogado no ve integrantes, 401 sin sesión y 403 para un cliente.
 
-- [ ] **T27 — Modificación** [RF-14, RF-27, RF-28, RF-31]
+- [x] **T27 — Modificación** [RF-14, RF-27, RF-28, RF-31]
   `PATCH /api/panel/usuarios/:id` con registro de `modificadoPor`, revocación de sesión si cambia el email de otra cuenta y cambio de rol solo entre administrador y abogado.
   Hecho cuando: los e2e verifican que cambiar el email de otro le cierra la sesión, que el propio no, que un cambio de rol mantiene la sesión y aplica los permisos nuevos en la siguiente petición, y que cliente ↔ integrante se rechaza.
 
