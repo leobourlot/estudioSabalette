@@ -1,3 +1,4 @@
+import type { Type } from '@nestjs/common';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { Test } from '@nestjs/testing';
 import { DataSource } from 'typeorm';
@@ -40,14 +41,20 @@ export async function clearTables(app: NestExpressApplication): Promise<void> {
 
 /**
  * Levanta la aplicación completa contra la base de tests, con la misma configuración
- * HTTP que main.ts, y deja las tablas vacías.
+ * HTTP que main.ts, y deja las tablas vacías. `extraControllers` agrega rutas solo para
+ * el test (por ejemplo, TestOnlyController).
  */
-export async function createTestApp(): Promise<NestExpressApplication> {
+export async function createTestApp(
+  options: { extraControllers?: Type[] } = {},
+): Promise<NestExpressApplication> {
   // Valida .env.test (y que la base sea de tests) antes de tocar nada.
   loadTestEnvironment();
   await migrateTestDatabase();
 
-  const moduleRef = await Test.createTestingModule({ imports: [AppModule] }).compile();
+  const moduleRef = await Test.createTestingModule({
+    imports: [AppModule],
+    controllers: options.extraControllers ?? [],
+  }).compile();
   const app = moduleRef.createNestApplication<NestExpressApplication>();
   configureApp(app);
   await app.init();

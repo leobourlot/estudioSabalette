@@ -1,5 +1,5 @@
 import { randomBytes } from 'node:crypto';
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -18,6 +18,12 @@ import {
 } from './tokens.js';
 
 export const INVALID_CREDENTIALS_MESSAGE = 'Email o contraseña incorrectos';
+export const WRONG_CURRENT_PASSWORD_MESSAGE = 'La contraseña actual no es correcta';
+export const SESSION_CLOSED_FOR_SECURITY_MESSAGE =
+  'Por seguridad, cerramos tu sesión. Volvé a ingresar';
+
+const MAX_WRONG_CURRENT_PASSWORD = 5;
+const PASSWORD_ATTEMPTS_WINDOW_MS = 15 * 60_000;
 
 export interface SessionTokens {
   accessToken: string;
@@ -147,6 +153,65 @@ export class AuthenticationService {
     ) {
       await this.sessions.update(session.id, { revocadaEn: new Date() });
     }
+  }
+
+  /**
+   * Cambio de la contraseña propia (RF-36 a RF-39). Cada error de la contraseña actual se
+   * cuenta en la sesión; al quinto en 15 minutos se revoca la sesión (RF-38).
+   */
+  async changePassword(
+    userId: number,
+    session: Sesion,
+    currentPassword: string,
+    newPassword: string,
+  ): Promise<void> {
+    const ruleViolation = this.passwords.findRuleViolation(newPassword);
+    if (ruleViolation) throw new BadRequestException(ruleViolation);
+
+    const credentials = await this.users.findOne({
+      where: { id: userId },
+      select: { id: true, contrasenaHash: true },
+    });
+    if (!credentials) throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
+
+    if (!(await this.passwords.verify(currentPassword, credentials.contrasenaHash))) {
+      await this.registerWrongCurrentPassword(session);
+    }
+
+    const sameAsCurrent = this.passwords.findRuleViolation(newPassword, currentPassword);
+    if (sameAsCurrent) throw new BadRequestException(sameAsCurrent);
+
+    // Condicionado al hash leído: si mientras tanto alguien restableció la contraseña,
+    // prevalece el restablecimiento (RF-33) y este cambio no se aplica.
+    const result = await this.users.update(
+      { id: userId, contrasenaHash: credentials.contrasenaHash },
+      { contrasenaHash: await this.passwords.hash(newPassword), debeCambiarContrasena: false },
+    );
+    if (result.affected !== 1) throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
+
+    await this.sessions.update(session.id, {
+      intentosContrasenaFallidos: 0,
+      primerIntentoFallidoEn: null,
+    });
+  }
+
+  private async registerWrongCurrentPassword(session: Sesion): Promise<never> {
+    const now = Date.now();
+    const windowExpired =
+      session.primerIntentoFallidoEn === null ||
+      now - session.primerIntentoFallidoEn.getTime() >= PASSWORD_ATTEMPTS_WINDOW_MS;
+    const attempts = windowExpired ? 1 : session.intentosContrasenaFallidos + 1;
+
+    if (attempts >= MAX_WRONG_CURRENT_PASSWORD) {
+      await this.sessions.update(session.id, { revocadaEn: new Date(now) });
+      throw new UnauthorizedException(SESSION_CLOSED_FOR_SECURITY_MESSAGE);
+    }
+
+    await this.sessions.update(session.id, {
+      intentosContrasenaFallidos: attempts,
+      primerIntentoFallidoEn: windowExpired ? new Date(now) : session.primerIntentoFallidoEn,
+    });
+    throw new BadRequestException(WRONG_CURRENT_PASSWORD_MESSAGE);
   }
 
   /** Usuario con sus datos de cliente, para responder sus datos propios (RF-35). */

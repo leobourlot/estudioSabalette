@@ -101,7 +101,7 @@ Reglas para todas las tareas:
   `POST /api/sesion/cerrar` (público, con la cookie de renovación) y `GET /api/sesion/usuario`.
   Hecho cuando: los e2e verifican que cerrar funciona aun con el token de acceso vencido y borra las cookies, que `GET /usuario` devuelve `UsuarioPropio` sin hash, y que un segundo ingreso deja al primero con 401.
 
-- [ ] **T22 — Cambio de contraseña propia** [RF-11, RF-33, RF-36 a RF-39]
+- [x] **T22 — Cambio de contraseña propia** [RF-11, RF-33, RF-36 a RF-39]
   `PUT /api/sesion/contrasena`: reglas, contador de errores en la sesión, cierre al quinto error y `UPDATE` condicionado al hash leído.
   Hecho cuando: los e2e verifican el cambio exitoso (con cambio pendiente incluido), el 400 por contraseña actual incorrecta y por cada regla, el 401 con el mensaje de RF-38 al quinto error, y que un usuario con cambio pendiente recibe 403 en cualquier otra ruta protegida.
 
