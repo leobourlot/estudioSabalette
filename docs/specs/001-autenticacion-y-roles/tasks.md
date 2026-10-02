@@ -77,12 +77,12 @@ Reglas para todas las tareas:
   `limitador-intentos.service.ts` en memoria: ventana fija de 15 minutos, 5 intentos por email e IP y 30 por IP, sin extender la ventana con intentos rechazados.
   Hecho cuando: los tests unitarios, con reloj simulado, verifican el bloqueo en el intento 6 (email e IP) y 31 (IP), el desbloqueo a los 15 minutos del primer intento y que los rechazos no corren la ventana.
 
-- [ ] **T16 — Guard de autenticación** [RF-14, RF-18]
-  Decoradores `@Publico` y `@UsuarioActual`; guard global que verifica el JWT, carga la sesión y el usuario, y responde 401 si la sesión está revocada o vencida, o el usuario inactivo.
+- [x] **T16 — Guard de autenticación** [RF-14, RF-18]
+  Decoradores `@Public` y `@CurrentUser`; guard global que verifica el JWT, carga la sesión y el usuario, y responde 401 si la sesión está revocada o vencida, o el usuario inactivo.
   Hecho cuando: los tests unitarios con repositorios simulados cubren token ausente, alterado, vencido, sesión revocada, usuario inactivo y ruta pública.
 
-- [ ] **T17 — Guards de cambio pendiente y de roles** [RF-11, RF-19]
-  Decoradores `@PermitidoConCambioPendiente` y `@Roles`; guards globales que responden 403 con el mensaje de RF-19.
+- [x] **T17 — Guards de cambio pendiente y de roles** [RF-11, RF-19]
+  Decoradores `@AllowPendingPasswordChange` y `@Roles`; guards globales que responden 403 con el mensaje de RF-19.
   Hecho cuando: los tests unitarios verifican que un usuario con cambio pendiente solo pasa en rutas marcadas, y que un rol no listado recibe 403 con el mensaje exacto.
 
 - [ ] **T18 — Servicio de ingreso** [RF-8, RF-9, RF-13]

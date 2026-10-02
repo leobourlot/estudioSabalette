@@ -168,14 +168,14 @@ ingresar(email, contrasena, ip):
 
 ### Cada petición protegida [RF-14, RF-18, RF-19, RF-11]
 ```
-guard de autenticación (global, salvo @Publico):
+guard de autenticación (global, salvo @Public):
   jwt = cookie access_token; verificar firma y vencimiento, si falla: 401
   sesión = buscar por jwt.sid con su usuario
   si sesión revocada, vencida, o usuario inactivo: 401
   request.usuario = usuario                                   // rol vigente leído de la base
 
 guard de cambio pendiente (global):
-  si usuario.debeCambiarContrasena y la ruta no tiene @PermitidoConCambioPendiente: 403
+  si usuario.debeCambiarContrasena y la ruta no tiene @AllowPendingPasswordChange: 403
 
 guard de roles (global):
   si la ruta tiene @Roles y el rol del usuario no está: 403 "No tenés permiso para realizar esta acción"
@@ -389,7 +389,7 @@ Cada suite corre las migraciones sobre la base de tests y vacía las tablas ante
 | RF-14 | Guard de autenticación que lee el usuario de la base | e2e de desactivación y rol |
 | RF-16 | `POST /api/sesion/cerrar` | e2e de cierre |
 | RF-17 | `cliente-http.ts`, `ProveedorSesion`, `RutaProtegida` | Vitest |
-| RF-18, RF-19 | Guard global con `@Publico`, guard de roles | e2e 401 y 403 |
+| RF-18, RF-19 | Guard global con `@Public`, guard de roles | e2e 401 y 403 |
 | RF-20 | `RutaProtegida`, `canAccess` | Vitest |
 | RF-21 a RF-34 | `usuarios.service`, `usuarios.controller`, páginas de `/panel/usuarios` | Unitarios y e2e de gestión |
 | RF-35 | `GET /api/sesion/usuario`, `MiCuenta` | e2e, Vitest |
