@@ -117,7 +117,7 @@ Reglas para todas las tareas:
   `POST /api/panel/usuarios`: alta con contraseña temporal y cambio pendiente, registro de `creadoPor`, mensajes de 409 por email activo, email de cuenta desactivada y DNI/CUIT (con el agregado si está desactivado).
   Hecho cuando: los e2e verifican un alta de persona física, una de persona jurídica y un abogado creado por un administrador, cada 409, y el 403 de un abogado que intenta crear un integrante.
 
-- [ ] **T26 — Listado y consulta** [RF-18, RF-19, RF-26, RF-34]
+- [x] **T26 — Listado y consulta** [RF-18, RF-19, RF-26, RF-34]
   `GET /api/panel/usuarios` (20 por página, orden, buscador y filtros; rol forzado a cliente para abogados) y `GET /api/panel/usuarios/:id` con auditoría.
   Hecho cuando: los e2e verifican orden, paginado, búsqueda por apellido y por DNI con puntos, que un abogado no ve integrantes, 401 sin sesión y 403 para un cliente.
 

@@ -1,9 +1,24 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+  Query,
+} from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import { CreateUserDto } from './dto/crear-usuario.dto.js';
+import { ListUsersQueryDto } from './dto/listar-usuarios.dto.js';
 import type { UsuarioDetalle } from './usuario-detalle.js';
 import type { Usuario } from './usuario.entity.js';
-import { UsersService } from './usuarios.service.js';
+import { USERS_MESSAGES, type UserPage, UsersService } from './usuarios.service.js';
+
+/** Un id que no es un número no puede ser una cuenta existente: 404, como cualquier otro. */
+const UserIdPipe = new ParseIntPipe({
+  exceptionFactory: () => new NotFoundException(USERS_MESSAGES.notFound),
+});
 
 /**
  * Gestión de cuentas del panel (RF-20 a RF-34). Entran administradores y abogados; qué puede
@@ -13,6 +28,19 @@ import { UsersService } from './usuarios.service.js';
 @Controller('panel/usuarios')
 export class UsersController {
   constructor(private readonly users: UsersService) {}
+
+  @Get()
+  list(@CurrentUser() actor: Usuario, @Query() query: ListUsersQueryDto): Promise<UserPage> {
+    return this.users.list(actor, query);
+  }
+
+  @Get(':id')
+  findOne(
+    @CurrentUser() actor: Usuario,
+    @Param('id', UserIdPipe) id: number,
+  ): Promise<UsuarioDetalle> {
+    return this.users.findOne(actor, id);
+  }
 
   @Post()
   create(@CurrentUser() actor: Usuario, @Body() body: CreateUserDto): Promise<UsuarioDetalle> {

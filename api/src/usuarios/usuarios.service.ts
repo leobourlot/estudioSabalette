@@ -6,13 +6,33 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, QueryFailedError, Repository } from 'typeorm';
+import {
+  Brackets,
+  DataSource,
+  QueryFailedError,
+  Repository,
+  type SelectQueryBuilder,
+} from 'typeorm';
 import { PasswordsService } from '../autenticacion/contrasenas.service.js';
 import { Cliente } from './cliente.entity.js';
 import type { CreateUserDto } from './dto/crear-usuario.dto.js';
-import { checkCreate, type PolicyDecision } from './permisos-gestion.js';
+import type { ListUsersQueryDto } from './dto/listar-usuarios.dto.js';
+import { checkAccountAction, checkCreate, type PolicyDecision } from './permisos-gestion.js';
 import { toUsuarioDetalle, type UsuarioDetalle } from './usuario-detalle.js';
 import { Usuario } from './usuario.entity.js';
+import { normalizeDocumentNumber } from './validadores/normalizar.js';
+
+const PAGE_SIZE = 20;
+
+export interface UserPage {
+  items: UsuarioDetalle[];
+  total: number;
+  pagina: number;
+  porPagina: number;
+}
+
+/** Escapa los comodines de LIKE para que la búsqueda los trate como texto. */
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, (char) => `\\${char}`);
 
 export const USERS_MESSAGES = {
   emailTaken: 'Ya existe una cuenta con ese email',
@@ -36,6 +56,73 @@ export class UsersService {
     @InjectRepository(Cliente) private readonly clients: Repository<Cliente>,
     private readonly passwords: PasswordsService,
   ) {}
+
+  /**
+   * Listado paginado con búsqueda y filtros (RF-26). Un abogado solo ve clientes: si no
+   * indica rol se fuerza "cliente", y si pide otro recibe 403.
+   */
+  async list(actor: Usuario, query: ListUsersQueryDto): Promise<UserPage> {
+    let rol = query.rol;
+    if (actor.rol === 'abogado') {
+      if (rol !== undefined && rol !== 'cliente') throwIfDenied(checkCreate(actor, rol));
+      rol = 'cliente';
+    }
+    const pagina = query.pagina ?? 1;
+
+    const builder = this.users
+      .createQueryBuilder('usuario')
+      .leftJoinAndSelect('usuario.cliente', 'cliente')
+      .leftJoinAndSelect('usuario.creadoPor', 'creadoPor')
+      .leftJoinAndSelect('usuario.modificadoPor', 'modificadoPor');
+
+    if (rol !== undefined) builder.andWhere('usuario.rol = :rol', { rol });
+    if (query.activo !== undefined)
+      builder.andWhere('usuario.activo = :activo', { activo: query.activo });
+    if (query.buscar) this.applySearch(builder, query.buscar);
+
+    // La intercalación utf8mb4_unicode_ci ordena y busca sin distinguir mayúsculas ni tildes.
+    // offset/limit (y no skip/take): las uniones son 1 a 1 o muchos a 1 y no multiplican
+    // filas, y skip/take arma una subconsulta que no admite COALESCE en el ORDER BY.
+    const [usuarios, total] = await builder
+      .orderBy('COALESCE(cliente.razonSocial, usuario.apellido)', 'ASC')
+      .addOrderBy('usuario.nombre', 'ASC')
+      .addOrderBy('usuario.id', 'ASC')
+      .offset((pagina - 1) * PAGE_SIZE)
+      .limit(PAGE_SIZE)
+      .getManyAndCount();
+
+    return { items: usuarios.map(toUsuarioDetalle), total, pagina, porPagina: PAGE_SIZE };
+  }
+
+  /** Consulta de una cuenta con su auditoría (RF-34). */
+  async findOne(actor: Usuario, id: number): Promise<UsuarioDetalle> {
+    const usuario = await this.findWithDetail(id);
+    throwIfDenied(checkAccountAction(actor, usuario, 'view'));
+    return toUsuarioDetalle(usuario);
+  }
+
+  /**
+   * Busca en apellido, nombre y razón social. Si el texto parece un DNI o CUIT (solo dígitos
+   * una vez quitados puntos, guiones y espacios), busca también en esos campos.
+   */
+  private applySearch(builder: SelectQueryBuilder<Usuario>, term: string): void {
+    const text = `%${escapeLike(term)}%`;
+    const digits = normalizeDocumentNumber(term);
+    builder.andWhere(
+      new Brackets((where) => {
+        where
+          .where('usuario.apellido LIKE :text', { text })
+          .orWhere('usuario.nombre LIKE :text', { text })
+          .orWhere('cliente.razonSocial LIKE :text', { text });
+        if (/^\d+$/.test(digits)) {
+          const document = `%${digits}%`;
+          where
+            .orWhere('cliente.dni LIKE :document', { document })
+            .orWhere('cliente.cuit LIKE :document', { document });
+        }
+      }),
+    );
+  }
 
   /** Alta de una cuenta con contraseña temporal y cambio pendiente (RF-21 a RF-25). */
   async create(actor: Usuario, dto: CreateUserDto): Promise<UsuarioDetalle> {
