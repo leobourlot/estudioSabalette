@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -10,6 +12,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
+import { TemporaryPasswordDto } from './dto/contrasena-temporal.dto.js';
 import { CreateUserDto } from './dto/crear-usuario.dto.js';
 import { ListUsersQueryDto } from './dto/listar-usuarios.dto.js';
 import { UpdateUserDto } from './dto/modificar-usuario.dto.js';
@@ -47,6 +50,22 @@ export class UsersController {
   @Post()
   create(@CurrentUser() actor: Usuario, @Body() body: CreateUserDto): Promise<UsuarioDetalle> {
     return this.users.create(actor, body);
+  }
+
+  @Post(':id/desactivar')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deactivate(@CurrentUser() actor: Usuario, @Param('id', UserIdPipe) id: number): Promise<void> {
+    return this.users.deactivate(actor, id);
+  }
+
+  @Post(':id/reactivar')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  reactivate(
+    @CurrentUser() actor: Usuario,
+    @Param('id', UserIdPipe) id: number,
+    @Body() body: TemporaryPasswordDto,
+  ): Promise<void> {
+    return this.users.reactivate(actor, id, body.contrasenaTemporal);
   }
 
   @Patch(':id')

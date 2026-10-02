@@ -125,7 +125,7 @@ Reglas para todas las tareas:
   `PATCH /api/panel/usuarios/:id` con registro de `modificadoPor`, revocación de sesión si cambia el email de otra cuenta y cambio de rol solo entre administrador y abogado.
   Hecho cuando: los e2e verifican que cambiar el email de otro le cierra la sesión, que el propio no, que un cambio de rol mantiene la sesión y aplica los permisos nuevos en la siguiente petición, y que cliente ↔ integrante se rechaza.
 
-- [ ] **T28 — Desactivación y reactivación** [RF-14, RF-24, RF-29, RF-30]
+- [x] **T28 — Desactivación y reactivación** [RF-14, RF-24, RF-29, RF-30]
   `POST …/desactivar` y `POST …/reactivar` (exige email y contraseña temporal).
   Hecho cuando: los e2e verifican que un usuario desactivado con sesión abierta recibe 401 en su próxima petición, que reactivar deja el cambio pendiente y que reactivar una cuenta sin email responde 409.
 

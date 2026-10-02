@@ -46,6 +46,8 @@ export const USERS_MESSAGES = {
   notFound: 'No existe esa cuenta',
   clientDataOnStaff: 'Solo las cuentas de clientes llevan datos de cliente',
   businessNameOnNaturalPerson: 'La razón social solo corresponde a personas jurídicas',
+  alreadyActive: 'La cuenta ya está activa',
+  reactivateWithoutEmail: 'La cuenta no tiene email. Asignale uno antes de reactivarla',
 } as const;
 
 /** Quita las claves sin valor (undefined); null se conserva porque significa "borrar". */
@@ -167,6 +169,51 @@ export class UsersService {
     }
 
     return toUsuarioDetalle(await this.findWithDetail(target.id));
+  }
+
+  /**
+   * Desactivación (RF-29): la cuenta no se borra, para conservar la autoría de lo cargado;
+   * se cierra su sesión y ya no puede ingresar. Repetirla no es un error.
+   */
+  async deactivate(actor: Usuario, id: number): Promise<void> {
+    const target = await this.findWithDetail(id);
+    throwIfDenied(checkAccountAction(actor, target, 'deactivate'));
+
+    const now = new Date();
+    await this.dataSource.transaction(async (manager) => {
+      await manager.update(Usuario, target.id, {
+        activo: false,
+        modificadoPorId: actor.id,
+        modificadoEn: now,
+      });
+      await manager.update(
+        Sesion,
+        { usuarioId: target.id, revocadaEn: IsNull() },
+        { revocadaEn: now },
+      );
+    });
+  }
+
+  /**
+   * Reactivación (RF-30): exige una contraseña temporal nueva, para que una contraseña que
+   * pudo verse comprometida no vuelva a servir, y deja pendiente el cambio.
+   */
+  async reactivate(actor: Usuario, id: number, temporaryPassword: string): Promise<void> {
+    const target = await this.findWithDetail(id);
+    throwIfDenied(checkAccountAction(actor, target, 'reactivate'));
+    if (target.activo) throw new ConflictException(USERS_MESSAGES.alreadyActive);
+    if (target.email === null) throw new ConflictException(USERS_MESSAGES.reactivateWithoutEmail);
+
+    const passwordViolation = this.passwords.findRuleViolation(temporaryPassword);
+    if (passwordViolation) throw new BadRequestException(passwordViolation);
+
+    await this.users.update(target.id, {
+      activo: true,
+      contrasenaHash: await this.passwords.hash(temporaryPassword),
+      debeCambiarContrasena: true,
+      modificadoPorId: actor.id,
+      modificadoEn: new Date(),
+    });
   }
 
   /**
