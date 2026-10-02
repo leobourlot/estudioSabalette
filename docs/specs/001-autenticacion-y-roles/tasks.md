@@ -137,7 +137,7 @@ Reglas para todas las tareas:
   Protecciones del principal en los endpoints y `POST …/transferir-principal` en una transacción con bloqueo.
   Hecho cuando: los e2e verifican que otro administrador recibe 409 al intentar quitarle el rol, desactivar, cambiar el email o restablecer la contraseña del principal; que el principal no puede quitarse el rol ni desactivarse; y que la transferencia deja exactamente un principal.
 
-- [ ] **T31 — Comando de consola** [RF-41, RF-42]
+- [x] **T31 — Comando de consola** [RF-41, RF-42]
   Lógica `crearPrincipal` y `restablecerPrincipal` separada de la entrada por `node:readline` (sin mostrar la contraseña); script `admin:principal`.
   Hecho cuando: los tests unitarios verifican que crea el principal solo si no existe, que con principal existente solo restablece su contraseña, y que nunca crea otro administrador.
 

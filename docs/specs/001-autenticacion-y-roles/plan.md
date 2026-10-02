@@ -257,7 +257,7 @@ Reglas de permisos en `usuarios/permisos-gestion.ts`, como funciones puras sin a
 ## Comando de consola [RF-41, RF-42]
 
 - **Ejecución**: `pnpm --filter api admin:principal` en desarrollo; en Easypanel, `node dist/consola/administrador-principal.js` desde la consola del servicio.
-- **Implementación**: abre el contexto de NestJS sin servidor HTTP (`NestFactory.createApplicationContext`) y pide los datos con `node:readline`, sin mostrar la contraseña en pantalla.
+- **Implementación**: abre el contexto de NestJS sin servidor HTTP (`NestFactory.createApplicationContext`) con un `ConsoleModule` mínimo (configuración, base y contraseñas) y pide los datos con `node:readline`. La contraseña se pide dos veces y no se muestra en pantalla. La lógica vive en `PrincipalAdminService`, separada de la entrada por teclado.
 - **Si no hay principal**: pide nombre, apellido, email y contraseña, aplica las mismas validaciones y crea el administrador con `esPrincipal = true` y `debeCambiarContrasena = false`.
 - **Si ya hay principal**: solo ofrece restablecer su contraseña (queda pendiente el cambio y se revoca su sesión). No crea otros administradores.
 
