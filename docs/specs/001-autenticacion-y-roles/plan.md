@@ -29,7 +29,7 @@ Todavía no existe código. Esta fase deja el proyecto listo para implementar la
 | `base-de-datos/` | Configuración de TypeORM, `data-source.ts` para el CLI de migraciones y `esquema.ts` con la lista única de entidades y migraciones. | — |
 | `migraciones/` | Migración `crear-usuarios-clientes-y-sesiones`. | RF-1 a RF-4 |
 | `autenticacion/` | `sesion.controller.ts`, `autenticacion.service.ts` (ingreso, renovación, cierre), `contrasenas.service.ts` (hash, verificación y reglas), `limitador-intentos.service.ts`, guards y decoradores. | RF-8 a RF-19, RF-36 a RF-40 |
-| `usuarios/` | Entidades `usuario.entity.ts`, `cliente.entity.ts` y `sesion.entity.ts`, `usuarios.controller.ts`, `usuarios.service.ts` (reglas de gestión), `dto/` y `validadores/` (DNI, CUIT, email, longitudes). | RF-1 a RF-7, RF-21 a RF-35 |
+| `usuarios/` | Entidades `usuario.entity.ts`, `cliente.entity.ts` y `sesion.entity.ts`, `usuarios.controller.ts`, `usuarios.service.ts`, `permisos-gestion.ts` (reglas de gestión), `dto/` y `validadores/` (DNI, CUIT, email, longitudes). | RF-1 a RF-7, RF-21 a RF-35 |
 | `consola/` | `administrador-principal.ts`: comando interactivo para crear el principal o restablecer su contraseña. | RF-41, RF-42 |
 
 Los controllers solo reciben, validan con DTO y delegan en los services (principio 3).
@@ -230,7 +230,7 @@ Supone una sola instancia de la API. Si en el futuro se escala a varias réplica
 
 ## Gestión de cuentas [RF-21 a RF-34]
 
-Reglas en `usuarios.service.ts`:
+Reglas de permisos en `usuarios/permisos-gestion.ts`, como funciones puras sin acceso a la base, que `usuarios.service.ts` consulta antes de cada operación (código HTTP y mensaje):
 - **Abogado**: toda operación sobre una cuenta que no sea de cliente responde 403 (RF-21).
 - **Principal**: si la cuenta destino es el principal y el actor es otro usuario, se rechazan desactivar, cambiar el rol, cambiar el email y restablecer la contraseña. El principal tampoco puede quitarse el rol ni desactivarse (RF-31). Como el principal siempre es un administrador activo, el sistema nunca se queda sin administradores.
 - **Transferencia** (RF-32): en una transacción con bloqueo de filas (`SELECT … FOR UPDATE`), pone `esPrincipal = false` en el actual y `true` en el destino.

@@ -109,11 +109,11 @@ Reglas para todas las tareas:
   DTO de alta (con `cliente` condicionado a `tipoPersona`), modificación (sin DNI, CUIT ni tipo de persona), contraseña temporal y consulta del listado.
   Hecho cuando: los tests unitarios con `class-validator` verifican campos exigidos y rechazados para persona física y jurídica, y que enviar `dni`, `cuit` o `tipoPersona` en la modificación falla.
 
-- [ ] **T24 — Reglas de permisos de gestión** [RF-21, RF-28, RF-31]
-  Funciones de política en `usuarios.service.ts`: qué puede hacer cada actor sobre cada cuenta (abogado solo clientes, protección del principal, cambios de rol permitidos).
+- [x] **T24 — Reglas de permisos de gestión** [RF-21, RF-28, RF-31]
+  Funciones de política en `usuarios/permisos-gestion.ts` (puras, sin base), que usa `usuarios.service.ts`: qué puede hacer cada actor sobre cada cuenta (abogado solo clientes, protección del principal, cambios de rol permitidos).
   Hecho cuando: los tests unitarios cubren la matriz actor (principal, administrador, abogado) × destino (principal, administrador, abogado, cliente) × acción.
 
-- [ ] **T25 — Alta de cuentas** [RF-4, RF-22 a RF-25]
+- [x] **T25 — Alta de cuentas** [RF-4, RF-22 a RF-25]
   `POST /api/panel/usuarios`: alta con contraseña temporal y cambio pendiente, registro de `creadoPor`, mensajes de 409 por email activo, email de cuenta desactivada y DNI/CUIT (con el agregado si está desactivado).
   Hecho cuando: los e2e verifican un alta de persona física, una de persona jurídica y un abogado creado por un administrador, cada 409, y el 403 de un abogado que intenta crear un integrante.
 
