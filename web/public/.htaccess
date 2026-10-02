@@ -1,0 +1,10 @@
+# Hostinger: toda ruta que no sea un archivo o carpeta existente se sirve con index.html,
+# para que las rutas de React (por ejemplo /panel/usuarios) funcionen al recargar.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  RewriteRule ^index\.html$ - [L]
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule . /index.html [L]
+</IfModule>
