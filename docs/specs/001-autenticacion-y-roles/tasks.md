@@ -133,7 +133,7 @@ Reglas para todas las tareas:
   `POST …/restablecer-contrasena` y `POST …/liberar-email` (solo administradores, solo cuentas desactivadas).
   Hecho cuando: los e2e verifican que restablecer cierra la sesión y deja el cambio pendiente, que un cambio de contraseña con el hash anterior no pisa un restablecimiento, y que después de liberar un email se puede crear otra cuenta con él.
 
-- [ ] **T30 — Administrador principal** [RF-31, RF-32]
+- [x] **T30 — Administrador principal** [RF-31, RF-32]
   Protecciones del principal en los endpoints y `POST …/transferir-principal` en una transacción con bloqueo.
   Hecho cuando: los e2e verifican que otro administrador recibe 409 al intentar quitarle el rol, desactivar, cambiar el email o restablecer la contraseña del principal; que el principal no puede quitarse el rol ni desactivarse; y que la transferencia deja exactamente un principal.
 

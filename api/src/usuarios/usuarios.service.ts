@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import {
   Brackets,
   DataSource,
+  In,
   IsNull,
   QueryFailedError,
   Repository,
@@ -257,6 +258,39 @@ export class UsersService {
       email: null,
       modificadoPorId: actor.id,
       modificadoEn: new Date(),
+    });
+  }
+
+  /**
+   * Transferencia de la condición de principal (RF-32). Bloquea las filas de los dos
+   * usuarios y vuelve a verificar las reglas dentro de la transacción: si llegan dos
+   * transferencias a la vez, la segunda espera y encuentra que el actor ya no es principal.
+   */
+  async transferPrincipal(actor: Usuario, id: number): Promise<void> {
+    const target = await this.findWithDetail(id);
+    throwIfDenied(checkAccountAction(actor, target, 'transferPrincipal'));
+
+    const now = new Date();
+    await this.dataSource.transaction(async (manager) => {
+      const locked = await manager.find(Usuario, {
+        where: { id: In([actor.id, target.id]) },
+        lock: { mode: 'pessimistic_write' },
+      });
+      const lockedActor = locked.find((usuario) => usuario.id === actor.id);
+      const lockedTarget = locked.find((usuario) => usuario.id === target.id);
+      if (!lockedActor || !lockedTarget) throw new NotFoundException(USERS_MESSAGES.notFound);
+      throwIfDenied(checkAccountAction(lockedActor, lockedTarget, 'transferPrincipal'));
+
+      await manager.update(Usuario, lockedActor.id, {
+        esPrincipal: false,
+        modificadoPorId: actor.id,
+        modificadoEn: now,
+      });
+      await manager.update(Usuario, lockedTarget.id, {
+        esPrincipal: true,
+        modificadoPorId: actor.id,
+        modificadoEn: now,
+      });
     });
   }
 

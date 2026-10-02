@@ -84,6 +84,15 @@ export class UsersController {
     return this.users.releaseEmail(actor, id);
   }
 
+  @Post(':id/transferir-principal')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  transferPrincipal(
+    @CurrentUser() actor: Usuario,
+    @Param('id', UserIdPipe) id: number,
+  ): Promise<void> {
+    return this.users.transferPrincipal(actor, id);
+  }
+
   @Patch(':id')
   update(
     @CurrentUser() actor: Usuario,
