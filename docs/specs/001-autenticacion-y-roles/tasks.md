@@ -69,7 +69,7 @@ Reglas para todas las tareas:
   `usuarios/validadores/`: normalización de email y de DNI/CUIT, DNI de 7 u 8 dígitos, CUIT con dígito verificador, email `texto@texto.texto`, largos de 55 y 15 caracteres.
   Hecho cuando: los tests unitarios cubren casos válidos e inválidos de cada validador, incluidos DNI y CUIT con puntos, guiones y espacios.
 
-- [ ] **T14 — Servicio de contraseñas** [RF-39, RF-40]
+- [x] **T14 — Servicio de contraseñas** [RF-39, RF-40]
   `contrasenas.service.ts`: reglas de RF-39 en el orden del plan (caracteres, después largo), hash bcrypt con costo 12 y verificación.
   Hecho cuando: los tests unitarios verifican cada mensaje de RF-39 (incluidas tildes, ñ y emojis), que el hash no contiene la contraseña y que la verificación acepta la correcta y rechaza otra.
 

@@ -315,6 +315,7 @@ Compartir la promesa de renovación evita que varias peticiones simultáneas de 
 | `@nestjs/typeorm`, `typeorm`, `mysql2` | ORM y driver de MySQL (principio 1). | Driver `mysql`: sin mantenimiento activo. |
 | `@nestjs/jwt` | Firmar y verificar el token de acceso. | Passport + passport-jwt: dos dependencias más para lo que resuelve un guard propio. Token opaco único: la rotación dentro de peticiones simultáneas produce falsos reúsos. |
 | `bcrypt` | Hash de contraseñas (costo 12). | `argon2`: no tiene límite de bytes, pero con contraseñas ASCII de hasta 64 caracteres ese límite no se alcanza, y bcrypt es la elección del estudio. `bcryptjs`: más lento, al estar escrito en JavaScript puro. |
+| `@types/bcrypt` | Tipos de `bcrypt` para TypeScript estricto. | — |
 | `cookie-parser` | Leer las cookies de sesión. | Parsear el encabezado a mano. |
 | `@types/cookie-parser` | Tipos de `cookie-parser` para TypeScript estricto. | — |
 | `class-validator`, `class-transformer` | DTO validados con el `ValidationPipe` (`whitelist`, `forbidNonWhitelisted`, `transform`). | Zod: requiere un pipe propio y duplica lo que Nest ya integra. |
