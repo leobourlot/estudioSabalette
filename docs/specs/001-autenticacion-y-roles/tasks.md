@@ -73,7 +73,7 @@ Reglas para todas las tareas:
   `contrasenas.service.ts`: reglas de RF-39 en el orden del plan (caracteres, después largo), hash bcrypt con costo 12 y verificación.
   Hecho cuando: los tests unitarios verifican cada mensaje de RF-39 (incluidas tildes, ñ y emojis), que el hash no contiene la contraseña y que la verificación acepta la correcta y rechaza otra.
 
-- [ ] **T15 — Limitador de intentos** [RF-10]
+- [x] **T15 — Limitador de intentos** [RF-10]
   `limitador-intentos.service.ts` en memoria: ventana fija de 15 minutos, 5 intentos por email e IP y 30 por IP, sin extender la ventana con intentos rechazados.
   Hecho cuando: los tests unitarios, con reloj simulado, verifican el bloqueo en el intento 6 (email e IP) y 31 (IP), el desbloqueo a los 15 minutos del primer intento y que los rechazos no corren la ventana.
 
