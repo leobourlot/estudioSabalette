@@ -153,15 +153,14 @@ ingresar(email, contrasena, ip):
   email = normalizar(email)
   si limitador.superado(ip) o limitador.superado(ip + email): 429
   limitador.contar(ip); limitador.contar(ip + email)
-  usuario = buscar por email
-  hashAComparar = usuario?.contrasenaHash ?? HASH_FICTICIO   // tiempo similar exista o no el email
+  credenciales = buscar por email (solo id, contrasenaHash, activo)   // el hash no viaja en otras consultas
+  hashAComparar = credenciales?.contrasenaHash ?? HASH_FICTICIO       // tiempo similar exista o no el email
   ok = bcrypt.compare(contrasena, hashAComparar)
-  si no usuario o no ok o no usuario.activo: 401 genérico
-  transacción:
-    revocar sesiones abiertas del usuario                     // sesión única
-    borrar sesiones vencidas o revocadas del usuario          // limpieza
-    secreto = aleatorio(32); crear sesión(tokenHash = sha256(secreto), venceEn = ahora + 7 días)
-    usuario.ultimoIngreso = ahora
+  si no credenciales o no ok o no credenciales.activo: 401 genérico
+  borrar las sesiones del usuario                    // sesión única; también limpia las viejas
+  secreto = aleatorio(32); crear sesión(tokenHash = sha256(secreto), venceEn = ahora + 7 días)
+  usuario.ultimoIngreso = ahora
+  usuario = buscar por id con su cliente               // para la respuesta, sin el hash
   setear cookies (JWT con sid, sesionId.secreto)
   devolver UsuarioPropio
 ```
@@ -335,7 +334,7 @@ No se usa `@nestjs/throttler`. Su bloqueo se mide desde que se supera el límite
 | Rol leído de la base en cada petición | Rol dentro del JWT | Un cambio de rol rige en la siguiente acción sin cerrar la sesión (RF-14). |
 | Sesión única revocando las anteriores al ingresar | Límite de sesiones por dispositivo | Es lo que pide RF-13 y es lo más simple. |
 | Contador de RF-38 dentro de la sesión | Tabla de intentos aparte | Al quinto error se revoca esa sesión, así que el contador vive y muere con ella. |
-| Limpieza de sesiones viejas al ingresar | Tarea programada | No suma infraestructura; las sesiones de cada usuario se limpian en su próximo ingreso. |
+| Borrar las sesiones del usuario al ingresar (cierra la anterior y limpia las viejas) | Tarea programada | No suma infraestructura; las sesiones de cada usuario se limpian en su próximo ingreso. |
 | IDs autoincrementales | UUID | Más simple. Todos los accesos pasan por autorización, así que adivinar un id no da acceso. |
 | Validadores duplicados en web y api | Paquete compartido en el monorepo | Son pocas funciones; un tercer paquete agrega configuración. La API es la fuente de verdad. |
 

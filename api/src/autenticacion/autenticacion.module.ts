@@ -8,6 +8,7 @@ import { Cliente } from '../usuarios/cliente.entity.js';
 import { Sesion } from '../usuarios/sesion.entity.js';
 import { Usuario } from '../usuarios/usuario.entity.js';
 import { AuthenticationGuard } from './autenticacion.guard.js';
+import { AuthenticationService } from './autenticacion.service.js';
 import { PendingPasswordChangeGuard } from './cambio-pendiente.guard.js';
 import { ACCESS_TOKEN_TTL_SECONDS } from './constantes.js';
 import { PasswordsService } from './contrasenas.service.js';
@@ -27,6 +28,7 @@ import { RolesGuard } from './roles.guard.js';
     }),
   ],
   providers: [
+    AuthenticationService,
     PasswordsService,
     LoginAttemptLimiter,
     // Guards globales, en este orden: sesión (RF-18), cambio de contraseña pendiente (RF-11)

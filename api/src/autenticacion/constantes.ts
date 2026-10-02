@@ -3,3 +3,6 @@ export const ACCESS_TOKEN_COOKIE = 'access_token';
 export const REFRESH_TOKEN_COOKIE = 'refresh_token';
 
 export const ACCESS_TOKEN_TTL_SECONDS = 15 * 60;
+
+// La sesión vence tras 7 días sin uso: cada renovación corre el vencimiento (RF-12).
+export const SESSION_TTL_MS = 7 * 24 * 60 * 60 * 1000;

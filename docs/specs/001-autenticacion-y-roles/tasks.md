@@ -85,7 +85,7 @@ Reglas para todas las tareas:
   Decoradores `@AllowPendingPasswordChange` y `@Roles`; guards globales que responden 403 con el mensaje de RF-19.
   Hecho cuando: los tests unitarios verifican que un usuario con cambio pendiente solo pasa en rutas marcadas, y que un rol no listado recibe 403 con el mensaje exacto.
 
-- [ ] **T18 — Servicio de ingreso** [RF-8, RF-9, RF-13]
+- [x] **T18 — Servicio de ingreso** [RF-8, RF-9, RF-13]
   `autenticacion.service.ts` (ingresar): normalización, comparación contra hash ficticio si el email no existe, revocación de sesiones anteriores, limpieza de sesiones viejas, creación de sesión, `ultimoIngreso`.
   Hecho cuando: los tests unitarios verifican el error genérico para email inexistente, contraseña incorrecta y cuenta desactivada, y que un ingreso exitoso revoca la sesión anterior.
 
