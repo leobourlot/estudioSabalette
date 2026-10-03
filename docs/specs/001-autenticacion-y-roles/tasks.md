@@ -171,7 +171,7 @@ Reglas para todas las tareas:
   `DisenoPanel` y `DisenoPortal` con botón de cerrar sesión; `PanelInicio` y `PortalInicio` como marcadores de posición; `MiCuenta` con los datos propios.
   Hecho cuando: los tests verifican que cerrar sesión llama al servicio y navega a `/ingresar`, y que `MiCuenta` muestra los datos de cliente solo para clientes.
 
-- [ ] **T39 — Servicio de usuarios** [RF-21 a RF-34]
+- [x] **T39 — Servicio de usuarios** [RF-21 a RF-34]
   `servicios/usuarios.ts` con una función por endpoint de gestión y mensajes de error de la API.
   Hecho cuando: los tests con `fetch` simulado verifican la ruta, el método y el cuerpo de cada llamada y el traslado de los mensajes de 409.
 
