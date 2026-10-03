@@ -16,8 +16,18 @@ interface SessionContextValue {
   cargando: boolean;
   login: (email: string, contrasena: string) => Promise<UsuarioPropio>;
   logout: () => Promise<void>;
-  /** Para actualizar los datos propios después de un cambio (por ejemplo, de contraseña). */
+  /** Cambia la contraseña propia y quita el cambio pendiente del usuario en memoria (RF-36). */
+  changePassword: (contrasenaActual: string, contrasenaNueva: string) => Promise<void>;
+  /** Para actualizar los datos propios después de un cambio. */
   setUsuario: (usuario: UsuarioPropio | null) => void;
+  /**
+   * Vacía la sesión porque la API la cerró, con un aviso para la pantalla de ingreso
+   * (RF-38). RutaProtegida lleva a /ingresar al ver la sesión vacía.
+   */
+  endSession: (notice: string) => void;
+  /** Aviso pendiente para la pantalla de ingreso, o null. */
+  notice: string | null;
+  clearNotice: () => void;
 }
 
 const SessionContext = createContext<SessionContextValue | null>(null);
@@ -75,9 +85,36 @@ export function ProveedorSesion({
     }
   }, [service]);
 
+  const changePassword = useCallback(
+    async (contrasenaActual: string, contrasenaNueva: string) => {
+      await service.changePassword(contrasenaActual, contrasenaNueva);
+      setUsuario((current) => (current ? { ...current, debeCambiarContrasena: false } : current));
+    },
+    [service],
+  );
+
+  const [notice, setNotice] = useState<string | null>(null);
+
+  const endSession = useCallback((message: string) => {
+    setUsuario(null);
+    setNotice(message);
+  }, []);
+
+  const clearNotice = useCallback(() => setNotice(null), []);
+
   const value = useMemo(
-    () => ({ usuario, cargando, login, logout, setUsuario }),
-    [usuario, cargando, login, logout],
+    () => ({
+      usuario,
+      cargando,
+      login,
+      logout,
+      changePassword,
+      setUsuario,
+      endSession,
+      notice,
+      clearNotice,
+    }),
+    [usuario, cargando, login, logout, changePassword, endSession, notice, clearNotice],
   );
 
   return <SessionContext.Provider value={value}>{children}</SessionContext.Provider>;

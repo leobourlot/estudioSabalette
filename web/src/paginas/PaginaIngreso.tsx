@@ -1,4 +1,4 @@
-import { type FormEvent, useState } from 'react';
+import { type FormEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSession } from '../componentes/ProveedorSesion';
 import { errorMessage } from '../servicios/cliente-http';
@@ -12,11 +12,16 @@ const EMPTY_FIELDS_MESSAGE = 'Completá el email y la contraseña';
  * resolveLandingRoute: el cambio de contraseña pendiente o el inicio de la sección.
  */
 export function PaginaIngreso() {
-  const { login } = useSession();
+  const { login, notice, clearNotice } = useSession();
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [contrasena, setContrasena] = useState('');
-  const [error, setError] = useState<string | null>(null);
+  // Aviso que deja otra pantalla al cerrar la sesión, por ejemplo el de RF-38.
+  const [error, setError] = useState<string | null>(notice);
+
+  useEffect(() => {
+    if (notice) clearNotice();
+  }, [notice, clearNotice]);
   const [enviando, setEnviando] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {

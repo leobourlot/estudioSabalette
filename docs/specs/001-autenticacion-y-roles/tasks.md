@@ -163,7 +163,7 @@ Reglas para todas las tareas:
   `PaginaIngreso` con Tailwind, que delega en `servicios/sesion.ts`.
   Hecho cuando: los tests verifican los mensajes de 401 y 429 y la redirección según `resolveLandingRoute`.
 
-- [ ] **T37 — Página de cambio de contraseña** [RF-11, RF-36 a RF-39]
+- [x] **T37 — Página de cambio de contraseña** [RF-11, RF-36 a RF-39]
   `PaginaCambiarContrasena`.
   Hecho cuando: los tests verifican los mensajes de cada regla, el de contraseña actual incorrecta, la redirección al inicio de la sección tras el cambio y la redirección a `/ingresar` ante el mensaje de RF-38.
 
