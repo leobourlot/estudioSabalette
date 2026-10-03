@@ -143,7 +143,7 @@ Reglas para todas las tareas:
 
 ## web
 
-- [ ] **T32 — Validaciones del frontend** [RF-6, RF-39]
+- [x] **T32 — Validaciones del frontend** [RF-6, RF-39]
   `servicios/validaciones.ts` con las mismas reglas que la API.
   Hecho cuando: los tests de Vitest cubren los mismos casos que T13 y T14.
 
