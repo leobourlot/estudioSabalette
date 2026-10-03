@@ -167,7 +167,7 @@ Reglas para todas las tareas:
   `PaginaCambiarContrasena`.
   Hecho cuando: los tests verifican los mensajes de cada regla, el de contraseña actual incorrecta, la redirección al inicio de la sección tras el cambio y la redirección a `/ingresar` ante el mensaje de RF-38.
 
-- [ ] **T38 — Diseños, inicios y mi cuenta** [RF-16, RF-35]
+- [x] **T38 — Diseños, inicios y mi cuenta** [RF-16, RF-35]
   `DisenoPanel` y `DisenoPortal` con botón de cerrar sesión; `PanelInicio` y `PortalInicio` como marcadores de posición; `MiCuenta` con los datos propios.
   Hecho cuando: los tests verifican que cerrar sesión llama al servicio y navega a `/ingresar`, y que `MiCuenta` muestra los datos de cliente solo para clientes.
 

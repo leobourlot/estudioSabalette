@@ -1,4 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
+import { DisenoPanel } from './componentes/DisenoPanel';
+import { DisenoPortal } from './componentes/DisenoPortal';
 import { RutaProtegida } from './componentes/RutaProtegida';
 import { MiCuenta } from './paginas/MiCuenta';
 import { PaginaCambiarContrasena } from './paginas/PaginaCambiarContrasena';
@@ -23,13 +25,17 @@ export function RutasAplicacion() {
       <Route element={<RutaProtegida />}>
         <Route path="/ingresar" element={<PaginaIngreso />} />
         <Route path="/cambiar-contrasena" element={<PaginaCambiarContrasena />} />
-        <Route path="/panel" element={<PanelInicio />} />
-        <Route path="/panel/usuarios" element={<PanelUsuarios />} />
-        <Route path="/panel/usuarios/nuevo" element={<PanelUsuarioNuevo />} />
-        <Route path="/panel/usuarios/:id" element={<PanelUsuarioDetalle />} />
-        <Route path="/panel/mi-cuenta" element={<MiCuenta />} />
-        <Route path="/portal" element={<PortalInicio />} />
-        <Route path="/portal/mi-cuenta" element={<MiCuenta />} />
+        <Route element={<DisenoPanel />}>
+          <Route path="/panel" element={<PanelInicio />} />
+          <Route path="/panel/usuarios" element={<PanelUsuarios />} />
+          <Route path="/panel/usuarios/nuevo" element={<PanelUsuarioNuevo />} />
+          <Route path="/panel/usuarios/:id" element={<PanelUsuarioDetalle />} />
+          <Route path="/panel/mi-cuenta" element={<MiCuenta />} />
+        </Route>
+        <Route element={<DisenoPortal />}>
+          <Route path="/portal" element={<PortalInicio />} />
+          <Route path="/portal/mi-cuenta" element={<MiCuenta />} />
+        </Route>
       </Route>
       <Route path="*" element={<PaginaNoEncontrada />} />
     </Routes>
