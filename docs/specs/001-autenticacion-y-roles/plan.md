@@ -276,7 +276,7 @@ Reglas de permisos en `usuarios/permisos-gestion.ts`, como funciones puras sin a
 | `/panel/mi-cuenta` y `/portal/mi-cuenta` | `MiCuenta` | El rol de la sección |
 | `/portal` | `PortalInicio` (por ahora vacío; su contenido es de la spec 004) | cliente |
 
-`RutaProtegida` recibe los roles permitidos y decide en este orden:
+`RutaProtegida` envuelve todas las rutas que dependen de la sesión (incluida `/ingresar`) y decide con `canAccess(ruta, usuario)`, en este orden:
 1. Cargando: indicador de carga.
 2. Sin sesión: `/ingresar`.
 3. Cambio pendiente: `/cambiar-contrasena`.

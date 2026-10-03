@@ -155,7 +155,7 @@ Reglas para todas las tareas:
   `servicios/sesion.ts`: `login`, `logout`, `fetchOwnUser`, `changePassword`, `resolveLandingRoute` y `canAccess`.
   Hecho cuando: los tests verifican `resolveLandingRoute` y `canAccess` para cada rol, con y sin cambio pendiente.
 
-- [ ] **T35 — Proveedor de sesión y rutas protegidas** [RF-17, RF-20, RNF de seguridad]
+- [x] **T35 — Proveedor de sesión y rutas protegidas** [RF-17, RF-20, RNF de seguridad]
   `ProveedorSesion`, `RutaProtegida` y el router con las rutas del plan (páginas como marcadores de posición).
   Hecho cuando: los tests verifican el orden de decisiones de `RutaProtegida` (cargando, sin sesión, cambio pendiente, otra sección, página) y que no se escribe nada en `localStorage` ni `sessionStorage`.
 

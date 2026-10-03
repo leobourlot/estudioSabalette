@@ -1,8 +1,14 @@
+import { BrowserRouter } from 'react-router-dom';
+import { ProveedorSesion } from './componentes/ProveedorSesion';
+import { RutasAplicacion } from './RutasAplicacion';
+
 function App() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50">
-      <h1 className="text-3xl font-semibold text-slate-800">Estudio Sabalette</h1>
-    </main>
+    <BrowserRouter>
+      <ProveedorSesion>
+        <RutasAplicacion />
+      </ProveedorSesion>
+    </BrowserRouter>
   );
 }
 
