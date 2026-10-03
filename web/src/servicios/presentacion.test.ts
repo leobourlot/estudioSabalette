@@ -3,6 +3,7 @@ import {
   accountRows,
   documentLabel,
   formatCuit,
+  formatDateTime,
   formatDni,
   fullName,
   listName,
@@ -120,5 +121,15 @@ describe('listName y documentLabel', () => {
     expect(documentLabel(client('30123456', null, null))).toBe('30.123.456');
     expect(documentLabel(client(null, '30712345671', 'Acme SRL'))).toBe('30-71234567-1');
     expect(documentLabel(person)).toBe('—');
+  });
+});
+
+describe('formatDateTime', () => {
+  it('muestra fecha y hora en hora de Buenos Aires (UTC−3)', () => {
+    expect(formatDateTime('2026-09-01T15:00:00.000Z')).toBe('01/09/2026 12:00');
+  });
+
+  it('cambia de día si en Buenos Aires todavía es el día anterior', () => {
+    expect(formatDateTime('2026-09-02T01:30:00.000Z')).toBe('01/09/2026 22:30');
   });
 });

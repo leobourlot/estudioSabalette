@@ -56,7 +56,7 @@ export function fakeSessionService(overrides: Partial<SessionService> = {}): Fak
 export function fakeUsersService(overrides: Partial<UsersService> = {}): FakeUsersService {
   return {
     listUsers: vi.fn().mockResolvedValue({ items: [], total: 0, pagina: 1, porPagina: 20 }),
-    getUser: vi.fn(),
+    getUser: vi.fn(async (id: number) => testAccount({ id })),
     createUser: vi.fn(),
     updateUser: vi.fn(),
     deactivateUser: vi.fn().mockResolvedValue(undefined),

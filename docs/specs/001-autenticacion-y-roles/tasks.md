@@ -179,11 +179,11 @@ Reglas para todas las tareas:
   `PanelUsuarios`: buscador, filtros por rol y estado, paginado de a 20.
   Hecho cuando: los tests verifican que buscar y filtrar llaman al servicio con los parámetros correctos y que un abogado no ve el filtro de roles de integrantes.
 
-- [ ] **T41 — Alta de cuenta** [RF-3, RF-6, RF-22 a RF-25]
+- [x] **T41 — Alta de cuenta** [RF-3, RF-6, RF-22 a RF-25]
   `PanelUsuarioNuevo` con campos según el rol y el tipo de persona.
   Hecho cuando: los tests verifican los campos de persona física, jurídica e integrante, las validaciones antes de enviar y la muestra de los mensajes de 409.
 
-- [ ] **T42 — Detalle y edición de cuenta** [RF-7, RF-27, RF-28, RF-34]
+- [x] **T42 — Detalle y edición de cuenta** [RF-7, RF-27, RF-28, RF-34]
   `PanelUsuarioDetalle`: datos, auditoría (creado y modificado por, fechas en hora de Buenos Aires, último ingreso) y edición sin DNI, CUIT ni tipo de persona.
   Hecho cuando: los tests verifican que DNI y CUIT se muestran como solo lectura, que el selector de rol solo ofrece administrador y abogado, y el formato de las fechas.
 

@@ -30,6 +30,24 @@ export const fullName = (persona: { nombre: string; apellido: string }) =>
 /** Texto para un dato opcional vacío. */
 export const EMPTY_VALUE = '—';
 
+const DATE_TIME_PARTS = new Intl.DateTimeFormat('es-AR', {
+  timeZone: 'America/Argentina/Buenos_Aires',
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+});
+
+/** Fecha y hora en hora de Buenos Aires, como dd/mm/aaaa hh:mm (RNF de fechas). */
+export function formatDateTime(iso: string): string {
+  const parts = Object.fromEntries(
+    DATE_TIME_PARTS.formatToParts(new Date(iso)).map((part) => [part.type, part.value]),
+  );
+  return `${parts.day}/${parts.month}/${parts.year} ${parts.hour}:${parts.minute}`;
+}
+
 /** Nombre en los listados: razón social, o "Apellido, Nombre" (el orden del listado, RF-26). */
 export const listName = (usuario: UsuarioPropio) =>
   usuario.cliente?.razonSocial ?? `${usuario.apellido}, ${usuario.nombre}`;
