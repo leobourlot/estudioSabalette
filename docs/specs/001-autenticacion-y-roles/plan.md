@@ -300,6 +300,8 @@ request(ruta, opciones):
 ```
 Compartir la promesa de renovación evita que varias peticiones simultáneas de una misma pestaña presenten el token viejo y disparen la detección de reúso (RF-15).
 
+Si la renovación falla por falta de conexión (y no por un 401), no se avisa sesión cerrada: la petición termina con un error de conexión y el usuario sigue en la pantalla en la que estaba. Los errores de la API llegan como `ApiError` con su código y sus mensajes en español.
+
 ## Dependencias nuevas
 
 | Paquete | Para qué | Alternativa descartada |

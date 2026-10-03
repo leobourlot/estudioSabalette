@@ -147,7 +147,7 @@ Reglas para todas las tareas:
   `servicios/validaciones.ts` con las mismas reglas que la API.
   Hecho cuando: los tests de Vitest cubren los mismos casos que T13 y T14.
 
-- [ ] **T33 — Cliente HTTP** [RF-15, RF-17]
+- [x] **T33 — Cliente HTTP** [RF-15, RF-17]
   `servicios/cliente-http.ts`: `VITE_API_URL`, `credentials: 'include'`, renovación compartida ante 401, un solo reintento y aviso de sesión cerrada.
   Hecho cuando: los tests con `fetch` simulado verifican que tres 401 simultáneos disparan una sola renovación, que se reintenta una vez y que, si la renovación falla, se avisa la sesión cerrada.
 
