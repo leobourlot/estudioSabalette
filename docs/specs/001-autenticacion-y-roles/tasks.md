@@ -151,8 +151,8 @@ Reglas para todas las tareas:
   `servicios/cliente-http.ts`: `VITE_API_URL`, `credentials: 'include'`, renovación compartida ante 401, un solo reintento y aviso de sesión cerrada.
   Hecho cuando: los tests con `fetch` simulado verifican que tres 401 simultáneos disparan una sola renovación, que se reintenta una vez y que, si la renovación falla, se avisa la sesión cerrada.
 
-- [ ] **T34 — Servicio de sesión** [RF-8, RF-11, RF-20]
-  `servicios/sesion.ts`: `ingresar`, `cerrar`, `obtenerUsuario`, `cambiarContrasena`, `resolveLandingRoute` y `canAccess`.
+- [x] **T34 — Servicio de sesión** [RF-8, RF-11, RF-20]
+  `servicios/sesion.ts`: `login`, `logout`, `fetchOwnUser`, `changePassword`, `resolveLandingRoute` y `canAccess`.
   Hecho cuando: los tests verifican `resolveLandingRoute` y `canAccess` para cada rol, con y sin cambio pendiente.
 
 - [ ] **T35 — Proveedor de sesión y rutas protegidas** [RF-17, RF-20, RNF de seguridad]
