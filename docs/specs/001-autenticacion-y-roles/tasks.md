@@ -187,7 +187,7 @@ Reglas para todas las tareas:
   `PanelUsuarioDetalle`: datos, auditoría (creado y modificado por, fechas en hora de Buenos Aires, último ingreso) y edición sin DNI, CUIT ni tipo de persona.
   Hecho cuando: los tests verifican que DNI y CUIT se muestran como solo lectura, que el selector de rol solo ofrece administrador y abogado, y el formato de las fechas.
 
-- [ ] **T43 — Acciones sobre una cuenta** [RF-24, RF-29 a RF-33]
+- [x] **T43 — Acciones sobre una cuenta** [RF-24, RF-29 a RF-33]
   En `PanelUsuarioDetalle`: desactivar, reactivar (con contraseña temporal), restablecer contraseña, liberar email y transferir principal, visibles según el rol y la condición de principal.
   Hecho cuando: los tests verifican qué acciones ve cada actor (principal, administrador, abogado) sobre cada tipo de cuenta, y que cada acción llama al servicio correspondiente.
 

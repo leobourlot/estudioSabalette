@@ -1,5 +1,6 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { AccionesCuenta } from '../componentes/AccionesCuenta';
 import { CampoTexto } from '../componentes/CampoTexto';
 import { ListaDeErrores } from '../componentes/ListaDeErrores';
 import { useSession } from '../componentes/ProveedorSesion';
@@ -234,6 +235,16 @@ export function PanelUsuarioDetalle() {
               </button>
             </div>
           </form>
+
+          <AccionesCuenta
+            account={account}
+            onChanged={(updated) => {
+              setAccount(updated);
+              setForm(editFormFrom(updated));
+              setProblems([]);
+              setSaved(false);
+            }}
+          />
         </>
       )}
     </main>
