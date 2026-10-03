@@ -159,7 +159,7 @@ Reglas para todas las tareas:
   `ProveedorSesion`, `RutaProtegida` y el router con las rutas del plan (páginas como marcadores de posición).
   Hecho cuando: los tests verifican el orden de decisiones de `RutaProtegida` (cargando, sin sesión, cambio pendiente, otra sección, página) y que no se escribe nada en `localStorage` ni `sessionStorage`.
 
-- [ ] **T36 — Página de ingreso** [RF-8 a RF-10]
+- [x] **T36 — Página de ingreso** [RF-8 a RF-10]
   `PaginaIngreso` con Tailwind, que delega en `servicios/sesion.ts`.
   Hecho cuando: los tests verifican los mensajes de 401 y 429 y la redirección según `resolveLandingRoute`.
 

@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ApiError, createHttpClient, NETWORK_ERROR_MESSAGE } from './cliente-http';
+import { ApiError, createHttpClient, errorMessage, NETWORK_ERROR_MESSAGE } from './cliente-http';
 
 const BASE_URL = 'https://api.estudio.com';
 const REFRESH_URL = `${BASE_URL}/api/sesion/renovar`;
@@ -196,5 +196,17 @@ describe('cliente HTTP', () => {
       expect(other).not.toHaveBeenCalled();
       expect(sessionClosed).toHaveBeenCalledTimes(1);
     });
+  });
+});
+
+describe('errorMessage', () => {
+  it('devuelve el mensaje de un ApiError o uno genérico', () => {
+    expect(errorMessage(new ApiError(409, ['Ya existe una cuenta con ese email']))).toBe(
+      'Ya existe una cuenta con ese email',
+    );
+    expect(errorMessage(new Error('interno'))).toBe(
+      'Ocurrió un error inesperado. Intentá de nuevo.',
+    );
+    expect(errorMessage('x')).toBe('Ocurrió un error inesperado. Intentá de nuevo.');
   });
 });

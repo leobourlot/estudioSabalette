@@ -113,6 +113,15 @@ async function toApiError(response: Response): Promise<ApiError> {
   }
 }
 
+export const UNEXPECTED_ERROR_MESSAGE = 'Ocurrió un error inesperado. Intentá de nuevo.';
+
+/** Mensaje para mostrar al usuario: el de la API si lo hay, o uno genérico. */
+export function errorMessage(error: unknown): string {
+  return error instanceof ApiError && error.messages.length > 0
+    ? error.message
+    : UNEXPECTED_ERROR_MESSAGE;
+}
+
 export type HttpClient = ReturnType<typeof createHttpClient>;
 
 /** Cliente de la aplicación: VITE_API_URL vacía en desarrollo, la URL de la API en producción. */
