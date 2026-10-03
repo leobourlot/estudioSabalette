@@ -175,7 +175,7 @@ Reglas para todas las tareas:
   `servicios/usuarios.ts` con una función por endpoint de gestión y mensajes de error de la API.
   Hecho cuando: los tests con `fetch` simulado verifican la ruta, el método y el cuerpo de cada llamada y el traslado de los mensajes de 409.
 
-- [ ] **T40 — Listado de cuentas** [RF-26]
+- [x] **T40 — Listado de cuentas** [RF-26]
   `PanelUsuarios`: buscador, filtros por rol y estado, paginado de a 20.
   Hecho cuando: los tests verifican que buscar y filtrar llaman al servicio con los parámetros correctos y que un abogado no ve el filtro de roles de integrantes.
 

@@ -1,9 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
   accountRows,
+  documentLabel,
   formatCuit,
   formatDni,
   fullName,
+  listName,
   personTypeLabel,
   roleLabel,
 } from './presentacion';
@@ -83,5 +85,40 @@ describe('accountRows', () => {
       ['Teléfono', '—'],
       ['Domicilio', '—'],
     ]);
+  });
+});
+
+describe('listName y documentLabel', () => {
+  const person = {
+    id: 1,
+    rol: 'cliente' as const,
+    esPrincipal: false,
+    email: null,
+    nombre: 'Ana',
+    apellido: 'Gómez',
+    debeCambiarContrasena: false,
+    cliente: null,
+  };
+  const client = (dni: string | null, cuit: string | null, razonSocial: string | null) => ({
+    ...person,
+    cliente: {
+      tipoPersona: (cuit ? 'juridica' : 'fisica') as 'fisica' | 'juridica',
+      dni,
+      cuit,
+      razonSocial,
+      telefono: null,
+      domicilio: null,
+    },
+  });
+
+  it('muestra "Apellido, Nombre" o la razón social', () => {
+    expect(listName(person)).toBe('Gómez, Ana');
+    expect(listName(client(null, '30712345671', 'Acme SRL'))).toBe('Acme SRL');
+  });
+
+  it('muestra el DNI o el CUIT formateado, o un guion si no es cliente', () => {
+    expect(documentLabel(client('30123456', null, null))).toBe('30.123.456');
+    expect(documentLabel(client(null, '30712345671', 'Acme SRL'))).toBe('30-71234567-1');
+    expect(documentLabel(person)).toBe('—');
   });
 });

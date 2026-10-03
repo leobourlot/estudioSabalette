@@ -30,6 +30,18 @@ export const fullName = (persona: { nombre: string; apellido: string }) =>
 /** Texto para un dato opcional vacío. */
 export const EMPTY_VALUE = '—';
 
+/** Nombre en los listados: razón social, o "Apellido, Nombre" (el orden del listado, RF-26). */
+export const listName = (usuario: UsuarioPropio) =>
+  usuario.cliente?.razonSocial ?? `${usuario.apellido}, ${usuario.nombre}`;
+
+/** DNI o CUIT formateado, o EMPTY_VALUE si la cuenta no es de un cliente. */
+export function documentLabel(usuario: UsuarioPropio): string {
+  const { cliente } = usuario;
+  if (cliente?.dni) return formatDni(cliente.dni);
+  if (cliente?.cuit) return formatCuit(cliente.cuit);
+  return EMPTY_VALUE;
+}
+
 /**
  * Filas etiqueta–valor con los datos de una cuenta, en el orden en que se muestran. Los
  * datos de cliente aparecen solo para clientes; en personas jurídicas, nombre y apellido
