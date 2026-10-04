@@ -16,7 +16,7 @@ Reglas para todas las tareas:
   `causas/validadores/texto-causa.ts`: normalización a NFC, regla de caracteres permitidos y número de expediente para búsqueda (solo letras y dígitos).
   Hecho cuando: los tests unitarios verifican que se aceptan letras con tilde, ñ, ü y cada símbolo permitido; que se rechazan emojis, saltos de línea y tabulaciones; que una tilde combinable cuenta como una letra; y que "1234/2024" y "1234-2024" dan el mismo número para búsqueda.
 
-- [ ] **T2 — Entidades** [RF-1, RF-13 a RF-15, RF-29]
+- [x] **T2 — Entidades** [RF-1, RF-13 a RF-15, RF-29]
   `causa.entity.ts` (con `claveExpediente` como columna generada `STORED` y `expedientePrincipal`), `parte.entity.ts` y `colaborador.entity.ts`, con los campos, tipos, índices y relaciones del plan.
   Hecho cuando: la api compila y un test unitario verifica que los enums de fuero, estado y rol procesal tienen exactamente los valores del plan.
 
