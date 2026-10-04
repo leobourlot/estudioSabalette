@@ -61,7 +61,7 @@ La estructura de `web/src` y `api/src` es orientativa. Cada `plan.md` define los
 
 | Spec | Qué cubre | Depende de | Estado |
 |------|-----------|------------|--------|
-| 001-autenticacion-y-roles | Ingreso, sesión, roles, gestión de usuarios (incluye cuentas de clientes) | — | Spec y plan listos |
+| 001-autenticacion-y-roles | Ingreso, sesión, roles, gestión de usuarios (incluye cuentas de clientes) | — | Terminada |
 | 002-causas-y-partes | Alta, edición, listado y búsqueda de causas; partes; vinculación con clientes y abogados | 001 | Pendiente |
 | 003-movimientos | Registro e historial de movimientos; visibilidad para el cliente | 002 | Pendiente |
 | 004-portal-del-cliente | El cliente ve sus causas y los movimientos visibles | 001, 003 | Pendiente |

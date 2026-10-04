@@ -80,7 +80,7 @@ Rutas abreviadas: `api/src/...` → **U** (unitario), `api/test/...` → **E** (
 - [x] Todos los RF con al menos un test en verde, incluidos los de punta a punta de ingreso, sesión única, cierre de sesión, acceso sin sesión, acceso sin permiso y bloqueo por intentos.
 - [x] Tests de que un abogado no gestiona cuentas de integrantes, nadie le quita el rol al principal y un cliente no accede a nada del panel.
 - [x] `pnpm test` y `pnpm lint` sin errores.
-- [ ] Demo manual (ver la guía siguiente).
+- [x] Demo manual (ver la guía siguiente): completada sin errores el 2026-10-04.
 
 ## Guía de la demo manual
 
@@ -100,4 +100,4 @@ Contra la base de **desarrollo**, que ya tiene la migración aplicada.
 
 ## Veredicto
 
-La spec 001 está **cumplida en todo lo verificable de forma automática**: los 42 RF y los RNF tienen tests en verde. Falta solo la demo manual para cerrar T44.
+La spec 001 está **cumplida**: los 42 RF y los RNF tienen tests en verde, `pnpm test` y `pnpm lint` pasan, y la demo manual se completó sin errores el 2026-10-04.
