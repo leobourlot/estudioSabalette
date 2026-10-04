@@ -19,8 +19,8 @@ Reglas para todas las tareas:
 - [x] **T2 — Entidades** [RF-1, RF-13 a RF-15, RF-29]
   `causa.entity.ts` (con `claveExpediente` como columna generada `STORED` y `expedientePrincipal`), `parte.entity.ts` y `colaborador.entity.ts`, con los campos, tipos, índices y relaciones del plan.
   Hecho cuando: la api compila y un test unitario verifica que los enums de fuero, estado y rol procesal tienen exactamente los valores del plan.
-
-- [ ] **T3 — Migración** [RF-1, RF-8, RF-13 a RF-15, RF-29] **(modifica existente: `esquema.ts`)**
+-
+- [x] **T3 — Migración** [RF-1, RF-8, RF-13 a RF-15, RF-29] **(modifica existente: `esquema.ts`)**
   Migración `crear-causas-partes-y-colaboradores` con las tres tablas, el índice único `UQ_causas_expediente_activo` y las claves foráneas. Se agregan las entidades y la migración a `esquema.ts`.
   Hecho cuando: un e2e corre `up` sobre la base de tests con las tablas de la spec 001, verifica que la clave es `NULL` en una causa desactivada, en un incidente, sin número y sin juzgado, que el índice rechaza dos causas activas con la misma clave, y corre `down` sin errores.
 

@@ -33,9 +33,12 @@ describe('migraciones', () => {
         expect(await queryRunner.hasTable(table)).toBe(true);
       }
 
+      // Solo las tablas de la spec 001: las de specs posteriores tienen su propio e2e.
       const uniqueIndexes: { name: string }[] = await queryRunner.query(
         `SELECT DISTINCT INDEX_NAME AS name FROM INFORMATION_SCHEMA.STATISTICS
-         WHERE TABLE_SCHEMA = DATABASE() AND NON_UNIQUE = 0 AND INDEX_NAME <> 'PRIMARY'`,
+         WHERE TABLE_SCHEMA = DATABASE() AND NON_UNIQUE = 0 AND INDEX_NAME <> 'PRIMARY'
+           AND TABLE_NAME IN (?)`,
+        [TABLES],
       );
       expect(uniqueIndexes.map((index) => index.name).sort()).toEqual([
         'UQ_clientes_cuit',
@@ -45,7 +48,9 @@ describe('migraciones', () => {
 
       const foreignKeys: { tabla: string; columna: string }[] = await queryRunner.query(
         `SELECT TABLE_NAME AS tabla, COLUMN_NAME AS columna FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE
-         WHERE TABLE_SCHEMA = DATABASE() AND REFERENCED_TABLE_NAME = 'usuarios'`,
+         WHERE TABLE_SCHEMA = DATABASE() AND REFERENCED_TABLE_NAME = 'usuarios'
+           AND TABLE_NAME IN (?)`,
+        [TABLES],
       );
       expect(foreignKeys.map((fk) => `${fk.tabla}.${fk.columna}`).sort()).toEqual([
         'clientes.usuarioId',
@@ -64,8 +69,10 @@ describe('migraciones', () => {
     expect(pending.upQueries.map((query) => query.query)).toEqual([]);
   });
 
-  it('down elimina las tablas sin errores', async () => {
-    await dataSource.undoLastMigration();
+  it('down de todas las migraciones, en orden inverso, deja la base sin tablas', async () => {
+    for (let index = 0; index < MIGRATIONS.length; index++) {
+      await dataSource.undoLastMigration();
+    }
 
     const queryRunner = dataSource.createQueryRunner();
     try {
