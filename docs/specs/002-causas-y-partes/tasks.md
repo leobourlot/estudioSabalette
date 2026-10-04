@@ -24,7 +24,7 @@ Reglas para todas las tareas:
   Migración `crear-causas-partes-y-colaboradores` con las tres tablas, el índice único `UQ_causas_expediente_activo` y las claves foráneas. Se agregan las entidades y la migración a `esquema.ts`.
   Hecho cuando: un e2e corre `up` sobre la base de tests con las tablas de la spec 001, verifica que la clave es `NULL` en una causa desactivada, en un incidente, sin número y sin juzgado, que el índice rechaza dos causas activas con la misma clave, y corre `down` sin errores.
 
-- [ ] **T4 — Reglas de expediente, documentos y nombres** [RF-8 a RF-10, RF-18, RF-19]
+- [x] **T4 — Reglas de expediente, documentos y nombres** [RF-8 a RF-10, RF-18, RF-19]
   `reglas-causas.ts`: clave de expediente (la misma fórmula que la columna generada), comparación de documentos entre parte cliente y no cliente, y comparación de nombres y razón social.
   Hecho cuando: los tests unitarios cubren la clave para activa, desactivada, incidente, sin número y sin juzgado; la igualdad de documentos entre una parte cliente y una no cliente; y la comparación de nombres de persona física y jurídica.
 
