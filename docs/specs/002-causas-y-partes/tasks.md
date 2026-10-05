@@ -155,7 +155,7 @@ Reglas para todas las tareas:
   Rutas `/panel/causas`, `/panel/causas/nueva` y `/panel/causas/:id` con páginas provisorias, y enlace "Causas" en el panel.
   Hecho cuando: los tests verifican que el panel muestra el enlace y que un cliente que entra a esas rutas es llevado al portal.
 
-- [ ] **T31 — Listado de causas** [RF-36 a RF-39]
+- [x] **T31 — Listado de causas** [RF-36 a RF-39]
   `PanelCausas`.
   Hecho cuando: los tests con servicios simulados verifican:
   - Que buscar y cada filtro llaman al servicio con los parámetros correctos y vuelven a la página 1.
