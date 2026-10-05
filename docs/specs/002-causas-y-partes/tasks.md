@@ -71,7 +71,7 @@ Reglas para todas las tareas:
   - Nombre repetido en la causa, incluido contra otra parte del mismo cuerpo.
   - Nombre de clientes del estudio: con uno y con varios homónimos, sin ofrecer desactivados, y sin pregunta si la parte trae un documento que no es de ningún cliente.
 
-- [ ] **T15 — Aviso de causas como no cliente** [RF-20]
+- [x] **T15 — Aviso de causas como no cliente** [RF-20]
   Búsqueda de `causasComoNoCliente` al vincular un cliente, incluida en `ResultadoAlta`.
   Hecho cuando: un e2e verifica que, si el DNI del cliente figura como parte no cliente vigente de otras causas activas, el alta las informa, y que esas causas siguen sin vincular al cliente.
 

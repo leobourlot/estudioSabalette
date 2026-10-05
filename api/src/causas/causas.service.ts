@@ -179,7 +179,11 @@ export class CausasService {
       return causa.id;
     });
 
-    return { causa: await this.findOne(id), rechazos, causasComoNoCliente: [] };
+    return {
+      causa: await this.findOne(id),
+      rechazos,
+      causasComoNoCliente: await this.partes.findCasesAsNonClient(parties.identities, id),
+    };
   }
 
   /**
@@ -209,7 +213,7 @@ export class CausasService {
    */
   private async validateNewParties(
     rawParties: readonly unknown[],
-  ): Promise<{ valid: CreateParteDto[]; rechazos: Rechazo[] }> {
+  ): Promise<{ valid: CreateParteDto[]; identities: PartyIdentity[]; rechazos: Rechazo[] }> {
     const valid: CreateParteDto[] = [];
     const identities: PartyIdentity[] = [];
     const rechazos: Rechazo[] = [];
@@ -229,7 +233,7 @@ export class CausasService {
         rechazos.push({ indiceParte, mensajes: [error.message] });
       }
     }
-    return { valid, rechazos };
+    return { valid, identities, rechazos };
   }
 
   /**

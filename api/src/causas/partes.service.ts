@@ -1,8 +1,10 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, IsNull, Not, Repository } from 'typeorm';
 import { Cliente } from '../usuarios/cliente.entity.js';
+import { type CausaReferencia, toCausaReferencia } from './causa-detalle.js';
 import type { CreateParteDto } from './dto/parte.dto.js';
+import { Parte } from './parte.entity.js';
 import { QUESTION_CODES, QuestionException } from './preguntas.js';
 import {
   documentOf,
@@ -48,7 +50,41 @@ function clientIdentity(cliente: Cliente): PartyIdentity {
 /** Partes de una causa (plan 002, "Agregar o modificar una parte"). */
 @Injectable()
 export class PartesService {
-  constructor(@InjectRepository(Cliente) private readonly clients: Repository<Cliente>) {}
+  constructor(
+    @InjectRepository(Cliente) private readonly clients: Repository<Cliente>,
+    @InjectRepository(Parte) private readonly parties: Repository<Parte>,
+  ) {}
+
+  /**
+   * RF-20: causas activas, distintas de exceptCausaId, donde alguno de los clientes
+   * vinculados figura como parte no cliente vigente con su DNI o CUIT. Solo se informan:
+   * esas causas no se modifican y el cliente no las ve.
+   */
+  async findCasesAsNonClient(
+    linked: readonly PartyIdentity[],
+    exceptCausaId: number,
+  ): Promise<CausaReferencia[]> {
+    const clients = linked.filter((identity) => identity.clienteId !== null);
+    const dnis = clients.flatMap((identity) => (identity.dni ? [identity.dni] : []));
+    const cuits = clients.flatMap((identity) => (identity.cuit ? [identity.cuit] : []));
+    if (dnis.length === 0 && cuits.length === 0) return [];
+
+    const common = {
+      vigente: true,
+      clienteId: IsNull(),
+      causa: { activa: true, id: Not(exceptCausaId) },
+    };
+    const matches = await this.parties.find({
+      where: [
+        ...(dnis.length > 0 ? [{ ...common, dni: In(dnis) }] : []),
+        ...(cuits.length > 0 ? [{ ...common, cuit: In(cuits) }] : []),
+      ],
+      relations: { causa: true },
+      order: { causaId: 'ASC' },
+    });
+    const causas = new Map(matches.map((parte) => [parte.causa.id, parte.causa]));
+    return [...causas.values()].map(toCausaReferencia);
+  }
 
   /**
    * Resuelve la identidad de una parte nueva y aplica, en orden, los rechazos y las
