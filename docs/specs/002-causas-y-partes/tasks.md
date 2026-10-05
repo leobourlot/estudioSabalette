@@ -32,7 +32,7 @@ Reglas para todas las tareas:
   En `reglas-causas.ts`: validación del conjunto responsable/colaboradores contra los asignados actuales y decisión de desvinculación.
   Hecho cuando: los tests unitarios verifican el rechazo de ids repetidos y del responsable como colaborador, el rechazo de un desactivado nuevo, la conservación de un desactivado ya asignado en el mismo lugar, y el rechazo de desvincular la única parte vigente.
 
-- [ ] **T6 — DTO de la causa** [RF-1, RF-3, RF-5, RF-10]
+- [x] **T6 — DTO de la causa** [RF-1, RF-3, RF-5, RF-10]
   DTO de alta (con `partes` como lista sin validar su interior), de modificación parcial y de los parámetros del listado, reutilizando `usuarios/dto/reglas.ts`.
   Hecho cuando: los tests unitarios cubren carátula vacía y larga, largos de número, expediente principal y juzgado, caracteres no permitidos, recorte y vacío a `NULL`, fuero y estado fuera de lista, incidente sin expediente principal, expediente principal sin incidente y campos desconocidos.
 
