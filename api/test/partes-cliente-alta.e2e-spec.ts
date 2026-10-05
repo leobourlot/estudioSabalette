@@ -192,6 +192,8 @@ describe('POST /api/panel/causas: partes cliente', () => {
           tipoPersona: 'juridica',
           razonSocial: 'Emp. S.A.',
           cuit: '30712345671',
+          // Ya respondió que no la agrega como cliente (RF-16): la repetida es la parte 1.
+          confirmarDocumentoDeCliente: true,
         },
         { rol: 'actor', clienteId: company.id },
       ],

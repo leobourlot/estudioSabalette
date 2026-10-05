@@ -64,7 +64,7 @@ Reglas para todas las tareas:
   Rechazos por parte y por colaborador en `ResultadoAlta`; 400 si no queda ninguna parte válida.
   Hecho cuando: los e2e verifican que una parte mal cargada, una parte con cliente desactivado y un colaborador desactivado no se guardan pero la causa sí, que la respuesta informa cada rechazo con su índice o id y sus mensajes, y que sin ninguna parte válida responde 400 con los motivos.
 
-- [ ] **T14 — Preguntas de documento y de nombre** [RF-16, RF-19]
+- [x] **T14 — Preguntas de documento y de nombre** [RF-16, RF-19]
   Preguntas `DOCUMENTO_DE_CLIENTE`, `NOMBRE_REPETIDO` y `NOMBRE_DE_CLIENTE` con `indiceParte` en el alta, y sus confirmaciones.
   Hecho cuando: los e2e verifican cada pregunta y cada respuesta posible:
   - Documento de cliente: activo y desactivado (`clienteActivo`).

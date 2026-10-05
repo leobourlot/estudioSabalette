@@ -22,6 +22,7 @@ import type { CreateCausaDto } from './dto/crear-causa.dto.js';
 import { type CreateParteDto, validateCreateParte } from './dto/parte.dto.js';
 import { Parte } from './parte.entity.js';
 import { PartesService } from './partes.service.js';
+import { QUESTION_CODES, QuestionException } from './preguntas.js';
 import {
   type CaseKeyData,
   CAUSAS_RULE_MESSAGES,
@@ -40,14 +41,6 @@ export const CAUSAS_MESSAGES = {
   notFound: 'No existe esa causa',
   duplicateCaseNumber: 'Ya existe una causa con ese número de expediente en ese juzgado y fuero',
   repeatedCaseNumber: 'Ya existe otra causa con ese número de expediente',
-} as const;
-
-/**
- * Códigos de las preguntas que la interfaz le hace al integrante: llegan como 409 con
- * `codigo`, para distinguirlas de un rechazo definitivo (plan 002, "Preguntas").
- */
-export const QUESTION_CODES = {
-  repeatedCaseNumber: 'EXPEDIENTE_REPETIDO',
 } as const;
 
 /** Índice único de la columna generada claveExpediente (migración de la spec 002). */
@@ -230,6 +223,8 @@ export class CausasService {
         identities.push(await this.partes.resolveNewParty(result.parte, identities));
         valid.push(result.parte);
       } catch (error) {
+        // Una pregunta corta el alta: la interfaz la responde y reenvía todo el alta.
+        if (error instanceof QuestionException) throw error.forParty(indiceParte);
         if (!isPartyRejection(error)) throw error;
         rechazos.push({ indiceParte, mensajes: [error.message] });
       }
@@ -268,11 +263,10 @@ export class CausasService {
       },
     });
     if (repeated && !confirmed) {
-      throw new ConflictException({
-        statusCode: 409,
-        message: CAUSAS_MESSAGES.repeatedCaseNumber,
-        codigo: QUESTION_CODES.repeatedCaseNumber,
-      });
+      throw new QuestionException(
+        QUESTION_CODES.repeatedCaseNumber,
+        CAUSAS_MESSAGES.repeatedCaseNumber,
+      );
     }
   }
 
