@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
-import type { CausaResumen, IntegranteResumen, ParteDetalle } from './causas';
+import type { CausaDetalle, CausaResumen, IntegranteResumen, ParteDetalle } from './causas';
 import {
+  auditLines,
   CASE_STATUS_OPTIONS,
   estadoLabel,
   fueroLabel,
@@ -178,6 +179,29 @@ describe('presentación de causas', () => {
       'Parte 4: El nombre es obligatorio. El apellido es obligatorio',
       'Colaborador Benítez, Lucía: El integrante está desactivado',
       'Colaborador 99: Los colaboradores deben ser integrantes del estudio',
+    ]);
+  });
+
+  it('describe el registro de la causa en hora de Buenos Aires (RF-2, RF-40, RF-42)', () => {
+    const author = { id: 1, nombre: 'Juan', apellido: 'Álvarez' };
+    const detail: CausaDetalle = {
+      ...causa({ creadoEn: '2026-10-01T13:00:00.000Z', modificadoEn: '2026-10-04T12:15:00.000Z' }),
+      colaboradores: [],
+      partes: [],
+      partesDesvinculadas: [],
+      creadoPor: author,
+      modificadoPor: author,
+      desactivadaPor: author,
+      desactivadaEn: '2026-10-02T13:00:00.000Z',
+      reactivadaPor: null,
+      reactivadaEn: '2026-10-03T13:00:00.000Z',
+    };
+
+    expect(auditLines(detail)).toEqual([
+      'Creada por Juan Álvarez el 01/10/2026 10:00',
+      'Modificada por última vez por Juan Álvarez el 04/10/2026 09:15',
+      'Desactivada por Juan Álvarez el 02/10/2026 10:00',
+      'Reactivada el 03/10/2026 10:00',
     ]);
   });
 });

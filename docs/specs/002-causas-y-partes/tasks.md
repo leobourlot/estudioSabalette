@@ -184,7 +184,7 @@ Reglas para todas las tareas:
   - La navegación al detalle con los rechazos y el aviso de causas como no cliente.
   - La muestra de los errores de la API.
 
-- [ ] **T36 — Detalle y edición de datos** [RF-11, RF-12, RF-33, RF-41]
+- [x] **T36 — Detalle y edición de datos** [RF-11, RF-12, RF-33, RF-41]
   `PanelCausaDetalle`: datos, texto de incidente, auditoría con fechas en hora de Buenos Aires, edición con la pregunta de expediente y aviso de responsable desactivado.
   Hecho cuando: los tests verifican la muestra de los datos y la auditoría, la edición, la pregunta de expediente repetido, el aviso de responsable desactivado, y que en una causa desactivada no hay acciones de edición.
 

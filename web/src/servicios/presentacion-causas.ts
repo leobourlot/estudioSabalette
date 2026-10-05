@@ -1,4 +1,5 @@
 import type {
+  CausaDetalle,
   CausaResumen,
   Rechazo,
   EstadoCausa,
@@ -7,7 +8,7 @@ import type {
   ParteDetalle,
   RolProcesal,
 } from './causas';
-import { formatCuit, formatDni } from './presentacion';
+import { formatCuit, formatDateTime, formatDni, fullName } from './presentacion';
 
 /** Cómo se muestran los datos de las causas. Funciones puras, sin React (principio 3). */
 
@@ -99,4 +100,25 @@ export function rejectionMessages(
     const member = members.find((candidate) => candidate.id === rechazo.colaboradorId);
     return `Colaborador ${member ? `${member.apellido}, ${member.nombre}` : rechazo.colaboradorId}: ${reasons}`;
   });
+}
+
+/**
+ * Registro de la causa (RF-2, RF-40, RF-42): quién la creó, la modificó por última vez, la
+ * desactivó y la reactivó, con fechas en hora de Buenos Aires.
+ */
+export function auditLines(causa: CausaDetalle): string[] {
+  const by = (author: CausaDetalle['creadoPor']) => (author ? ` por ${fullName(author)}` : '');
+  const lines = [`Creada${by(causa.creadoPor)} el ${formatDateTime(causa.creadoEn)}`];
+  lines.push(
+    causa.modificadoEn
+      ? `Modificada por última vez${by(causa.modificadoPor)} el ${formatDateTime(causa.modificadoEn)}`
+      : 'Sin modificaciones desde el alta',
+  );
+  if (causa.desactivadaEn) {
+    lines.push(`Desactivada${by(causa.desactivadaPor)} el ${formatDateTime(causa.desactivadaEn)}`);
+  }
+  if (causa.reactivadaEn) {
+    lines.push(`Reactivada${by(causa.reactivadaPor)} el ${formatDateTime(causa.reactivadaEn)}`);
+  }
+  return lines;
 }
