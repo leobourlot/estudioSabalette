@@ -40,7 +40,7 @@ Reglas para todas las tareas:
   `ParteNuevaDto`, DTO de modificación de parte y una función que valida un objeto suelto con `validate()` de class-validator (para el alta parcial).
   Hecho cuando: los tests unitarios cubren parte cliente y no cliente, campos obligatorios y prohibidos según el tipo de persona, DNI y CUIT normalizados y validados, rol fuera de lista, y que la función devuelve los mensajes por parte sin lanzar excepciones.
 
-- [ ] **T8 — Armado de respuestas** [RF-12, RF-14]
+- [x] **T8 — Armado de respuestas** [RF-12, RF-14]
   `causa-detalle.ts`: `CausaResumen`, `CausaDetalle`, `ParteDetalle` e `IntegranteResumen`, campo por campo.
   Hecho cuando: los tests unitarios verifican que una parte cliente persona física toma nombre, apellido y DNI de la cuenta, que una persona jurídica toma la razón social y no el contacto, y que ninguna respuesta incluye email ni hashes.
 
