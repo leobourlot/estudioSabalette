@@ -1,7 +1,22 @@
-import { Controller, Get } from '@nestjs/common';
-import { Roles } from '../autenticacion/decoradores.js';
-import type { IntegranteResumen } from './causa-detalle.js';
-import { CausasService } from './causas.service.js';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
+import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
+import type { Usuario } from '../usuarios/usuario.entity.js';
+import type { CausaDetalle, IntegranteResumen, ResultadoAlta } from './causa-detalle.js';
+import { CAUSAS_MESSAGES, CausasService } from './causas.service.js';
+import { CreateCausaDto } from './dto/crear-causa.dto.js';
+
+/** Un id que no es un número no puede ser una causa existente: 404, como cualquier otro. */
+const CausaIdPipe = new ParseIntPipe({
+  exceptionFactory: () => new NotFoundException(CAUSAS_MESSAGES.notFound),
+});
 
 /**
  * Causas del panel (plan 002). Solo administradores y abogados: los guards globales de la
@@ -16,5 +31,15 @@ export class CausasController {
   @Get('integrantes')
   listMembers(): Promise<IntegranteResumen[]> {
     return this.causas.listMembers();
+  }
+
+  @Get(':id')
+  findOne(@Param('id', CausaIdPipe) id: number): Promise<CausaDetalle> {
+    return this.causas.findOne(id);
+  }
+
+  @Post()
+  create(@CurrentUser() actor: Usuario, @Body() body: CreateCausaDto): Promise<ResultadoAlta> {
+    return this.causas.create(actor, body);
   }
 }

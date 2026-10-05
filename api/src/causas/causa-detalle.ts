@@ -149,3 +149,17 @@ export function toCausaReferencia(causa: Pick<Causa, 'id' | 'caratula' | 'numero
     numeroExpediente: causa.numeroExpediente,
   } satisfies CausaReferencia;
 }
+
+/** Parte o colaborador que no se guardó en el alta, con sus motivos (RF-7). */
+export interface Rechazo {
+  indiceParte?: number;
+  colaboradorId?: number;
+  mensajes: string[];
+}
+
+/** Respuesta del alta: la causa creada, lo que no se guardó y el aviso de RF-20. */
+export interface ResultadoAlta {
+  causa: CausaDetalle;
+  rechazos: Rechazo[];
+  causasComoNoCliente: CausaReferencia[];
+}

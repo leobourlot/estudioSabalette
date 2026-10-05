@@ -48,7 +48,7 @@ Reglas para todas las tareas:
   `CausasModule` importado en `app.module.ts`, `causas.controller.ts` con `@Roles('admin', 'abogado')` y `GET /api/panel/causas/integrantes`. Funciones de e2e para crear integrantes, clientes y causas.
   Hecho cuando: un e2e verifica que `GET /integrantes` devuelve administradores y abogados, activos y desactivados, ordenados por apellido y sin emails, y que no incluye clientes.
 
-- [ ] **T10 — Alta básica y consulta** [RF-2, RF-6, RF-12, RF-29]
+- [x] **T10 — Alta básica y consulta** [RF-2, RF-6, RF-12, RF-29]
   `POST /` con datos, responsable, colaboradores y partes no cliente, en una transacción y con auditoría; `GET /:id`.
   Hecho cuando: los e2e verifican el alta con estado por defecto En trámite, el registro de quién la creó, el detalle con partes, responsable y colaboradores, el 400 sin partes y el 404 de una causa inexistente o con id no numérico.
 
