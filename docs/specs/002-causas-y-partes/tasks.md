@@ -139,7 +139,7 @@ Reglas para todas las tareas:
   `servicios/causas.ts` con tipos y una función por endpoint, y `useCausasService` en `ProveedorServicios`.
   Hecho cuando: los tests con `fetch` simulado verifican la ruta, el método, el cuerpo y el query string de cada llamada.
 
-- [ ] **T27 — Presentación de causas** [RF-1, RF-12, RF-33, RF-36]
+- [x] **T27 — Presentación de causas** [RF-1, RF-12, RF-33, RF-36]
   `servicios/presentacion-causas.ts`.
   Hecho cuando: los tests verifican las etiquetas de fuero, estado y rol procesal, el texto "Vinculado al expte. principal Nº …", el nombre visible de cada tipo de parte y `needsResponsableWarning`.
 
