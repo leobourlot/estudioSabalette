@@ -44,7 +44,7 @@ Reglas para todas las tareas:
   `causa-detalle.ts`: `CausaResumen`, `CausaDetalle`, `ParteDetalle` e `IntegranteResumen`, campo por campo.
   Hecho cuando: los tests unitarios verifican que una parte cliente persona física toma nombre, apellido y DNI de la cuenta, que una persona jurídica toma la razón social y no el contacto, y que ninguna respuesta incluye email ni hashes.
 
-- [ ] **T9 — Módulo, controller e integrantes** [RF-29, RF-44] **(modifica existente: `app.module.ts`, utilidades de e2e)**
+- [x] **T9 — Módulo, controller e integrantes** [RF-29, RF-44] **(modifica existente: `app.module.ts`, utilidades de e2e)**
   `CausasModule` importado en `app.module.ts`, `causas.controller.ts` con `@Roles('admin', 'abogado')` y `GET /api/panel/causas/integrantes`. Funciones de e2e para crear integrantes, clientes y causas.
   Hecho cuando: un e2e verifica que `GET /integrantes` devuelve administradores y abogados, activos y desactivados, ordenados por apellido y sin emails, y que no incluye clientes.
 

@@ -1,6 +1,10 @@
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import { DataSource } from 'typeorm';
 import { PasswordsService } from '../../src/autenticacion/contrasenas.service.js';
+import { Causa } from '../../src/causas/causa.entity.js';
+import { Colaborador } from '../../src/causas/colaborador.entity.js';
+import { Parte } from '../../src/causas/parte.entity.js';
+import { toSearchableCaseNumber } from '../../src/causas/validadores/texto-causa.js';
 import { Cliente } from '../../src/usuarios/cliente.entity.js';
 import { Usuario } from '../../src/usuarios/usuario.entity.js';
 
@@ -46,4 +50,61 @@ export async function createTestUser(
     });
   }
   return usuario;
+}
+
+type PartyData = Partial<Omit<Parte, 'id' | 'causaId' | 'causa' | 'cliente'>>;
+
+type CausaData = Partial<
+  Omit<Causa, 'id' | 'claveExpediente' | 'responsable' | 'partes' | 'colaboradores'>
+> & {
+  responsableId: number;
+  creadoPorId: number;
+  /** Partes no cliente por defecto (persona física); con clienteId, parte cliente. */
+  partes?: PartyData[];
+  colaboradorIds?: number[];
+};
+
+/**
+ * Crea una causa con sus partes y colaboradores directamente en la base de tests, sin pasar
+ * por las reglas del service: sirve para preparar datos, no para probar el alta.
+ */
+export async function createTestCausa(
+  app: NestExpressApplication,
+  data: CausaData,
+): Promise<Causa> {
+  const dataSource = app.get(DataSource);
+  const { partes = [{}], colaboradorIds = [], ...causaData } = data;
+  const numeroExpediente = causaData.numeroExpediente ?? null;
+
+  const causa = await dataSource.getRepository(Causa).save({
+    caratula: 'Pérez, Juan c/ Gómez S.A. s/ daños y perjuicios',
+    fuero: 'civil',
+    estado: 'en_tramite',
+    esIncidente: false,
+    activa: true,
+    juzgado: null,
+    expedientePrincipal: null,
+    ...causaData,
+    numeroExpediente,
+    numeroExpedienteBusqueda: numeroExpediente && toSearchableCaseNumber(numeroExpediente),
+  });
+
+  for (const parte of partes) {
+    const isClient = parte.clienteId !== undefined && parte.clienteId !== null;
+    await dataSource.getRepository(Parte).save({
+      causaId: causa.id,
+      rol: 'actor',
+      vigente: true,
+      creadoPorId: data.creadoPorId,
+      ...(isClient
+        ? { tipoPersona: null, nombre: null, apellido: null }
+        : { tipoPersona: 'fisica' as const, nombre: 'Juan', apellido: 'Pérez' }),
+      ...parte,
+    });
+  }
+
+  for (const usuarioId of colaboradorIds) {
+    await dataSource.getRepository(Colaborador).save({ causaId: causa.id, usuarioId });
+  }
+  return causa;
 }

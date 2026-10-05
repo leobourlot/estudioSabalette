@@ -8,7 +8,7 @@ import { buildDataSourceOptions } from '../../src/base-de-datos/opciones-base-de
 import { configureApp } from '../../src/configurar-aplicacion.js';
 import { loadTestEnvironment } from './base-de-tests.js';
 
-const TABLES = ['sesiones', 'clientes', 'usuarios'];
+const TABLES = ['causa_colaboradores', 'partes', 'causas', 'sesiones', 'clientes', 'usuarios'];
 
 /** Aplica las migraciones pendientes sobre la base de tests. */
 async function migrateTestDatabase(): Promise<void> {
