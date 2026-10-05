@@ -215,4 +215,22 @@ describe('PanelCausaDetalle: datos y edición (RF-11, RF-12, RF-33, RF-41)', () 
       within(screen.getByRole('table', { name: 'Partes vigentes' })).getByText('Ana Gómez'),
     ).toBeTruthy();
   });
+
+  it('edita los abogados desde el detalle y muestra los nuevos (RF-29, RF-34)', async () => {
+    const carla = testMember({ id: 4, nombre: 'Carla', apellido: 'Sabalette', rol: 'admin' });
+    const updateLawyers = vi
+      .fn()
+      .mockResolvedValue(detail({ responsable: carla, colaboradores: [] }));
+    const { user } = await openDetail(detail(), {
+      listMembers: vi.fn().mockResolvedValue([testMember(), carla]),
+      updateLawyers,
+    });
+
+    await user.click(screen.getByRole('button', { name: 'Editar abogados' }));
+    await user.selectOptions(await screen.findByLabelText('Responsable'), '4');
+    await user.click(screen.getByRole('button', { name: 'Guardar abogados' }));
+
+    expect(updateLawyers).toHaveBeenCalledWith(7, { responsableId: 4, colaboradorIds: [2] });
+    expect(within(dataSection()).getByText('Sabalette, Carla')).toBeTruthy();
+  });
 });

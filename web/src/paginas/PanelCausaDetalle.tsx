@@ -1,6 +1,7 @@
 import { type ReactNode, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { type Avisos, AvisosResultado } from '../componentes/AvisosResultado';
+import { EditorAbogados } from '../componentes/EditorAbogados';
 import { FormularioCausa } from '../componentes/FormularioCausa';
 import { PreguntaConfirmacion } from '../componentes/PreguntaConfirmacion';
 import { useCausasService } from '../componentes/ProveedorServicios';
@@ -170,6 +171,7 @@ export function PanelCausaDetalle() {
             )}
           </Dato>
         </dl>
+        <EditorAbogados causa={causa} onSaved={setCausa} />
       </section>
 
       {editing && (

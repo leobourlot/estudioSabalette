@@ -192,7 +192,7 @@ Reglas para todas las tareas:
   `TablaPartes` con partes vigentes y desvinculadas: agregar, modificar, desvincular y volver a vincular.
   Hecho cuando: los tests verifican cada acción con su llamada al servicio, las preguntas al agregar y al modificar, el aviso de causas como no cliente, y el mensaje al intentar desvincular la última parte.
 
-- [ ] **T38 — Abogados en el detalle** [RF-29 a RF-34]
+- [x] **T38 — Abogados en el detalle** [RF-29 a RF-34]
   Edición de responsable y colaboradores en `PanelCausaDetalle`.
   Hecho cuando: los tests verifican el envío de `{ responsableId, colaboradorIds }`, la conservación de un desactivado ya asignado y la muestra de los mensajes de 409.
 
