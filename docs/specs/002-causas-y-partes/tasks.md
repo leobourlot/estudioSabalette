@@ -164,7 +164,7 @@ Reglas para todas las tareas:
 
   No se escribe nada en `localStorage` ni `sessionStorage`.
 
-- [ ] **T32 — Formulario de causa y selector de integrantes** [RF-1, RF-10, RF-29 a RF-32]
+- [x] **T32 — Formulario de causa y selector de integrantes** [RF-1, RF-10, RF-29 a RF-32]
   `FormularioCausa` (con la casilla "Es incidente" y el campo del expediente principal) y `SelectorIntegrantes`.
   Hecho cuando: los tests verifican que el campo del expediente principal aparece solo con la casilla marcada, los errores antes de enviar, que solo se ofrecen integrantes activos para asignar, y que un desactivado ya asignado se muestra marcado y se conserva.
 

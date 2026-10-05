@@ -245,3 +245,20 @@ export function partyFormFrom(parte: ParteDetalle): PartyForm {
     cuit: parte.cuit ?? '',
   };
 }
+
+// --- Abogados ---
+
+export interface LawyersForm {
+  responsableId: number | null;
+  colaboradorIds: number[];
+}
+
+/** El responsable es obligatorio (RF-29). */
+export function validateLawyersForm(form: LawyersForm): string[] {
+  return form.responsableId === null ? ['Elegí el responsable'] : [];
+}
+
+/** Espera un formulario válido (con responsable). */
+export function toLawyersData(form: LawyersForm): LawyersData {
+  return { responsableId: form.responsableId!, colaboradorIds: form.colaboradorIds };
+}

@@ -11,7 +11,9 @@ import {
   EMPTY_PARTY_FORM,
   type PartyForm,
   partyFormFrom,
+  toLawyersData,
   validateCausaForm,
+  validateLawyersForm,
   validatePartyForm,
 } from './formulario-causa';
 
@@ -328,6 +330,22 @@ describe('formulario de parte (RF-13 a RF-15)', () => {
     expect(partyFormFrom({ ...nonClient, esCliente: true, clienteId: 5 })).toMatchObject({
       modo: 'cliente',
       clienteId: 5,
+    });
+  });
+});
+
+describe('abogados del formulario (RF-29)', () => {
+  it('exige elegir el responsable', () => {
+    expect(validateLawyersForm({ responsableId: null, colaboradorIds: [2] })).toEqual([
+      'Elegí el responsable',
+    ]);
+    expect(validateLawyersForm({ responsableId: 1, colaboradorIds: [] })).toEqual([]);
+  });
+
+  it('arma los datos para la API', () => {
+    expect(toLawyersData({ responsableId: 1, colaboradorIds: [2, 3] })).toEqual({
+      responsableId: 1,
+      colaboradorIds: [2, 3],
     });
   });
 });
