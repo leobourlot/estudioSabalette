@@ -1,6 +1,12 @@
-import { BadRequestException, HttpException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  HttpException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, In, Repository } from 'typeorm';
+import { DataSource, type EntityManager, In, Not, QueryFailedError, Repository } from 'typeorm';
 import { Usuario } from '../usuarios/usuario.entity.js';
 import {
   type CausaDetalle,
@@ -14,12 +20,31 @@ import { Colaborador } from './colaborador.entity.js';
 import type { CreateCausaDto } from './dto/crear-causa.dto.js';
 import { type CreateParteDto, validateCreateParte } from './dto/parte.dto.js';
 import { Parte } from './parte.entity.js';
-import { checkLawyers, type LawyerAssignment, type RuleDecision } from './reglas-causas.js';
+import {
+  type CaseKeyData,
+  caseKey,
+  checkLawyers,
+  type LawyerAssignment,
+  type RuleDecision,
+} from './reglas-causas.js';
 import { toSearchableCaseNumber } from './validadores/texto-causa.js';
 
 export const CAUSAS_MESSAGES = {
   notFound: 'No existe esa causa',
+  duplicateCaseNumber: 'Ya existe una causa con ese número de expediente en ese juzgado y fuero',
+  repeatedCaseNumber: 'Ya existe otra causa con ese número de expediente',
 } as const;
+
+/**
+ * Códigos de las preguntas que la interfaz le hace al integrante: llegan como 409 con
+ * `codigo`, para distinguirlas de un rechazo definitivo (plan 002, "Preguntas").
+ */
+export const QUESTION_CODES = {
+  repeatedCaseNumber: 'EXPEDIENTE_REPETIDO',
+} as const;
+
+/** Índice único de la columna generada claveExpediente (migración de la spec 002). */
+const CASE_NUMBER_INDEX = 'UQ_causas_expediente_activo';
 
 /** Relaciones que necesita toCausaDetalle. */
 const DETAIL_RELATIONS = {
@@ -100,7 +125,18 @@ export class CausasService {
     }
 
     const numeroExpediente = dto.numeroExpediente ?? null;
-    const id = await this.dataSource.transaction(async (manager) => {
+    await this.checkCaseNumber(
+      {
+        numeroExpediente,
+        juzgado: dto.juzgado ?? null,
+        fuero: dto.fuero,
+        esIncidente: dto.esIncidente ?? false,
+      },
+      null,
+      dto.confirmarExpedienteRepetido === true,
+    );
+
+    const id = await this.saveTranslatingDuplicate(async (manager) => {
       const causa = await manager.save(Causa, {
         caratula: dto.caratula,
         numeroExpediente,
@@ -126,6 +162,66 @@ export class CausasService {
     });
 
     return { causa: await this.findOne(id), rechazos: [], causasComoNoCliente: [] };
+  }
+
+  /**
+   * Control de expediente (RF-8 a RF-10). Un incidente o una causa sin número no se
+   * controlan. Primero, el duplicado exacto en el mismo juzgado y fuero, que se rechaza
+   * aunque se haya confirmado; después, el mismo número en cualquier otra causa activa no
+   * incidente, que se pregunta. La intercalación de la base compara sin distinguir
+   * mayúsculas ni tildes; el número se compara tal como se escribió.
+   */
+  private async checkCaseNumber(
+    data: Omit<CaseKeyData, 'activa'>,
+    exceptId: number | null,
+    confirmed: boolean,
+  ): Promise<void> {
+    if (data.numeroExpediente === null || data.esIncidente) return;
+    const others = exceptId === null ? {} : { id: Not(exceptId) };
+
+    const key = caseKey({ ...data, activa: true });
+    if (
+      key !== null &&
+      (await this.causas.exists({ where: { claveExpediente: key, ...others } }))
+    ) {
+      throw new ConflictException(CAUSAS_MESSAGES.duplicateCaseNumber);
+    }
+    const repeated = await this.causas.exists({
+      where: {
+        numeroExpediente: data.numeroExpediente,
+        activa: true,
+        esIncidente: false,
+        ...others,
+      },
+    });
+    if (repeated && !confirmed) {
+      throw new ConflictException({
+        statusCode: 409,
+        message: CAUSAS_MESSAGES.repeatedCaseNumber,
+        codigo: QUESTION_CODES.repeatedCaseNumber,
+      });
+    }
+  }
+
+  /**
+   * Transacción de guardado. Si dos guardados simultáneos pasan checkCaseNumber, el índice
+   * único rechaza el segundo y se responde el mismo 409 que en el caso común (RF-8).
+   */
+  private async saveTranslatingDuplicate<T>(
+    work: (manager: EntityManager) => Promise<T>,
+  ): Promise<T> {
+    try {
+      return await this.dataSource.transaction(work);
+    } catch (error) {
+      const driverError = error instanceof QueryFailedError ? error.driverError : undefined;
+      if (
+        driverError?.code === 'ER_DUP_ENTRY' &&
+        String(driverError.message).includes(CASE_NUMBER_INDEX)
+      ) {
+        throw new ConflictException(CAUSAS_MESSAGES.duplicateCaseNumber);
+      }
+      throw error;
+    }
   }
 
   /** RF-29 a RF-32: responsable y colaboradores, contra los asignados actuales si los hay. */
