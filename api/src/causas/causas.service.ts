@@ -33,6 +33,7 @@ import {
   checkCollaborator,
   checkLawyers,
   checkResponsible,
+  checkUnlink,
   type LawyerAssignment,
   type PartyIdentity,
   partyIdentity,
@@ -348,6 +349,50 @@ export class CausasService {
         dni,
         cuit,
         ...audit,
+      });
+      return resolved;
+    });
+    return this.partyResult(causaId, identity);
+  }
+
+  /**
+   * Desvincula una parte vigente (RF-22, RF-23): la marca como no vigente y la conserva.
+   * Un cliente desvinculado deja de estar vinculado a la causa (RF-27). El bloqueo de la
+   * causa hace exacto el control de última parte aunque lleguen dos a la vez.
+   */
+  async unlinkParty(actor: Usuario, causaId: number, parteId: number): Promise<CausaDetalle> {
+    await this.withLockedCausa(actor, causaId, async (manager) => {
+      const parte = await manager.findOne(Parte, {
+        where: { id: parteId, causaId, vigente: true },
+      });
+      if (!parte) throw new NotFoundException(PARTES_MESSAGES.partyNotFound);
+      const activeCount = await manager.count(Parte, { where: { causaId, vigente: true } });
+      throwIfDenied(checkUnlink(activeCount));
+      await manager.update(Parte, parte.id, {
+        vigente: false,
+        modificadoPorId: actor.id,
+        modificadoEn: new Date(),
+      });
+    });
+    return this.findOne(causaId);
+  }
+
+  /** Vuelve a vincular una parte desvinculada, con los controles de RF-17 y RF-18 (RF-24). */
+  async relinkParty(actor: Usuario, causaId: number, parteId: number): Promise<ResultadoParte> {
+    const identity = await this.withLockedCausa(actor, causaId, async (manager) => {
+      const parte = await manager.findOne(Parte, {
+        where: { id: parteId, causaId, vigente: false },
+        relations: { cliente: { usuario: true } },
+      });
+      if (!parte) throw new NotFoundException(PARTES_MESSAGES.partyNotFound);
+      const resolved = this.partes.checkRelink(
+        parte,
+        await this.loadActiveParties(manager, causaId),
+      );
+      await manager.update(Parte, parte.id, {
+        vigente: true,
+        modificadoPorId: actor.id,
+        modificadoEn: new Date(),
       });
       return resolved;
     });

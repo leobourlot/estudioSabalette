@@ -90,6 +90,22 @@ export class PartesService {
   }
 
   /**
+   * RF-24: volver a vincular una parte desvinculada aplica los controles de RF-17 (cliente
+   * desactivado) y RF-18 (persona que ya es parte vigente). Espera la parte con
+   * cliente.usuario cargado si es una parte cliente.
+   */
+  checkRelink(parte: Parte, activeParties: readonly ActiveParty[]): PartyIdentity {
+    if (parte.cliente && !parte.cliente.usuario.activo) {
+      throw new ConflictException(PARTES_MESSAGES.clientDeactivated);
+    }
+    const identity = partyIdentity(parte);
+    if (activeParties.some((other) => isSamePerson(other, identity))) {
+      throw new ConflictException(PARTES_MESSAGES.repeatedPerson);
+    }
+    return identity;
+  }
+
+  /**
    * Resuelve la identidad de una parte nueva y aplica, en orden, los rechazos y las
    * preguntas de RF-16 a RF-19:
    * 1. Cliente inexistente (404), cliente desactivado (RF-17) y persona que ya es parte

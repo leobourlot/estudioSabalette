@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -84,5 +86,25 @@ export class CausasController {
     @Body() body: UpdateParteDto,
   ): Promise<ResultadoParte> {
     return this.causas.updateParty(actor, id, parteId, body);
+  }
+
+  @Post(':id/partes/:parteId/desvincular')
+  @HttpCode(HttpStatus.OK)
+  unlinkParty(
+    @CurrentUser() actor: Usuario,
+    @Param('id', CausaIdPipe) id: number,
+    @Param('parteId', ParteIdPipe) parteId: number,
+  ): Promise<CausaDetalle> {
+    return this.causas.unlinkParty(actor, id, parteId);
+  }
+
+  @Post(':id/partes/:parteId/revincular')
+  @HttpCode(HttpStatus.OK)
+  relinkParty(
+    @CurrentUser() actor: Usuario,
+    @Param('id', CausaIdPipe) id: number,
+    @Param('parteId', ParteIdPipe) parteId: number,
+  ): Promise<ResultadoParte> {
+    return this.causas.relinkParty(actor, id, parteId);
   }
 }

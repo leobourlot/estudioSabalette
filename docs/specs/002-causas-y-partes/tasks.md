@@ -87,7 +87,7 @@ Reglas para todas las tareas:
   - El 404 con una parte de otra causa.
   - Que un cambio en la cuenta del cliente se ve en la parte sin cambiar `modificadoEn` de la causa.
 
-- [ ] **T18 — Desvincular y volver a vincular** [RF-22 a RF-25, RF-27]
+- [x] **T18 — Desvincular y volver a vincular** [RF-22 a RF-25, RF-27]
   `POST /:id/partes/:parteId/desvincular` y `/revincular`.
   Hecho cuando: los e2e verifican:
   - Que la parte desvinculada pasa a `partesDesvinculadas`.
