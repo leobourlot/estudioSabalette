@@ -143,7 +143,7 @@ Reglas para todas las tareas:
   `servicios/presentacion-causas.ts`.
   Hecho cuando: los tests verifican las etiquetas de fuero, estado y rol procesal, el texto "Vinculado al expte. principal Nº …", el nombre visible de cada tipo de parte y `needsResponsableWarning`.
 
-- [ ] **T28 — Validación de formularios** [RF-1, RF-3 a RF-5, RF-10, RF-15]
+- [x] **T28 — Validación de formularios** [RF-1, RF-3 a RF-5, RF-10, RF-15]
   `servicios/formulario-causa.ts`: validación de causa y de parte con los mensajes de la API y armado de los cuerpos.
   Hecho cuando: los tests verifican cada mensaje (incluidos los de caracteres y de incidente), el recorte, y los cuerpos de alta, de modificación y de parte cliente y no cliente.
 
