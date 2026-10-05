@@ -233,4 +233,24 @@ describe('PanelCausaDetalle: datos y edición (RF-11, RF-12, RF-33, RF-41)', () 
     expect(updateLawyers).toHaveBeenCalledWith(7, { responsableId: 4, colaboradorIds: [2] });
     expect(within(dataSection()).getByText('Sabalette, Carla')).toBeTruthy();
   });
+
+  it('desactiva la causa desde el detalle y deja solo "Reactivar" (RF-40, RF-41)', async () => {
+    const getCausa = vi
+      .fn()
+      .mockResolvedValueOnce(detail())
+      .mockResolvedValueOnce(detail({ activa: false }));
+    const causas = fakeCausasService({ getCausa });
+    renderCausaPages('/panel/causas/7', causas);
+    const user = userEvent.setup();
+    await screen.findByRole('heading', { name: 'Pérez, Juan c/ Gómez S.A. s/ daños', level: 1 });
+
+    await user.click(screen.getByRole('button', { name: 'Desactivar' }));
+    await user.click(screen.getByRole('button', { name: 'Sí, desactivar' }));
+
+    expect(await screen.findByText('Esta causa está desactivada')).toBeTruthy();
+    expect(screen.getByRole('button', { name: 'Reactivar' })).toBeTruthy();
+    expect(screen.queryByRole('button', { name: 'Editar datos' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Agregar parte' })).toBeNull();
+    expect(screen.queryByRole('button', { name: 'Editar abogados' })).toBeNull();
+  });
 });

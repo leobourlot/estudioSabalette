@@ -196,7 +196,7 @@ Reglas para todas las tareas:
   Edición de responsable y colaboradores en `PanelCausaDetalle`.
   Hecho cuando: los tests verifican el envío de `{ responsableId, colaboradorIds }`, la conservación de un desactivado ya asignado y la muestra de los mensajes de 409.
 
-- [ ] **T39 — Desactivar y reactivar** [RF-40 a RF-43]
+- [x] **T39 — Desactivar y reactivar** [RF-40 a RF-43]
   `AccionesCausa`.
   Hecho cuando: los tests verifican que una causa activa ofrece "Desactivar" con confirmación, que una desactivada ofrece solo "Reactivar", y la pregunta de expediente repetido al reactivar.
 

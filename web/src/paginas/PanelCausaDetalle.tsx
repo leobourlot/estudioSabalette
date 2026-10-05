@@ -1,5 +1,6 @@
 import { type ReactNode, useEffect, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+import { AccionesCausa } from '../componentes/AccionesCausa';
 import { type Avisos, AvisosResultado } from '../componentes/AvisosResultado';
 import { EditorAbogados } from '../componentes/EditorAbogados';
 import { FormularioCausa } from '../componentes/FormularioCausa';
@@ -43,7 +44,8 @@ function Dato({ label, children }: { label: string; children: ReactNode }) {
 /**
  * Detalle de una causa (RF-12): datos, abogados, partes, registro y edición de los datos (RF-11) con
  * la pregunta de expediente repetido (RF-9). Avisa si el responsable está desactivado
- * (RF-33). Una causa desactivada no se edita (RF-41). Muestra los avisos que deja el alta.
+ * (RF-33). Una causa desactivada no se edita y solo se reactiva (RF-40 a RF-43). Muestra los
+ * avisos que deja el alta.
  */
 export function PanelCausaDetalle() {
   const { id } = useParams();
@@ -209,6 +211,14 @@ export function PanelCausaDetalle() {
         onChanged={(updated, newAvisos) => {
           setCausa(updated);
           setActionAvisos(newAvisos ?? null);
+        }}
+      />
+
+      <AccionesCausa
+        causa={causa}
+        onChanged={(updated) => {
+          setCausa(updated);
+          setEditing(false);
         }}
       />
 
