@@ -135,7 +135,7 @@ Reglas para todas las tareas:
   `ApiError.details` con los campos extra del cuerpo de error.
   Hecho cuando: los tests verifican que `codigo`, `clienteId`, `clienteActivo`, `clientes`, `parteId` e `indiceParte` llegan en `details`, y que los errores sin datos extra siguen funcionando como antes.
 
-- [ ] **T26 — Servicio de causas** [RF-6 a RF-44] **(modifica existente: `ProveedorServicios.tsx`)**
+- [x] **T26 — Servicio de causas** [RF-6 a RF-44] **(modifica existente: `ProveedorServicios.tsx`)**
   `servicios/causas.ts` con tipos y una función por endpoint, y `useCausasService` en `ProveedorServicios`.
   Hecho cuando: los tests con `fetch` simulado verifican la ruta, el método, el cuerpo y el query string de cada llamada.
 
