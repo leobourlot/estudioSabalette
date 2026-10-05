@@ -28,7 +28,7 @@ Reglas para todas las tareas:
   `reglas-causas.ts`: clave de expediente (la misma fórmula que la columna generada), comparación de documentos entre parte cliente y no cliente, y comparación de nombres y razón social.
   Hecho cuando: los tests unitarios cubren la clave para activa, desactivada, incidente, sin número y sin juzgado; la igualdad de documentos entre una parte cliente y una no cliente; y la comparación de nombres de persona física y jurídica.
 
-- [ ] **T5 — Reglas de abogados y de última parte** [RF-23, RF-29 a RF-32]
+- [x] **T5 — Reglas de abogados y de última parte** [RF-23, RF-29 a RF-32]
   En `reglas-causas.ts`: validación del conjunto responsable/colaboradores contra los asignados actuales y decisión de desvinculación.
   Hecho cuando: los tests unitarios verifican el rechazo de ids repetidos y del responsable como colaborador, el rechazo de un desactivado nuevo, la conservación de un desactivado ya asignado en el mismo lugar, y el rechazo de desvincular la única parte vigente.
 

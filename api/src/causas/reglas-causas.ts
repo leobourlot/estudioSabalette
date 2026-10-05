@@ -1,4 +1,5 @@
 import type { TipoPersona } from '../usuarios/cliente.entity.js';
+import type { Usuario } from '../usuarios/usuario.entity.js';
 import type { Causa } from './causa.entity.js';
 import type { Parte } from './parte.entity.js';
 
@@ -120,4 +121,107 @@ export function hasSameName(a: PartyIdentity, b: PartyIdentity): boolean {
   if (a.tipoPersona !== b.tipoPersona) return false;
   if (a.tipoPersona === 'juridica') return sameText(a.razonSocial, b.razonSocial);
   return sameText(a.nombre, b.nombre) && sameText(a.apellido, b.apellido);
+}
+
+// --- Mensajes y decisiones ---
+
+export const CAUSAS_RULE_MESSAGES = {
+  responsibleNotStaff: 'El responsable debe ser un integrante del estudio',
+  collaboratorNotStaff: 'Los colaboradores deben ser integrantes del estudio',
+  memberDeactivated: 'El integrante está desactivado',
+  memberAlreadyIntervenes: 'Ese integrante ya interviene en la causa',
+  lastParty: 'La causa debe tener al menos una parte',
+} as const;
+
+/** null si la operación está permitida; si no, el código HTTP y el mensaje. */
+export type RuleDecision = { status: 400 | 409; message: string } | null;
+
+const conflict = (message: string): RuleDecision => ({ status: 409, message });
+
+// --- Abogados (RF-29 a RF-32) ---
+
+export type StaffMember = Pick<Usuario, 'id' | 'rol' | 'activo'>;
+
+export interface LawyerAssignment {
+  responsableId: number;
+  colaboradorIds: number[];
+}
+
+const isStaff = (member: StaffMember | undefined): member is StaffMember =>
+  member !== undefined && member.rol !== 'cliente';
+
+/**
+ * Un integrante desactivado solo puede seguir en el lugar que ya ocupaba en la causa
+ * (RF-32); asignarlo en un lugar nuevo se rechaza (RF-30).
+ */
+function checkMember(
+  member: StaffMember | undefined,
+  notStaffMessage: string,
+  alreadyThere: boolean,
+): RuleDecision {
+  if (!isStaff(member)) return { status: 400, message: notStaffMessage };
+  if (!member.activo && !alreadyThere) return conflict(CAUSAS_RULE_MESSAGES.memberDeactivated);
+  return null;
+}
+
+/** Responsable de la causa; current es null en el alta. */
+export function checkResponsible(
+  id: number,
+  member: StaffMember | undefined,
+  current: LawyerAssignment | null,
+): RuleDecision {
+  return checkMember(
+    member,
+    CAUSAS_RULE_MESSAGES.responsibleNotStaff,
+    current?.responsableId === id,
+  );
+}
+
+/**
+ * Un colaborador por separado, para que el alta pueda guardar los válidos y rechazar el
+ * resto (RF-7); current es null en el alta.
+ */
+export function checkCollaborator(
+  id: number,
+  member: StaffMember | undefined,
+  current: LawyerAssignment | null,
+): RuleDecision {
+  return checkMember(
+    member,
+    CAUSAS_RULE_MESSAGES.collaboratorNotStaff,
+    current?.colaboradorIds.includes(id) ?? false,
+  );
+}
+
+/**
+ * Conjunto completo de abogados de una causa (RF-29 a RF-32). members tiene los usuarios
+ * encontrados por id; un id ausente no existe.
+ */
+export function checkLawyers(
+  next: LawyerAssignment,
+  members: ReadonlyMap<number, StaffMember>,
+  current: LawyerAssignment | null,
+): RuleDecision {
+  const ids = [next.responsableId, ...next.colaboradorIds];
+  if (new Set(ids).size !== ids.length) {
+    return conflict(CAUSAS_RULE_MESSAGES.memberAlreadyIntervenes);
+  }
+  const responsible = checkResponsible(
+    next.responsableId,
+    members.get(next.responsableId),
+    current,
+  );
+  if (responsible) return responsible;
+  for (const id of next.colaboradorIds) {
+    const collaborator = checkCollaborator(id, members.get(id), current);
+    if (collaborator) return collaborator;
+  }
+  return null;
+}
+
+// --- Partes (RF-23) ---
+
+/** activePartyCount incluye a la parte que se quiere desvincular. */
+export function checkUnlink(activePartyCount: number): RuleDecision {
+  return activePartyCount <= 1 ? conflict(CAUSAS_RULE_MESSAGES.lastParty) : null;
 }

@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import {
+  CAUSAS_RULE_MESSAGES,
   caseKey,
+  checkCollaborator,
+  checkLawyers,
+  checkResponsible,
+  checkUnlink,
   documentOf,
   hasSameDocument,
   hasSameName,
@@ -8,8 +13,10 @@ import {
   normalizeNameForComparison,
   partyIdentity,
   type CaseKeyData,
+  type LawyerAssignment,
   type PartyIdentity,
   type PartySource,
+  type StaffMember,
 } from './reglas-causas.js';
 
 const ACTIVE_CASE: CaseKeyData = {
@@ -213,5 +220,148 @@ describe('nombres (RF-19)', () => {
 
   it('una persona física y una jurídica nunca tienen el mismo nombre', () => {
     expect(hasSameName(naturalPerson(), legalPerson({ razonSocial: 'Juan Pérez' }))).toBe(false);
+  });
+});
+
+describe('abogados (RF-29 a RF-32)', () => {
+  const member = (id: number, overrides: Partial<StaffMember> = {}): StaffMember => ({
+    id,
+    rol: 'abogado',
+    activo: true,
+    ...overrides,
+  });
+  const membersOf = (...members: StaffMember[]) =>
+    new Map(members.map((staff) => [staff.id, staff]));
+
+  const conflict = (message: string) => ({ status: 409, message });
+  const ASSIGNED: LawyerAssignment = { responsableId: 1, colaboradorIds: [2] };
+
+  describe('checkResponsible', () => {
+    it('acepta un abogado o un administrador activo', () => {
+      expect(checkResponsible(1, member(1), null)).toBeNull();
+      expect(checkResponsible(1, member(1, { rol: 'admin' }), null)).toBeNull();
+    });
+
+    it('rechaza un id inexistente o un cliente con 400', () => {
+      const notStaff = { status: 400, message: CAUSAS_RULE_MESSAGES.responsibleNotStaff };
+      expect(checkResponsible(1, undefined, null)).toEqual(notStaff);
+      expect(checkResponsible(1, member(1, { rol: 'cliente' }), null)).toEqual(notStaff);
+    });
+
+    it('rechaza un desactivado nuevo (RF-30)', () => {
+      expect(checkResponsible(1, member(1, { activo: false }), null)).toEqual(
+        conflict(CAUSAS_RULE_MESSAGES.memberDeactivated),
+      );
+      expect(checkResponsible(2, member(2, { activo: false }), ASSIGNED)).toEqual(
+        conflict(CAUSAS_RULE_MESSAGES.memberDeactivated),
+      );
+    });
+
+    it('conserva al responsable desactivado que ya lo era (RF-32)', () => {
+      expect(checkResponsible(1, member(1, { activo: false }), ASSIGNED)).toBeNull();
+    });
+  });
+
+  describe('checkCollaborator', () => {
+    it('acepta un integrante activo', () => {
+      expect(checkCollaborator(3, member(3), null)).toBeNull();
+    });
+
+    it('rechaza un id inexistente o un cliente con 400', () => {
+      const notStaff = { status: 400, message: CAUSAS_RULE_MESSAGES.collaboratorNotStaff };
+      expect(checkCollaborator(3, undefined, null)).toEqual(notStaff);
+      expect(checkCollaborator(3, member(3, { rol: 'cliente' }), null)).toEqual(notStaff);
+    });
+
+    it('rechaza un desactivado nuevo (RF-30), también si antes era el responsable', () => {
+      expect(checkCollaborator(3, member(3, { activo: false }), ASSIGNED)).toEqual(
+        conflict(CAUSAS_RULE_MESSAGES.memberDeactivated),
+      );
+      expect(checkCollaborator(1, member(1, { activo: false }), ASSIGNED)).toEqual(
+        conflict(CAUSAS_RULE_MESSAGES.memberDeactivated),
+      );
+    });
+
+    it('conserva al colaborador desactivado que ya lo era (RF-32)', () => {
+      expect(checkCollaborator(2, member(2, { activo: false }), ASSIGNED)).toBeNull();
+    });
+  });
+
+  describe('checkLawyers', () => {
+    it('acepta un responsable y colaboradores válidos', () => {
+      expect(
+        checkLawyers(
+          { responsableId: 1, colaboradorIds: [2, 3] },
+          membersOf(member(1), member(2), member(3)),
+          null,
+        ),
+      ).toBeNull();
+    });
+
+    it('acepta una causa sin colaboradores', () => {
+      expect(
+        checkLawyers({ responsableId: 1, colaboradorIds: [] }, membersOf(member(1)), null),
+      ).toBeNull();
+    });
+
+    it('rechaza colaboradores repetidos (RF-31)', () => {
+      expect(
+        checkLawyers(
+          { responsableId: 1, colaboradorIds: [2, 2] },
+          membersOf(member(1), member(2)),
+          null,
+        ),
+      ).toEqual(conflict(CAUSAS_RULE_MESSAGES.memberAlreadyIntervenes));
+    });
+
+    it('rechaza al responsable como colaborador (RF-31)', () => {
+      expect(
+        checkLawyers({ responsableId: 1, colaboradorIds: [1] }, membersOf(member(1)), null),
+      ).toEqual(conflict(CAUSAS_RULE_MESSAGES.memberAlreadyIntervenes));
+    });
+
+    it('rechaza un colaborador desactivado nuevo y conserva uno ya asignado (RF-30, RF-32)', () => {
+      const members = membersOf(
+        member(1),
+        member(2, { activo: false }),
+        member(3, { activo: false }),
+      );
+      expect(checkLawyers({ responsableId: 1, colaboradorIds: [2] }, members, ASSIGNED)).toBeNull();
+      expect(checkLawyers({ responsableId: 1, colaboradorIds: [2, 3] }, members, ASSIGNED)).toEqual(
+        conflict(CAUSAS_RULE_MESSAGES.memberDeactivated),
+      );
+    });
+
+    it('rechaza que un colaborador desactivado pase a ser el responsable (RF-30)', () => {
+      const members = membersOf(member(1), member(2, { activo: false }));
+      expect(checkLawyers({ responsableId: 2, colaboradorIds: [1] }, members, ASSIGNED)).toEqual(
+        conflict(CAUSAS_RULE_MESSAGES.memberDeactivated),
+      );
+    });
+
+    it('rechaza un responsable que no es integrante', () => {
+      expect(checkLawyers({ responsableId: 9, colaboradorIds: [] }, membersOf(), null)).toEqual({
+        status: 400,
+        message: CAUSAS_RULE_MESSAGES.responsibleNotStaff,
+      });
+    });
+  });
+});
+
+describe('checkUnlink (RF-23)', () => {
+  it('rechaza desvincular la única parte vigente', () => {
+    expect(checkUnlink(1)).toEqual({ status: 409, message: CAUSAS_RULE_MESSAGES.lastParty });
+  });
+
+  it('permite desvincular si quedan otras partes vigentes', () => {
+    expect(checkUnlink(2)).toBeNull();
+  });
+
+  it('usa el mensaje de la spec', () => {
+    expect(CAUSAS_RULE_MESSAGES.lastParty).toBe('La causa debe tener al menos una parte');
+    expect(CAUSAS_RULE_MESSAGES.memberDeactivated).toBe('El integrante está desactivado');
+    expect(CAUSAS_RULE_MESSAGES.memberAlreadyIntervenes).toBe(
+      'Ese integrante ya interviene en la causa',
+    );
   });
 });
