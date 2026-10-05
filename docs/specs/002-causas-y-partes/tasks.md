@@ -151,7 +151,7 @@ Reglas para todas las tareas:
   `servicios/preguntas.ts`: `pendingQuestion(error)` y `applyPartyAnswer(parte, opción)`.
   Hecho cuando: los tests verifican la pregunta y las opciones de cada `codigo` (incluido `DOCUMENTO_DE_CLIENTE` con cliente desactivado y `NOMBRE_DE_CLIENTE` con varios clientes), y que un error sin `codigo` no es una pregunta.
 
-- [ ] **T30 — Rutas y navegación** [RF-44] **(modifica existente: `RutasAplicacion.tsx`, `DisenoPanel.tsx` y `Disenos.test.tsx`)**
+- [x] **T30 — Rutas y navegación** [RF-44] **(modifica existente: `RutasAplicacion.tsx`, `DisenoPanel.tsx` y `Disenos.test.tsx`)**
   Rutas `/panel/causas`, `/panel/causas/nueva` y `/panel/causas/:id` con páginas provisorias, y enlace "Causas" en el panel.
   Hecho cuando: los tests verifican que el panel muestra el enlace y que un cliente que entra a esas rutas es llevado al portal.
 

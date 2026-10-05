@@ -20,7 +20,7 @@ describe('DisenoPanel (RF-16)', () => {
   it('muestra la navegación del panel y el nombre del usuario', async () => {
     await openAs('/panel', testUser('abogado', { nombre: 'Juan', apellido: 'Pérez' }), 'Panel');
 
-    expect(navLinks()).toEqual(['Inicio', 'Cuentas', 'Mi cuenta']);
+    expect(navLinks()).toEqual(['Inicio', 'Causas', 'Cuentas', 'Mi cuenta']);
     expect(screen.getByText('Juan Pérez')).toBeTruthy();
   });
 
