@@ -105,6 +105,29 @@ describe('FormularioCausa (RF-1, RF-4, RF-5, RF-10)', () => {
     });
   });
 
+  it('puede dejar el botón afuera, asociado al formulario por su id', async () => {
+    const onSubmit = vi.fn();
+    render(
+      <>
+        <FormularioCausa
+          id="causa"
+          renderSubmit={false}
+          value={{ ...EMPTY_CAUSA_FORM, caratula: 'Pérez c/ Gómez', fuero: 'civil' }}
+          onChange={vi.fn()}
+          submitLabel="Guardar"
+          onSubmit={onSubmit}
+        />
+        <button type="submit" form="causa">
+          Crear causa
+        </button>
+      </>,
+    );
+
+    expect(screen.queryByRole('button', { name: 'Guardar' })).toBeNull();
+    await userEvent.setup().click(screen.getByRole('button', { name: 'Crear causa' }));
+    expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
   it('muestra los errores que devolvió la API', () => {
     render(
       <Harness

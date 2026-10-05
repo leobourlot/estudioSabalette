@@ -6,6 +6,10 @@ import { CampoTexto } from './CampoTexto';
 import { ListaDeErrores } from './ListaDeErrores';
 
 interface FormularioCausaProps {
+  /** Para asociar un botón ubicado fuera del formulario (atributo form). */
+  id?: string;
+  /** Con false, el botón de envío va fuera del formulario, asociado por su id. */
+  renderSubmit?: boolean;
   value: CausaForm;
   onChange: (value: CausaForm) => void;
   submitLabel: string;
@@ -29,6 +33,8 @@ const selectClass =
  * con los mismos mensajes que la API (RF-4, RF-5).
  */
 export function FormularioCausa({
+  id,
+  renderSubmit = true,
   value,
   onChange,
   submitLabel,
@@ -54,7 +60,7 @@ export function FormularioCausa({
   }
 
   return (
-    <form onSubmit={handleSubmit} noValidate className="space-y-4">
+    <form id={id} onSubmit={handleSubmit} noValidate className="space-y-4">
       <ListaDeErrores messages={[...problems, ...apiProblems]} />
 
       <CampoTexto
@@ -130,13 +136,15 @@ export function FormularioCausa({
 
       {children}
 
-      <button
-        type="submit"
-        disabled={enviando}
-        className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
-      >
-        {submitLabel}
-      </button>
+      {renderSubmit && (
+        <button
+          type="submit"
+          disabled={enviando}
+          className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
+        >
+          {submitLabel}
+        </button>
+      )}
     </form>
   );
 }

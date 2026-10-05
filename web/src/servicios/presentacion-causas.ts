@@ -1,5 +1,6 @@
 import type {
   CausaResumen,
+  Rechazo,
   EstadoCausa,
   Fuero,
   IntegranteResumen,
@@ -77,4 +78,25 @@ export const RESPONSABLE_WARNING =
 /** RF-33: el aviso se muestra mientras la causa está activa y su responsable desactivado. */
 export function needsResponsableWarning(causa: Pick<CausaResumen, 'activa' | 'responsable'>) {
   return causa.activa && !causa.responsable.activo;
+}
+
+/**
+ * Qué no se guardó en el alta y por qué (RF-7). partyNames son los nombres de las partes en
+ * el orden en que se enviaron; members, los integrantes para nombrar a los colaboradores.
+ */
+export function rejectionMessages(
+  rechazos: Rechazo[],
+  partyNames: string[],
+  members: IntegranteResumen[],
+): string[] {
+  return rechazos.map((rechazo) => {
+    const reasons = rechazo.mensajes.join('. ');
+    if (rechazo.indiceParte !== undefined) {
+      const name = partyNames[rechazo.indiceParte];
+      const party = `Parte ${rechazo.indiceParte + 1}`;
+      return `${name ? `${party} (${name})` : party}: ${reasons}`;
+    }
+    const member = members.find((candidate) => candidate.id === rechazo.colaboradorId);
+    return `Colaborador ${member ? `${member.apellido}, ${member.nombre}` : rechazo.colaboradorId}: ${reasons}`;
+  });
 }

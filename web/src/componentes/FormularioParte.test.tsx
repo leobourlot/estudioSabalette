@@ -30,7 +30,7 @@ function Harness({
   clientLabel = null,
 }: {
   initial?: PartyForm;
-  onSubmit: (data: NewPartyData) => void;
+  onSubmit: (data: NewPartyData, name: string) => void;
   fixedMode?: boolean;
   clientLabel?: string | null;
 }) {
@@ -121,7 +121,10 @@ describe('FormularioParte (RF-13 a RF-15)', () => {
 
     expect(users.listUsers).toHaveBeenCalledWith({ rol: 'cliente', activo: true, buscar: 'gómez' });
     expect(screen.getByText('Cliente elegido: Gómez, Ana · DNI 30.123.456')).toBeTruthy();
-    expect(onSubmit).toHaveBeenCalledWith({ rol: 'demandado', clienteId: 12 });
+    expect(onSubmit).toHaveBeenCalledWith(
+      { rol: 'demandado', clienteId: 12 },
+      'Gómez, Ana · DNI 30.123.456',
+    );
   });
 
   it('envía una persona jurídica no cliente con el CUIT normalizado', async () => {
@@ -134,12 +137,10 @@ describe('FormularioParte (RF-13 a RF-15)', () => {
     await user.type(screen.getByLabelText('CUIT (opcional)'), '30-71234567-1');
     await user.click(screen.getByRole('button', { name: 'Agregar parte' }));
 
-    expect(onSubmit).toHaveBeenCalledWith({
-      rol: 'actor',
-      tipoPersona: 'juridica',
-      razonSocial: 'Zeta S.R.L.',
-      cuit: '30712345671',
-    });
+    expect(onSubmit).toHaveBeenCalledWith(
+      { rol: 'actor', tipoPersona: 'juridica', razonSocial: 'Zeta S.R.L.', cuit: '30712345671' },
+      'Zeta S.R.L.',
+    );
   });
 
   it('al modificar una parte cliente solo deja cambiar el rol (RF-21)', async () => {
@@ -156,6 +157,6 @@ describe('FormularioParte (RF-13 a RF-15)', () => {
 
     await user.selectOptions(screen.getByLabelText('Rol procesal'), 'tercero');
     await user.click(screen.getByRole('button', { name: 'Agregar parte' }));
-    expect(onSubmit).toHaveBeenCalledWith({ rol: 'tercero', clienteId: 12 });
+    expect(onSubmit).toHaveBeenCalledWith({ rol: 'tercero', clienteId: 12 }, 'Ana Gómez');
   });
 });

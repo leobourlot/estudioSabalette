@@ -11,8 +11,11 @@ interface FormularioParteProps {
   value: PartyForm;
   onChange: (value: PartyForm) => void;
   submitLabel: string;
-  /** Se llama con los datos para la API, solo si el formulario es válido. */
-  onSubmit: (data: NewPartyData) => void | Promise<void>;
+  /**
+   * Se llama con los datos para la API y el nombre visible de la parte, solo si el
+   * formulario es válido.
+   */
+  onSubmit: (data: NewPartyData, name: string) => void | Promise<void>;
   /** Al modificar una parte: no se cambia entre cliente y no cliente. */
   fixedMode?: boolean;
   /** Nombre del cliente ya elegido (por ejemplo, al modificar una parte cliente). */
@@ -20,6 +23,14 @@ interface FormularioParteProps {
   apiProblems?: string[];
   enviando?: boolean;
   onCancel?: () => void;
+}
+
+/** Nombre visible: el del cliente elegido, o el de los datos de la parte no cliente. */
+function displayName(form: PartyForm, clientName: string | null): string {
+  if (form.modo === 'cliente') return clientName ?? '';
+  return form.tipoPersona === 'juridica'
+    ? form.razonSocial.trim()
+    : `${form.nombre.trim()} ${form.apellido.trim()}`;
 }
 
 const fieldClass =
@@ -54,7 +65,7 @@ export function FormularioParte({
     const found = validatePartyForm(value);
     setProblems(found);
     if (found.length > 0) return;
-    await onSubmit(buildPartyData(value));
+    await onSubmit(buildPartyData(value), displayName(value, chosenLabel ?? clientLabel));
   }
 
   const isClient = value.modo === 'cliente';

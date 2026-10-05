@@ -12,6 +12,7 @@ import {
   partyName,
   PROCEDURAL_ROLE_OPTIONS,
   RESPONSABLE_WARNING,
+  rejectionMessages,
   rolProcesalLabel,
 } from './presentacion-causas';
 
@@ -158,5 +159,25 @@ describe('presentación de causas', () => {
         needsResponsableWarning(causa({ activa: false, responsable: member({ activo: false }) })),
       ).toBe(false);
     });
+  });
+
+  it('describe cada parte o colaborador que no se guardó en el alta (RF-7)', () => {
+    expect(
+      rejectionMessages(
+        [
+          { indiceParte: 1, mensajes: ['El cliente está desactivado'] },
+          { indiceParte: 3, mensajes: ['El nombre es obligatorio', 'El apellido es obligatorio'] },
+          { colaboradorId: 2, mensajes: ['El integrante está desactivado'] },
+          { colaboradorId: 99, mensajes: ['Los colaboradores deben ser integrantes del estudio'] },
+        ],
+        ['Pedro López', 'Gómez, Ana · DNI 30.123.456'],
+        [member({ id: 2, nombre: 'Lucía', apellido: 'Benítez', activo: false })],
+      ),
+    ).toEqual([
+      'Parte 2 (Gómez, Ana · DNI 30.123.456): El cliente está desactivado',
+      'Parte 4: El nombre es obligatorio. El apellido es obligatorio',
+      'Colaborador Benítez, Lucía: El integrante está desactivado',
+      'Colaborador 99: Los colaboradores deben ser integrantes del estudio',
+    ]);
   });
 });

@@ -176,7 +176,7 @@ Reglas para todas las tareas:
   `PreguntaConfirmacion`.
   Hecho cuando: los tests verifican que muestra el mensaje y un botón por opción, que `NOMBRE_DE_CLIENTE` muestra un botón por cliente con su documento formateado, y que cada botón devuelve la respuesta elegida.
 
-- [ ] **T35 — Alta de causa** [RF-6, RF-7, RF-16, RF-19, RF-20]
+- [x] **T35 — Alta de causa** [RF-6, RF-7, RF-16, RF-19, RF-20]
   `PanelCausaNueva`.
   Hecho cuando: los tests con servicios simulados verifican:
   - El envío.
