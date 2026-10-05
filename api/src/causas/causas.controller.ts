@@ -10,6 +10,7 @@ import {
   Patch,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
@@ -19,9 +20,10 @@ import type {
   ResultadoAlta,
   ResultadoParte,
 } from './causa-detalle.js';
-import { CAUSAS_MESSAGES, CausasService } from './causas.service.js';
+import { CAUSAS_MESSAGES, type CausaPage, CausasService } from './causas.service.js';
 import { UpdateLawyersDto } from './dto/abogados.dto.js';
 import { CreateCausaDto } from './dto/crear-causa.dto.js';
+import { ListCausasQueryDto } from './dto/listar-causas.dto.js';
 import { UpdateCausaDto } from './dto/modificar-causa.dto.js';
 import { CreateParteDto, UpdateParteDto } from './dto/parte.dto.js';
 import { ReactivateCausaDto } from './dto/reactivar-causa.dto.js';
@@ -46,6 +48,11 @@ const ParteIdPipe = new ParseIntPipe({
 @Controller('panel/causas')
 export class CausasController {
   constructor(private readonly causas: CausasService) {}
+
+  @Get()
+  list(@CurrentUser() actor: Usuario, @Query() query: ListCausasQueryDto): Promise<CausaPage> {
+    return this.causas.list(actor, query);
+  }
 
   @Get('integrantes')
   listMembers(): Promise<IntegranteResumen[]> {

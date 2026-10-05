@@ -6,21 +6,32 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, type EntityManager, In, Not, QueryFailedError, Repository } from 'typeorm';
+import {
+  Brackets,
+  DataSource,
+  type EntityManager,
+  In,
+  Not,
+  QueryFailedError,
+  Repository,
+} from 'typeorm';
 import { Usuario } from '../usuarios/usuario.entity.js';
 import {
   type CausaDetalle,
+  type CausaResumen,
   type IntegranteResumen,
   type Rechazo,
   type ResultadoAlta,
   type ResultadoParte,
   toCausaDetalle,
+  toCausaResumen,
   toIntegranteResumen,
 } from './causa-detalle.js';
 import { Causa } from './causa.entity.js';
 import { Colaborador } from './colaborador.entity.js';
 import type { UpdateLawyersDto } from './dto/abogados.dto.js';
 import type { CreateCausaDto } from './dto/crear-causa.dto.js';
+import type { ListCausasQueryDto } from './dto/listar-causas.dto.js';
 import type { UpdateCausaDto } from './dto/modificar-causa.dto.js';
 import { principalCaseViolation } from './dto/reglas-causa.js';
 import { type CreateParteDto, type UpdateParteDto, validateCreateParte } from './dto/parte.dto.js';
@@ -53,6 +64,15 @@ export const CAUSAS_MESSAGES = {
 
 /** Índice único de la columna generada claveExpediente (migración de la spec 002). */
 const CASE_NUMBER_INDEX = 'UQ_causas_expediente_activo';
+
+const PAGE_SIZE = 20;
+
+export interface CausaPage {
+  items: CausaResumen[];
+  total: number;
+  pagina: number;
+  porPagina: number;
+}
 
 /** Relaciones que necesita toCausaDetalle. */
 const DETAIL_RELATIONS = {
@@ -117,6 +137,53 @@ export class CausasService {
       order: { apellido: 'ASC', nombre: 'ASC', id: 'ASC' },
     });
     return members.map(toIntegranteResumen);
+  }
+
+  /**
+   * Listado paginado de a 20 (RF-36 a RF-39): primero las causas modificadas más
+   * recientemente o, si nunca se modificaron, las de alta más reciente. Por defecto solo las
+   * activas. Los filtros se combinan entre sí. offset/limit (y no skip/take): la unión con el
+   * responsable es muchos a uno y no multiplica filas, y skip/take arma una subconsulta que
+   * no admite COALESCE en el ORDER BY.
+   */
+  async list(actor: Usuario, query: ListCausasQueryDto): Promise<CausaPage> {
+    const pagina = query.pagina ?? 1;
+    const builder = this.causas
+      .createQueryBuilder('causa')
+      .innerJoinAndSelect('causa.responsable', 'responsable');
+
+    if (query.incluirDesactivadas !== true) builder.andWhere('causa.activa = 1');
+    if (query.fuero !== undefined) builder.andWhere('causa.fuero = :fuero', { fuero: query.fuero });
+    if (query.estado !== undefined) {
+      builder.andWhere('causa.estado = :estado', { estado: query.estado });
+    }
+    if (query.responsableId !== undefined) {
+      builder.andWhere('causa.responsableId = :responsableId', {
+        responsableId: query.responsableId,
+      });
+    }
+    if (query.mias === true) {
+      builder.andWhere(
+        new Brackets((where) =>
+          where
+            .where('causa.responsableId = :actorId')
+            .orWhere(
+              'EXISTS (SELECT 1 FROM causa_colaboradores colaborador WHERE colaborador.causaId = causa.id AND colaborador.usuarioId = :actorId)',
+            ),
+        ),
+        { actorId: actor.id },
+      );
+    }
+    if (query.responsableDesactivado === true) builder.andWhere('responsable.activo = 0');
+
+    const [causas, total] = await builder
+      .orderBy('COALESCE(causa.modificadoEn, causa.creadoEn)', 'DESC')
+      .addOrderBy('causa.id', 'DESC')
+      .offset((pagina - 1) * PAGE_SIZE)
+      .limit(PAGE_SIZE)
+      .getManyAndCount();
+
+    return { items: causas.map(toCausaResumen), total, pagina, porPagina: PAGE_SIZE };
   }
 
   /** Consulta de una causa con sus partes, abogados y auditoría (RF-12). */

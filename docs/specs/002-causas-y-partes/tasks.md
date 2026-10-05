@@ -111,7 +111,7 @@ Reglas para todas las tareas:
   - Que vuelve al reactivar la causa.
   - Que un cliente desactivado sigue como parte y su vínculo vuelve al reactivar la cuenta.
 
-- [ ] **T22 — Listado y filtros** [RF-36, RF-38, RF-39]
+- [x] **T22 — Listado y filtros** [RF-36, RF-38, RF-39]
   `GET /` con paginado de a 20, orden por modificación o alta, y filtros `fuero`, `estado`, `responsableId`, `mias`, `responsableDesactivado` e `incluirDesactivadas`.
   Hecho cuando: los e2e verifican el orden, el paginado, cada filtro por separado y combinado, que por defecto no aparecen las desactivadas y que con `incluirDesactivadas` sí.
 
