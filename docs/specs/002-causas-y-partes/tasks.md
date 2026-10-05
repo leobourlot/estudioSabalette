@@ -172,7 +172,7 @@ Reglas para todas las tareas:
   `FormularioParte` (modo cliente o no cliente, campos según el tipo de persona) y `SelectorCliente`.
   Hecho cuando: los tests verifican los campos de cada modo y tipo de persona, los errores antes de enviar, y que el selector busca con `listUsers({ rol: 'cliente', activo: true, buscar })` y muestra el DNI o CUIT de cada resultado.
 
-- [ ] **T34 — Pregunta de confirmación** [RF-9, RF-16, RF-19, RF-43]
+- [x] **T34 — Pregunta de confirmación** [RF-9, RF-16, RF-19, RF-43]
   `PreguntaConfirmacion`.
   Hecho cuando: los tests verifican que muestra el mensaje y un botón por opción, que `NOMBRE_DE_CLIENTE` muestra un botón por cliente con su documento formateado, y que cada botón devuelve la respuesta elegida.
 
