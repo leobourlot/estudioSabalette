@@ -6,6 +6,7 @@ import {
   renderCausaPages,
   testCausaDetalle,
   testMember,
+  testParte,
 } from '../pruebas/causas-de-prueba';
 import type { CausaDetalle } from '../servicios/causas';
 import { ApiError } from '../servicios/cliente-http';
@@ -187,5 +188,31 @@ describe('PanelCausaDetalle: datos y edición (RF-11, RF-12, RF-33, RF-41)', () 
 
     expect((await screen.findByRole('alert')).textContent).toBe('No existe esa causa');
     expect(screen.getByRole('heading', { name: 'Causa', level: 1 })).toBeTruthy();
+  });
+
+  it('muestra las partes y, al volver a vincular un cliente, el aviso de causas como no cliente (RF-20, RF-24)', async () => {
+    const ana = testParte({
+      id: 5,
+      esCliente: true,
+      clienteId: 12,
+      clienteActivo: true,
+      nombre: 'Ana',
+      apellido: 'Gómez',
+    });
+    const relinkParty = vi.fn().mockResolvedValue({
+      causa: detail({ partes: [testParte(), ana] }),
+      causasComoNoCliente: [
+        { id: 3, caratula: 'López c/ Gómez s/ desalojo', numeroExpediente: null },
+      ],
+    });
+    const { user } = await openDetail(detail({ partesDesvinculadas: [ana] }), { relinkParty });
+
+    expect(screen.getByRole('table', { name: 'Partes vigentes' })).toBeTruthy();
+    await user.click(screen.getByRole('button', { name: 'Volver a vincular' }));
+
+    expect(await screen.findByRole('link', { name: 'López c/ Gómez s/ desalojo' })).toBeTruthy();
+    expect(
+      within(screen.getByRole('table', { name: 'Partes vigentes' })).getByText('Ana Gómez'),
+    ).toBeTruthy();
   });
 });

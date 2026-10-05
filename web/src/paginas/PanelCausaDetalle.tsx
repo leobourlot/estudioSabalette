@@ -4,6 +4,7 @@ import { type Avisos, AvisosResultado } from '../componentes/AvisosResultado';
 import { FormularioCausa } from '../componentes/FormularioCausa';
 import { PreguntaConfirmacion } from '../componentes/PreguntaConfirmacion';
 import { useCausasService } from '../componentes/ProveedorServicios';
+import { TablaPartes } from '../componentes/TablaPartes';
 import type { CausaDetalle } from '../servicios/causas';
 import { ApiError, errorMessage } from '../servicios/cliente-http';
 import {
@@ -39,7 +40,7 @@ function Dato({ label, children }: { label: string; children: ReactNode }) {
 }
 
 /**
- * Detalle de una causa (RF-12): datos, abogados, registro y edición de los datos (RF-11) con
+ * Detalle de una causa (RF-12): datos, abogados, partes, registro y edición de los datos (RF-11) con
  * la pregunta de expediente repetido (RF-9). Avisa si el responsable está desactivado
  * (RF-33). Una causa desactivada no se edita (RF-41). Muestra los avisos que deja el alta.
  */
@@ -56,6 +57,7 @@ export function PanelCausaDetalle() {
   const [question, setQuestion] = useState<PendingQuestion | null>(null);
   const [apiProblems, setApiProblems] = useState<string[]>([]);
   const [enviando, setEnviando] = useState(false);
+  const [actionAvisos, setActionAvisos] = useState<Avisos | null>(null);
 
   useEffect(() => {
     let active = true;
@@ -123,6 +125,7 @@ export function PanelCausaDetalle() {
     <main className="mx-auto max-w-5xl space-y-6 p-8">
       <h1 className="text-2xl font-semibold text-slate-800">{causa.caratula}</h1>
       {avisos && <AvisosResultado {...avisos} />}
+      {actionAvisos && <AvisosResultado {...actionAvisos} />}
 
       {!causa.activa && (
         <p className="rounded bg-slate-200 px-3 py-2 text-sm text-slate-800">
@@ -198,6 +201,14 @@ export function PanelCausaDetalle() {
           )}
         </section>
       )}
+
+      <TablaPartes
+        causa={causa}
+        onChanged={(updated, newAvisos) => {
+          setCausa(updated);
+          setActionAvisos(newAvisos ?? null);
+        }}
+      />
 
       <section aria-label="Registro" className="text-sm text-slate-600">
         {auditLines(causa).map((line) => (

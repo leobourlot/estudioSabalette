@@ -188,7 +188,7 @@ Reglas para todas las tareas:
   `PanelCausaDetalle`: datos, texto de incidente, auditoría con fechas en hora de Buenos Aires, edición con la pregunta de expediente y aviso de responsable desactivado.
   Hecho cuando: los tests verifican la muestra de los datos y la auditoría, la edición, la pregunta de expediente repetido, el aviso de responsable desactivado, y que en una causa desactivada no hay acciones de edición.
 
-- [ ] **T37 — Partes en el detalle** [RF-16 a RF-25]
+- [x] **T37 — Partes en el detalle** [RF-16 a RF-25]
   `TablaPartes` con partes vigentes y desvinculadas: agregar, modificar, desvincular y volver a vincular.
   Hecho cuando: los tests verifican cada acción con su llamada al servicio, las preguntas al agregar y al modificar, el aviso de causas como no cliente, y el mensaje al intentar desvincular la última parte.
 
