@@ -9,16 +9,22 @@ export const NETWORK_ERROR_MESSAGE =
 /** Rutas cuyo 401 no significa "sesión vencida": no se renueva ni se avisa. */
 const PATHS_WITHOUT_REFRESH = ['/sesion/ingresar', '/sesion/renovar'];
 
-/** Error de la API con su código y los mensajes en español que devolvió. */
+/**
+ * Error de la API con su código y los mensajes en español que devolvió. `details` tiene los
+ * demás campos del cuerpo, como el `codigo` de las preguntas de la spec 002 y los datos que
+ * necesitan para responderse (clienteId, clientes, indiceParte…).
+ */
 export class ApiError extends Error {
   readonly status: number;
   readonly messages: string[];
+  readonly details: Record<string, unknown>;
 
-  constructor(status: number, messages: string[]) {
+  constructor(status: number, messages: string[], details: Record<string, unknown> = {}) {
     super(messages[0] ?? 'Ocurrió un error inesperado');
     this.name = 'ApiError';
     this.status = status;
     this.messages = messages;
+    this.details = details;
   }
 }
 
@@ -101,13 +107,16 @@ export function createHttpClient({ baseUrl, fetch: fetchFn = fetch }: HttpClient
 
 async function toApiError(response: Response): Promise<ApiError> {
   try {
-    const body = (await response.json()) as { message?: string | string[] };
-    const messages = Array.isArray(body.message)
-      ? body.message
-      : body.message
-        ? [body.message]
-        : [];
-    return new ApiError(response.status, messages);
+    const body = (await response.json()) as Record<string, unknown> & {
+      message?: string | string[];
+    };
+    const { message } = body;
+    const messages = Array.isArray(message) ? message : message ? [message] : [];
+    // statusCode y error son del formato por defecto de NestJS y no aportan datos.
+    const details = Object.fromEntries(
+      Object.entries(body).filter(([key]) => !['message', 'statusCode', 'error'].includes(key)),
+    );
+    return new ApiError(response.status, messages, details);
   } catch {
     return new ApiError(response.status, []);
   }

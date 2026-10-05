@@ -91,6 +91,61 @@ describe('cliente HTTP', () => {
       expect(error).toMatchObject({ status: 409, messages, message: messages[0] });
     });
 
+    it('deja en details los datos extra de una pregunta de la API (spec 002, RF-9, RF-16, RF-19)', async () => {
+      const clientes = [{ id: 4, nombre: 'Juan', apellido: 'Pérez', dni: '20111111' }];
+      fetchMock.mockResolvedValueOnce(
+        jsonResponse(409, {
+          statusCode: 409,
+          message: 'Hay clientes del estudio con ese nombre. ¿Es alguno de ellos?',
+          codigo: 'NOMBRE_DE_CLIENTE',
+          clienteId: 7,
+          clienteActivo: true,
+          clientes,
+          parteId: 3,
+          indiceParte: 1,
+        }),
+      );
+
+      const error = await client.post('/panel/causas', {}).catch((caught: unknown) => caught);
+
+      expect(error).toMatchObject({
+        status: 409,
+        message: 'Hay clientes del estudio con ese nombre. ¿Es alguno de ellos?',
+      });
+      expect((error as ApiError).details).toEqual({
+        codigo: 'NOMBRE_DE_CLIENTE',
+        clienteId: 7,
+        clienteActivo: true,
+        clientes,
+        parteId: 3,
+        indiceParte: 1,
+      });
+    });
+
+    it('un error sin datos extra deja details vacío, sin statusCode, message ni error', async () => {
+      fetchMock.mockResolvedValueOnce(
+        jsonResponse(409, {
+          statusCode: 409,
+          message: 'La causa ya está activa',
+          error: 'Conflict',
+        }),
+      );
+
+      const error = await client
+        .post('/panel/causas/1/reactivar')
+        .catch((caught: unknown) => caught);
+
+      expect((error as ApiError).details).toEqual({});
+    });
+
+    it('un error sin cuerpo JSON deja details vacío', async () => {
+      fetchMock.mockResolvedValueOnce(new Response('Bad Gateway', { status: 502 }));
+
+      const error = await client.get('/panel/causas').catch((caught: unknown) => caught);
+
+      expect(error).toMatchObject({ status: 502, messages: [], details: {} });
+    });
+
     it('si no hay conexión, lanza ApiError con status 0 y un mensaje claro', async () => {
       fetchMock.mockRejectedValueOnce(new TypeError('Failed to fetch'));
 

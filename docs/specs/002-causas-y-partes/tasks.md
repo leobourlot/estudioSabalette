@@ -131,7 +131,7 @@ Reglas para todas las tareas:
 
 ## web
 
-- [ ] **T25 — Detalles en los errores de la API** [RF-9, RF-16, RF-19] **(modifica existente: `cliente-http.ts` y su test)**
+- [x] **T25 — Detalles en los errores de la API** [RF-9, RF-16, RF-19] **(modifica existente: `cliente-http.ts` y su test)**
   `ApiError.details` con los campos extra del cuerpo de error.
   Hecho cuando: los tests verifican que `codigo`, `clienteId`, `clienteActivo`, `clientes`, `parteId` e `indiceParte` llegan en `details`, y que los errores sin datos extra siguen funcionando como antes.
 
