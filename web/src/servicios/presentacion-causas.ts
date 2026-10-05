@@ -51,7 +51,9 @@ export function incidentLabel(
 }
 
 /** Nombre y apellido de una persona física, o razón social de una jurídica (RF-12). */
-export function partyName(parte: ParteDetalle): string {
+export function partyName(
+  parte: Pick<ParteDetalle, 'tipoPersona' | 'nombre' | 'apellido' | 'razonSocial'>,
+): string {
   if (parte.tipoPersona === 'juridica') return parte.razonSocial ?? '';
   return [parte.nombre, parte.apellido].filter(Boolean).join(' ');
 }

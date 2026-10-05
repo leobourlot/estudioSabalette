@@ -362,7 +362,7 @@ Las rutas quedan dentro de `DisenoPanel`, así que `RutaProtegida` aplica las mi
 
 ### Comportamiento de la interfaz
 - **Preguntas** (RF-9, RF-16, RF-19, RF-43):
-  - `formulario-causa.ts` expone `pendingQuestion(error)`, que traduce el `codigo` de un `ApiError` en una pregunta con sus opciones.
+  - `servicios/preguntas.ts` expone `pendingQuestion(error)`, que traduce el `codigo` de un `ApiError` en una pregunta con sus opciones, y `applyPartyAnswer(parte, opción)`, que aplica la respuesta elegida a una parte.
   - `PreguntaConfirmacion` la muestra, y la página repite la petición con la respuesta elegida:
     - `EXPEDIENTE_REPETIDO`: "Guardar igual" o "Cancelar".
     - `DOCUMENTO_DE_CLIENTE` con cliente activo: "Agregar como cliente" o "Agregar como no cliente".
@@ -458,7 +458,8 @@ Mismo esquema que la spec 001: migraciones sobre la base de tests, tablas vaciad
 
 ### web — Vitest
 - `servicios/causas.ts` con `fetch` simulado: rutas, métodos y armado del query string [RF-36 a RF-39].
-- `servicios/formulario-causa.ts`: validaciones con los mensajes de la API (incluidos los caracteres), recorte, cuerpos de parte cliente y no cliente, y `pendingQuestion` para cada `codigo` [RF-1, RF-4, RF-5, RF-9, RF-15, RF-16, RF-19, RF-43].
+- `servicios/formulario-causa.ts`: validaciones con los mensajes de la API (incluidos los caracteres), recorte, y cuerpos de causa y de parte cliente y no cliente [RF-1, RF-4, RF-5, RF-10, RF-15].
+- `servicios/preguntas.ts`: `pendingQuestion` para cada `codigo` y `applyPartyAnswer` [RF-9, RF-16, RF-19, RF-43].
 - `servicios/presentacion-causas.ts`: etiquetas, texto del incidente, nombre visible de cada tipo de parte y `needsResponsableWarning` [RF-1, RF-12, RF-33].
 - `cliente-http.ts`: `ApiError.details` con los campos extra del error [RF-9, RF-16, RF-19].
 - `PanelCausas` con servicios simulados: filtros (responsables solo activos), buscador, paginado, marca de incidente y "Mostrar desactivadas" [RF-36 a RF-39].

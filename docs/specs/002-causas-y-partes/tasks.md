@@ -147,8 +147,8 @@ Reglas para todas las tareas:
   `servicios/formulario-causa.ts`: validación de causa y de parte con los mensajes de la API y armado de los cuerpos.
   Hecho cuando: los tests verifican cada mensaje (incluidos los de caracteres y de incidente), el recorte, y los cuerpos de alta, de modificación y de parte cliente y no cliente.
 
-- [ ] **T29 — Preguntas** [RF-9, RF-16, RF-19, RF-43]
-  `pendingQuestion(error)` en `formulario-causa.ts`.
+- [x] **T29 — Preguntas** [RF-9, RF-16, RF-19, RF-43]
+  `servicios/preguntas.ts`: `pendingQuestion(error)` y `applyPartyAnswer(parte, opción)`.
   Hecho cuando: los tests verifican la pregunta y las opciones de cada `codigo` (incluido `DOCUMENTO_DE_CLIENTE` con cliente desactivado y `NOMBRE_DE_CLIENTE` con varios clientes), y que un error sin `codigo` no es una pregunta.
 
 - [ ] **T30 — Rutas y navegación** [RF-44] **(modifica existente: `RutasAplicacion.tsx`, `DisenoPanel.tsx` y `Disenos.test.tsx`)**
