@@ -7,10 +7,11 @@ import { CausasController } from './causas.controller.js';
 import { CausasService } from './causas.service.js';
 import { Colaborador } from './colaborador.entity.js';
 import { Parte } from './parte.entity.js';
+import { PartesService } from './partes.service.js';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Causa, Parte, Colaborador, Usuario, Cliente])],
   controllers: [CausasController],
-  providers: [CausasService],
+  providers: [CausasService, PartesService],
 })
 export class CausasModule {}

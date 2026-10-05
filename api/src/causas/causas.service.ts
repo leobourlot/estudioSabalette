@@ -20,11 +20,13 @@ import { Colaborador } from './colaborador.entity.js';
 import type { CreateCausaDto } from './dto/crear-causa.dto.js';
 import { type CreateParteDto, validateCreateParte } from './dto/parte.dto.js';
 import { Parte } from './parte.entity.js';
+import { PartesService } from './partes.service.js';
 import {
   type CaseKeyData,
   caseKey,
   checkLawyers,
   type LawyerAssignment,
+  type PartyIdentity,
   type RuleDecision,
 } from './reglas-causas.js';
 import { toSearchableCaseNumber } from './validadores/texto-causa.js';
@@ -86,6 +88,7 @@ export class CausasService {
     private readonly dataSource: DataSource,
     @InjectRepository(Causa) private readonly causas: Repository<Causa>,
     @InjectRepository(Usuario) private readonly users: Repository<Usuario>,
+    private readonly partes: PartesService,
   ) {}
 
   /**
@@ -118,9 +121,11 @@ export class CausasService {
     await this.assertLawyers({ responsableId: dto.responsableId, colaboradorIds }, null);
 
     const partes: CreateParteDto[] = [];
+    const identities: PartyIdentity[] = [];
     for (const raw of dto.partes) {
       const result = await validateCreateParte(raw);
       if (!result.parte) throw new BadRequestException(result.messages);
+      identities.push(await this.partes.resolveNewParty(result.parte, identities));
       partes.push(result.parte);
     }
 

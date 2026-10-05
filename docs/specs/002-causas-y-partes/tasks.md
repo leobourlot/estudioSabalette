@@ -56,7 +56,7 @@ Reglas para todas las tareas:
   `controlarExpediente`, pregunta `EXPEDIENTE_REPETIDO` con `confirmarExpedienteRepetido` y traducción del índice único al 409 de RF-8.
   Hecho cuando: los e2e verifican el rechazo en el mismo juzgado y fuero (con otras mayúsculas, tildes o espacios), la pregunta en otro juzgado y con una causa sin juzgado, el guardado al confirmar, el incidente sin rechazo ni pregunta, que "1234/2024" y "1234-2024" no son duplicados, y que de dos altas simultáneas con la misma clave solo una se guarda.
 
-- [ ] **T12 — Partes cliente en el alta** [RF-14, RF-17, RF-18]
+- [x] **T12 — Partes cliente en el alta** [RF-14, RF-17, RF-18]
   Validación de partes cliente: cliente inexistente, desactivado y personas repetidas dentro del mismo cuerpo.
   Hecho cuando: los e2e verifican el alta con una parte cliente, el 404 de un `clienteId` que no es cliente, y que un cliente desactivado o una persona repetida no se guardan.
 
