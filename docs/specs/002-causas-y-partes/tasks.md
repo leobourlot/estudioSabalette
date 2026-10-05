@@ -99,7 +99,7 @@ Reglas para todas las tareas:
   `PUT /:id/abogados`.
   Hecho cuando: los e2e verifican el reemplazo del responsable y de los colaboradores, el rechazo de un desactivado nuevo, la conservación de uno ya asignado, los repetidos, el 400 con un cliente como responsable, y que una cuenta desactivada después de asignada sigue figurando con `activo: false`.
 
-- [ ] **T20 — Desactivación y reactivación** [RF-40, RF-42, RF-43]
+- [x] **T20 — Desactivación y reactivación** [RF-40, RF-42, RF-43]
   `POST /:id/desactivar` y `/reactivar` con `confirmarExpedienteRepetido`.
   Hecho cuando: los e2e verifican la auditoría de las dos acciones, que repetir la desactivación no es un error, el 409 al reactivar una causa activa, y en la reactivación con número repetido primero la pregunta y, al confirmar, el rechazo por duplicado exacto o la reactivación si no lo es.
 

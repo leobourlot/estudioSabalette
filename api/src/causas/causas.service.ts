@@ -46,6 +46,7 @@ import { toSearchableCaseNumber } from './validadores/texto-causa.js';
 export const CAUSAS_MESSAGES = {
   notFound: 'No existe esa causa',
   deactivated: 'La causa está desactivada. Reactivala para modificarla',
+  alreadyActive: 'La causa ya está activa',
   duplicateCaseNumber: 'Ya existe una causa con ese número de expediente en ese juzgado y fuero',
   repeatedCaseNumber: 'Ya existe otra causa con ese número de expediente',
 } as const;
@@ -430,6 +431,67 @@ export class CausasService {
       );
     });
     return this.findOne(causaId);
+  }
+
+  /**
+   * Desactiva una causa (RF-40): reemplaza al borrado, la quita del listado normal y corta
+   * el vínculo de sus clientes (RF-27). La clave de expediente pasa a NULL sola. Repetirla
+   * no es un error ni cambia el registro.
+   */
+  async deactivate(actor: Usuario, id: number): Promise<void> {
+    const causa = await this.causas.findOne({ where: { id }, select: { id: true, activa: true } });
+    if (!causa) throw new NotFoundException(CAUSAS_MESSAGES.notFound);
+    if (!causa.activa) return;
+
+    await this.withLockedCausa(actor, id, async (manager) => {
+      await manager.update(Causa, id, {
+        activa: false,
+        desactivadaPorId: actor.id,
+        desactivadaEn: new Date(),
+      });
+    });
+  }
+
+  /**
+   * Reactiva una causa (RF-42): sus clientes vigentes vuelven a estar vinculados. Si el
+   * número coincide con el de otra causa activa, primero pregunta (RF-43); confirmada la
+   * pregunta, un duplicado exacto en el mismo juzgado y fuero se rechaza igual (RF-8).
+   */
+  async reactivate(actor: Usuario, id: number, confirmed: boolean): Promise<void> {
+    await this.withLockedCausa(
+      actor,
+      id,
+      async (manager, causa) => {
+        if (causa.activa) throw new ConflictException(CAUSAS_MESSAGES.alreadyActive);
+        await this.checkReactivationCaseNumber(causa, confirmed);
+        await manager.update(Causa, id, {
+          activa: true,
+          reactivadaPorId: actor.id,
+          reactivadaEn: new Date(),
+        });
+      },
+      { allowDeactivated: true },
+    );
+  }
+
+  private async checkReactivationCaseNumber(causa: Causa, confirmed: boolean): Promise<void> {
+    if (causa.numeroExpediente === null || causa.esIncidente) return;
+    const repeated = await this.causas.exists({
+      where: {
+        numeroExpediente: causa.numeroExpediente,
+        activa: true,
+        esIncidente: false,
+        id: Not(causa.id),
+      },
+    });
+    if (!repeated) return;
+    if (!confirmed) {
+      throw new QuestionException(
+        QUESTION_CODES.repeatedCaseNumber,
+        CAUSAS_MESSAGES.repeatedCaseNumber,
+      );
+    }
+    await this.checkCaseNumber(causa, causa.id, true);
   }
 
   /** Detalle de la causa y, si se vinculó un cliente, el aviso de RF-20. */

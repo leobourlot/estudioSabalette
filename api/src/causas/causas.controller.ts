@@ -24,6 +24,7 @@ import { UpdateLawyersDto } from './dto/abogados.dto.js';
 import { CreateCausaDto } from './dto/crear-causa.dto.js';
 import { UpdateCausaDto } from './dto/modificar-causa.dto.js';
 import { CreateParteDto, UpdateParteDto } from './dto/parte.dto.js';
+import { ReactivateCausaDto } from './dto/reactivar-causa.dto.js';
 import { PARTES_MESSAGES } from './partes.service.js';
 
 /** Un id que no es un número no puede ser una causa existente: 404, como cualquier otro. */
@@ -116,5 +117,21 @@ export class CausasController {
     @Body() body: UpdateLawyersDto,
   ): Promise<CausaDetalle> {
     return this.causas.updateLawyers(actor, id, body);
+  }
+
+  @Post(':id/desactivar')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  deactivate(@CurrentUser() actor: Usuario, @Param('id', CausaIdPipe) id: number): Promise<void> {
+    return this.causas.deactivate(actor, id);
+  }
+
+  @Post(':id/reactivar')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  reactivate(
+    @CurrentUser() actor: Usuario,
+    @Param('id', CausaIdPipe) id: number,
+    @Body() body: ReactivateCausaDto,
+  ): Promise<void> {
+    return this.causas.reactivate(actor, id, body.confirmarExpedienteRepetido === true);
   }
 }
