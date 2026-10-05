@@ -126,25 +126,28 @@ describe('POST /api/panel/causas: partes cliente', () => {
   it.each([
     ['un integrante', () => lawyer.id],
     ['un id inexistente', () => 99999],
-  ])('responde 404 si el cliente es %s', async (_case, clienteId) => {
+  ])('no vincula como cliente a %s', async (_case, clienteId) => {
     const before = await countCausas();
 
-    const response = await post([{ rol: 'actor', clienteId: clienteId() }]).expect(404);
+    // Única parte rechazada: no queda ninguna válida y no se crea la causa (RF-7).
+    const response = await post([{ rol: 'actor', clienteId: clienteId() }]).expect(400);
 
-    expect(response.body.message).toBe('No existe ese cliente');
+    expect(response.body.message).toEqual(['Parte 1: No existe ese cliente']);
     expect(await countCausas()).toBe(before);
   });
 
   it('no vincula a un cliente desactivado (RF-17)', async () => {
-    const before = await countCausas();
-
     const response = await post([
       { rol: 'actor', tipoPersona: 'fisica', nombre: 'Pedro', apellido: 'López' },
       { rol: 'demandado', clienteId: inactive.id },
-    ]).expect(409);
+    ]).expect(201);
 
-    expect(response.body.message).toBe('El cliente está desactivado');
-    expect(await countCausas()).toBe(before);
+    expect(response.body.causa.partes).toEqual([
+      expect.objectContaining({ esCliente: false, nombre: 'Pedro' }),
+    ]);
+    expect(response.body.rechazos).toEqual([
+      { indiceParte: 1, mensajes: ['El cliente está desactivado'] },
+    ]);
   });
 
   it.each<[string, () => object[]]>([
@@ -194,12 +197,10 @@ describe('POST /api/panel/causas: partes cliente', () => {
       ],
     ],
   ])('no repite personas en la misma causa: %s (RF-18)', async (_case, partes) => {
-    const before = await countCausas();
+    const response = await post(partes()).expect(201);
 
-    const response = await post(partes()).expect(409);
-
-    expect(response.body.message).toBe(REPEATED_PERSON);
-    expect(await countCausas()).toBe(before);
+    expect(response.body.causa.partes).toHaveLength(1);
+    expect(response.body.rechazos).toEqual([{ indiceParte: 1, mensajes: [REPEATED_PERSON] }]);
   });
 
   it('dos partes no cliente sin documento no se consideran la misma persona', async () => {

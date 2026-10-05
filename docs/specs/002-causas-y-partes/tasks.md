@@ -60,7 +60,7 @@ Reglas para todas las tareas:
   Validación de partes cliente: cliente inexistente, desactivado y personas repetidas dentro del mismo cuerpo.
   Hecho cuando: los e2e verifican el alta con una parte cliente, el 404 de un `clienteId` que no es cliente, y que un cliente desactivado o una persona repetida no se guardan.
 
-- [ ] **T13 — Alta parcial** [RF-7]
+- [x] **T13 — Alta parcial** [RF-7]
   Rechazos por parte y por colaborador en `ResultadoAlta`; 400 si no queda ninguna parte válida.
   Hecho cuando: los e2e verifican que una parte mal cargada, una parte con cliente desactivado y un colaborador desactivado no se guardan pero la causa sí, que la respuesta informa cada rechazo con su índice o id y sus mensajes, y que sin ninguna parte válida responde 400 con los motivos.
 

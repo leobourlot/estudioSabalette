@@ -11,6 +11,7 @@ import { Usuario } from '../usuarios/usuario.entity.js';
 import {
   type CausaDetalle,
   type IntegranteResumen,
+  type Rechazo,
   type ResultadoAlta,
   toCausaDetalle,
   toIntegranteResumen,
@@ -23,11 +24,15 @@ import { Parte } from './parte.entity.js';
 import { PartesService } from './partes.service.js';
 import {
   type CaseKeyData,
+  CAUSAS_RULE_MESSAGES,
   caseKey,
+  checkCollaborator,
   checkLawyers,
+  checkResponsible,
   type LawyerAssignment,
   type PartyIdentity,
   type RuleDecision,
+  type StaffMember,
 } from './reglas-causas.js';
 import { toSearchableCaseNumber } from './validadores/texto-causa.js';
 
@@ -58,6 +63,14 @@ const DETAIL_RELATIONS = {
   desactivadaPor: true,
   reactivadaPor: true,
 } as const;
+
+/**
+ * Rechazo de una parte que el alta informa en lugar de cortar (RF-7): cliente inexistente,
+ * cliente desactivado o persona repetida.
+ */
+function isPartyRejection(error: unknown): error is HttpException {
+  return error instanceof NotFoundException || error instanceof ConflictException;
+}
 
 /** Convierte una decisión de reglas-causas en la respuesta HTTP correspondiente. */
 function throwIfDenied(decision: RuleDecision): void {
@@ -114,19 +127,26 @@ export class CausasService {
 
   /**
    * Alta de una causa con su responsable, colaboradores y partes, en una transacción, con
-   * estado En trámite por defecto y registro de quién la creó (RF-2, RF-6, RF-29).
+   * estado En trámite por defecto y registro de quién la creó (RF-2, RF-6, RF-29). El
+   * responsable es obligatorio: si no es válido, no se crea la causa. Las partes y los
+   * colaboradores rechazados no se guardan y se informan en `rechazos`, siempre que quede
+   * al menos una parte válida (RF-7).
    */
   async create(actor: Usuario, dto: CreateCausaDto): Promise<ResultadoAlta> {
-    const colaboradorIds = dto.colaboradorIds ?? [];
-    await this.assertLawyers({ responsableId: dto.responsableId, colaboradorIds }, null);
+    const members = await this.loadMembers([dto.responsableId, ...(dto.colaboradorIds ?? [])]);
+    throwIfDenied(checkResponsible(dto.responsableId, members.get(dto.responsableId), null));
+    const collaborators = this.validateNewCollaborators(dto, members);
+    const parties = await this.validateNewParties(dto.partes);
 
-    const partes: CreateParteDto[] = [];
-    const identities: PartyIdentity[] = [];
-    for (const raw of dto.partes) {
-      const result = await validateCreateParte(raw);
-      if (!result.parte) throw new BadRequestException(result.messages);
-      identities.push(await this.partes.resolveNewParty(result.parte, identities));
-      partes.push(result.parte);
+    const rechazos = [...parties.rechazos, ...collaborators.rechazos];
+    if (parties.valid.length === 0) {
+      throw new BadRequestException({
+        statusCode: 400,
+        message: parties.rechazos.flatMap(({ indiceParte, mensajes }) =>
+          mensajes.map((mensaje) => `Parte ${indiceParte! + 1}: ${mensaje}`),
+        ),
+        rechazos: parties.rechazos,
+      });
     }
 
     const numeroExpediente = dto.numeroExpediente ?? null;
@@ -157,16 +177,64 @@ export class CausasService {
       });
       await manager.save(
         Parte,
-        partes.map((parte) => toParteRow(parte, causa.id, actor.id)),
+        parties.valid.map((parte) => toParteRow(parte, causa.id, actor.id)),
       );
       await manager.save(
         Colaborador,
-        colaboradorIds.map((usuarioId) => ({ causaId: causa.id, usuarioId })),
+        collaborators.valid.map((usuarioId) => ({ causaId: causa.id, usuarioId })),
       );
       return causa.id;
     });
 
-    return { causa: await this.findOne(id), rechazos: [], causasComoNoCliente: [] };
+    return { causa: await this.findOne(id), rechazos, causasComoNoCliente: [] };
+  }
+
+  /**
+   * Colaboradores del alta, de a uno (RF-7, RF-30, RF-31): se rechazan los que no son
+   * integrantes, los desactivados, el responsable y los repetidos.
+   */
+  private validateNewCollaborators(
+    dto: CreateCausaDto,
+    members: ReadonlyMap<number, StaffMember>,
+  ): { valid: number[]; rechazos: Rechazo[] } {
+    const valid: number[] = [];
+    const rechazos: Rechazo[] = [];
+    for (const id of dto.colaboradorIds ?? []) {
+      const alreadyIntervenes = id === dto.responsableId || valid.includes(id);
+      const decision = alreadyIntervenes
+        ? { message: CAUSAS_RULE_MESSAGES.memberAlreadyIntervenes }
+        : checkCollaborator(id, members.get(id), null);
+      if (decision) rechazos.push({ colaboradorId: id, mensajes: [decision.message] });
+      else valid.push(id);
+    }
+    return { valid, rechazos };
+  }
+
+  /**
+   * Partes del alta, de a una (RF-7): primero su formato y después los controles de
+   * PartesService. Una parte rechazada no se guarda ni cuenta para detectar repetidas.
+   */
+  private async validateNewParties(
+    rawParties: readonly unknown[],
+  ): Promise<{ valid: CreateParteDto[]; rechazos: Rechazo[] }> {
+    const valid: CreateParteDto[] = [];
+    const identities: PartyIdentity[] = [];
+    const rechazos: Rechazo[] = [];
+    for (const [indiceParte, raw] of rawParties.entries()) {
+      const result = await validateCreateParte(raw);
+      if (!result.parte) {
+        rechazos.push({ indiceParte, mensajes: result.messages });
+        continue;
+      }
+      try {
+        identities.push(await this.partes.resolveNewParty(result.parte, identities));
+        valid.push(result.parte);
+      } catch (error) {
+        if (!isPartyRejection(error)) throw error;
+        rechazos.push({ indiceParte, mensajes: [error.message] });
+      }
+    }
+    return { valid, rechazos };
   }
 
   /**
@@ -234,10 +302,13 @@ export class CausasService {
     next: LawyerAssignment,
     current: LawyerAssignment | null,
   ): Promise<void> {
-    const ids = [next.responsableId, ...next.colaboradorIds];
+    const members = await this.loadMembers([next.responsableId, ...next.colaboradorIds]);
+    throwIfDenied(checkLawyers(next, members, current));
+  }
+
+  /** Usuarios por id; un id ausente del mapa no existe. */
+  private async loadMembers(ids: number[]): Promise<Map<number, Usuario>> {
     const members = await this.users.find({ where: { id: In(ids) } });
-    throwIfDenied(
-      checkLawyers(next, new Map(members.map((member) => [member.id, member])), current),
-    );
+    return new Map(members.map((member) => [member.id, member]));
   }
 }
