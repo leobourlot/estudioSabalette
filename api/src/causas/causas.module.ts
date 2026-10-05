@@ -8,10 +8,13 @@ import { CausasService } from './causas.service.js';
 import { Colaborador } from './colaborador.entity.js';
 import { Parte } from './parte.entity.js';
 import { PartesService } from './partes.service.js';
+import { ClientLinkService } from './vinculo-cliente.service.js';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Causa, Parte, Colaborador, Usuario, Cliente])],
   controllers: [CausasController],
-  providers: [CausasService, PartesService],
+  providers: [CausasService, PartesService, ClientLinkService],
+  // La spec 004 filtra lo que ve cada cliente con este service.
+  exports: [ClientLinkService],
 })
 export class CausasModule {}

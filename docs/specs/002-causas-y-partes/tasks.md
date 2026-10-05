@@ -103,7 +103,7 @@ Reglas para todas las tareas:
   `POST /:id/desactivar` y `/reactivar` con `confirmarExpedienteRepetido`.
   Hecho cuando: los e2e verifican la auditoría de las dos acciones, que repetir la desactivación no es un error, el 409 al reactivar una causa activa, y en la reactivación con número repetido primero la pregunta y, al confirmar, el rechazo por duplicado exacto o la reactivación si no lo es.
 
-- [ ] **T21 — Vínculo cliente-causa** [RF-26 a RF-28, RF-42]
+- [x] **T21 — Vínculo cliente-causa** [RF-26 a RF-28, RF-42]
   `vinculo-cliente.service.ts` con `linkedCausaIds` e `isLinked`.
   Hecho cuando: los e2e sobre la base de tests verifican:
   - El vínculo con la causa en cada estado, incluidas Archivada y Finalizada.
