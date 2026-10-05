@@ -19,6 +19,7 @@ import {
 } from './causa-detalle.js';
 import { Causa } from './causa.entity.js';
 import { Colaborador } from './colaborador.entity.js';
+import type { UpdateLawyersDto } from './dto/abogados.dto.js';
 import type { CreateCausaDto } from './dto/crear-causa.dto.js';
 import type { UpdateCausaDto } from './dto/modificar-causa.dto.js';
 import { principalCaseViolation } from './dto/reglas-causa.js';
@@ -397,6 +398,38 @@ export class CausasService {
       return resolved;
     });
     return this.partyResult(causaId, identity);
+  }
+
+  /**
+   * Reemplaza al responsable y a los colaboradores (RF-29 a RF-34). Un integrante
+   * desactivado solo se conserva en el lugar que ya ocupaba (RF-30, RF-32); los
+   * colaboradores que no vienen dejan de figurar, sin historial (RF-34).
+   */
+  async updateLawyers(
+    actor: Usuario,
+    causaId: number,
+    dto: UpdateLawyersDto,
+  ): Promise<CausaDetalle> {
+    await this.withLockedCausa(actor, causaId, async (manager, causa) => {
+      const currentCollaborators = await manager.find(Colaborador, { where: { causaId } });
+      const current: LawyerAssignment = {
+        responsableId: causa.responsableId,
+        colaboradorIds: currentCollaborators.map((colaborador) => colaborador.usuarioId),
+      };
+      await this.assertLawyers(dto, current);
+
+      await manager.update(Causa, causaId, { responsableId: dto.responsableId });
+      const removed = current.colaboradorIds.filter((id) => !dto.colaboradorIds.includes(id));
+      if (removed.length > 0) {
+        await manager.delete(Colaborador, { causaId, usuarioId: In(removed) });
+      }
+      const added = dto.colaboradorIds.filter((id) => !current.colaboradorIds.includes(id));
+      await manager.save(
+        Colaborador,
+        added.map((usuarioId) => ({ causaId, usuarioId })),
+      );
+    });
+    return this.findOne(causaId);
   }
 
   /** Detalle de la causa y, si se vinculó un cliente, el aviso de RF-20. */

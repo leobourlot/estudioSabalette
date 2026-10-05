@@ -20,6 +20,7 @@ import type {
   ResultadoParte,
 } from './causa-detalle.js';
 import { CAUSAS_MESSAGES, CausasService } from './causas.service.js';
+import { UpdateLawyersDto } from './dto/abogados.dto.js';
 import { CreateCausaDto } from './dto/crear-causa.dto.js';
 import { UpdateCausaDto } from './dto/modificar-causa.dto.js';
 import { CreateParteDto, UpdateParteDto } from './dto/parte.dto.js';
@@ -106,5 +107,14 @@ export class CausasController {
     @Param('parteId', ParteIdPipe) parteId: number,
   ): Promise<ResultadoParte> {
     return this.causas.relinkParty(actor, id, parteId);
+  }
+
+  @Put(':id/abogados')
+  updateLawyers(
+    @CurrentUser() actor: Usuario,
+    @Param('id', CausaIdPipe) id: number,
+    @Body() body: UpdateLawyersDto,
+  ): Promise<CausaDetalle> {
+    return this.causas.updateLawyers(actor, id, body);
   }
 }

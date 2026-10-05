@@ -95,7 +95,7 @@ Reglas para todas las tareas:
   - La revinculación con los controles de cliente desactivado y persona repetida.
   - El aviso de causas como no cliente al revincular un cliente.
 
-- [ ] **T19 — Abogados** [RF-29 a RF-34]
+- [x] **T19 — Abogados** [RF-29 a RF-34]
   `PUT /:id/abogados`.
   Hecho cuando: los e2e verifican el reemplazo del responsable y de los colaboradores, el rechazo de un desactivado nuevo, la conservación de uno ya asignado, los repetidos, el 400 con un cliente como responsable, y que una cuenta desactivada después de asignada sigue figurando con `activo: false`.
 
