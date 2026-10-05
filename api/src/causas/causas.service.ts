@@ -13,6 +13,7 @@ import {
   type IntegranteResumen,
   type Rechazo,
   type ResultadoAlta,
+  type ResultadoParte,
   toCausaDetalle,
   toIntegranteResumen,
 } from './causa-detalle.js';
@@ -21,9 +22,9 @@ import { Colaborador } from './colaborador.entity.js';
 import type { CreateCausaDto } from './dto/crear-causa.dto.js';
 import type { UpdateCausaDto } from './dto/modificar-causa.dto.js';
 import { principalCaseViolation } from './dto/reglas-causa.js';
-import { type CreateParteDto, validateCreateParte } from './dto/parte.dto.js';
+import { type CreateParteDto, type UpdateParteDto, validateCreateParte } from './dto/parte.dto.js';
 import { Parte } from './parte.entity.js';
-import { PartesService } from './partes.service.js';
+import { type ActiveParty, PARTES_MESSAGES, PartesService } from './partes.service.js';
 import { QUESTION_CODES, QuestionException } from './preguntas.js';
 import {
   type CaseKeyData,
@@ -34,6 +35,7 @@ import {
   checkResponsible,
   type LawyerAssignment,
   type PartyIdentity,
+  partyIdentity,
   type RuleDecision,
   type StaffMember,
 } from './reglas-causas.js';
@@ -74,7 +76,7 @@ function throwIfDenied(decision: RuleDecision): void {
 }
 
 /** Fila de una parte nueva: una parte cliente no guarda datos propios (RF-14, RF-15). */
-function toParteRow(parte: CreateParteDto, causaId: number, actorId: number) {
+function toParteRow(parte: CreateParteDto | UpdateParteDto, causaId: number, actorId: number) {
   const isClient = parte.clienteId !== undefined;
   return {
     causaId,
@@ -283,6 +285,103 @@ export class CausasService {
       });
     });
     return this.findOne(id);
+  }
+
+  /** Agrega una parte a una causa activa, con los controles y preguntas de RF-16 a RF-19. */
+  async addParty(actor: Usuario, causaId: number, dto: CreateParteDto): Promise<ResultadoParte> {
+    const identity = await this.withLockedCausa(actor, causaId, async (manager) => {
+      const active = await this.loadActiveParties(manager, causaId);
+      const resolved = await this.partes.resolveNewParty(dto, active);
+      await manager.save(Parte, toParteRow(dto, causaId, actor.id));
+      return resolved;
+    });
+    return this.partyResult(causaId, identity);
+  }
+
+  /**
+   * Modifica una parte vigente (RF-16, RF-21, RF-25), en una de tres formas:
+   * - Solo el rol, en cualquier parte.
+   * - Los datos completos de una parte no cliente (con su tipo de persona).
+   * - { rol, clienteId }: convierte una parte no cliente en parte cliente.
+   * Los datos de una parte cliente solo se modifican desde su cuenta (spec 001).
+   */
+  async updateParty(
+    actor: Usuario,
+    causaId: number,
+    parteId: number,
+    dto: UpdateParteDto,
+  ): Promise<ResultadoParte> {
+    const identity = await this.withLockedCausa(actor, causaId, async (manager) => {
+      const parte = await manager.findOne(Parte, {
+        where: { id: parteId, causaId, vigente: true },
+      });
+      if (!parte) throw new NotFoundException(PARTES_MESSAGES.partyNotFound);
+      const audit = { modificadoPorId: actor.id, modificadoEn: new Date() };
+
+      const changesIdentity = dto.clienteId !== undefined || dto.tipoPersona !== undefined;
+      if (!changesIdentity) {
+        await manager.update(Parte, parte.id, { rol: dto.rol, ...audit });
+        return null;
+      }
+      if (parte.clienteId !== null) {
+        throw new BadRequestException(
+          dto.clienteId !== undefined
+            ? PARTES_MESSAGES.clientPartyChange
+            : PARTES_MESSAGES.clientPartyData,
+        );
+      }
+
+      const others = await this.loadActiveParties(manager, causaId, parte.id);
+      const resolved = await this.partes.resolveNewParty(dto, others);
+      const { rol, clienteId, tipoPersona, nombre, apellido, razonSocial, dni, cuit } = toParteRow(
+        dto,
+        causaId,
+        actor.id,
+      );
+      await manager.update(Parte, parte.id, {
+        rol,
+        clienteId,
+        tipoPersona,
+        nombre,
+        apellido,
+        razonSocial,
+        dni,
+        cuit,
+        ...audit,
+      });
+      return resolved;
+    });
+    return this.partyResult(causaId, identity);
+  }
+
+  /** Detalle de la causa y, si se vinculó un cliente, el aviso de RF-20. */
+  private async partyResult(
+    causaId: number,
+    linked: PartyIdentity | null,
+  ): Promise<ResultadoParte> {
+    const isClient = linked !== null && linked.clienteId !== null;
+    return {
+      causa: await this.findOne(causaId),
+      causasComoNoCliente: isClient
+        ? await this.partes.findCasesAsNonClient([linked], causaId)
+        : [],
+    };
+  }
+
+  /** Partes vigentes de la causa con su identidad resuelta, salvo exceptParteId. */
+  private async loadActiveParties(
+    manager: EntityManager,
+    causaId: number,
+    exceptParteId?: number,
+  ): Promise<ActiveParty[]> {
+    const parties = await manager.find(Parte, {
+      where: { causaId, vigente: true },
+      relations: { cliente: { usuario: true } },
+      order: { id: 'ASC' },
+    });
+    return parties
+      .filter((parte) => parte.id !== exceptParteId)
+      .map((parte) => ({ ...partyIdentity(parte), parteId: parte.id }));
   }
 
   /**

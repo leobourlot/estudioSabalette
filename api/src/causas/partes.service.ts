@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, IsNull, Not, Repository } from 'typeorm';
 import { Cliente } from '../usuarios/cliente.entity.js';
 import { type CausaReferencia, toCausaReferencia } from './causa-detalle.js';
-import type { CreateParteDto } from './dto/parte.dto.js';
+import type { CreateParteDto, UpdateParteDto } from './dto/parte.dto.js';
 import { Parte } from './parte.entity.js';
 import { QUESTION_CODES, QuestionException } from './preguntas.js';
 import {
@@ -18,6 +18,9 @@ export const PARTES_MESSAGES = {
   clientNotFound: 'No existe ese cliente',
   clientDeactivated: 'El cliente está desactivado',
   repeatedPerson: 'Esa persona ya es parte de la causa',
+  partyNotFound: 'No existe esa parte',
+  clientPartyData: 'Los datos de una parte cliente se modifican desde su cuenta',
+  clientPartyChange: 'Una parte cliente no se puede cambiar por otro cliente',
   clientDocument: 'Ese DNI o CUIT pertenece a un cliente del estudio',
   deactivatedClientDocument: 'Ese DNI o CUIT pertenece a un cliente desactivado',
   repeatedName: 'Ya hay una parte con ese nombre en la causa. ¿Es la misma persona?',
@@ -97,7 +100,7 @@ export class PartesService {
    * Cada pregunta se saltea si el cuerpo ya trae la respuesta.
    */
   async resolveNewParty(
-    parte: CreateParteDto,
+    parte: CreateParteDto | UpdateParteDto,
     activeParties: readonly ActiveParty[],
   ): Promise<PartyIdentity> {
     const identity = await this.identityOf(parte);
@@ -127,7 +130,7 @@ export class PartesService {
     return identity;
   }
 
-  private async identityOf(parte: CreateParteDto): Promise<PartyIdentity> {
+  private async identityOf(parte: CreateParteDto | UpdateParteDto): Promise<PartyIdentity> {
     if (parte.clienteId === undefined) {
       return partyIdentity({
         clienteId: null,

@@ -163,3 +163,9 @@ export interface ResultadoAlta {
   rechazos: Rechazo[];
   causasComoNoCliente: CausaReferencia[];
 }
+
+/** Respuesta al agregar, modificar o volver a vincular una parte: la causa y el aviso de RF-20. */
+export interface ResultadoParte {
+  causa: CausaDetalle;
+  causasComoNoCliente: CausaReferencia[];
+}

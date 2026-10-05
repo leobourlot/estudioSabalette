@@ -79,7 +79,7 @@ Reglas para todas las tareas:
   Función de transacción con `SELECT … FOR UPDATE` sobre la causa, rechazo sobre causas desactivadas y registro de modificación. `PATCH /:id` con nuevo control de expediente cuando cambian número, juzgado, fuero o la marca de incidente.
   Hecho cuando: los e2e verifican la edición con su auditoría, que quitar la marca de incidente borra el expediente principal, que el control de expediente se repite al cambiar el número, que el DTO no acepta un campo para activar o desactivar, y el 409 sobre una causa desactivada.
 
-- [ ] **T17 — Agregar y modificar partes** [RF-2, RF-13 a RF-21, RF-25]
+- [x] **T17 — Agregar y modificar partes** [RF-2, RF-13 a RF-21, RF-25]
   `POST /:id/partes` y `PUT /:id/partes/:parteId` (incluida la conversión en parte cliente), con `ResultadoParte`.
   Hecho cuando: los e2e verifican:
   - El alta de partes cliente y no cliente, con sus preguntas y su aviso.

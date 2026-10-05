@@ -7,17 +7,30 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
-import type { CausaDetalle, IntegranteResumen, ResultadoAlta } from './causa-detalle.js';
+import type {
+  CausaDetalle,
+  IntegranteResumen,
+  ResultadoAlta,
+  ResultadoParte,
+} from './causa-detalle.js';
 import { CAUSAS_MESSAGES, CausasService } from './causas.service.js';
 import { CreateCausaDto } from './dto/crear-causa.dto.js';
 import { UpdateCausaDto } from './dto/modificar-causa.dto.js';
+import { CreateParteDto, UpdateParteDto } from './dto/parte.dto.js';
+import { PARTES_MESSAGES } from './partes.service.js';
 
 /** Un id que no es un número no puede ser una causa existente: 404, como cualquier otro. */
 const CausaIdPipe = new ParseIntPipe({
   exceptionFactory: () => new NotFoundException(CAUSAS_MESSAGES.notFound),
+});
+
+/** Una parte con id no numérico no existe en la causa (RF-25). */
+const ParteIdPipe = new ParseIntPipe({
+  exceptionFactory: () => new NotFoundException(PARTES_MESSAGES.partyNotFound),
 });
 
 /**
@@ -52,5 +65,24 @@ export class CausasController {
     @Body() body: UpdateCausaDto,
   ): Promise<CausaDetalle> {
     return this.causas.update(actor, id, body);
+  }
+
+  @Post(':id/partes')
+  addParty(
+    @CurrentUser() actor: Usuario,
+    @Param('id', CausaIdPipe) id: number,
+    @Body() body: CreateParteDto,
+  ): Promise<ResultadoParte> {
+    return this.causas.addParty(actor, id, body);
+  }
+
+  @Put(':id/partes/:parteId')
+  updateParty(
+    @CurrentUser() actor: Usuario,
+    @Param('id', CausaIdPipe) id: number,
+    @Param('parteId', ParteIdPipe) parteId: number,
+    @Body() body: UpdateParteDto,
+  ): Promise<ResultadoParte> {
+    return this.causas.updateParty(actor, id, parteId, body);
   }
 }
