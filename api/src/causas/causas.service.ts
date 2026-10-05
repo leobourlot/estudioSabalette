@@ -14,8 +14,10 @@ import {
   Not,
   QueryFailedError,
   Repository,
+  type SelectQueryBuilder,
 } from 'typeorm';
 import { Usuario } from '../usuarios/usuario.entity.js';
+import { normalizeDocumentNumber } from '../usuarios/validadores/normalizar.js';
 import {
   type CausaDetalle,
   type CausaResumen,
@@ -91,6 +93,39 @@ const DETAIL_RELATIONS = {
  */
 function isPartyRejection(error: unknown): error is HttpException {
   return error instanceof NotFoundException || error instanceof ConflictException;
+}
+
+/** Escapa los comodines de LIKE para que la búsqueda los trate como texto. */
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, (char) => `\\${char}`);
+
+/**
+ * Partes vigentes de la causa que coinciden con la búsqueda (RF-37): nombre, apellido,
+ * ambos en los dos órdenes o razón social de la parte no cliente; los mismos datos de la
+ * cuenta de una parte cliente (la razón social, no el contacto, en una persona jurídica); y,
+ * si el texto son dígitos, el DNI o el CUIT. Con EXISTS una causa aparece una sola vez.
+ */
+function partySearchSql(searchDocuments: boolean): string {
+  const names = (alias: string) =>
+    [
+      `${alias}.nombre LIKE :text`,
+      `${alias}.apellido LIKE :text`,
+      `CONCAT_WS(' ', ${alias}.nombre, ${alias}.apellido) LIKE :text`,
+      `CONCAT_WS(' ', ${alias}.apellido, ${alias}.nombre) LIKE :text`,
+    ].join(' OR ');
+  const documents = searchDocuments
+    ? ` OR parte.dni LIKE :document OR parte.cuit LIKE :document
+        OR cliente.dni LIKE :document OR cliente.cuit LIKE :document`
+    : '';
+  return `EXISTS (
+    SELECT 1 FROM partes parte
+    LEFT JOIN clientes cliente ON cliente.usuarioId = parte.clienteId
+    LEFT JOIN usuarios usuarioCliente ON usuarioCliente.id = parte.clienteId
+    WHERE parte.causaId = causa.id AND parte.vigente = 1 AND (
+      ${names('parte')} OR parte.razonSocial LIKE :text
+      OR (cliente.tipoPersona = 'fisica' AND (${names('usuarioCliente')}))
+      OR cliente.razonSocial LIKE :text${documents}
+    )
+  )`;
 }
 
 /** Convierte una decisión de reglas-causas en la respuesta HTTP correspondiente. */
@@ -175,6 +210,7 @@ export class CausasService {
       );
     }
     if (query.responsableDesactivado === true) builder.andWhere('responsable.activo = 0');
+    if (query.buscar) this.applySearch(builder, query.buscar);
 
     const [causas, total] = await builder
       .orderBy('COALESCE(causa.modificadoEn, causa.creadoEn)', 'DESC')
@@ -184,6 +220,30 @@ export class CausasService {
       .getManyAndCount();
 
     return { items: causas.map(toCausaResumen), total, pagina, porPagina: PAGE_SIZE };
+  }
+
+  /**
+   * Buscador (RF-37): fragmentos de la carátula, del número de expediente (también sin
+   * separadores: "1234-2024" encuentra "1234/2024") y de los datos de las partes vigentes.
+   * La intercalación utf8mb4_unicode_ci compara sin distinguir mayúsculas ni tildes; DNI y
+   * CUIT se comparan normalizados.
+   */
+  private applySearch(builder: SelectQueryBuilder<Causa>, term: string): void {
+    const caseNumber = toSearchableCaseNumber(term);
+    const digits = normalizeDocumentNumber(term);
+    const searchDocuments = /^\d+$/.test(digits);
+    builder.andWhere(
+      new Brackets((where) => {
+        where.where('causa.caratula LIKE :text').orWhere('causa.numeroExpediente LIKE :text');
+        if (caseNumber !== '') where.orWhere('causa.numeroExpedienteBusqueda LIKE :caseNumber');
+        where.orWhere(partySearchSql(searchDocuments));
+      }),
+      {
+        text: `%${escapeLike(term)}%`,
+        caseNumber: `%${escapeLike(caseNumber)}%`,
+        document: `%${digits}%`,
+      },
+    );
   }
 
   /** Consulta de una causa con sus partes, abogados y auditoría (RF-12). */

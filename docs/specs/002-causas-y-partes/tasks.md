@@ -115,7 +115,7 @@ Reglas para todas las tareas:
   `GET /` con paginado de a 20, orden por modificación o alta, y filtros `fuero`, `estado`, `responsableId`, `mias`, `responsableDesactivado` e `incluirDesactivadas`.
   Hecho cuando: los e2e verifican el orden, el paginado, cada filtro por separado y combinado, que por defecto no aparecen las desactivadas y que con `incluirDesactivadas` sí.
 
-- [ ] **T23 — Búsqueda** [RF-37]
+- [x] **T23 — Búsqueda** [RF-37]
   Parámetro `buscar` sobre carátula, número, número para búsqueda y partes vigentes.
   Hecho cuando: los e2e verifican la búsqueda por:
   - Fragmento de carátula, en mayúsculas y sin tildes.
