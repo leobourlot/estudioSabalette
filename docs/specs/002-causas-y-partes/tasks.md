@@ -168,7 +168,7 @@ Reglas para todas las tareas:
   `FormularioCausa` (con la casilla "Es incidente" y el campo del expediente principal) y `SelectorIntegrantes`.
   Hecho cuando: los tests verifican que el campo del expediente principal aparece solo con la casilla marcada, los errores antes de enviar, que solo se ofrecen integrantes activos para asignar, y que un desactivado ya asignado se muestra marcado y se conserva.
 
-- [ ] **T33 — Formulario de parte y selector de cliente** [RF-13 a RF-15]
+- [x] **T33 — Formulario de parte y selector de cliente** [RF-13 a RF-15]
   `FormularioParte` (modo cliente o no cliente, campos según el tipo de persona) y `SelectorCliente`.
   Hecho cuando: los tests verifican los campos de cada modo y tipo de persona, los errores antes de enviar, y que el selector busca con `listUsers({ rol: 'cliente', activo: true, buscar })` y muestra el DNI o CUIT de cada resultado.
 
