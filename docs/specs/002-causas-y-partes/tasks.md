@@ -75,7 +75,7 @@ Reglas para todas las tareas:
   Búsqueda de `causasComoNoCliente` al vincular un cliente, incluida en `ResultadoAlta`.
   Hecho cuando: un e2e verifica que, si el DNI del cliente figura como parte no cliente vigente de otras causas activas, el alta las informa, y que esas causas siguen sin vincular al cliente.
 
-- [ ] **T16 — Bloqueo por causa y edición de datos** [RF-2, RF-11, RF-41]
+- [x] **T16 — Bloqueo por causa y edición de datos** [RF-2, RF-11, RF-41]
   Función de transacción con `SELECT … FOR UPDATE` sobre la causa, rechazo sobre causas desactivadas y registro de modificación. `PATCH /:id` con nuevo control de expediente cuando cambian número, juzgado, fuero o la marca de incidente.
   Hecho cuando: los e2e verifican la edición con su auditoría, que quitar la marca de incidente borra el expediente principal, que el control de expediente se repite al cambiar el número, que el DTO no acepta un campo para activar o desactivar, y el 409 sobre una causa desactivada.
 

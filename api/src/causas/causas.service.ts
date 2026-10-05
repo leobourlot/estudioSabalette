@@ -19,6 +19,8 @@ import {
 import { Causa } from './causa.entity.js';
 import { Colaborador } from './colaborador.entity.js';
 import type { CreateCausaDto } from './dto/crear-causa.dto.js';
+import type { UpdateCausaDto } from './dto/modificar-causa.dto.js';
+import { principalCaseViolation } from './dto/reglas-causa.js';
 import { type CreateParteDto, validateCreateParte } from './dto/parte.dto.js';
 import { Parte } from './parte.entity.js';
 import { PartesService } from './partes.service.js';
@@ -39,6 +41,7 @@ import { toSearchableCaseNumber } from './validadores/texto-causa.js';
 
 export const CAUSAS_MESSAGES = {
   notFound: 'No existe esa causa',
+  deactivated: 'La causa está desactivada. Reactivala para modificarla',
   duplicateCaseNumber: 'Ya existe una causa con ese número de expediente en ese juzgado y fuero',
   repeatedCaseNumber: 'Ya existe otra causa con ese número de expediente',
 } as const;
@@ -234,6 +237,83 @@ export class CausasService {
       }
     }
     return { valid, identities, rechazos };
+  }
+
+  /**
+   * Modificación parcial de los datos de una causa activa (RF-11). Controla RF-10 sobre el
+   * estado final (quitar la marca de incidente borra el expediente principal) y repite el
+   * control de expediente solo si cambian el número, el juzgado, el fuero o la marca de
+   * incidente. Si dos integrantes modifican a la vez, gana el último cambio.
+   */
+  async update(actor: Usuario, id: number, dto: UpdateCausaDto): Promise<CausaDetalle> {
+    await this.withLockedCausa(actor, id, async (manager, causa) => {
+      const esIncidente = dto.esIncidente ?? causa.esIncidente;
+      const expedientePrincipal =
+        dto.expedientePrincipal !== undefined
+          ? dto.expedientePrincipal
+          : esIncidente
+            ? causa.expedientePrincipal
+            : null;
+      const violation = principalCaseViolation(esIncidente, expedientePrincipal);
+      if (violation) throw new BadRequestException(violation);
+
+      const next = {
+        numeroExpediente:
+          dto.numeroExpediente !== undefined ? dto.numeroExpediente : causa.numeroExpediente,
+        juzgado: dto.juzgado !== undefined ? dto.juzgado : causa.juzgado,
+        fuero: dto.fuero ?? causa.fuero,
+        esIncidente,
+      };
+      const caseNumberChanged =
+        next.numeroExpediente !== causa.numeroExpediente ||
+        next.juzgado !== causa.juzgado ||
+        next.fuero !== causa.fuero ||
+        next.esIncidente !== causa.esIncidente;
+      if (caseNumberChanged) {
+        await this.checkCaseNumber(next, causa.id, dto.confirmarExpedienteRepetido === true);
+      }
+
+      await manager.update(Causa, causa.id, {
+        ...next,
+        numeroExpedienteBusqueda:
+          next.numeroExpediente && toSearchableCaseNumber(next.numeroExpediente),
+        expedientePrincipal,
+        ...(dto.caratula !== undefined ? { caratula: dto.caratula } : {}),
+        ...(dto.estado !== undefined ? { estado: dto.estado } : {}),
+      });
+    });
+    return this.findOne(id);
+  }
+
+  /**
+   * Bloqueo por causa (plan 002): toda escritura sobre una causa existente corre en una
+   * transacción que empieza con SELECT … FOR UPDATE sobre su fila, así dos operaciones
+   * simultáneas sobre la misma causa se ejecutan de a una y la segunda ve el resultado de la
+   * primera. Rechaza las causas desactivadas salvo para reactivarlas (RF-41) y registra la
+   * modificación (RF-2).
+   */
+  private withLockedCausa<T>(
+    actor: Usuario,
+    id: number,
+    work: (manager: EntityManager, causa: Causa) => Promise<T>,
+    options: { allowDeactivated?: boolean } = {},
+  ): Promise<T> {
+    return this.saveTranslatingDuplicate(async (manager) => {
+      const causa = await manager.findOne(Causa, {
+        where: { id },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!causa) throw new NotFoundException(CAUSAS_MESSAGES.notFound);
+      if (!causa.activa && !options.allowDeactivated) {
+        throw new ConflictException(CAUSAS_MESSAGES.deactivated);
+      }
+      const result = await work(manager, causa);
+      await manager.update(Causa, causa.id, {
+        modificadoPorId: actor.id,
+        modificadoEn: new Date(),
+      });
+      return result;
+    });
   }
 
   /**

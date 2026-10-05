@@ -5,6 +5,7 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
@@ -12,6 +13,7 @@ import type { Usuario } from '../usuarios/usuario.entity.js';
 import type { CausaDetalle, IntegranteResumen, ResultadoAlta } from './causa-detalle.js';
 import { CAUSAS_MESSAGES, CausasService } from './causas.service.js';
 import { CreateCausaDto } from './dto/crear-causa.dto.js';
+import { UpdateCausaDto } from './dto/modificar-causa.dto.js';
 
 /** Un id que no es un número no puede ser una causa existente: 404, como cualquier otro. */
 const CausaIdPipe = new ParseIntPipe({
@@ -41,5 +43,14 @@ export class CausasController {
   @Post()
   create(@CurrentUser() actor: Usuario, @Body() body: CreateCausaDto): Promise<ResultadoAlta> {
     return this.causas.create(actor, body);
+  }
+
+  @Patch(':id')
+  update(
+    @CurrentUser() actor: Usuario,
+    @Param('id', CausaIdPipe) id: number,
+    @Body() body: UpdateCausaDto,
+  ): Promise<CausaDetalle> {
+    return this.causas.update(actor, id, body);
   }
 }
