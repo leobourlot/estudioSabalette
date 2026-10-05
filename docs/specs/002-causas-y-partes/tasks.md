@@ -125,7 +125,7 @@ Reglas para todas las tareas:
 
   También verifican que una parte desvinculada no aparece, que los comodines `%` y `_` se buscan como texto y que una causa con varias partes coincidentes aparece una sola vez.
 
-- [ ] **T24 — Acceso** [RF-35, RF-44]
+- [x] **T24 — Acceso** [RF-35, RF-44]
   Recorrido de todos los endpoints de `/api/panel/causas`.
   Hecho cuando: los e2e verifican 401 sin sesión y 403 con un cliente en cada endpoint, y que un integrante que no interviene en una causa puede editarla.
 
