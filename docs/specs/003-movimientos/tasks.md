@@ -12,7 +12,7 @@ Reglas para todas las tareas:
 
 ## api
 
-- [ ] **T1 — Validador de textos del movimiento** [RF-3, RF-4]
+- [x] **T1 — Validador de textos del movimiento** [RF-3, RF-4]
   `movimientos/validadores/texto-movimiento.ts`: normalización a NFC, conversión de `\r\n` y `\r` en `\n`, recorte de espacios y saltos de línea de los extremos, regla de caracteres permitidos y largo en puntos de código. Constantes de largo máximo.
   Hecho cuando: los tests unitarios verifican:
   - Que se aceptan letras con tilde, ñ, ü, saltos de línea, líneas en blanco intermedias y cada símbolo permitido, incluidos `¿ ? ¡ ! %`.
