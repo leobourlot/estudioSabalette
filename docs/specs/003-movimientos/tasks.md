@@ -20,7 +20,7 @@ Reglas para todas las tareas:
   - Que solo se recortan espacios y saltos de línea de los extremos, y que `\r\n` cuenta como un carácter.
   - Que 2.000 caracteres pasan y 2.001 no, también con letras que ocupan dos unidades en UTF-16.
 
-- [ ] **T2 — Reglas puras** [RF-5 a RF-7, RF-20, RF-24]
+- [x] **T2 — Reglas puras** [RF-5 a RF-7, RF-20, RF-24]
   `movimientos/reglas-movimientos.ts`: `visibleText`, `diffMovement`, `isExistingDate`, `isDateInRange`, `todayInBuenosAires` e `isFutureDate`.
   Hecho cuando: los tests unitarios verifican:
   - `visibleText` con y sin texto para el cliente, y su origen.
