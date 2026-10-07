@@ -11,13 +11,14 @@ import { PanelCausaDetalle } from './paginas/PanelCausaDetalle';
 import { PanelCausaNueva } from './paginas/PanelCausaNueva';
 import { PanelCausas } from './paginas/PanelCausas';
 import { PanelInicio } from './paginas/PanelInicio';
+import { PanelMovimientoDetalle } from './paginas/PanelMovimientoDetalle';
 import { PanelUsuarioDetalle } from './paginas/PanelUsuarioDetalle';
 import { PanelUsuarioNuevo } from './paginas/PanelUsuarioNuevo';
 import { PanelUsuarios } from './paginas/PanelUsuarios';
 import { PortalInicio } from './paginas/PortalInicio';
 
 /**
- * Rutas de la aplicación (planes 001 y 002, "Rutas"). Están separadas del router para poder
+ * Rutas de la aplicación (planes 001 a 003, "Rutas"). Están separadas del router para poder
  * probarlas con un MemoryRouter. RutaProtegida decide el acceso de todas las rutas que
  * dependen de la sesión, incluida /ingresar (que con sesión lleva al inicio de la sección).
  */
@@ -33,6 +34,10 @@ export function RutasAplicacion() {
           <Route path="/panel/causas" element={<PanelCausas />} />
           <Route path="/panel/causas/nueva" element={<PanelCausaNueva />} />
           <Route path="/panel/causas/:id" element={<PanelCausaDetalle />} />
+          <Route
+            path="/panel/causas/:id/movimientos/:movimientoId"
+            element={<PanelMovimientoDetalle />}
+          />
           <Route path="/panel/usuarios" element={<PanelUsuarios />} />
           <Route path="/panel/usuarios/nuevo" element={<PanelUsuarioNuevo />} />
           <Route path="/panel/usuarios/:id" element={<PanelUsuarioDetalle />} />

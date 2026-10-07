@@ -159,7 +159,7 @@ Reglas para todas las tareas:
   Componente `TextoLiteral` y regla `no-restricted-syntax` contra `dangerouslySetInnerHTML`.
   Hecho cuando: un test verifica que un texto con comillas, `&` y saltos de línea se muestra literal, con las líneas en blanco, y `pnpm lint` falla sobre un archivo de prueba temporal que usa `dangerouslySetInnerHTML` (después se lo borra) y pasa sobre el código real.
 
-- [ ] **T26 — Ruta del detalle del movimiento** [RF-35] **(modifica existente: `RutasAplicacion.tsx`)**
+- [x] **T26 — Ruta del detalle del movimiento** [RF-35] **(modifica existente: `RutasAplicacion.tsx`)**
   Ruta `/panel/causas/:id/movimientos/:movimientoId` con una página provisoria.
   Hecho cuando: los tests verifican que un integrante llega a la página y que un cliente que entra a esa ruta es llevado al portal.
 
