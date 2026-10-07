@@ -163,7 +163,7 @@ Reglas para todas las tareas:
   Ruta `/panel/causas/:id/movimientos/:movimientoId` con una página provisoria.
   Hecho cuando: los tests verifican que un integrante llega a la página y que un cliente que entra a esa ruta es llevado al portal.
 
-- [ ] **T27 — Formulario de movimiento** [RF-8, RF-9, RF-11, RF-13]
+- [x] **T27 — Formulario de movimiento** [RF-8, RF-9, RF-11, RF-13]
   `FormularioMovimiento` para alta y edición.
   Hecho cuando: los tests verifican:
   - Que la casilla "Visible para el cliente" está desmarcada al cargar.
