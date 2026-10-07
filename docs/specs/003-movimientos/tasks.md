@@ -139,7 +139,7 @@ Reglas para todas las tareas:
 
 ## web
 
-- [ ] **T21 — Servicio de movimientos** [RF-8, RF-11, RF-14, RF-16, RF-18, RF-22 a RF-27] **(modifica existente: `ProveedorServicios.tsx`)**
+- [x] **T21 — Servicio de movimientos** [RF-8, RF-11, RF-14, RF-16, RF-18, RF-22 a RF-27] **(modifica existente: `ProveedorServicios.tsx`)**
   `servicios/movimientos.ts` con tipos y una función por endpoint, y `useMovimientosService` en `ProveedorServicios`.
   Hecho cuando: los tests con `fetch` simulado verifican la ruta, el método, el cuerpo y el query string de cada llamada.
 
