@@ -20,6 +20,11 @@ export function buildDataSourceOptions(environment: DatabaseEnvironment) {
     database: environment.DB_DATABASE,
     charset: 'utf8mb4_unicode_ci',
     timezone: '-03:00',
+    // La fecha de un movimiento es un día sin hora: llega como texto AAAA-MM-DD y no como
+    // Date a la medianoche del huso, que en otro huso puede mostrarse como el día anterior
+    // (plan 003). Las columnas DATETIME no cambian.
+    dateStrings: ['DATE'],
+    // Sin `logging`: las consultas llevan los textos de los movimientos (RNF de registros).
     synchronize: false,
     migrationsRun: false,
     migrationsTableName: 'migraciones',

@@ -33,7 +33,7 @@ Reglas para todas las tareas:
   `movimiento.entity.ts` (con el índice `IDX_movimientos_historial` y `creadoEn` con microsegundos) y `cambio-movimiento.entity.ts` (con `cambios` en JSON y el índice `IDX_movimiento_cambios_movimiento`), con los campos, tipos y relaciones del plan.
   Hecho cuando: la api compila y un test unitario verifica que los enums de tipo y de acción tienen exactamente los valores del plan.
 
-- [ ] **T4 — Fechas como texto y registro de consultas apagado** [RF-1, RNF de fechas y de registros] **(modifica existente: `opciones-base-de-datos.ts` y su test)**
+- [x] **T4 — Fechas como texto y registro de consultas apagado** [RF-1, RNF de fechas y de registros] **(modifica existente: `opciones-base-de-datos.ts` y su test)**
   `dateStrings: ['DATE']` en las opciones de conexión.
   Hecho cuando: el test unitario verifica que las opciones incluyen `dateStrings: ['DATE']` y no activan `logging`, y los e2e existentes siguen en verde (las columnas `DATETIME` no cambian).
 

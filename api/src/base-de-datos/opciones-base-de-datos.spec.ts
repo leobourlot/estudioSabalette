@@ -37,6 +37,14 @@ describe('buildDataSourceOptions', () => {
     expect(options).toMatchObject({ timezone: '-03:00', charset: 'utf8mb4_unicode_ci' });
   });
 
+  it('lee las columnas DATE como texto AAAA-MM-DD, sin corrimientos de zona horaria', () => {
+    expect(options.dateStrings).toEqual(['DATE']);
+  });
+
+  it('no registra las consultas, que llevan los textos de los movimientos', () => {
+    expect('logging' in options).toBe(false);
+  });
+
   it('registra las migraciones en la tabla migraciones', () => {
     expect(options.migrationsTableName).toBe('migraciones');
   });
