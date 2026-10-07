@@ -4,6 +4,7 @@ import { AccionesCausa } from '../componentes/AccionesCausa';
 import { type Avisos, AvisosResultado } from '../componentes/AvisosResultado';
 import { EditorAbogados } from '../componentes/EditorAbogados';
 import { FormularioCausa } from '../componentes/FormularioCausa';
+import { HistorialMovimientos } from '../componentes/HistorialMovimientos';
 import { PreguntaConfirmacion } from '../componentes/PreguntaConfirmacion';
 import { useCausasService } from '../componentes/ProveedorServicios';
 import { TablaPartes } from '../componentes/TablaPartes';
@@ -213,6 +214,8 @@ export function PanelCausaDetalle() {
           setActionAvisos(newAvisos ?? null);
         }}
       />
+
+      <HistorialMovimientos causaId={causa.id} causaActiva={causa.activa} />
 
       <AccionesCausa
         causa={causa}

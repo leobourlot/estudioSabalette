@@ -176,7 +176,7 @@ Reglas para todas las tareas:
   `FilaMovimiento` y `FiltrosMovimientos`.
   Hecho cuando: los tests verifican que la fila muestra fecha, tipo, descripción recortada con "Ver completa", "Visible" u "Oculto", "Con texto para el cliente", el autor (marcado si está desactivado) y las etiquetas "Anulado" y "Fecha futura"; y que los filtros devuelven los valores elegidos y muestran el error de desde > hasta sin llamar al servicio.
 
-- [ ] **T29 — Historial en el detalle de la causa** [RF-8, RF-23 a RF-28] **(modifica existente: `PanelCausaDetalle.tsx` y su test)**
+- [x] **T29 — Historial en el detalle de la causa** [RF-8, RF-23 a RF-28] **(modifica existente: `PanelCausaDetalle.tsx` y su test)**
   `HistorialMovimientos`, con el alta de movimientos, en `PanelCausaDetalle`.
   Hecho cuando: los tests con servicios simulados verifican:
   - Que buscar y cada filtro llaman al servicio con los parámetros correctos y vuelven a la página 1.

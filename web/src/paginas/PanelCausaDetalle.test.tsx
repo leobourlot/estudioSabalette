@@ -10,6 +10,14 @@ import {
 } from '../pruebas/causas-de-prueba';
 import type { CausaDetalle } from '../servicios/causas';
 import { ApiError } from '../servicios/cliente-http';
+import { movimientosService } from '../servicios/movimientos';
+
+// El historial de movimientos (spec 003) usa el servicio por defecto: acá, uno simulado.
+vi.mock('../servicios/movimientos', async (importOriginal) => {
+  const original = await importOriginal<typeof import('../servicios/movimientos')>();
+  const { fakeMovimientosService } = await import('../pruebas/movimientos-de-prueba');
+  return { ...original, movimientosService: fakeMovimientosService() };
+});
 
 const detail = (overrides: Partial<CausaDetalle> = {}) =>
   testCausaDetalle({
@@ -252,5 +260,25 @@ describe('PanelCausaDetalle: datos y edición (RF-11, RF-12, RF-33, RF-41)', () 
     expect(screen.queryByRole('button', { name: 'Editar datos' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Agregar parte' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Editar abogados' })).toBeNull();
+  });
+});
+
+describe('PanelCausaDetalle: movimientos (RF-23, RF-28)', () => {
+  it('muestra la sección de movimientos de la causa', async () => {
+    await openDetail();
+
+    const section = screen.getByRole('region', { name: 'Movimientos' });
+    expect(within(section).getByRole('button', { name: 'Nuevo movimiento' })).toBeTruthy();
+    expect(movimientosService.listMovements).toHaveBeenCalledWith(
+      7,
+      expect.objectContaining({ pagina: 1 }),
+    );
+  });
+
+  it('en una causa desactivada muestra los movimientos sin "Nuevo movimiento" (RF-28)', async () => {
+    await openDetail(detail({ activa: false }));
+
+    const section = screen.getByRole('region', { name: 'Movimientos' });
+    expect(within(section).queryByRole('button', { name: 'Nuevo movimiento' })).toBeNull();
   });
 });
