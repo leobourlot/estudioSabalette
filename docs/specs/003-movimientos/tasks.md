@@ -98,7 +98,7 @@ Reglas para todas las tareas:
   Recorrido completo del historial de cambios de un movimiento.
   Hecho cuando: un e2e con dos integrantes hace carga, modificación, cambio de visibilidad, anulación y restauración, y verifica el orden del más reciente al más antiguo, los autores, los valores anterior y nuevo, y que los cambios anteriores siguen idénticos después de cada operación.
 
-- [ ] **T15 — Estado de la causa y concurrencia** [RF-10, RF-15, RF-28, RF-29]
+- [x] **T15 — Estado de la causa y concurrencia** [RF-10, RF-15, RF-28, RF-29]
   Controles de causa desactivada y escrituras simultáneas.
   Hecho cuando: los e2e verifican:
   - Que cargar, modificar, anular y restaurar no cambian `modificadoPor/En` de la causa.
