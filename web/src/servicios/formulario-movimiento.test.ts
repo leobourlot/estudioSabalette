@@ -196,8 +196,8 @@ describe('visibleTextPreview (RF-7, RF-9)', () => {
 
   it('nombra el origen del texto', () => {
     expect(VISIBLE_TEXT_ORIGIN_LABELS).toEqual({
-      textoCliente: 'texto para el cliente',
-      descripcion: 'descripción (no hay texto para el cliente)',
+      textoCliente: 'el texto para el cliente',
+      descripcion: 'la descripción (no hay texto para el cliente)',
     });
   });
 });

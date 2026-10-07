@@ -32,12 +32,6 @@ function Dato({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-/** De dónde sale el texto que ve el cliente, con su artículo (RF-7). */
-const ORIGIN_PHRASES = {
-  textoCliente: `el ${VISIBLE_TEXT_ORIGIN_LABELS.textoCliente}`,
-  descripcion: `la ${VISIBLE_TEXT_ORIGIN_LABELS.descripcion}`,
-} as const;
-
 const messagesOf = (caught: unknown) =>
   caught instanceof ApiError ? caught.messages : [errorMessage(caught)];
 
@@ -272,8 +266,8 @@ export function PanelMovimientoDetalle() {
         <h2 className="text-lg font-semibold text-slate-800">Lo que ve el cliente</h2>
         <p className="text-sm text-slate-600">
           {movimiento.visible
-            ? `El cliente ve este movimiento${movimiento.anulado ? ', marcado como anulado,' : ''} con ${ORIGIN_PHRASES[movimiento.origenTextoVisible]}:`
-            : `El cliente no ve este movimiento. Si se lo hace visible, verá ${ORIGIN_PHRASES[movimiento.origenTextoVisible]}:`}
+            ? `El cliente ve este movimiento${movimiento.anulado ? ', marcado como anulado,' : ''} con ${VISIBLE_TEXT_ORIGIN_LABELS[movimiento.origenTextoVisible]}:`
+            : `El cliente no ve este movimiento. Si se lo hace visible, verá ${VISIBLE_TEXT_ORIGIN_LABELS[movimiento.origenTextoVisible]}:`}
         </p>
         <TextoLiteral texto={movimiento.textoVisible} className="text-slate-800" />
       </section>

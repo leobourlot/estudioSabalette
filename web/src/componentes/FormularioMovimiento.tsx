@@ -162,7 +162,7 @@ export function FormularioMovimiento({
           className="space-y-1 rounded bg-sky-50 px-3 py-2 text-sm text-sky-900"
         >
           <p className="font-medium">
-            El cliente verá ({VISIBLE_TEXT_ORIGIN_LABELS[preview.origen]}):
+            El cliente verá {VISIBLE_TEXT_ORIGIN_LABELS[preview.origen]}:
           </p>
           <TextoLiteral texto={preview.texto === '' ? EMPTY_VALUE : preview.texto} />
         </div>

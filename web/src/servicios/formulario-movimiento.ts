@@ -208,8 +208,8 @@ export const VISIBLE_CHANGE_WARNING =
   'Este movimiento es visible para el cliente; el cambio se verá en el portal';
 
 export const VISIBLE_TEXT_ORIGIN_LABELS = {
-  textoCliente: 'texto para el cliente',
-  descripcion: 'descripción (no hay texto para el cliente)',
+  textoCliente: 'el texto para el cliente',
+  descripcion: 'la descripción (no hay texto para el cliente)',
 } as const;
 
 /**

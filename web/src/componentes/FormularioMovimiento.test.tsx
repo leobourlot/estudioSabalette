@@ -128,7 +128,7 @@ describe('FormularioMovimiento (RF-1, RF-8, RF-9, RF-11, RF-13)', () => {
 
     await user.click(screen.getByLabelText('Visible para el cliente'));
     expect(preview()!.textContent).toContain(
-      'El cliente verá (descripción (no hay texto para el cliente))',
+      'El cliente verá la descripción (no hay texto para el cliente):',
     );
     expect(preview()!.textContent).toContain('Se fija audiencia preliminar.');
 
@@ -136,7 +136,7 @@ describe('FormularioMovimiento (RF-1, RF-8, RF-9, RF-11, RF-13)', () => {
       screen.getByLabelText('Texto para el cliente (opcional)'),
       'El juez fijó audiencia.',
     );
-    expect(preview()!.textContent).toContain('El cliente verá (texto para el cliente)');
+    expect(preview()!.textContent).toContain('El cliente verá el texto para el cliente:');
     expect(preview()!.textContent).toContain('El juez fijó audiencia.');
     expect(preview()!.textContent).not.toContain('Se fija audiencia preliminar.');
   });
