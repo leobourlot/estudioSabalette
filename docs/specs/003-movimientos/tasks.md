@@ -124,7 +124,7 @@ Reglas para todas las tareas:
   Prueba de volumen.
   Hecho cuando: un e2e inserta en bloque 5.000 movimientos en una causa y verifica que el historial con buscador y filtros responde en menos de 2 segundos.
 
-- [ ] **T19 — Visibilidad para el cliente** [RF-30 a RF-33]
+- [x] **T19 — Visibilidad para el cliente** [RF-30 a RF-33]
   `visibilidad-cliente.service.ts` con `listVisible` y `findVisible`, exportado por `MovimientosModule`.
   Hecho cuando: los e2e sobre la base de tests verifican:
   - Que un cliente vinculado ve un movimiento visible con el texto para el cliente o, si no hay, con la descripción.
