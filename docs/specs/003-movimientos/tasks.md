@@ -143,7 +143,7 @@ Reglas para todas las tareas:
   `servicios/movimientos.ts` con tipos y una función por endpoint, y `useMovimientosService` en `ProveedorServicios`.
   Hecho cuando: los tests con `fetch` simulado verifican la ruta, el método, el cuerpo y el query string de cada llamada.
 
-- [ ] **T22 — Presentación de movimientos** [RF-1, RF-22, RF-24]
+- [x] **T22 — Presentación de movimientos** [RF-1, RF-22, RF-24]
   `servicios/presentacion-movimientos.ts`: etiquetas de tipo, de acción y de campo, `formatMovementDate`, recorte de la descripción a 200 caracteres y nombre del autor con "(desactivado)".
   Hecho cuando: los tests verifican cada etiqueta, que `formatMovementDate('2024-03-01')` da `01/03/2024` con la zona horaria del test en UTC y en Buenos Aires, y el recorte de un texto corto y de uno largo.
 
