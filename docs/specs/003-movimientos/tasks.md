@@ -133,7 +133,7 @@ Reglas para todas las tareas:
   - Que el cliente deja de verlos al desvincularlo, al desactivar la causa y al desactivar su cuenta, y que los sigue viendo con la causa Archivada.
   - Que `listVisible` devuelve `null` para una causa no vinculada y respeta el orden del historial.
 
-- [ ] **T20 — Acceso e integrantes desactivados** [RF-35, RF-36]
+- [x] **T20 — Acceso e integrantes desactivados** [RF-35, RF-36]
   Recorrido de todos los endpoints de movimientos.
   Hecho cuando: los e2e verifican 401 sin sesión y 403 con un cliente en cada endpoint, y que un autor desactivado sigue figurando en el historial y en los cambios con `activo: false`.
 
