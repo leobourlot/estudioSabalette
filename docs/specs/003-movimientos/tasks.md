@@ -186,7 +186,7 @@ Reglas para todas las tareas:
 
   No se escribe nada en `localStorage` ni `sessionStorage`.
 
-- [ ] **T30 — Historial de cambios** [RF-22]
+- [x] **T30 — Historial de cambios** [RF-22]
   `HistorialCambios`.
   Hecho cuando: los tests verifican que cada cambio muestra fecha y hora en hora de Buenos Aires, acción, autor y, por cada dato, los valores anterior y nuevo, con los textos completos mediante `TextoLiteral` y la visibilidad como "Sí" o "No".
 
