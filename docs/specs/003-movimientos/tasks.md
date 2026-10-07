@@ -55,7 +55,7 @@ Reglas para todas las tareas:
   DTO de `GET /` con `pagina`, `buscar`, `tipo`, `visibilidad`, `desde`, `hasta` y `ocultarAnulados`.
   Hecho cuando: los tests unitarios cubren los valores por defecto, una página inválida, un `buscar` de más de 100 caracteres, el tipo y la visibilidad fuera de lista, las fechas inválidas, y el 400 "La fecha desde no puede ser posterior a la fecha hasta".
 
-- [ ] **T8 — Armado de respuestas** [RF-22, RF-24, RF-31, RF-36]
+- [x] **T8 — Armado de respuestas** [RF-22, RF-24, RF-31, RF-36]
   `movimiento-detalle.ts`: `AutorResumen`, `MovimientoResumen`, `MovimientoDetalle`, `CambioMovimiento` y `MovimientoCliente`, campo por campo.
   Hecho cuando: los tests unitarios verifican:
   - Que `MovimientoCliente` tiene solo id, fecha, tipo, texto y anulado; que el texto es el texto para el cliente cuando existe; y que nunca incluye la descripción en ese caso, ni autores, fechas de registro o cambios.
