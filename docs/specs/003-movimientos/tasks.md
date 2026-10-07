@@ -51,7 +51,7 @@ Reglas para todas las tareas:
   - En `PATCH`, el rechazo de `causaId`, `anulado` y otros campos desconocidos.
   - Que ningún mensaje repite el valor recibido.
 
-- [ ] **T7 — DTO de los parámetros del historial** [RF-23, RF-25, RF-26]
+- [x] **T7 — DTO de los parámetros del historial** [RF-23, RF-25, RF-26]
   DTO de `GET /` con `pagina`, `buscar`, `tipo`, `visibilidad`, `desde`, `hasta` y `ocultarAnulados`.
   Hecho cuando: los tests unitarios cubren los valores por defecto, una página inválida, un `buscar` de más de 100 caracteres, el tipo y la visibilidad fuera de lista, las fechas inválidas, y el 400 "La fecha desde no puede ser posterior a la fecha hasta".
 
