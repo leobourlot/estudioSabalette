@@ -41,7 +41,7 @@ Reglas para todas las tareas:
   Migración `crear-movimientos-y-cambios` con las dos tablas, sus índices y sus claves foráneas. Se agregan las entidades y la migración a `esquema.ts`.
   Hecho cuando: un e2e corre `up` sobre la base de tests con las tablas de las specs 001 y 002, guarda un movimiento con fecha 2024-03-01 y la lee como el texto `2024-03-01`, y corre `down` sin errores.
 
-- [ ] **T6 — DTO de alta y modificación** [RF-1, RF-3 a RF-6, RF-11, RF-12]
+- [x] **T6 — DTO de alta y modificación** [RF-1, RF-3 a RF-6, RF-11, RF-12]
   DTO de `POST` y de `PATCH` parcial, con los mensajes del plan y reutilizando `usuarios/dto/reglas.ts`.
   Hecho cuando: los tests unitarios cubren:
   - Fecha ausente, con formato inválido, inexistente y fuera de rango.
