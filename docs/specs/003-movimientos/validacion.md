@@ -87,7 +87,7 @@ Rutas abreviadas:
 - [x] Todos los RF con al menos un test en verde.
 - [x] Tests de que un movimiento nuevo es no visible, de la regla de visibilidad para el cliente con sus casos, de lo que se le expone, de las escrituras rechazadas en una causa desactivada, del historial de cambios y su inmutabilidad, de los caracteres rechazados, de los textos fuera de los registros y del acceso.
 - [x] `pnpm test` y `pnpm lint` sin errores.
-- [ ] Demo manual (ver la guía siguiente): pendiente.
+- [x] Demo manual (ver la guía siguiente): completada sin errores el 2026-10-07.
 
 ## Guía de la demo manual
 
@@ -151,4 +151,4 @@ Contra la base de **desarrollo**. Cada paso dice qué hacer y qué tenés que ve
 
 ## Veredicto
 
-Pendiente de la demo manual. Los 36 RF y los RNF tienen tests en verde, y `pnpm test` y `pnpm lint` pasan. La spec 003 queda cumplida cuando la demo manual se complete sin errores.
+La spec 003 está **cumplida**: los 36 RF y los RNF tienen tests en verde, `pnpm test` y `pnpm lint` pasan, y la demo manual se completó sin errores el 2026-10-07.
