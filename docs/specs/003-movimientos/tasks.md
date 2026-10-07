@@ -62,7 +62,7 @@ Reglas para todas las tareas:
   - Que las respuestas del panel no incluyen email ni hashes y marcan a los autores desactivados.
   - Que `MovimientoDetalle` trae `textoVisible` y `origenTextoVisible`.
 
-- [ ] **T9 — Filtro global de errores sin datos** [RNF de registros] **(modifica existente: `configurar-aplicacion.ts`)**
+- [x] **T9 — Filtro global de errores sin datos** [RNF de registros] **(modifica existente: `configurar-aplicacion.ts`)**
   `configuracion/errores-sin-datos.filter.ts`, registrado en `configureApp`.
   Hecho cuando:
   - Los tests unitarios verifican que una `HttpException` se responde igual que antes.

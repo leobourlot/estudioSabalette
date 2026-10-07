@@ -3,6 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
 import { formatValidationErrors } from './configuracion/errores-de-validacion.js';
+import { NoDataExceptionFilter } from './configuracion/errores-sin-datos.filter.js';
 import type { Environment } from './configuracion/validar-entorno.js';
 
 /**
@@ -20,6 +21,10 @@ export function configureApp(app: NestExpressApplication): void {
   app.set('trust proxy', config.get('TRUST_PROXY_HOPS', { infer: true }));
 
   app.use(cookieParser());
+
+  // Ante un error inesperado, no registra mensajes, cuerpos ni URLs reales, que pueden llevar
+  // los textos de los movimientos (plan 003, RNF de registros).
+  app.useGlobalFilters(new NoDataExceptionFilter());
 
   app.useGlobalPipes(
     new ValidationPipe({
