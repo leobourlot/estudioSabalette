@@ -1,4 +1,12 @@
-import { Body, Controller, NotFoundException, Param, ParseIntPipe, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CreateMovimientoDto } from './dto/crear-movimiento.dto.js';
@@ -10,6 +18,11 @@ const CausaIdPipe = new ParseIntPipe({
   exceptionFactory: () => new NotFoundException(MOVIMIENTOS_MESSAGES.causaNotFound),
 });
 
+/** Un movimiento con id no numérico no existe en la causa (RF-34). */
+const MovimientoIdPipe = new ParseIntPipe({
+  exceptionFactory: () => new NotFoundException(MOVIMIENTOS_MESSAGES.notFound),
+});
+
 /**
  * Movimientos de una causa (plan 003). Solo administradores y abogados: los guards globales
  * de la spec 001 rechazan a clientes (403) y visitantes (401) antes de llegar acá (RF-35).
@@ -19,6 +32,14 @@ const CausaIdPipe = new ParseIntPipe({
 @Controller('panel/causas/:causaId/movimientos')
 export class MovimientosController {
   constructor(private readonly movimientos: MovimientosService) {}
+
+  @Get(':movimientoId')
+  findOne(
+    @Param('causaId', CausaIdPipe) causaId: number,
+    @Param('movimientoId', MovimientoIdPipe) movimientoId: number,
+  ): Promise<MovimientoDetalle> {
+    return this.movimientos.findOne(causaId, movimientoId);
+  }
 
   @Post()
   create(

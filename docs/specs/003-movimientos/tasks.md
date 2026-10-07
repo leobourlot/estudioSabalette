@@ -77,7 +77,7 @@ Reglas para todas las tareas:
   - El 404 de una causa inexistente o con id no numérico.
   - Que un 400 con un texto inválido que lleva una marca no repite la marca en la respuesta.
 
-- [ ] **T11 — Consulta de un movimiento e integridad** [RF-22, RF-34]
+- [x] **T11 — Consulta de un movimiento e integridad** [RF-22, RF-34]
   `GET /:movimientoId` con el texto visible, la auditoría y los cambios.
   Hecho cuando: los e2e verifican el detalle completo, y el mismo 404 "No existe ese movimiento" para un movimiento inexistente, uno de otra causa y un id no numérico.
 
