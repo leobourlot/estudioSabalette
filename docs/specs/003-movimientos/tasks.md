@@ -155,7 +155,7 @@ Reglas para todas las tareas:
   En `servicios/formulario-movimiento.ts`: `visibleTextPreview` y `needsVisibleChangeWarning`.
   Hecho cuando: los tests verifican que la vista previa usa el texto para el cliente o, si está vacío o solo tiene espacios, la descripción, con su origen; y que el aviso de cambio aparece solo si el movimiento era visible, sigue visible y cambió la fecha, el tipo, la descripción o el texto para el cliente.
 
-- [ ] **T25 — Texto literal y regla de ESLint** [RF-3, RNF de textos seguros] **(modifica existente: `web/eslint.config.js`)**
+- [x] **T25 — Texto literal y regla de ESLint** [RF-3, RNF de textos seguros] **(modifica existente: `web/eslint.config.js`)**
   Componente `TextoLiteral` y regla `no-restricted-syntax` contra `dangerouslySetInnerHTML`.
   Hecho cuando: un test verifica que un texto con comillas, `&` y saltos de línea se muestra literal, con las líneas en blanco, y `pnpm lint` falla sobre un archivo de prueba temporal que usa `dangerouslySetInnerHTML` (después se lo borra) y pasa sobre el código real.
 
