@@ -107,7 +107,7 @@ Reglas para todas las tareas:
   - Que, con una anulación y una modificación simultáneas, si la anulación queda primero la modificación responde 409.
   - Que, con una desactivación de la causa y una carga simultáneas, si la desactivación queda primero la carga responde 409.
 
-- [ ] **T16 — Historial de la causa: orden, paginado y filtros** [RF-23 a RF-26, RF-28]
+- [x] **T16 — Historial de la causa: orden, paginado y filtros** [RF-23 a RF-26, RF-28]
   `GET /` sin `buscar`, con `esFechaFutura`.
   Hecho cuando: los e2e verifican:
   - El orden por fecha, por momento de carga y por id con la misma fecha y el mismo `creadoEn`.

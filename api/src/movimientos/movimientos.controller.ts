@@ -9,13 +9,19 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CreateMovimientoDto } from './dto/crear-movimiento.dto.js';
+import { ListMovimientosQueryDto } from './dto/listar-movimientos.dto.js';
 import { UpdateMovimientoDto } from './dto/modificar-movimiento.dto.js';
 import type { MovimientoDetalle } from './movimiento-detalle.js';
-import { MOVIMIENTOS_MESSAGES, MovimientosService } from './movimientos.service.js';
+import {
+  MOVIMIENTOS_MESSAGES,
+  type MovimientoPage,
+  MovimientosService,
+} from './movimientos.service.js';
 
 /** Un id que no es un número no puede ser una causa existente: 404, como cualquier otro. */
 const CausaIdPipe = new ParseIntPipe({
@@ -36,6 +42,14 @@ const MovimientoIdPipe = new ParseIntPipe({
 @Controller('panel/causas/:causaId/movimientos')
 export class MovimientosController {
   constructor(private readonly movimientos: MovimientosService) {}
+
+  @Get()
+  list(
+    @Param('causaId', CausaIdPipe) causaId: number,
+    @Query() query: ListMovimientosQueryDto,
+  ): Promise<MovimientoPage> {
+    return this.movimientos.list(causaId, query);
+  }
 
   @Get(':movimientoId')
   findOne(

@@ -5,8 +5,14 @@ import { Causa } from '../causas/causa.entity.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CambioMovimiento } from './cambio-movimiento.entity.js';
 import type { CreateMovimientoDto } from './dto/crear-movimiento.dto.js';
+import type { ListMovimientosQueryDto } from './dto/listar-movimientos.dto.js';
 import type { UpdateMovimientoDto } from './dto/modificar-movimiento.dto.js';
-import { type MovimientoDetalle, toMovimientoDetalle } from './movimiento-detalle.js';
+import {
+  type MovimientoDetalle,
+  type MovimientoResumen,
+  toMovimientoDetalle,
+  toMovimientoResumen,
+} from './movimiento-detalle.js';
 import { Movimiento } from './movimiento.entity.js';
 import { diffMovement, loadChanges, type MovementData } from './reglas-movimientos.js';
 
@@ -28,6 +34,15 @@ const snapshot = (movimiento: Movimiento): MovementData => ({
   visible: movimiento.visible,
   anulado: movimiento.anulado,
 });
+
+const PAGE_SIZE = 20;
+
+export interface MovimientoPage {
+  items: MovimientoResumen[];
+  total: number;
+  pagina: number;
+  porPagina: number;
+}
 
 /** Relaciones que necesita toMovimientoDetalle. */
 const DETAIL_RELATIONS = { creadoPor: true, modificadoPor: true, cambios: { usuario: true } };
@@ -171,6 +186,49 @@ export class MovimientosService {
       });
     });
     return this.findOne(causaId, movimientoId);
+  }
+
+  /**
+   * Historial de movimientos de una causa, activa o desactivada (RF-23, RF-28), de a 20.
+   * Orden: fecha del movimiento, momento de carga e id, siempre del más reciente al más
+   * antiguo; el id es único, así ningún movimiento se repite ni se omite entre páginas. Los
+   * filtros se combinan (RF-25). offset/limit (y no skip/take), como en el listado de causas:
+   * la unión con el autor es muchos a uno y no multiplica filas.
+   */
+  async list(causaId: number, query: ListMovimientosQueryDto): Promise<MovimientoPage> {
+    await this.findCausa(causaId);
+    const pagina = query.pagina ?? 1;
+    const builder = this.movimientos
+      .createQueryBuilder('movimiento')
+      .innerJoinAndSelect('movimiento.creadoPor', 'creadoPor')
+      .where('movimiento.causaId = :causaId', { causaId });
+
+    if (query.tipo !== undefined) builder.andWhere('movimiento.tipo = :tipo', { tipo: query.tipo });
+    // "Visibles" incluye los anulados visibles, salvo con ocultarAnulados (RF-25).
+    if (query.visibilidad === 'visibles') builder.andWhere('movimiento.visible = 1');
+    if (query.visibilidad === 'ocultos') builder.andWhere('movimiento.visible = 0');
+    // Las fechas AAAA-MM-DD se comparan como fechas; los extremos se incluyen.
+    if (query.desde !== undefined)
+      builder.andWhere('movimiento.fecha >= :desde', { desde: query.desde });
+    if (query.hasta !== undefined)
+      builder.andWhere('movimiento.fecha <= :hasta', { hasta: query.hasta });
+    if (query.ocultarAnulados === true) builder.andWhere('movimiento.anulado = 0');
+
+    const [movimientos, total] = await builder
+      .orderBy('movimiento.fecha', 'DESC')
+      .addOrderBy('movimiento.creadoEn', 'DESC')
+      .addOrderBy('movimiento.id', 'DESC')
+      .offset((pagina - 1) * PAGE_SIZE)
+      .limit(PAGE_SIZE)
+      .getManyAndCount();
+
+    const ahora = new Date();
+    return {
+      items: movimientos.map((movimiento) => toMovimientoResumen(movimiento, ahora)),
+      total,
+      pagina,
+      porPagina: PAGE_SIZE,
+    };
   }
 
   /**
