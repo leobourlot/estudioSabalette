@@ -94,7 +94,7 @@ Reglas para todas las tareas:
   `POST /:movimientoId/anular` y `/restaurar`.
   Hecho cuando: los e2e verifican que las dos acciones conservan los datos y la visibilidad, registran `modificadoPor/En` y su cambio `anulacion` o `restauracion`, y que anular dos veces y restaurar uno no anulado responden 409 con sus mensajes.
 
-- [ ] **T14 — Historial de cambios completo** [RF-20 a RF-22]
+- [x] **T14 — Historial de cambios completo** [RF-20 a RF-22]
   Recorrido completo del historial de cambios de un movimiento.
   Hecho cuando: un e2e con dos integrantes hace carga, modificación, cambio de visibilidad, anulación y restauración, y verifica el orden del más reciente al más antiguo, los autores, los valores anterior y nuevo, y que los cambios anteriores siguen idénticos después de cada operación.
 
