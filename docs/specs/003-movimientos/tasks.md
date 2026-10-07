@@ -120,7 +120,7 @@ Reglas para todas las tareas:
   Parámetro `buscar` sobre la descripción y el texto para el cliente.
   Hecho cuando: los e2e verifican la búsqueda por fragmento en cada texto, en mayúsculas y sin tildes, que los comodines `%` y `_` se buscan como texto, que solo devuelve movimientos de la causa indicada, y su combinación con los filtros.
 
-- [ ] **T18 — Rendimiento del historial** [RNF de rendimiento]
+- [x] **T18 — Rendimiento del historial** [RNF de rendimiento]
   Prueba de volumen.
   Hecho cuando: un e2e inserta en bloque 5.000 movimientos en una causa y verifica que el historial con buscador y filtros responde en menos de 2 segundos.
 
