@@ -90,7 +90,7 @@ Reglas para todas las tareas:
   - El 400 con `causaId`.
   - El 409 sobre un movimiento anulado, también al cambiar solo la visibilidad.
 
-- [ ] **T13 — Anulación y restauración** [RF-2, RF-16 a RF-19]
+- [x] **T13 — Anulación y restauración** [RF-2, RF-16 a RF-19]
   `POST /:movimientoId/anular` y `/restaurar`.
   Hecho cuando: los e2e verifican que las dos acciones conservan los datos y la visibilidad, registran `modificadoPor/En` y su cambio `anulacion` o `restauracion`, y que anular dos veces y restaurar uno no anulado responden 409 con sus mensajes.
 

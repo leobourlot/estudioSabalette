@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -60,5 +62,25 @@ export class MovimientosController {
     @Body() body: UpdateMovimientoDto,
   ): Promise<MovimientoDetalle> {
     return this.movimientos.update(actor, causaId, movimientoId, body);
+  }
+
+  @Post(':movimientoId/anular')
+  @HttpCode(HttpStatus.OK)
+  annul(
+    @CurrentUser() actor: Usuario,
+    @Param('causaId', CausaIdPipe) causaId: number,
+    @Param('movimientoId', MovimientoIdPipe) movimientoId: number,
+  ): Promise<MovimientoDetalle> {
+    return this.movimientos.annul(actor, causaId, movimientoId);
+  }
+
+  @Post(':movimientoId/restaurar')
+  @HttpCode(HttpStatus.OK)
+  restore(
+    @CurrentUser() actor: Usuario,
+    @Param('causaId', CausaIdPipe) causaId: number,
+    @Param('movimientoId', MovimientoIdPipe) movimientoId: number,
+  ): Promise<MovimientoDetalle> {
+    return this.movimientos.restore(actor, causaId, movimientoId);
   }
 }

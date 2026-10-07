@@ -15,6 +15,8 @@ export const MOVIMIENTOS_MESSAGES = {
   notFound: 'No existe ese movimiento',
   causaDeactivated: 'La causa está desactivada',
   annulled: 'El movimiento está anulado. Restauralo para modificarlo',
+  alreadyAnnulled: 'El movimiento ya está anulado',
+  notAnnulled: 'El movimiento no está anulado',
 } as const;
 
 /** Datos del movimiento que registra el historial de cambios (RF-20). */
@@ -123,6 +125,49 @@ export class MovimientosService {
         usuarioId: actor.id,
         fechaHora: ahora,
         cambios,
+      });
+    });
+    return this.findOne(causaId, movimientoId);
+  }
+
+  /**
+   * Anula un movimiento (RF-16): conserva sus datos y su visibilidad, así un movimiento visible
+   * se sigue viendo, marcado como anulado (RF-17). Nunca se borra.
+   */
+  annul(actor: Usuario, causaId: number, movimientoId: number): Promise<MovimientoDetalle> {
+    return this.setAnnulled(actor, causaId, movimientoId, true);
+  }
+
+  /** Restaura un movimiento anulado, con la visibilidad que tenía (RF-18). */
+  restore(actor: Usuario, causaId: number, movimientoId: number): Promise<MovimientoDetalle> {
+    return this.setAnnulled(actor, causaId, movimientoId, false);
+  }
+
+  /** Anulación y restauración: registran la modificación y su cambio (RF-2, RF-20). */
+  private async setAnnulled(
+    actor: Usuario,
+    causaId: number,
+    movimientoId: number,
+    anulado: boolean,
+  ): Promise<MovimientoDetalle> {
+    await this.withMovement(causaId, movimientoId, async (manager, movimiento) => {
+      if (movimiento.anulado === anulado) {
+        throw new ConflictException(
+          anulado ? MOVIMIENTOS_MESSAGES.alreadyAnnulled : MOVIMIENTOS_MESSAGES.notAnnulled,
+        );
+      }
+      const ahora = new Date();
+      await manager.update(Movimiento, movimiento.id, {
+        anulado,
+        modificadoPorId: actor.id,
+        modificadoEn: ahora,
+      });
+      await manager.insert(CambioMovimiento, {
+        movimientoId: movimiento.id,
+        accion: anulado ? 'anulacion' : 'restauracion',
+        usuarioId: actor.id,
+        fechaHora: ahora,
+        cambios: [{ campo: 'anulado', anterior: !anulado, nuevo: anulado }],
       });
     });
     return this.findOne(causaId, movimientoId);
