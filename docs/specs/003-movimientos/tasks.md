@@ -190,7 +190,7 @@ Reglas para todas las tareas:
   `HistorialCambios`.
   Hecho cuando: los tests verifican que cada cambio muestra fecha y hora en hora de Buenos Aires, acción, autor y, por cada dato, los valores anterior y nuevo, con los textos completos mediante `TextoLiteral` y la visibilidad como "Sí" o "No".
 
-- [ ] **T31 — Detalle del movimiento** [RF-11, RF-15 a RF-19, RF-22, RF-28]
+- [x] **T31 — Detalle del movimiento** [RF-11, RF-15 a RF-19, RF-22, RF-28]
   `PanelMovimientoDetalle` en lugar de la página provisoria.
   Hecho cuando: los tests con servicios simulados verifican:
   - La muestra de los datos y del texto visible con su origen.

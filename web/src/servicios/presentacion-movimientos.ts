@@ -3,9 +3,10 @@ import type {
   AutorResumen,
   CampoMovimiento,
   FiltroVisibilidad,
+  MovimientoDetalle,
   TipoMovimiento,
 } from './movimientos';
-import { EMPTY_VALUE } from './presentacion';
+import { EMPTY_VALUE, formatDateTime } from './presentacion';
 
 /** Cómo se muestran los datos de los movimientos. Funciones puras, sin React (principio 3). */
 
@@ -91,4 +92,19 @@ export function formatChangeValue(campo: CampoMovimiento, valor: string | boolea
   if (campo === 'fecha') return formatMovementDate(valor);
   if (campo === 'tipo') return tipoMovimientoLabel(valor as TipoMovimiento);
   return valor;
+}
+
+/** Quién cargó y quién modificó por última vez el movimiento, con fecha y hora (RF-2, RF-22). */
+export function movementAuditLines(
+  movimiento: Pick<MovimientoDetalle, 'creadoPor' | 'creadoEn' | 'modificadoPor' | 'modificadoEn'>,
+): string[] {
+  const lines = [
+    `Cargado por ${authorName(movimiento.creadoPor)} el ${formatDateTime(movimiento.creadoEn)}`,
+  ];
+  lines.push(
+    movimiento.modificadoPor && movimiento.modificadoEn
+      ? `Modificado por última vez por ${authorName(movimiento.modificadoPor)} el ${formatDateTime(movimiento.modificadoEn)}`
+      : 'Sin modificaciones desde la carga',
+  );
+  return lines;
 }

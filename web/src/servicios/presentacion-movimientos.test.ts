@@ -6,6 +6,7 @@ import {
   DESCRIPTION_PREVIEW_LENGTH,
   formatChangeValue,
   formatMovementDate,
+  movementAuditLines,
   MOVEMENT_TYPE_OPTIONS,
   tipoMovimientoLabel,
   truncateDescription,
@@ -99,5 +100,31 @@ describe('formatChangeValue (RF-22)', () => {
     ['descripcion', 'Texto\ncon salto.', 'Texto\ncon salto.'],
   ] as const)('%s %j → %j', (campo, valor, expected) => {
     expect(formatChangeValue(campo, valor)).toBe(expected);
+  });
+});
+
+describe('movementAuditLines (RF-2)', () => {
+  const autor = { id: 1, nombre: 'Luis', apellido: 'Sosa', activo: true };
+
+  it('indica quién lo cargó y que no se modificó, en hora de Buenos Aires', () => {
+    expect(
+      movementAuditLines({
+        creadoPor: autor,
+        creadoEn: '2026-10-01T13:00:00.000Z',
+        modificadoPor: null,
+        modificadoEn: null,
+      }),
+    ).toEqual(['Cargado por Sosa, Luis el 01/10/2026 10:00', 'Sin modificaciones desde la carga']);
+  });
+
+  it('indica quién lo modificó por última vez, marcando a un autor desactivado', () => {
+    expect(
+      movementAuditLines({
+        creadoPor: autor,
+        creadoEn: '2026-10-01T13:00:00.000Z',
+        modificadoPor: { ...autor, id: 2, nombre: 'Marta', apellido: 'Díaz', activo: false },
+        modificadoEn: '2026-10-02T21:30:00.000Z',
+      })[1],
+    ).toBe('Modificado por última vez por Díaz, Marta (desactivado) el 02/10/2026 18:30');
   });
 });
