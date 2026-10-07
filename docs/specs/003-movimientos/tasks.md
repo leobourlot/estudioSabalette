@@ -147,7 +147,7 @@ Reglas para todas las tareas:
   `servicios/presentacion-movimientos.ts`: etiquetas de tipo, de acción y de campo, `formatMovementDate`, recorte de la descripción a 200 caracteres y nombre del autor con "(desactivado)".
   Hecho cuando: los tests verifican cada etiqueta, que `formatMovementDate('2024-03-01')` da `01/03/2024` con la zona horaria del test en UTC y en Buenos Aires, y el recorte de un texto corto y de uno largo.
 
-- [ ] **T23 — Validación del formulario y de los filtros** [RF-1, RF-3 a RF-6, RF-26]
+- [x] **T23 — Validación del formulario y de los filtros** [RF-1, RF-3 a RF-6, RF-26]
   En `servicios/formulario-movimiento.ts`: `validateMovementForm`, armado del cuerpo de alta y del de edición (solo lo que cambió) y `validateMovementFilters`.
   Hecho cuando: los tests verifican cada mensaje con el texto de la API (incluidos los de caracteres, el largo en puntos de código y el rango de fechas), que el texto para el cliente vacío se envía como `null`, que la edición envía solo los datos cambiados, y el mensaje de desde > hasta.
 
