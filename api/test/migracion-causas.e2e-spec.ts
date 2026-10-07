@@ -2,6 +2,7 @@ import { DataSource, QueryFailedError, type QueryRunner } from 'typeorm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { ENTITIES, MIGRATIONS } from '../src/base-de-datos/esquema.js';
 import { buildDataSourceOptions } from '../src/base-de-datos/opciones-base-de-datos.js';
+import { CrearCausasPartesYColaboradores1791156117399 } from '../src/migraciones/1791156117399-crear-causas-partes-y-colaboradores.js';
 import { loadTestEnvironment } from './utilidades/base-de-tests.js';
 
 const TABLES = ['causas', 'partes', 'causa_colaboradores'];
@@ -149,7 +150,10 @@ describe('migración de causas', () => {
   });
 
   it('down elimina las tablas y su metadato sin tocar las de la spec 001', async () => {
-    await dataSource.undoLastMigration();
+    // Las migraciones posteriores dependen de causas: se deshacen primero, y después la de causas.
+    const fromCausas =
+      MIGRATIONS.length - MIGRATIONS.indexOf(CrearCausasPartesYColaboradores1791156117399);
+    for (let index = 0; index < fromCausas; index++) await dataSource.undoLastMigration();
 
     for (const table of TABLES) expect(await queryRunner.hasTable(table)).toBe(false);
     for (const table of SPEC_001_TABLES) expect(await queryRunner.hasTable(table)).toBe(true);

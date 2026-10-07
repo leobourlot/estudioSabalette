@@ -37,7 +37,7 @@ Reglas para todas las tareas:
   `dateStrings: ['DATE']` en las opciones de conexión.
   Hecho cuando: el test unitario verifica que las opciones incluyen `dateStrings: ['DATE']` y no activan `logging`, y los e2e existentes siguen en verde (las columnas `DATETIME` no cambian).
 
-- [ ] **T5 — Migración** [RF-1, RF-2, RF-20] **(modifica existente: `esquema.ts`)**
+- [x] **T5 — Migración** [RF-1, RF-2, RF-20] **(modifica existente: `esquema.ts`)**
   Migración `crear-movimientos-y-cambios` con las dos tablas, sus índices y sus claves foráneas. Se agregan las entidades y la migración a `esquema.ts`.
   Hecho cuando: un e2e corre `up` sobre la base de tests con las tablas de las specs 001 y 002, guarda un movimiento con fecha 2024-03-01 y la lee como el texto `2024-03-01`, y corre `down` sin errores.
 
