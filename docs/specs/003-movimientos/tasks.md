@@ -172,7 +172,7 @@ Reglas para todas las tareas:
   - El aviso "El cliente verá:" con su origen al marcar la casilla, y el aviso de cambio en un movimiento visible.
   - Que ningún aviso impide guardar, y la muestra de los errores de la API.
 
-- [ ] **T28 — Fila y filtros del historial** [RF-24, RF-25]
+- [x] **T28 — Fila y filtros del historial** [RF-24, RF-25]
   `FilaMovimiento` y `FiltrosMovimientos`.
   Hecho cuando: los tests verifican que la fila muestra fecha, tipo, descripción recortada con "Ver completa", "Visible" u "Oculto", "Con texto para el cliente", el autor (marcado si está desactivado) y las etiquetas "Anulado" y "Fecha futura"; y que los filtros devuelven los valores elegidos y muestran el error de desde > hasta sin llamar al servicio.
 
