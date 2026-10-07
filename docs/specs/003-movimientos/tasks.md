@@ -69,7 +69,7 @@ Reglas para todas las tareas:
   - También verifican que un `QueryFailedError` con un texto de prueba en el mensaje responde 500 "Ocurrió un error inesperado", y que lo registrado contiene el método, el patrón de la ruta, la clase y el código del error, pero no el texto, la URL real ni el query string.
   - Los e2e existentes siguen en verde.
 
-- [ ] **T10 — Módulo, controller y carga** [RF-2, RF-8, RF-20, RF-34, RF-35] **(modifica existente: `app.module.ts`, utilidades de e2e)**
+- [x] **T10 — Módulo, controller y carga** [RF-2, RF-8, RF-20, RF-34, RF-35] **(modifica existente: `app.module.ts`, utilidades de e2e)**
   `MovimientosModule` importado en `app.module.ts` (importa `CausasModule`), `movimientos.controller.ts` con `@Roles('admin', 'abogado')`, la transacción `conCausaYMovimiento` (causa con bloqueo compartido y movimiento con bloqueo exclusivo) y `POST /`. Función de e2e para crear movimientos.
   Hecho cuando: los e2e verifican:
   - La carga no visible por defecto, la carga visible y el registro de quién la cargó.
