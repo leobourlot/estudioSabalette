@@ -8,9 +8,13 @@ import {
   MOVEMENT_MESSAGES,
   type MovementForm,
   movementFormFrom,
+  needsVisibleChangeWarning,
   toListQuery,
   validateMovementFilters,
   validateMovementForm,
+  VISIBLE_CHANGE_WARNING,
+  VISIBLE_TEXT_ORIGIN_LABELS,
+  visibleTextPreview,
 } from './formulario-movimiento';
 import type { MovimientoDetalle } from './movimientos';
 
@@ -170,5 +174,77 @@ describe('filtros del historial (RF-25, RF-26)', () => {
       hasta: '',
       ocultarAnulados: true,
     });
+  });
+});
+
+describe('visibleTextPreview (RF-7, RF-9)', () => {
+  it('usa el texto para el cliente si está informado', () => {
+    expect(
+      visibleTextPreview({ descripcion: 'Técnica.', textoCliente: ' Para el cliente. ' }),
+    ).toEqual({ texto: 'Para el cliente.', origen: 'textoCliente' });
+  });
+
+  it.each(['', '   ', ' \n '])(
+    'usa la descripción si el texto para el cliente es %j',
+    (textoCliente) => {
+      expect(visibleTextPreview({ descripcion: ' Técnica.\r\n', textoCliente })).toEqual({
+        texto: 'Técnica.',
+        origen: 'descripcion',
+      });
+    },
+  );
+
+  it('nombra el origen del texto', () => {
+    expect(VISIBLE_TEXT_ORIGIN_LABELS).toEqual({
+      textoCliente: 'texto para el cliente',
+      descripcion: 'descripción (no hay texto para el cliente)',
+    });
+  });
+});
+
+describe('needsVisibleChangeWarning (RF-13)', () => {
+  const visible = { ...MOVEMENT, visible: true };
+  const hidden = { ...MOVEMENT, visible: false };
+  const formOf = (movimiento: MovimientoDetalle, override: Partial<MovementForm> = {}) => ({
+    ...movementFormFrom(movimiento),
+    ...override,
+  });
+
+  it.each([
+    ['la fecha', { fecha: '2024-03-02' }],
+    ['el tipo', { tipo: 'oficio' as const }],
+    ['la descripción', { descripcion: 'Otra.' }],
+    ['el texto para el cliente', { textoCliente: 'Otro texto.' }],
+    ['el texto para el cliente vaciado', { textoCliente: '' }],
+  ])('avisa si era visible, sigue visible y cambia %s', (_case, override) => {
+    expect(needsVisibleChangeWarning(visible, formOf(visible, override))).toBe(true);
+  });
+
+  it('no avisa si no cambia nada que vea el cliente', () => {
+    expect(needsVisibleChangeWarning(visible, formOf(visible))).toBe(false);
+    expect(
+      needsVisibleChangeWarning(
+        visible,
+        formOf(visible, { descripcion: ` ${MOVEMENT.descripcion} ` }),
+      ),
+    ).toBe(false);
+  });
+
+  it('no avisa si pasa a no visible, aunque cambie el texto', () => {
+    expect(
+      needsVisibleChangeWarning(visible, formOf(visible, { visible: false, descripcion: 'Otra.' })),
+    ).toBe(false);
+  });
+
+  it('no avisa si no era visible: al hacerlo visible se aplica el aviso de RF-9', () => {
+    expect(
+      needsVisibleChangeWarning(hidden, formOf(hidden, { visible: true, descripcion: 'Otra.' })),
+    ).toBe(false);
+  });
+
+  it('el mensaje es el de la spec', () => {
+    expect(VISIBLE_CHANGE_WARNING).toBe(
+      'Este movimiento es visible para el cliente; el cambio se verá en el portal',
+    );
   });
 });

@@ -151,7 +151,7 @@ Reglas para todas las tareas:
   En `servicios/formulario-movimiento.ts`: `validateMovementForm`, armado del cuerpo de alta y del de edición (solo lo que cambió) y `validateMovementFilters`.
   Hecho cuando: los tests verifican cada mensaje con el texto de la API (incluidos los de caracteres, el largo en puntos de código y el rango de fechas), que el texto para el cliente vacío se envía como `null`, que la edición envía solo los datos cambiados, y el mensaje de desde > hasta.
 
-- [ ] **T24 — Avisos de visibilidad** [RF-7, RF-9, RF-13]
+- [x] **T24 — Avisos de visibilidad** [RF-7, RF-9, RF-13]
   En `servicios/formulario-movimiento.ts`: `visibleTextPreview` y `needsVisibleChangeWarning`.
   Hecho cuando: los tests verifican que la vista previa usa el texto para el cliente o, si está vacío o solo tiene espacios, la descripción, con su origen; y que el aviso de cambio aparece solo si el movimiento era visible, sigue visible y cambió la fecha, el tipo, la descripción o el texto para el cliente.
 

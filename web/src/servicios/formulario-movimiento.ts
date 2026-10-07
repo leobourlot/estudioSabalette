@@ -201,3 +201,40 @@ export function toListQuery(filters: MovementFilters, pagina: number): ListMovim
     ocultarAnulados: filters.ocultarAnulados,
   };
 }
+
+// --- Avisos de visibilidad (RF-9, RF-13): informativos, no bloquean ni piden confirmación ---
+
+export const VISIBLE_CHANGE_WARNING =
+  'Este movimiento es visible para el cliente; el cambio se verá en el portal';
+
+export const VISIBLE_TEXT_ORIGIN_LABELS = {
+  textoCliente: 'texto para el cliente',
+  descripcion: 'descripción (no hay texto para el cliente)',
+} as const;
+
+/**
+ * Lo que leerá el cliente si el movimiento es visible (RF-7, RF-9): el texto para el cliente
+ * o, si quedó vacío, la descripción, con su origen. Se calcula mientras se escribe.
+ */
+export function visibleTextPreview(form: Pick<MovementForm, 'descripcion' | 'textoCliente'>): {
+  texto: string;
+  origen: keyof typeof VISIBLE_TEXT_ORIGIN_LABELS;
+} {
+  const textoCliente = optionalText(form.textoCliente);
+  return textoCliente === null
+    ? { texto: normalizeMovementText(form.descripcion), origen: 'descripcion' }
+    : { texto: textoCliente, origen: 'textoCliente' };
+}
+
+/**
+ * RF-13: el movimiento ya era visible, sigue siéndolo, y cambia algo de lo que ve el cliente
+ * (fecha, tipo, descripción o texto para el cliente).
+ */
+export function needsVisibleChangeWarning(
+  movimiento: MovimientoDetalle,
+  form: MovementForm,
+): boolean {
+  if (!movimiento.visible || !form.visible) return false;
+  const changes = buildUpdateMovementData(form, movimiento);
+  return Object.keys(changes).some((campo) => campo !== 'visible');
+}
