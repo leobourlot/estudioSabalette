@@ -29,7 +29,7 @@ Reglas para todas las tareas:
   - Los límites 1899-12-31, 1900-01-01, 2099-12-31 y 2100-01-01.
   - La fecha futura con el día siguiente y con el mismo día, y el cambio de día a las 02:59 y a las 03:00 UTC.
 
-- [ ] **T3 — Entidades** [RF-1, RF-2, RF-20]
+- [x] **T3 — Entidades** [RF-1, RF-2, RF-20]
   `movimiento.entity.ts` (con el índice `IDX_movimientos_historial` y `creadoEn` con microsegundos) y `cambio-movimiento.entity.ts` (con `cambios` en JSON y el índice `IDX_movimiento_cambios_movimiento`), con los campos, tipos y relaciones del plan.
   Hecho cuando: la api compila y un test unitario verifica que los enums de tipo y de acción tienen exactamente los valores del plan.
 
