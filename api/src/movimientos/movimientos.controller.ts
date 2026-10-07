@@ -5,11 +5,13 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CreateMovimientoDto } from './dto/crear-movimiento.dto.js';
+import { UpdateMovimientoDto } from './dto/modificar-movimiento.dto.js';
 import type { MovimientoDetalle } from './movimiento-detalle.js';
 import { MOVIMIENTOS_MESSAGES, MovimientosService } from './movimientos.service.js';
 
@@ -48,5 +50,15 @@ export class MovimientosController {
     @Body() body: CreateMovimientoDto,
   ): Promise<MovimientoDetalle> {
     return this.movimientos.create(actor, causaId, body);
+  }
+
+  @Patch(':movimientoId')
+  update(
+    @CurrentUser() actor: Usuario,
+    @Param('causaId', CausaIdPipe) causaId: number,
+    @Param('movimientoId', MovimientoIdPipe) movimientoId: number,
+    @Body() body: UpdateMovimientoDto,
+  ): Promise<MovimientoDetalle> {
+    return this.movimientos.update(actor, causaId, movimientoId, body);
   }
 }

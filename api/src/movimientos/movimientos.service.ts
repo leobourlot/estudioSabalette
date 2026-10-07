@@ -5,15 +5,27 @@ import { Causa } from '../causas/causa.entity.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CambioMovimiento } from './cambio-movimiento.entity.js';
 import type { CreateMovimientoDto } from './dto/crear-movimiento.dto.js';
+import type { UpdateMovimientoDto } from './dto/modificar-movimiento.dto.js';
 import { type MovimientoDetalle, toMovimientoDetalle } from './movimiento-detalle.js';
 import { Movimiento } from './movimiento.entity.js';
-import { loadChanges, type MovementData } from './reglas-movimientos.js';
+import { diffMovement, loadChanges, type MovementData } from './reglas-movimientos.js';
 
 export const MOVIMIENTOS_MESSAGES = {
   causaNotFound: 'No existe esa causa',
   notFound: 'No existe ese movimiento',
   causaDeactivated: 'La causa está desactivada',
+  annulled: 'El movimiento está anulado. Restauralo para modificarlo',
 } as const;
+
+/** Datos del movimiento que registra el historial de cambios (RF-20). */
+const snapshot = (movimiento: Movimiento): MovementData => ({
+  fecha: movimiento.fecha,
+  tipo: movimiento.tipo,
+  descripcion: movimiento.descripcion,
+  textoCliente: movimiento.textoCliente,
+  visible: movimiento.visible,
+  anulado: movimiento.anulado,
+});
 
 /** Relaciones que necesita toMovimientoDetalle. */
 const DETAIL_RELATIONS = { creadoPor: true, modificadoPor: true, cambios: { usuario: true } };
@@ -68,6 +80,52 @@ export class MovimientosService {
       return movimiento.id;
     });
     return this.findOne(causaId, id);
+  }
+
+  /**
+   * Modifica los datos o la visibilidad de un movimiento no anulado (RF-11, RF-14). Registra
+   * la modificación y el cambio con los datos que cambiaron (RF-2, RF-20). Un PATCH que no
+   * cambia nada no deja rastro: no es una modificación.
+   */
+  async update(
+    actor: Usuario,
+    causaId: number,
+    movimientoId: number,
+    dto: UpdateMovimientoDto,
+  ): Promise<MovimientoDetalle> {
+    await this.withMovement(causaId, movimientoId, async (manager, movimiento) => {
+      if (movimiento.anulado) throw new ConflictException(MOVIMIENTOS_MESSAGES.annulled);
+      const antes = snapshot(movimiento);
+      const despues: MovementData = {
+        ...antes,
+        fecha: dto.fecha ?? antes.fecha,
+        tipo: dto.tipo ?? antes.tipo,
+        descripcion: dto.descripcion ?? antes.descripcion,
+        textoCliente: dto.textoCliente === undefined ? antes.textoCliente : dto.textoCliente,
+        visible: dto.visible ?? antes.visible,
+      };
+      const cambios = diffMovement(antes, despues);
+      if (cambios.length === 0) return;
+
+      const ahora = new Date();
+      await manager.update(Movimiento, movimiento.id, {
+        fecha: despues.fecha,
+        tipo: dto.tipo ?? movimiento.tipo,
+        descripcion: despues.descripcion,
+        textoCliente: despues.textoCliente,
+        visible: despues.visible,
+        modificadoPorId: actor.id,
+        modificadoEn: ahora,
+      });
+      await manager.insert(CambioMovimiento, {
+        movimientoId: movimiento.id,
+        accion: 'modificacion',
+        usuarioId: actor.id,
+        fechaHora: ahora,
+        cambios,
+      });
+    });
+    return this.findOne(causaId, movimientoId);
   }
 
   /**

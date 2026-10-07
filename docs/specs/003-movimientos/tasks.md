@@ -81,7 +81,7 @@ Reglas para todas las tareas:
   `GET /:movimientoId` con el texto visible, la auditoría y los cambios.
   Hecho cuando: los e2e verifican el detalle completo, y el mismo 404 "No existe ese movimiento" para un movimiento inexistente, uno de otra causa y un id no numérico.
 
-- [ ] **T12 — Modificación y visibilidad** [RF-2, RF-11, RF-12, RF-14, RF-15, RF-20]
+- [x] **T12 — Modificación y visibilidad** [RF-2, RF-11, RF-12, RF-14, RF-15, RF-20]
   `PATCH /:movimientoId` con `diffMovement`, registro de la modificación y cambio `modificacion`.
   Hecho cuando: los e2e verifican:
   - La modificación de cada dato y de la visibilidad en los dos sentidos, con `modificadoPor/En`.
