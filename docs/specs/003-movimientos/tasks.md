@@ -116,7 +116,7 @@ Reglas para todas las tareas:
   - El 400 con desde > hasta, el 404 de una causa inexistente y el 200 de una causa desactivada.
   - `esFechaFutura`.
 
-- [ ] **T17 — Búsqueda en el historial** [RF-27]
+- [x] **T17 — Búsqueda en el historial** [RF-27]
   Parámetro `buscar` sobre la descripción y el texto para el cliente.
   Hecho cuando: los e2e verifican la búsqueda por fragmento en cada texto, en mayúsculas y sin tildes, que los comodines `%` y `_` se buscan como texto, que solo devuelve movimientos de la causa indicada, y su combinación con los filtros.
 

@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, type EntityManager, Repository } from 'typeorm';
+import { Brackets, DataSource, type EntityManager, Repository } from 'typeorm';
 import { Causa } from '../causas/causa.entity.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CambioMovimiento } from './cambio-movimiento.entity.js';
@@ -36,6 +36,9 @@ const snapshot = (movimiento: Movimiento): MovementData => ({
 });
 
 const PAGE_SIZE = 20;
+
+/** Escapa los comodines de LIKE, para que % y _ se busquen como texto. */
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, (char) => `\\${char}`);
 
 export interface MovimientoPage {
   items: MovimientoResumen[];
@@ -213,6 +216,18 @@ export class MovimientosService {
     if (query.hasta !== undefined)
       builder.andWhere('movimiento.fecha <= :hasta', { hasta: query.hasta });
     if (query.ocultarAnulados === true) builder.andWhere('movimiento.anulado = 0');
+    // Buscador (RF-27): fragmentos de la descripción o del texto para el cliente. La
+    // intercalación utf8mb4_unicode_ci compara sin distinguir mayúsculas ni tildes.
+    if (query.buscar) {
+      builder.andWhere(
+        new Brackets((where) =>
+          where
+            .where('movimiento.descripcion LIKE :texto')
+            .orWhere('movimiento.textoCliente LIKE :texto'),
+        ),
+        { texto: `%${escapeLike(query.buscar)}%` },
+      );
+    }
 
     const [movimientos, total] = await builder
       .orderBy('movimiento.fecha', 'DESC')
