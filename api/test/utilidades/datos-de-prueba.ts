@@ -52,6 +52,26 @@ export async function createTestUser(
   return usuario;
 }
 
+let testClientCounter = 0;
+
+/**
+ * Crea un cliente persona física con email y DNI únicos, listo para vincularlo a una causa
+ * como parte (con `partes: [{ clienteId }]` en createTestCausa). Ingresa con TEST_PASSWORD.
+ */
+export function createTestClient(
+  app: NestExpressApplication,
+  data: { nombre?: string; apellido?: string } = {},
+): Promise<Usuario> {
+  testClientCounter += 1;
+  return createTestUser(app, {
+    rol: 'cliente',
+    email: `cliente.portal${testClientCounter}@correo.com`,
+    nombre: data.nombre ?? 'Cliente',
+    apellido: data.apellido ?? `Número ${testClientCounter}`,
+    cliente: { tipoPersona: 'fisica', dni: String(31000000 + testClientCounter) },
+  });
+}
+
 type PartyData = Partial<Omit<Parte, 'id' | 'causaId' | 'causa' | 'cliente'>>;
 
 type CausaData = Partial<

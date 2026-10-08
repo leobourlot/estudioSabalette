@@ -69,7 +69,7 @@ Reglas para todas las tareas:
   `portal/portal-detalle.ts`: `CausaPortalResumen`, `CausaPortalDetalle` y `PartePortal`, campo por campo.
   Hecho cuando: los tests unitarios comparan las claves exactas de cada respuesta, verifican que ninguna incluye `dni`, `cuit`, `tipoPersona`, `clienteId`, ids de partes o integrantes, emails, colaboradores, `activa` ni auditoría, y que un responsable desactivado sale como `null`.
 
-- [ ] **T10 — Módulo, controller y lista de causas** [RF-1, RF-2, RF-7, RF-9, RF-12] **(modifica existente: `app.module.ts` y `api/test/utilidades/datos-de-prueba.ts`)**
+- [x] **T10 — Módulo, controller y lista de causas** [RF-1, RF-2, RF-7, RF-9, RF-12] **(modifica existente: `app.module.ts` y `api/test/utilidades/datos-de-prueba.ts`)**
   `PortalModule`, `PortalController` con `@Roles('cliente')` y sus cuatro rutas `GET`, DTO de `pagina` con el mensaje de los listados existentes, pipes de ids con los 404 de la spec 003, y `PortalService.listCausas`. Las utilidades de e2e suman una función para vincular un cliente a una causa como parte.
   Hecho cuando: los e2e verifican:
   - Que un cliente ve solo sus causas vinculadas, incluidas una Archivada y una Finalizada, sin una desactivada, una de la que fue desvinculado ni una de otro cliente.
