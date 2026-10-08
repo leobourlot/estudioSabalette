@@ -1,4 +1,5 @@
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
+import { STUDIO_CONTACT } from '../servicios/datos-estudio';
 import { fullName } from '../servicios/presentacion';
 import { ROUTES } from '../servicios/sesion';
 import { useSession } from './ProveedorSesion';
@@ -30,7 +31,8 @@ export function DisenoSeccion({ title, links }: DisenoSeccionProps) {
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-3">
           <p className="font-semibold text-slate-800">
-            Estudio Sabalette <span className="font-normal text-slate-500">· {title}</span>
+            <span>{STUDIO_CONTACT.nombre}</span>{' '}
+            <span className="font-normal text-slate-500">· {title}</span>
           </p>
           <nav className="flex gap-4 text-sm">
             {links.map((link) => (

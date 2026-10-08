@@ -115,7 +115,7 @@ Reglas para todas las tareas:
 
 ## web
 
-- [ ] **T16 — Datos del estudio** [RF-18, RF-19] **(modifica existente: `DisenoSeccion.tsx`)**
+- [x] **T16 — Datos del estudio** [RF-18, RF-19] **(modifica existente: `DisenoSeccion.tsx`)**
   `servicios/datos-estudio.ts` con `STUDIO_CONTACT` (nombre "Estudio Sabalette", dirección y WhatsApp genéricos, marcados para reemplazar) y `whatsappUrl()`. `DisenoSeccion` toma el nombre de ahí.
   Hecho cuando: un test verifica que `whatsappUrl()` arma `https://wa.me/<número>` sin mensaje, y el test existente de los diseños sigue mostrando "Estudio Sabalette".
 

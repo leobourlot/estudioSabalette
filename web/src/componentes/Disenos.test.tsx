@@ -2,6 +2,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-de-prueba';
+import { STUDIO_CONTACT } from '../servicios/datos-estudio';
 import type { UsuarioPropio } from '../servicios/sesion';
 
 async function openAs(path: string, usuario: UsuarioPropio, firstHeading: string) {
@@ -22,6 +23,12 @@ describe('DisenoPanel (RF-16)', () => {
 
     expect(navLinks()).toEqual(['Inicio', 'Causas', 'Cuentas', 'Mi cuenta']);
     expect(screen.getByText('Juan Pérez')).toBeTruthy();
+  });
+
+  it('el encabezado muestra el nombre del estudio de sus datos de contacto', async () => {
+    await openAs('/panel', testUser('abogado'), 'Panel');
+
+    expect(within(screen.getByRole('banner')).getByText(STUDIO_CONTACT.nombre)).toBeTruthy();
   });
 
   it('cerrar sesión llama al servicio y lleva a /ingresar', async () => {
