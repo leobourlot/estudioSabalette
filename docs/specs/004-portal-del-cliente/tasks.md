@@ -138,7 +138,7 @@ Reglas para todas las tareas:
   `servicios/portal.ts` con los tipos y una función por ruta.
   Hecho cuando: los tests con `fetch` simulado verifican la ruta y el `pagina` de cada función.
 
-- [ ] **T21 — Presentación del portal** [RF-9, RF-10, RF-13, RF-21, RF-25]
+- [x] **T21 — Presentación del portal** [RF-9, RF-10, RF-13, RF-21, RF-25]
   `servicios/presentacion-portal.ts`: `groupCausas`, títulos de grupo, "Sin asignar", `movementLegend`, `truncateClientText` y `parsePageParam`.
   Hecho cuando: los tests verifican:
   - `groupCausas` con una página que empieza a mitad de un grupo y con otra de un solo grupo.
