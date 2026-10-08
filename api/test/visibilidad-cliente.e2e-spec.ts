@@ -90,7 +90,7 @@ describe('ClientVisibilityService', () => {
     const { causaId } = await causaWith(client.id);
     const created = await movement(causaId, { textoCliente: 'El juez fijó audiencia.' });
 
-    const seen = await visibility.findVisible(client.id, created.id);
+    const seen = await visibility.findVisible(client.id, created.causaId, created.id);
 
     expect(seen).toEqual({
       id: created.id,
@@ -107,7 +107,7 @@ describe('ClientVisibilityService', () => {
     const { causaId } = await causaWith(client.id);
     const created = await movement(causaId);
 
-    expect((await visibility.findVisible(client.id, created.id)).texto).toBe(
+    expect((await visibility.findVisible(client.id, created.causaId, created.id)).texto).toBe(
       'Descripción técnica interna.',
     );
   });
@@ -120,9 +120,32 @@ describe('ClientVisibilityService', () => {
     const hidden = await movement(causaId, { visible: false });
     const foreign = await movement(foreignCausa);
 
-    await expectNotFound(visibility.findVisible(client.id, hidden.id));
-    await expectNotFound(visibility.findVisible(client.id, foreign.id));
-    await expectNotFound(visibility.findVisible(client.id, 999999));
+    await expectNotFound(visibility.findVisible(client.id, hidden.causaId, hidden.id));
+    await expectNotFound(visibility.findVisible(client.id, foreign.causaId, foreign.id));
+    await expectNotFound(visibility.findVisible(client.id, causaId, 999999));
+  });
+
+  it('responde el mismo 404 para un movimiento visible pedido dentro de otra causa del cliente (spec 004, RF-29)', async () => {
+    const client = await newClient();
+    const { causaId } = await causaWith(client.id);
+    const { causaId: otherCausa } = await causaWith(client.id);
+    const fromOther = await movement(otherCausa);
+
+    await expectNotFound(visibility.findVisible(client.id, causaId, fromOther.id));
+    expect(await visibility.findVisible(client.id, otherCausa, fromOther.id)).toMatchObject({
+      id: fromOther.id,
+    });
+  });
+
+  it('canSeeCausa exige la cuenta de cliente activa y el vínculo vigente', async () => {
+    const client = await newClient();
+    const other = await newClient();
+    const { causaId } = await causaWith(client.id);
+
+    expect(await visibility.canSeeCausa(client.id, causaId)).toBe(true);
+    expect(await visibility.canSeeCausa(other.id, causaId)).toBe(false);
+    expect(await visibility.canSeeCausa(lawyer.id, causaId)).toBe(false);
+    expect(await visibility.canSeeCausa(client.id, 999999)).toBe(false);
   });
 
   it('un movimiento visible anulado se ve marcado como anulado (RF-17)', async () => {
@@ -130,7 +153,9 @@ describe('ClientVisibilityService', () => {
     const { causaId } = await causaWith(client.id);
     const created = await movement(causaId, { anulado: true });
 
-    expect(await visibility.findVisible(client.id, created.id)).toMatchObject({ anulado: true });
+    expect(await visibility.findVisible(client.id, created.causaId, created.id)).toMatchObject({
+      anulado: true,
+    });
   });
 
   it('ve los movimientos cargados antes de quedar vinculado (RF-32)', async () => {
@@ -143,7 +168,9 @@ describe('ClientVisibilityService', () => {
       .send({ rol: 'actor', clienteId: client.id })
       .expect(201);
 
-    expect(await visibility.findVisible(client.id, earlier.id)).toMatchObject({ id: earlier.id });
+    expect(await visibility.findVisible(client.id, earlier.causaId, earlier.id)).toMatchObject({
+      id: earlier.id,
+    });
   });
 
   it('deja de verlos al desvincularlo como parte (RF-32)', async () => {
@@ -153,7 +180,7 @@ describe('ClientVisibilityService', () => {
 
     await panel('post', `/api/panel/causas/${causaId}/partes/${parteId}/desvincular`).expect(200);
 
-    await expectNotFound(visibility.findVisible(client.id, created.id));
+    await expectNotFound(visibility.findVisible(client.id, created.causaId, created.id));
     await expect(visibility.listVisible(client.id, causaId)).resolves.toBeNull();
   });
 
@@ -164,7 +191,7 @@ describe('ClientVisibilityService', () => {
 
     await panel('post', `/api/panel/causas/${causaId}/desactivar`).expect(204);
 
-    await expectNotFound(visibility.findVisible(client.id, created.id));
+    await expectNotFound(visibility.findVisible(client.id, created.causaId, created.id));
   });
 
   it('deja de verlos con la cuenta desactivada, y los recupera al reactivarla', async () => {
@@ -174,10 +201,12 @@ describe('ClientVisibilityService', () => {
     const users = app.get(DataSource).getRepository(Usuario);
 
     await users.update(client.id, { activo: false });
-    await expectNotFound(visibility.findVisible(client.id, created.id));
+    await expectNotFound(visibility.findVisible(client.id, created.causaId, created.id));
 
     await users.update(client.id, { activo: true });
-    expect(await visibility.findVisible(client.id, created.id)).toMatchObject({ id: created.id });
+    expect(await visibility.findVisible(client.id, created.causaId, created.id)).toMatchObject({
+      id: created.id,
+    });
   });
 
   it.each(['archivada', 'finalizada'] as const)(
@@ -187,7 +216,9 @@ describe('ClientVisibilityService', () => {
       const { causaId } = await causaWith(client.id, estado);
       const created = await movement(causaId);
 
-      expect(await visibility.findVisible(client.id, created.id)).toMatchObject({ id: created.id });
+      expect(await visibility.findVisible(client.id, created.causaId, created.id)).toMatchObject({
+        id: created.id,
+      });
     },
   );
 
@@ -201,7 +232,8 @@ describe('ClientVisibilityService', () => {
 
     const page = await visibility.listVisible(client.id, causaId);
 
-    expect(page).toMatchObject({ total: 3, pagina: 1, porPagina: 20 });
+    expect(page).toMatchObject({ pagina: 1, haySiguiente: false });
+    expect(page).not.toHaveProperty('total');
     expect(page!.items.map((item) => [item.id, item.anulado])).toEqual([
       [newer.id, false],
       [annulled.id, true],
@@ -212,10 +244,32 @@ describe('ClientVisibilityService', () => {
     }
   });
 
+  it('listVisible pagina de a 20 solo los visibles, con haySiguiente y sin total (spec 004, RF-24, RF-26)', async () => {
+    const client = await newClient();
+    const { causaId } = await causaWith(client.id);
+    for (let day = 1; day <= 21; day++) {
+      await movement(causaId, { fecha: `2024-01-${String(day).padStart(2, '0')}` });
+    }
+    for (let day = 1; day <= 5; day++) {
+      await movement(causaId, { fecha: `2024-02-0${day}`, visible: false });
+    }
+
+    const first = await visibility.listVisible(client.id, causaId, 1);
+    const second = await visibility.listVisible(client.id, causaId, 2);
+
+    expect(first).toMatchObject({ pagina: 1, haySiguiente: true });
+    expect(first!.items).toHaveLength(20);
+    expect(first!.items[0].fecha).toBe('2024-01-21');
+    expect(second).toMatchObject({ pagina: 2, haySiguiente: false });
+    expect(second!.items.map((item) => item.fecha)).toEqual(['2024-01-01']);
+    expect(first).not.toHaveProperty('total');
+    expect(second).not.toHaveProperty('total');
+  });
+
   it('un integrante no es un cliente: no ve movimientos por esta regla', async () => {
     const causa = await createTestCausa(app, { responsableId: lawyer.id, creadoPorId: lawyer.id });
     const created = await movement(causa.id);
 
-    await expectNotFound(visibility.findVisible(lawyer.id, created.id));
+    await expectNotFound(visibility.findVisible(lawyer.id, created.causaId, created.id));
   });
 });

@@ -45,7 +45,7 @@ Reglas para todas las tareas:
   Middleware de Express que pone `Cache-Control: no-store` en todas las respuestas de la API.
   Hecho cuando: un e2e verifica el encabezado en una respuesta 200 del panel, en una 401 y en una 404.
 
-- [ ] **T6 — Visibilidad para el cliente: causa, página y movimiento** [RF-20, RF-24, RF-26, RF-29] **(modifica existente: `visibilidad-cliente.service.ts` y `visibilidad-cliente.e2e-spec.ts`)**
+- [x] **T6 — Visibilidad para el cliente: causa, página y movimiento** [RF-20, RF-24, RF-26, RF-29] **(modifica existente: `visibilidad-cliente.service.ts` y `visibilidad-cliente.e2e-spec.ts`)**
   `canSeeCausa` pasa a ser público. `listVisible(clienteId, causaId, pagina, ahora)` pide 21 filas y devuelve `{ items, pagina, haySiguiente }` sin `total`. `findVisible(clienteId, causaId, movimientoId, ahora)` busca también por causa.
   Hecho cuando: los e2e existentes de visibilidad pasan con las firmas nuevas, y además verifican:
   - Que `findVisible` responde el mismo 404 para un movimiento visible de otra causa vinculada.
