@@ -176,7 +176,7 @@ Reglas para todas las tareas:
   Ruta `/portal/causas/:id/movimientos/:movimientoId` y página `PortalMovimientoDetalle`.
   Hecho cuando: los tests verifican el texto completo, la carátula, "Volver a la causa" con la misma página y que ante un 404 solo se muestra "No existe ese movimiento".
 
-- [ ] **T27 — Acceso y persistencia en la web** [RF-1, RNF de persistencia]
+- [x] **T27 — Acceso y persistencia en la web** [RF-1, RNF de persistencia]
   Recorrido de las rutas del portal.
   Hecho cuando: los tests verifican que un visitante va a `/ingresar`, un integrante al panel y un cliente con cambio pendiente a `/cambiar-contrasena` en cada ruta nueva, y que el flujo del portal no escribe en `localStorage` ni en `sessionStorage`.
 
