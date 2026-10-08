@@ -77,7 +77,7 @@ Reglas para todas las tareas:
   - Que un cliente sin causas recibe `items` vacío.
   - Que `pagina=0` y `pagina=abc` responden 400.
 
-- [ ] **T11 — Orden y paginación de la lista de causas** [RF-8, RF-10, RF-11, RF-24, RF-25]
+- [x] **T11 — Orden y paginación de la lista de causas** [RF-8, RF-10, RF-11, RF-24, RF-25]
   Orden y página con las reglas de T8 y las fechas de T7, con `ahora` controlado en el service.
   Hecho cuando: los e2e verifican:
   - Los grupos y el orden con la fecha del último movimiento, y que esa fecha cambia al pasar el día en Buenos Aires.
