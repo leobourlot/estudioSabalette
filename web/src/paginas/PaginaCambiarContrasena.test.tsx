@@ -35,6 +35,22 @@ async function fill(current: string, next: string, repeated = next) {
 
 const alertText = async () => (await screen.findByRole('alert')).textContent;
 
+describe('PaginaCambiarContrasena: WhatsApp (spec 004, RF-18, RF-19)', () => {
+  it('a un cliente le muestra el botón de WhatsApp, sin el bloque de contacto', async () => {
+    await openPage({ rol: 'cliente', pending: false });
+
+    expect(screen.getByRole('link', { name: 'Escribinos por WhatsApp' })).toBeTruthy();
+    expect(screen.queryByRole('contentinfo', { name: 'Contacto del estudio' })).toBeNull();
+  });
+
+  it('a un integrante no le muestra nada de eso', async () => {
+    await openPage({ rol: 'abogado', pending: false });
+
+    expect(screen.queryByRole('link', { name: 'Escribinos por WhatsApp' })).toBeNull();
+    expect(screen.queryByRole('contentinfo', { name: 'Contacto del estudio' })).toBeNull();
+  });
+});
+
 describe('PaginaCambiarContrasena (RF-11, RF-36 a RF-39)', () => {
   it.each([
     ['tiene tildes', 'contraseña nueva 2026', 'La contraseña no puede tener tildes, ñ ni emojis'],

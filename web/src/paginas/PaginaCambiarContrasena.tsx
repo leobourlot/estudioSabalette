@@ -1,5 +1,6 @@
 import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { BotonWhatsapp } from '../componentes/BotonWhatsapp';
 import { useSession } from '../componentes/ProveedorSesion';
 import { ApiError, errorMessage } from '../servicios/cliente-http';
 import { resolveLandingRoute, ROUTES } from '../servicios/sesion';
@@ -50,6 +51,9 @@ export function PaginaCambiarContrasena() {
   const [enviando, setEnviando] = useState(false);
 
   const pendiente = usuario?.debeCambiarContrasena ?? false;
+  // Los clientes ven el botón de WhatsApp en todas sus pantallas, también acá; el bloque de
+  // contacto, no (spec 004, RF-18, RF-19).
+  const esCliente = usuario?.rol === 'cliente';
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -86,7 +90,9 @@ export function PaginaCambiarContrasena() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
+    <main
+      className={`flex min-h-screen items-center justify-center bg-slate-50 p-4 ${esCliente ? 'pb-24' : ''}`}
+    >
       <form
         onSubmit={handleSubmit}
         noValidate
@@ -150,6 +156,7 @@ export function PaginaCambiarContrasena() {
           </button>
         </div>
       </form>
+      {esCliente && <BotonWhatsapp />}
     </main>
   );
 }

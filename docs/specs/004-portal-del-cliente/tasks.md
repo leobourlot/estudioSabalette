@@ -146,7 +146,7 @@ Reglas para todas las tareas:
   - `movementLegend` en las cuatro combinaciones de anulado y fecha futura.
   - `parsePageParam` con vacío, `1`, `3`, `0`, `-1`, `1.5` y `abc`.
 
-- [ ] **T22 — Contacto y WhatsApp** [RF-2, RF-18, RF-19] **(modifica existente: `DisenoPortal.tsx`, `PaginaCambiarContrasena.tsx` y sus tests)**
+- [x] **T22 — Contacto y WhatsApp** [RF-2, RF-18, RF-19] **(modifica existente: `DisenoPortal.tsx`, `PaginaCambiarContrasena.tsx` y sus tests)**
   `BloqueContactoEstudio` y `BotonWhatsapp`. `DisenoPortal` suma el bloque, el botón, el enlace "Cambiar contraseña" y el margen inferior. `PaginaCambiarContrasena` muestra el botón a los clientes.
   Hecho cuando: los tests verifican:
   - En el portal: el enlace "Cambiar contraseña", el nombre, la dirección y el enlace de WhatsApp con `target="_blank"` y `rel="noopener noreferrer"`, y el botón con su `aria-label`.

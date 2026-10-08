@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { STUDIO_CONTACT } from '../servicios/datos-estudio';
 import { fullName } from '../servicios/presentacion';
@@ -14,10 +15,12 @@ export interface SectionLink {
 interface DisenoSeccionProps {
   title: string;
   links: SectionLink[];
+  /** Lo que va debajo de la página, como el contacto del estudio en el portal. */
+  footer?: ReactNode;
 }
 
 /** Encabezado con navegación, nombre del usuario y "Cerrar sesión" (RF-16), y la página debajo. */
-export function DisenoSeccion({ title, links }: DisenoSeccionProps) {
+export function DisenoSeccion({ title, links, footer }: DisenoSeccionProps) {
   const { usuario, logout } = useSession();
   const navigate = useNavigate();
 
@@ -57,6 +60,7 @@ export function DisenoSeccion({ title, links }: DisenoSeccionProps) {
         </div>
       </header>
       <Outlet />
+      {footer}
     </div>
   );
 }
