@@ -10,7 +10,8 @@ import { cookieValue, cookieWasCleared, loginAs } from './utilidades/sesion-de-p
 
 const REFRESH = '/api/sesion/renovar';
 const INVALID_SESSION = 'Tu sesión no es válida o venció. Volvé a ingresar';
-const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+// createTestUser crea un abogado: su sesión dura 1 hora sin uso (spec 001, RF-12).
+const LAWYER_SESSION_TTL = 60 * 60 * 1000;
 
 describe('POST /api/sesion/renovar', () => {
   let app: NestExpressApplication;
@@ -40,7 +41,7 @@ describe('POST /api/sesion/renovar', () => {
     return session;
   }
 
-  it('entrega tokens nuevos y corre el vencimiento a 7 días (RF-12)', async () => {
+  it('entrega tokens nuevos y corre el vencimiento según el rol (RF-12)', async () => {
     const original = await loginAs(app, 'juan@estudio.com');
     const before = await storedSession();
     await sessions.update(before.id, { venceEn: new Date(Date.now() + 60_000) });
@@ -58,7 +59,9 @@ describe('POST /api/sesion/renovar', () => {
     const after = await storedSession();
     expect(after.tokenHash).not.toBe(before.tokenHash);
     expect(after.tokenAnteriorHash).toBe(before.tokenHash);
-    expect(Math.abs(after.venceEn.getTime() - (Date.now() + SEVEN_DAYS))).toBeLessThan(60_000);
+    expect(Math.abs(after.venceEn.getTime() - (Date.now() + LAWYER_SESSION_TTL))).toBeLessThan(
+      60_000,
+    );
   });
 
   it('permite renovar varias veces seguidas con el token más reciente', async () => {

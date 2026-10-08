@@ -76,7 +76,7 @@ describe('POST /api/sesion/ingresar', () => {
     expect(access).toMatch(/; Path=\/api(;|$)/);
     expect(access).toMatch(/Max-Age=900/);
     expect(refresh).toMatch(/; Path=\/api\/sesion(;|$)/);
-    expect(refresh).toMatch(/Max-Age=604800/);
+    expect(refresh).toMatch(/Max-Age=4500;/);
   });
 
   it('registra la fecha de último ingreso', async () => {

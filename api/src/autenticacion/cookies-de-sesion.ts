@@ -2,8 +2,8 @@ import type { CookieOptions, Response } from 'express';
 import {
   ACCESS_TOKEN_COOKIE,
   ACCESS_TOKEN_TTL_SECONDS,
+  REFRESH_COOKIE_MAX_AGE_MS,
   REFRESH_TOKEN_COOKIE,
-  SESSION_TTL_MS,
 } from './constantes.js';
 
 // httpOnly: el código de la página no puede leerlas. Secure: solo viajan por HTTPS
@@ -24,7 +24,7 @@ export function setSessionCookies(
   });
   response.cookie(REFRESH_TOKEN_COOKIE, tokens.refreshToken, {
     ...REFRESH_OPTIONS,
-    maxAge: SESSION_TTL_MS,
+    maxAge: REFRESH_COOKIE_MAX_AGE_MS,
   });
 }
 

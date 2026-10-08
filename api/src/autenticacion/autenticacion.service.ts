@@ -7,7 +7,7 @@ import { Sesion } from '../usuarios/sesion.entity.js';
 import { Usuario } from '../usuarios/usuario.entity.js';
 import { normalizeEmail } from '../usuarios/validadores/normalizar.js';
 import type { AccessTokenPayload } from './autenticacion.guard.js';
-import { ACCESS_TOKEN_TTL_SECONDS, INVALID_SESSION_MESSAGE, SESSION_TTL_MS } from './constantes.js';
+import { ACCESS_TOKEN_TTL_SECONDS, INVALID_SESSION_MESSAGE, sessionTtlMs } from './constantes.js';
 import { PasswordsService } from './contrasenas.service.js';
 import {
   createSessionSecret,
@@ -58,7 +58,7 @@ export class AuthenticationService {
 
     const credentials = await this.users.findOne({
       where: { email: normalizedEmail },
-      select: { id: true, contrasenaHash: true, activo: true },
+      select: { id: true, contrasenaHash: true, activo: true, rol: true },
     });
     const passwordMatches = await this.passwords.verify(
       password,
@@ -76,7 +76,7 @@ export class AuthenticationService {
     const session = await this.sessions.save({
       usuarioId: credentials.id,
       tokenHash: hashSessionSecret(secret),
-      venceEn: new Date(now.getTime() + SESSION_TTL_MS),
+      venceEn: new Date(now.getTime() + sessionTtlMs(credentials.rol)),
     });
     await this.users.update(credentials.id, { ultimoIngreso: now });
 
@@ -94,7 +94,7 @@ export class AuthenticationService {
 
   /**
    * Renovación con el token de renovación (RF-12, RF-15): rota el secreto y corre el
-   * vencimiento a 7 días. Si se presenta el secreto ya reemplazado, revoca la sesión.
+   * vencimiento según el rol. Si se presenta el secreto ya reemplazado, revoca la sesión.
    */
   async refresh(refreshToken: unknown): Promise<SessionTokens> {
     const parsed = parseRefreshToken(refreshToken);
@@ -126,7 +126,7 @@ export class AuthenticationService {
       {
         tokenAnteriorHash: session.tokenHash,
         tokenHash: hashSessionSecret(secret),
-        venceEn: new Date(now.getTime() + SESSION_TTL_MS),
+        venceEn: new Date(now.getTime() + sessionTtlMs(session.usuario.rol)),
       },
     );
     if (result.affected !== 1) throw new UnauthorizedException(INVALID_SESSION_MESSAGE);

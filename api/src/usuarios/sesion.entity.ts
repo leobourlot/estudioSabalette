@@ -32,7 +32,7 @@ export class Sesion {
   @CreateDateColumn({ type: 'datetime' })
   creadaEn: Date;
 
-  // Se corre a ahora + 7 días en cada renovación (RF-12).
+  // Se corre a ahora + la duración del rol en cada consulta y en cada renovación (RF-12).
   @Column({ type: 'datetime' })
   venceEn: Date;
 

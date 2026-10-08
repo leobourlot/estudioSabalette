@@ -13,7 +13,7 @@ Reglas para todas las tareas:
 
 ## Corrección de la spec 001
 
-- [ ] **T1 — Duración de la sesión por rol** [RF-4; spec 001, RF-12] **(modifica existente: `constantes.ts`, `autenticacion.service.ts`, `cookies-de-sesion.ts`, `usuarios/sesion.entity.ts` y `autenticacion.service.spec.ts`)**
+- [x] **T1 — Duración de la sesión por rol** [RF-4; spec 001, RF-12] **(modifica existente: `constantes.ts`, `autenticacion.service.ts`, `cookies-de-sesion.ts`, `usuarios/sesion.entity.ts` y `autenticacion.service.spec.ts`)**
   `SESSION_TTL_MS` se reemplaza por `SESSION_IDLE_TTL_MS`, `sessionTtlMs(rol)` y `REFRESH_COOKIE_MAX_AGE_MS`. El ingreso lee también el rol, y el ingreso y la renovación fijan `venceEn` según el rol. La cookie de renovación pasa a vivir 75 minutos. Se actualiza el comentario de `venceEn` en la entidad.
   Hecho cuando: los tests unitarios verifican:
   - `sessionTtlMs` para cada rol: 20 minutos para `cliente` y 60 para `admin` y `abogado`.

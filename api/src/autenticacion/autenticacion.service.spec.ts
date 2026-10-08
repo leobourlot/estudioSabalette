@@ -11,7 +11,7 @@ import type { PasswordsService } from './contrasenas.service.js';
 
 const SECRET = 'secreto-de-tests-con-mas-de-32-caracteres';
 const NOW = new Date('2026-10-02T12:00:00-03:00');
-const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+const MINUTE = 60_000;
 const STORED_HASH = '$2b$12$hash-guardado';
 
 const storedUser = {
@@ -32,11 +32,15 @@ describe('AuthenticationService.login', () => {
   let passwords: { verify: ReturnType<typeof vi.fn>; hash: ReturnType<typeof vi.fn> };
   let service: AuthenticationService;
 
-  function givenUser(credentials: { contrasenaHash: string; activo: boolean } | null) {
+  function givenUser(
+    credentials: { contrasenaHash: string; activo: boolean; rol?: Usuario['rol'] } | null,
+  ) {
     users.findOne.mockImplementation(async (options: { select?: object }) => {
       if (credentials === null) return null;
-      // La primera consulta pide solo las credenciales; la segunda, el usuario completo.
-      return options.select ? { id: storedUser.id, ...credentials } : storedUser;
+      // La primera consulta pide solo las credenciales y el rol; la segunda, el usuario completo.
+      return options.select
+        ? { id: storedUser.id, rol: storedUser.rol, ...credentials }
+        : storedUser;
     });
   }
 
@@ -113,7 +117,15 @@ describe('AuthenticationService.login', () => {
     );
   });
 
-  it('crea una sesión de 7 días que guarda solo el hash del secreto de renovación (RF-12)', async () => {
+  it('pide el rol junto con las credenciales, para fijar la duración de la sesión', async () => {
+    await service.login('juan@estudio.com', 'clave correcta');
+
+    expect(users.findOne.mock.calls[0][0]).toMatchObject({
+      select: { id: true, contrasenaHash: true, activo: true, rol: true },
+    });
+  });
+
+  it('crea una sesión que guarda solo el hash del secreto de renovación (RF-12)', async () => {
     const result = await service.login('juan@estudio.com', 'clave correcta');
 
     const [sessionId, secret] = result.refreshToken.split('.');
@@ -124,7 +136,22 @@ describe('AuthenticationService.login', () => {
     expect(saved.usuarioId).toBe(7);
     expect(saved.tokenHash).toBe(createHash('sha256').update(secret).digest('hex'));
     expect(saved.tokenHash).not.toContain(secret);
-    expect(saved.venceEn).toEqual(new Date(NOW.getTime() + SEVEN_DAYS));
+  });
+
+  it('la sesión de un integrante vence en 1 hora sin uso (spec 001, RF-12)', async () => {
+    await service.login('juan@estudio.com', 'clave correcta');
+
+    const saved = sessions.save.mock.calls[0][0] as Partial<Sesion>;
+    expect(saved.venceEn).toEqual(new Date(NOW.getTime() + 60 * MINUTE));
+  });
+
+  it('la sesión de un cliente vence en 20 minutos sin uso (RF-4; spec 001, RF-12)', async () => {
+    givenUser({ contrasenaHash: STORED_HASH, activo: true, rol: 'cliente' });
+
+    await service.login('juan@estudio.com', 'clave correcta');
+
+    const saved = sessions.save.mock.calls[0][0] as Partial<Sesion>;
+    expect(saved.venceEn).toEqual(new Date(NOW.getTime() + 20 * MINUTE));
   });
 
   it('emite un token de acceso con el usuario y la sesión', async () => {
@@ -157,4 +184,56 @@ describe('AuthenticationService.login', () => {
 
     expect(first.refreshToken).not.toBe(second.refreshToken);
   });
+});
+
+describe('AuthenticationService.refresh', () => {
+  const jwt = new JwtService({ secret: SECRET, signOptions: { algorithm: 'HS256' } });
+  const SECRET_TOKEN = 'secreto-de-renovacion';
+  const hashOf = (value: string) => createHash('sha256').update(value).digest('hex');
+  let sessions: { findOne: ReturnType<typeof vi.fn>; update: ReturnType<typeof vi.fn> };
+  let service: AuthenticationService;
+
+  function givenSession(rol: Usuario['rol']) {
+    sessions.findOne.mockResolvedValue({
+      id: 40,
+      usuarioId: 7,
+      usuario: { ...storedUser, rol },
+      tokenHash: hashOf(SECRET_TOKEN),
+      tokenAnteriorHash: null,
+      revocadaEn: null,
+      venceEn: new Date(NOW.getTime() + MINUTE),
+    } as Sesion);
+  }
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(NOW);
+    sessions = { findOne: vi.fn(), update: vi.fn().mockResolvedValue({ affected: 1 }) };
+    service = new AuthenticationService(
+      { findOne: vi.fn() } as unknown as Repository<Usuario>,
+      sessions as unknown as Repository<Sesion>,
+      { hash: vi.fn().mockResolvedValue('$2b$12$hash-ficticio') } as unknown as PasswordsService,
+      jwt,
+    );
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it.each([
+    ['cliente', 20],
+    ['abogado', 60],
+    ['admin', 60],
+  ] as const)(
+    'corre el vencimiento de la sesión de un %s a %i minutos (spec 001, RF-12)',
+    async (rol, minutes) => {
+      givenSession(rol);
+
+      await service.refresh(`40.${SECRET_TOKEN}`);
+
+      const [, changes] = sessions.update.mock.calls[0] as [unknown, Partial<Sesion>];
+      expect(changes.venceEn).toEqual(new Date(NOW.getTime() + minutes * MINUTE));
+    },
+  );
 });
