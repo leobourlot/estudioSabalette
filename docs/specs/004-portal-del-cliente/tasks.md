@@ -123,7 +123,7 @@ Reglas para todas las tareas:
   `servicios/inactividad.ts` con `CLIENT_IDLE_LIMIT_MS` e `isIdleExpired`. El cliente HTTP suma `onActivity`.
   Hecho cuando: los tests verifican `isIdleExpired` un milisegundo antes y justo a los 20 minutos, y que `onActivity` se llama una vez por petición, también al renovar, y deja de llamarse al dejar de escuchar.
 
-- [ ] **T18 — Cierre por inactividad en la pantalla** [RF-4, RF-5] **(modifica existente: `ProveedorSesion.tsx` y su test)**
+- [x] **T18 — Cierre por inactividad en la pantalla** [RF-4, RF-5] **(modifica existente: `ProveedorSesion.tsx` y su test)**
   Mientras el usuario es cliente, control cada 30 segundos y al volver a la pestaña (`visibilitychange` y `focus`). Si venció, `endSession("Tu sesión se cerró por inactividad. Volvé a ingresar")`, sin llamar a la API.
   Hecho cuando: los tests, con reloj simulado, verifican:
   - Que un cliente sin actividad durante 20 minutos queda sin usuario y con el aviso, sin ninguna petición.

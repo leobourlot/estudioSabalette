@@ -5,6 +5,12 @@
  * compara horas: los temporizadores viven en ProveedorSesion. No importa React.
  */
 
+/** Aviso de la pantalla de ingreso cuando la sesión se cierra por inactividad. */
+export const IDLE_NOTICE = 'Tu sesión se cerró por inactividad. Volvé a ingresar';
+
+/** Cada cuánto se controla la inactividad mientras la pestaña está abierta. */
+export const IDLE_CHECK_INTERVAL_MS = 30_000;
+
 /** El mismo límite que la sesión de un cliente en el servidor (spec 001, RF-12). */
 export const CLIENT_IDLE_LIMIT_MS = 20 * 60_000;
 

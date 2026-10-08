@@ -8,6 +8,7 @@ import {
   useState,
 } from 'react';
 import { httpClient } from '../servicios/cliente-http';
+import { IDLE_CHECK_INTERVAL_MS, IDLE_NOTICE, isIdleExpired } from '../servicios/inactividad';
 import { type SessionService, sessionService, type UsuarioPropio } from '../servicios/sesion';
 
 interface SessionContextValue {
@@ -36,17 +37,22 @@ interface ProveedorSesionProps {
   children: ReactNode;
   service?: SessionService;
   subscribeSessionClosed?: (listener: () => void) => () => void;
+  /** Avisa cada pedido enviado a la API, para medir la inactividad del cliente. */
+  subscribeActivity?: (listener: () => void) => () => void;
 }
 
 /**
  * Estado de la sesión, solo en memoria: nunca se guarda en localStorage ni sessionStorage
  * (principio 5). Al cargar pregunta a la API quién es el usuario; si el cliente HTTP avisa
  * que la sesión se cerró, el usuario pasa a null y RutaProtegida lleva a /ingresar (RF-17).
+ * Si un cliente pasa 20 minutos sin pedidos a la API, la sesión se vacía sola, sin llamar a la
+ * API: ya venció en el servidor (spec 004, RF-4, RF-5).
  */
 export function ProveedorSesion({
   children,
   service = sessionService,
   subscribeSessionClosed = httpClient.onSessionClosed,
+  subscribeActivity = httpClient.onActivity,
 }: ProveedorSesionProps) {
   const [usuario, setUsuario] = useState<UsuarioPropio | null>(null);
   const [cargando, setCargando] = useState(true);
@@ -101,6 +107,33 @@ export function ProveedorSesion({
   }, []);
 
   const clearNotice = useCallback(() => setNotice(null), []);
+
+  // Inactividad del cliente (plan 004, "Inactividad en la pantalla"). Se compara con la hora,
+  // no se cuenta con el temporizador, porque los temporizadores se frenan con la computadora
+  // suspendida; por eso también se controla al volver a la pestaña.
+  const isClient = usuario?.rol === 'cliente';
+  useEffect(() => {
+    if (!isClient) return;
+    let lastActivity = Date.now();
+    const stopListening = subscribeActivity(() => {
+      lastActivity = Date.now();
+    });
+    const check = () => {
+      if (isIdleExpired(lastActivity, Date.now())) endSession(IDLE_NOTICE);
+    };
+    const checkIfVisible = () => {
+      if (document.visibilityState === 'visible') check();
+    };
+    const interval = setInterval(check, IDLE_CHECK_INTERVAL_MS);
+    document.addEventListener('visibilitychange', checkIfVisible);
+    window.addEventListener('focus', check);
+    return () => {
+      stopListening();
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', checkIfVisible);
+      window.removeEventListener('focus', check);
+    };
+  }, [isClient, usuario?.id, subscribeActivity, endSession]);
 
   const value = useMemo(
     () => ({
