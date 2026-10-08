@@ -51,7 +51,7 @@ Reglas para todas las tareas:
   - Que `findVisible` responde el mismo 404 para un movimiento visible de otra causa vinculada.
   - Que con 21 movimientos visibles y 5 ocultos, la página 1 trae 20 y `haySiguiente: true`, la página 2 trae 1 y `haySiguiente: false`, y ninguna incluye `total`.
 
-- [ ] **T7 — Fecha del último movimiento y fecha futura del cliente** [RF-8, RF-21] **(modifica existente: `visibilidad-cliente.service.ts`, `movimiento-detalle.ts` y sus tests)**
+- [x] **T7 — Fecha del último movimiento y fecha futura del cliente** [RF-8, RF-21] **(modifica existente: `visibilidad-cliente.service.ts`, `movimiento-detalle.ts` y sus tests)**
   `lastVisibleDates(causaIds, hoy)` en `ClientVisibilityService`. `toMovimientoCliente(m, ahora)` suma `esFechaFutura`, que es falso en un anulado.
   Hecho cuando:
   - Un test unitario verifica `esFechaFutura` en un movimiento futuro, en uno de hoy y en uno anulado futuro, y que `toMovimientoCliente` sigue sin descripción interna, autores ni cambios.

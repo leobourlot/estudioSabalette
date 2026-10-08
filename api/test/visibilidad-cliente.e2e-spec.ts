@@ -98,6 +98,7 @@ describe('ClientVisibilityService', () => {
       tipo: created.tipo,
       texto: 'El juez fijó audiencia.',
       anulado: false,
+      esFechaFutura: false,
     });
     expect(JSON.stringify(seen)).not.toContain('Descripción técnica');
   });
@@ -240,7 +241,14 @@ describe('ClientVisibilityService', () => {
       [older.id, false],
     ]);
     for (const item of page!.items) {
-      expect(Object.keys(item).sort()).toEqual(['anulado', 'fecha', 'id', 'texto', 'tipo']);
+      expect(Object.keys(item).sort()).toEqual([
+        'anulado',
+        'esFechaFutura',
+        'fecha',
+        'id',
+        'texto',
+        'tipo',
+      ]);
     }
   });
 
@@ -264,6 +272,43 @@ describe('ClientVisibilityService', () => {
     expect(second!.items.map((item) => item.fecha)).toEqual(['2024-01-01']);
     expect(first).not.toHaveProperty('total');
     expect(second).not.toHaveProperty('total');
+  });
+
+  it('lastVisibleDates toma el visible no anulado más reciente hasta hoy (spec 004, RF-8)', async () => {
+    const client = await newClient();
+    const { causaId } = await causaWith(client.id);
+    const { causaId: onlyHidden } = await causaWith(client.id);
+    const { causaId: empty } = await causaWith(client.id);
+    await movement(causaId, { fecha: '2024-04-01' });
+    await movement(causaId, { fecha: '2024-05-01' });
+    await movement(causaId, { fecha: '2024-06-01', visible: false });
+    await movement(causaId, { fecha: '2024-07-01', anulado: true });
+    await movement(causaId, { fecha: '2099-01-01' });
+    await movement(onlyHidden, { fecha: '2024-05-01', visible: false });
+
+    const today = await visibility.lastVisibleDates([causaId, onlyHidden, empty], '2026-10-08');
+
+    expect([...today.entries()]).toEqual([[causaId, '2024-05-01']]);
+    // El día indicado cuenta; uno anterior, no.
+    expect((await visibility.lastVisibleDates([causaId], '2024-05-01')).get(causaId)).toBe(
+      '2024-05-01',
+    );
+    expect((await visibility.lastVisibleDates([causaId], '2024-04-30')).get(causaId)).toBe(
+      '2024-04-01',
+    );
+    expect((await visibility.lastVisibleDates([], '2026-10-08')).size).toBe(0);
+  });
+
+  it('marca la fecha futura en los movimientos visibles, salvo en los anulados (spec 004, RF-21)', async () => {
+    const client = await newClient();
+    const { causaId } = await causaWith(client.id);
+    const future = await movement(causaId, { fecha: '2099-01-01' });
+    const annulledFuture = await movement(causaId, { fecha: '2099-01-02', anulado: true });
+
+    expect((await visibility.findVisible(client.id, causaId, future.id)).esFechaFutura).toBe(true);
+    expect(
+      (await visibility.findVisible(client.id, causaId, annulledFuture.id)).esFechaFutura,
+    ).toBe(false);
   });
 
   it('un integrante no es un cliente: no ve movimientos por esta regla', async () => {

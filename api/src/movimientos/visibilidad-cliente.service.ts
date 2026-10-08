@@ -44,6 +44,7 @@ export class ClientVisibilityService {
     clienteId: number,
     causaId: number,
     pagina = 1,
+    ahora: Date = new Date(),
   ): Promise<MovimientoClientePage | null> {
     if (!(await this.canSeeCausa(clienteId, causaId))) return null;
     // Una fila de más indica si hay página siguiente, sin contar el total.
@@ -54,7 +55,7 @@ export class ClientVisibilityService {
       take: PAGE_SIZE + 1,
     });
     return {
-      items: movimientos.slice(0, PAGE_SIZE).map(toMovimientoCliente),
+      items: movimientos.slice(0, PAGE_SIZE).map((m) => toMovimientoCliente(m, ahora)),
       pagina,
       haySiguiente: movimientos.length > PAGE_SIZE,
     };
@@ -70,6 +71,7 @@ export class ClientVisibilityService {
     clienteId: number,
     causaId: number,
     movimientoId: number,
+    ahora: Date = new Date(),
   ): Promise<MovimientoCliente> {
     const movimiento = await this.movimientos.findOneBy({
       id: movimientoId,
@@ -79,7 +81,28 @@ export class ClientVisibilityService {
     if (!movimiento || !(await this.canSeeCausa(clienteId, causaId))) {
       throw new NotFoundException(MOVIMIENTOS_MESSAGES.notFound);
     }
-    return toMovimientoCliente(movimiento);
+    return toMovimientoCliente(movimiento, ahora);
+  }
+
+  /**
+   * Fecha del último movimiento de cada causa para un cliente (spec 004, RF-8): la más reciente
+   * entre los visibles, sin contar los anulados ni los posteriores a `hoy` (AAAA-MM-DD). No
+   * verifica el vínculo: recibe las causas ya resueltas con ClientLinkService. Las causas sin
+   * ninguno no aparecen en el mapa.
+   */
+  async lastVisibleDates(causaIds: number[], hoy: string): Promise<Map<number, string>> {
+    if (causaIds.length === 0) return new Map();
+    const rows = await this.movimientos
+      .createQueryBuilder('m')
+      .select('m.causaId', 'causaId')
+      .addSelect('MAX(m.fecha)', 'fecha')
+      .where('m.causaId IN (:...causaIds)', { causaIds })
+      .andWhere('m.visible = 1')
+      .andWhere('m.anulado = 0')
+      .andWhere('m.fecha <= :hoy', { hoy })
+      .groupBy('m.causaId')
+      .getRawMany<{ causaId: number | string; fecha: string }>();
+    return new Map(rows.map((row) => [Number(row.causaId), row.fecha]));
   }
 
   /** Si el cliente, con la cuenta activa, está vinculado a la causa (spec 002, RF-26). */

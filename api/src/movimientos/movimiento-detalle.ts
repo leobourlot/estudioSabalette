@@ -68,6 +68,8 @@ export interface MovimientoCliente {
   tipo: TipoMovimiento;
   texto: string;
   anulado: boolean;
+  /** Fecha posterior al día actual en Buenos Aires; nunca en un anulado (spec 004, RF-21). */
+  esFechaFutura: boolean;
 }
 
 export function toAutorResumen(usuario: Usuario): AutorResumen {
@@ -129,12 +131,16 @@ export function toMovimientoDetalle(
   };
 }
 
-export function toMovimientoCliente(movimiento: Movimiento): MovimientoCliente {
+export function toMovimientoCliente(
+  movimiento: Movimiento,
+  ahora: Date = new Date(),
+): MovimientoCliente {
   return {
     id: movimiento.id,
     fecha: movimiento.fecha,
     tipo: movimiento.tipo,
     texto: visibleText(movimiento).texto,
     anulado: movimiento.anulado,
+    esFechaFutura: !movimiento.anulado && isFutureDate(movimiento.fecha, ahora),
   };
 }
