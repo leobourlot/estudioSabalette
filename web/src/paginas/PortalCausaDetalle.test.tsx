@@ -1,9 +1,15 @@
 import { screen, within } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-de-prueba';
-import { fakePortalService, testCausaPortalDetalle } from '../pruebas/portal-de-prueba';
+import {
+  fakePortalService,
+  testCausaPortalDetalle,
+  testMovimientoCliente,
+  testPortalPage,
+} from '../pruebas/portal-de-prueba';
 import { ApiError } from '../servicios/cliente-http';
-import type { CausaPortalDetalle, PortalService } from '../servicios/portal';
+import type { CausaPortalDetalle, MovimientoCliente, PortalService } from '../servicios/portal';
 
 function openCausa(path: string, portal: PortalService) {
   const session = fakeSessionService({
@@ -83,5 +89,111 @@ describe('PortalCausaDetalle: datos, partes y responsable (spec 004, RF-13 a RF-
     expect(screen.queryByRole('region', { name: 'Datos de la causa' })).toBeNull();
     expect(screen.queryByRole('region', { name: 'Partes' })).toBeNull();
     expect(portal.getCausa).toHaveBeenCalledWith('abc');
+  });
+});
+
+describe('PortalCausaDetalle: movimientos (spec 004, RF-20, RF-21, RF-23, RF-24)', () => {
+  const withMovements = (items: MovimientoCliente[], haySiguiente = false) =>
+    fakePortalService({
+      listMovimientos: vi.fn(async (_causaId: string | number, pagina: number) =>
+        testPortalPage(items, pagina, haySiguiente),
+      ),
+    });
+
+  const movements = async () => within(await screen.findByRole('region', { name: 'Movimientos' }));
+
+  it('muestra la fecha, el tipo y el texto de cada movimiento, en el orden recibido', async () => {
+    const portal = withMovements([
+      testMovimientoCliente({ id: 1, fecha: '2026-09-30', tipo: 'audiencia', texto: 'Primero.' }),
+      testMovimientoCliente({ id: 2, fecha: '2026-08-01', tipo: 'sentencia', texto: 'Segundo.' }),
+    ]);
+    openCausa('/portal/causas/7', portal);
+
+    const list = await movements();
+    const items = await list.findAllByRole('article');
+    expect(items.map((item) => within(item).getByText(/\d{2}\/\d{2}\/\d{4}/).textContent)).toEqual([
+      '30/09/2026',
+      '01/08/2026',
+    ]);
+    expect(within(items[0]).getByText('Audiencia')).toBeTruthy();
+    expect(within(items[0]).getByText('Primero.')).toBeTruthy();
+    expect(within(items[1]).getByText('Sentencia')).toBeTruthy();
+    expect(portal.listMovimientos).toHaveBeenCalledWith('7', 1);
+  });
+
+  it('muestra "Anulado" o "Fecha futura", y en un anulado futuro solo "Anulado" (RF-21)', async () => {
+    openCausa(
+      '/portal/causas/7',
+      withMovements([
+        testMovimientoCliente({ id: 1, esFechaFutura: true }),
+        testMovimientoCliente({ id: 2, anulado: true }),
+        testMovimientoCliente({ id: 3, anulado: true, esFechaFutura: false }),
+      ]),
+    );
+
+    const items = await (await movements()).findAllByRole('article');
+    expect(within(items[0]).getByText('Fecha futura')).toBeTruthy();
+    expect(within(items[1]).getByText('Anulado')).toBeTruthy();
+    expect(within(items[1]).queryByText('Fecha futura')).toBeNull();
+    expect(within(items[2]).getByText('Anulado')).toBeTruthy();
+  });
+
+  it('recorta un texto largo y "Ver más" lo despliega sin otra petición (RF-21)', async () => {
+    const long = `${'a'.repeat(300)}FIN`;
+    const portal = withMovements([testMovimientoCliente({ texto: long })]);
+    openCausa('/portal/causas/7', portal);
+
+    const item = (await (await movements()).findAllByRole('article'))[0];
+    expect(within(item).getByText(`${'a'.repeat(300)}…`)).toBeTruthy();
+
+    await userEvent.setup().click(within(item).getByRole('button', { name: 'Ver más' }));
+
+    expect(within(item).getByText(long)).toBeTruthy();
+    expect(portal.listMovimientos).toHaveBeenCalledTimes(1);
+  });
+
+  it('un texto corto no ofrece "Ver más"', async () => {
+    openCausa('/portal/causas/7', withMovements([testMovimientoCliente({ texto: 'Corto.' })]));
+
+    const item = (await (await movements()).findAllByRole('article'))[0];
+    expect(within(item).queryByRole('button', { name: 'Ver más' })).toBeNull();
+  });
+
+  it('el enlace "Abrir" lleva al movimiento con la página actual (RF-22)', async () => {
+    openCausa('/portal/causas/7?pagina=3', withMovements([testMovimientoCliente({ id: 70 })]));
+
+    const item = (await (await movements()).findAllByRole('article'))[0];
+    expect(within(item).getByRole('link', { name: 'Abrir' }).getAttribute('href')).toBe(
+      '/portal/causas/7/movimientos/70?pagina=3',
+    );
+  });
+
+  it('en la página 1 sin movimientos muestra "Todavía no hay movimientos para mostrar" (RF-23)', async () => {
+    openCausa('/portal/causas/7', withMovements([]));
+
+    expect(
+      await (await movements()).findByText('Todavía no hay movimientos para mostrar'),
+    ).toBeTruthy();
+  });
+
+  it('pagina sin totales, con la página en la dirección (RF-24)', async () => {
+    openCausa('/portal/causas/7?pagina=2', withMovements([testMovimientoCliente()], true));
+
+    const pagination = await (await movements()).findByRole('navigation', { name: 'Paginación' });
+    expect(within(pagination).getByRole('link', { name: 'Anterior' }).getAttribute('href')).toBe(
+      '/portal/causas/7?pagina=1',
+    );
+    expect(within(pagination).getByRole('link', { name: 'Siguiente' }).getAttribute('href')).toBe(
+      '/portal/causas/7?pagina=3',
+    );
+  });
+
+  it('con una página inválida no pide movimientos ni muestra el mensaje de vacío (RF-25)', async () => {
+    const portal = withMovements([]);
+    openCausa('/portal/causas/7?pagina=abc', portal);
+
+    await screen.findByRole('heading', { level: 1 });
+    expect(portal.listMovimientos).not.toHaveBeenCalled();
+    expect(screen.queryByText('Todavía no hay movimientos para mostrar')).toBeNull();
   });
 });

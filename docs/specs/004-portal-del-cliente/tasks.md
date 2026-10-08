@@ -164,7 +164,7 @@ Reglas para todas las tareas:
   Ruta `/portal/causas/:id` y página `PortalCausaDetalle`, con `DatosCausaPortal` y `PartesPortal`.
   Hecho cuando: los tests verifican los datos con "Sin asignar" y la leyenda de incidente, las partes con "Vos", el responsable presente y ausente, y que ante un 404 solo se muestra "No existe esa causa".
 
-- [ ] **T25 — Movimientos de la causa** [RF-20, RF-21, RF-23, RF-24]
+- [x] **T25 — Movimientos de la causa** [RF-20, RF-21, RF-23, RF-24]
   `MovimientosPortal` y `TarjetaMovimientoPortal` en `PortalCausaDetalle`, con la página de `?pagina=`.
   Hecho cuando: los tests verifican:
   - La fecha, el tipo y las leyendas "Anulado" y "Fecha futura".
