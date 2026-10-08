@@ -1,8 +1,8 @@
 import { type ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
-import type { Repository } from 'typeorm';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { IsNull, type Repository } from 'typeorm';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Sesion } from '../usuarios/sesion.entity.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { AuthenticationGuard, type AuthenticatedRequest } from './autenticacion.guard.js';
@@ -11,6 +11,9 @@ import { IS_PUBLIC_KEY } from './decoradores.js';
 
 const SECRET = 'secreto-de-tests-con-mas-de-32-caracteres';
 const DAY = 24 * 60 * 60 * 1000;
+const MINUTE = 60_000;
+// Del reloj real: los casos de la tabla arman sus fechas con Date.now() al cargar el archivo.
+const NOW = new Date();
 
 function buildUser(overrides: Partial<Usuario> = {}): Usuario {
   return { id: 7, rol: 'abogado', activo: true, ...overrides } as Usuario;
@@ -38,13 +41,22 @@ function contextFor(request: Partial<AuthenticatedRequest>): ExecutionContext {
 describe('AuthenticationGuard', () => {
   const jwt = new JwtService({ secret: SECRET, signOptions: { algorithm: 'HS256' } });
   let reflector: Reflector;
-  let sessions: { findOne: ReturnType<typeof vi.fn> };
+  let sessions: { findOne: ReturnType<typeof vi.fn>; update: ReturnType<typeof vi.fn> };
   let guard: AuthenticationGuard;
 
   beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(NOW);
     reflector = new Reflector();
-    sessions = { findOne: vi.fn().mockResolvedValue(buildSession()) };
+    sessions = {
+      findOne: vi.fn().mockResolvedValue(buildSession()),
+      update: vi.fn().mockResolvedValue({ affected: 1 }),
+    };
     guard = new AuthenticationGuard(reflector, jwt, sessions as unknown as Repository<Sesion>);
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   async function requestWithToken(payload: object = { sub: 7, sid: 40 }) {
@@ -57,6 +69,7 @@ describe('AuthenticationGuard', () => {
 
     await expect(guard.canActivate(contextFor({ cookies: {} }))).resolves.toBe(true);
     expect(sessions.findOne).not.toHaveBeenCalled();
+    expect(sessions.update).not.toHaveBeenCalled();
   });
 
   it('acepta un token válido y deja el usuario y la sesión en la petición', async () => {
@@ -124,5 +137,35 @@ describe('AuthenticationGuard', () => {
       UnauthorizedException,
     );
     expect(request.usuario).toBeUndefined();
+    expect(sessions.update).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['cliente', 20],
+    ['abogado', 60],
+    ['admin', 60],
+  ] as const)(
+    'cada petición de un %s corre el vencimiento de la sesión a %i minutos (spec 001, RF-12)',
+    async (rol, minutes) => {
+      sessions.findOne.mockResolvedValue(buildSession({ usuario: buildUser({ rol }) }));
+
+      await guard.canActivate(contextFor(await requestWithToken()));
+
+      expect(sessions.update).toHaveBeenCalledTimes(1);
+      expect(sessions.update).toHaveBeenCalledWith(
+        { id: 40, revocadaEn: IsNull() },
+        { venceEn: new Date(NOW.getTime() + minutes * MINUTE) },
+      );
+    },
+  );
+
+  it('usa el rol vigente leído de la base, no el que tenía al ingresar (RF-14)', async () => {
+    sessions.findOne.mockResolvedValue(buildSession({ usuario: buildUser({ rol: 'admin' }) }));
+
+    await guard.canActivate(contextFor(await requestWithToken()));
+
+    expect(sessions.update.mock.calls[0][1]).toEqual({
+      venceEn: new Date(NOW.getTime() + 60 * MINUTE),
+    });
   });
 });

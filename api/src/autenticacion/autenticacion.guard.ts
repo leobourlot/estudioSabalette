@@ -8,10 +8,10 @@ import { Reflector } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import type { Request } from 'express';
-import { Repository } from 'typeorm';
+import { IsNull, Repository } from 'typeorm';
 import { Sesion } from '../usuarios/sesion.entity.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
-import { ACCESS_TOKEN_COOKIE, INVALID_SESSION_MESSAGE } from './constantes.js';
+import { ACCESS_TOKEN_COOKIE, INVALID_SESSION_MESSAGE, sessionTtlMs } from './constantes.js';
 import { IS_PUBLIC_KEY } from './decoradores.js';
 
 export interface AccessTokenPayload {
@@ -28,6 +28,8 @@ export interface AuthenticatedRequest extends Request {
  * Guard global: toda ruta exige sesión salvo las marcadas con @Public() (RF-18).
  * En cada petición verifica el token de acceso y relee de la base la sesión y el usuario,
  * así una sesión revocada, un usuario desactivado o un cambio de rol rigen al instante (RF-14).
+ * Cada petición cuenta como uso: corre el vencimiento de la sesión según el rol vigente
+ * (spec 001, RF-12; spec 004, RF-4).
  */
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
@@ -60,6 +62,12 @@ export class AuthenticationGuard implements CanActivate {
     ) {
       throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
     }
+
+    // Condicionado a que siga abierta: no revive una sesión cerrada mientras tanto.
+    await this.sessions.update(
+      { id: session.id, revocadaEn: IsNull() },
+      { venceEn: new Date(Date.now() + sessionTtlMs(session.usuario.rol)) },
+    );
 
     request.usuario = session.usuario;
     request.sesion = session;

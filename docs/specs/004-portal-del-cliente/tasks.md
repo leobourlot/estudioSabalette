@@ -20,7 +20,7 @@ Reglas para todas las tareas:
   - Que el ingreso y la renovación de un cliente fijan `venceEn` a ahora + 20 minutos, y los de un integrante a ahora + 1 hora. Reemplazan las verificaciones de 7 días.
   - Que la cookie de renovación lleva `maxAge` de 75 minutos.
 
-- [ ] **T2 — Extensión de la sesión en cada consulta** [RF-4; spec 001, RF-12] **(modifica existente: `autenticacion.guard.ts` y `autenticacion.guard.spec.ts`)**
+- [x] **T2 — Extensión de la sesión en cada consulta** [RF-4; spec 001, RF-12] **(modifica existente: `autenticacion.guard.ts` y `autenticacion.guard.spec.ts`)**
   Después de validar la sesión, el guard corre `venceEn` a ahora + `sessionTtlMs(usuario.rol)`, con la condición `revocadaEn IS NULL`.
   Hecho cuando: los tests unitarios verifican que una petición válida extiende `venceEn` según el rol vigente, que una sesión vencida o revocada responde 401 sin extenderse, y que una ruta `@Public` no extiende nada.
 
