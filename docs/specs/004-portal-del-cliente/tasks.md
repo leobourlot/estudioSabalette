@@ -57,7 +57,7 @@ Reglas para todas las tareas:
   - Un test unitario verifica `esFechaFutura` en un movimiento futuro, en uno de hoy y en uno anulado futuro, y que `toMovimientoCliente` sigue sin descripción interna, autores ni cambios.
   - Los e2e verifican que `lastVisibleDates` toma la fecha más reciente de los visibles no anulados hasta hoy, sin contar ocultos, anulados ni futuros, y que una causa sin ninguno no aparece en el mapa.
 
-- [ ] **T8 — Reglas puras del portal** [RF-10, RF-11, RF-14, RF-24, RF-25]
+- [x] **T8 — Reglas puras del portal** [RF-10, RF-11, RF-14, RF-24, RF-25]
   `portal/reglas-portal.ts`: `caseGroup`, `comparePortalCausas`, `portalParty`, `comparePortalParties` y `pageOf`, con `Intl.Collator('es', { sensitivity: 'base' })`.
   Hecho cuando: los tests unitarios verifican:
   - `caseGroup` para cada estado.
