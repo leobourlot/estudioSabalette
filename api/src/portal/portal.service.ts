@@ -1,11 +1,17 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { Causa } from '../causas/causa.entity.js';
 import { ClientLinkService } from '../causas/vinculo-cliente.service.js';
+import { MOVIMIENTOS_MESSAGES } from '../movimientos/movimientos.service.js';
 import { todayInBuenosAires } from '../movimientos/reglas-movimientos.js';
 import { ClientVisibilityService } from '../movimientos/visibilidad-cliente.service.js';
-import { type CausaPortalResumen, toCausaPortalResumen } from './portal-detalle.js';
+import {
+  type CausaPortalDetalle,
+  type CausaPortalResumen,
+  toCausaPortalDetalle,
+  toCausaPortalResumen,
+} from './portal-detalle.js';
 import { comparePortalCausas, pageOf, type PortalPage } from './reglas-portal.js';
 
 const PAGE_SIZE = 20;
@@ -45,5 +51,26 @@ export class PortalService {
       .map((causa) => toCausaPortalResumen(causa, fechas.get(causa.id) ?? null))
       .sort(comparePortalCausas);
     return pageOf(filas, pagina, PAGE_SIZE);
+  }
+
+  /**
+   * Detalle de una causa vinculada: sus datos, sus partes vigentes y el responsable activo
+   * (RF-13 a RF-17). Una causa no vinculada, desactivada o inexistente responde siempre el
+   * mismo 404 (RF-28).
+   */
+  async getCausa(clienteId: number, causaId: number): Promise<CausaPortalDetalle> {
+    await this.assertCanSeeCausa(clienteId, causaId);
+    const causa = await this.causas.findOne({
+      where: { id: causaId },
+      relations: { responsable: true, partes: { cliente: { usuario: true } } },
+    });
+    if (!causa) throw new NotFoundException(MOVIMIENTOS_MESSAGES.causaNotFound);
+    return toCausaPortalDetalle(causa, clienteId);
+  }
+
+  private async assertCanSeeCausa(clienteId: number, causaId: number): Promise<void> {
+    if (!(await this.visibility.canSeeCausa(clienteId, causaId))) {
+      throw new NotFoundException(MOVIMIENTOS_MESSAGES.causaNotFound);
+    }
   }
 }

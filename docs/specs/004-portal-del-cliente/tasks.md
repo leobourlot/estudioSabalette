@@ -84,7 +84,7 @@ Reglas para todas las tareas:
   - Que con 45 causas las tres páginas no repiten ni omiten ninguna y no incluyen `total`.
   - Que una página posterior a la última devuelve `items` vacío y `haySiguiente: false`.
 
-- [ ] **T12 — Detalle de la causa** [RF-13 a RF-17, RF-28]
+- [x] **T12 — Detalle de la causa** [RF-13 a RF-17, RF-28]
   `PortalService.getCausa`, con `canSeeCausa`, partes vigentes y responsable.
   Hecho cuando: los e2e verifican:
   - Las claves exactas, "Vos" en la parte propia y el orden de las partes.
