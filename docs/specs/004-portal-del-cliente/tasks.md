@@ -41,7 +41,7 @@ Reglas para todas las tareas:
 
 ## api
 
-- [ ] **T5 — Respuestas sin caché** [RF-6] **(modifica existente: `configurar-aplicacion.ts`)**
+- [x] **T5 — Respuestas sin caché** [RF-6] **(modifica existente: `configurar-aplicacion.ts`)**
   Middleware de Express que pone `Cache-Control: no-store` en todas las respuestas de la API.
   Hecho cuando: un e2e verifica el encabezado en una respuesta 200 del panel, en una 401 y en una 404.
 

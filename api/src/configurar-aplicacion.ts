@@ -2,6 +2,7 @@ import { BadRequestException, ValidationPipe } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import type { NestExpressApplication } from '@nestjs/platform-express';
 import cookieParser from 'cookie-parser';
+import type { NextFunction, Request, Response } from 'express';
 import { formatValidationErrors } from './configuracion/errores-de-validacion.js';
 import { NoDataExceptionFilter } from './configuracion/errores-sin-datos.filter.js';
 import type { Environment } from './configuracion/validar-entorno.js';
@@ -21,6 +22,13 @@ export function configureApp(app: NestExpressApplication): void {
   app.set('trust proxy', config.get('TRUST_PROXY_HOPS', { infer: true }));
 
   app.use(cookieParser());
+
+  // Ninguna respuesta de la API queda guardada en el navegador, salga bien o mal: así no se
+  // pueden volver a ver datos después de cerrar la sesión (plan 004, "Caché del navegador").
+  app.use((_request: Request, response: Response, next: NextFunction) => {
+    response.setHeader('Cache-Control', 'no-store');
+    next();
+  });
 
   // Ante un error inesperado, no registra mensajes, cuerpos ni URLs reales, que pueden llevar
   // los textos de los movimientos (plan 003, RNF de registros).
