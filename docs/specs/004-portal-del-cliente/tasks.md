@@ -160,7 +160,7 @@ Reglas para todas las tareas:
   - Que con `?pagina=abc` no hay petición ni mensaje.
   - "Anterior" y "Siguiente" según la página y `haySiguiente`, sin totales.
 
-- [ ] **T24 — Detalle de la causa** [RF-13 a RF-17, RF-28] **(modifica existente: `RutasAplicacion.tsx`)**
+- [x] **T24 — Detalle de la causa** [RF-13 a RF-17, RF-28] **(modifica existente: `RutasAplicacion.tsx`)**
   Ruta `/portal/causas/:id` y página `PortalCausaDetalle`, con `DatosCausaPortal` y `PartesPortal`.
   Hecho cuando: los tests verifican los datos con "Sin asignar" y la leyenda de incidente, las partes con "Vos", el responsable presente y ausente, y que ante un 404 solo se muestra "No existe esa causa".
 
