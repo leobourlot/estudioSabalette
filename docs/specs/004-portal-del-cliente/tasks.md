@@ -119,7 +119,7 @@ Reglas para todas las tareas:
   `servicios/datos-estudio.ts` con `STUDIO_CONTACT` (nombre "Estudio Sabalette", dirección y WhatsApp genéricos, marcados para reemplazar) y `whatsappUrl()`. `DisenoSeccion` toma el nombre de ahí.
   Hecho cuando: un test verifica que `whatsappUrl()` arma `https://wa.me/<número>` sin mensaje, y el test existente de los diseños sigue mostrando "Estudio Sabalette".
 
-- [ ] **T17 — Actividad e inactividad** [RF-4, RF-5] **(modifica existente: `cliente-http.ts` y su test)**
+- [x] **T17 — Actividad e inactividad** [RF-4, RF-5] **(modifica existente: `cliente-http.ts` y su test)**
   `servicios/inactividad.ts` con `CLIENT_IDLE_LIMIT_MS` e `isIdleExpired`. El cliente HTTP suma `onActivity`.
   Hecho cuando: los tests verifican `isIdleExpired` un milisegundo antes y justo a los 20 minutos, y que `onActivity` se llama una vez por petición, también al renovar, y deja de llamarse al dejar de escuchar.
 

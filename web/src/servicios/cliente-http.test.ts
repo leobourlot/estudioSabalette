@@ -265,3 +265,47 @@ describe('errorMessage', () => {
     expect(errorMessage('x')).toBe('Ocurrió un error inesperado. Intentá de nuevo.');
   });
 });
+
+describe('actividad (spec 004, RF-5)', () => {
+  it('avisa una vez por cada petición enviada, también la renovación y el reintento', async () => {
+    const fetchMock = vi
+      .fn<typeof fetch>()
+      .mockResolvedValueOnce(jsonResponse(200, {}))
+      .mockResolvedValueOnce(jsonResponse(401, { message: 'Sesión vencida' }))
+      .mockResolvedValueOnce(jsonResponse(204))
+      .mockResolvedValueOnce(jsonResponse(200, {}));
+    const client = createHttpClient({ baseUrl: BASE_URL, fetch: fetchMock });
+    const activity = vi.fn<() => void>();
+    client.onActivity(activity);
+
+    await client.get('/sesion/usuario');
+    expect(activity).toHaveBeenCalledTimes(1);
+
+    // Petición con 401, renovación y reintento: tres pedidos al servidor.
+    await client.get('/portal/causas');
+    expect(activity).toHaveBeenCalledTimes(4);
+  });
+
+  it('avisa antes de enviar, aunque la conexión falle', async () => {
+    const fetchMock = vi.fn<typeof fetch>().mockRejectedValueOnce(new TypeError('sin conexión'));
+    const client = createHttpClient({ baseUrl: BASE_URL, fetch: fetchMock });
+    const activity = vi.fn<() => void>();
+    client.onActivity(activity);
+
+    await expect(client.get('/portal/causas')).rejects.toBeInstanceOf(ApiError);
+    expect(activity).toHaveBeenCalledTimes(1);
+  });
+
+  it('deja de avisar al dejar de escuchar', async () => {
+    const fetchMock = vi.fn<typeof fetch>(async () => jsonResponse(200, {}));
+    const client = createHttpClient({ baseUrl: BASE_URL, fetch: fetchMock });
+    const activity = vi.fn<() => void>();
+    const stop = client.onActivity(activity);
+
+    await client.get('/portal/causas');
+    stop();
+    await client.get('/portal/causas');
+
+    expect(activity).toHaveBeenCalledTimes(1);
+  });
+});

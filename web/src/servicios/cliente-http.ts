@@ -38,13 +38,17 @@ export interface HttpClientOptions {
 
 export function createHttpClient({ baseUrl, fetch: fetchFn = fetch }: HttpClientOptions) {
   const sessionClosedListeners = new Set<() => void>();
+  const activityListeners = new Set<() => void>();
   // Una sola renovación en curso, compartida por todas las peticiones de la pestaña: si
   // varias reciben 401 a la vez, ninguna presenta un token ya rotado (RF-15).
   let refreshInProgress: Promise<RefreshResult> | null = null;
 
   const notifySessionClosed = () => sessionClosedListeners.forEach((listener) => listener());
+  // Cada pedido enviado al servidor cuenta como uso de la sesión (spec 001, RF-12).
+  const notifyActivity = () => activityListeners.forEach((listener) => listener());
 
   function refreshOnce(): Promise<RefreshResult> {
+    if (!refreshInProgress) notifyActivity();
     refreshInProgress ??= fetchFn(`${baseUrl}/api/sesion/renovar`, {
       method: 'POST',
       credentials: 'include',
@@ -62,6 +66,7 @@ export function createHttpClient({ baseUrl, fetch: fetchFn = fetch }: HttpClient
   }
 
   async function send(method: string, path: string, body?: unknown): Promise<Response> {
+    notifyActivity();
     try {
       return await fetchFn(`${baseUrl}/api${path}`, {
         method,
@@ -101,6 +106,14 @@ export function createHttpClient({ baseUrl, fetch: fetchFn = fetch }: HttpClient
     onSessionClosed(listener: () => void): () => void {
       sessionClosedListeners.add(listener);
       return () => sessionClosedListeners.delete(listener);
+    },
+    /**
+     * Avisa cada vez que se envía un pedido a la API, también la renovación, para medir la
+     * inactividad del cliente en la pantalla (spec 004, RF-5). Devuelve cómo dejar de escuchar.
+     */
+    onActivity(listener: () => void): () => void {
+      activityListeners.add(listener);
+      return () => activityListeners.delete(listener);
     },
   };
 }
