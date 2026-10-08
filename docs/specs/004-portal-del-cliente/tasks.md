@@ -109,7 +109,7 @@ Reglas para todas las tareas:
   - 401 para un visitante, y 403 para un administrador, un abogado y un cliente con cambio pendiente, en cada ruta. `POST` y `PATCH` responden 404.
   - Que después de desvincular al cliente, desactivar la causa, ocultar un movimiento o desactivar al responsable, la siguiente petición ya refleja el cambio.
 
-- [ ] **T15 — Rendimiento del portal** [RNF de rendimiento]
+- [x] **T15 — Rendimiento del portal** [RNF de rendimiento]
   Suite con 100 causas vinculadas a un cliente y 5.000 movimientos en una, insertados en bloque.
   Hecho cuando: un e2e verifica que cada ruta del portal responde en menos de 2 segundos. Si no se cumple, la tarea se detiene y se consulta antes de agregar el índice que prevé el plan.
 
