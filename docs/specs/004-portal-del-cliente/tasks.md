@@ -32,7 +32,7 @@ Reglas para todas las tareas:
   - Que con `venceEn` en el pasado, la petición y la renovación responden 401.
   - Que la renovación lo corre según el rol, y que la cookie de renovación dura 75 minutos.
 
-- [ ] **T4 — Plan de la spec 001 y dirección única del sitio** [spec 001, RF-12; plan 004, "Dirección única del sitio"] **(modifica existente: `docs/specs/001-autenticacion-y-roles/plan.md` y `web/public/.htaccess`)**
+- [x] **T4 — Plan de la spec 001 y dirección única del sitio** [spec 001, RF-12; plan 004, "Dirección única del sitio"] **(modifica existente: `docs/specs/001-autenticacion-y-roles/plan.md` y `web/public/.htaccess`)**
   En `plan.md` de la spec 001 se actualizan la tabla `sesiones`, "Credenciales", "Ingreso", "Cada petición protegida", "Renovación", "Topología" y "Cobertura de RF", según el plan 004. En `.htaccess` se agrega la redirección a HTTPS sin www, con `R=302`, antes de las reglas que sirven `index.html`.
   Hecho cuando:
   - `plan.md` de la spec 001 ya no menciona los 7 días y describe la duración por rol, la extensión en el guard, la cookie de 75 minutos y la dirección sin www con HTTPS.

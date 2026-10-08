@@ -17,6 +17,7 @@ Todavía no existe código. Esta fase deja el proyecto listo para implementar la
 ### Topología
 - **Producción**: el frontend se publica como sitio estático en Hostinger, en el dominio del estudio (por ejemplo, `estudio.com`). La API corre en Easypanel en un subdominio del mismo dominio (por ejemplo, `api.estudio.com`), con un registro DNS que apunta al VPS y certificado HTTPS emitido por Easypanel. Como ambos comparten el dominio base, son del mismo sitio: las cookies con `SameSite=Lax` viajan en las peticiones del frontend a la API.
 - **CORS**: al ser orígenes distintos, la API habilita CORS solo para los orígenes de `FRONTEND_ORIGINS` (por ejemplo, `https://estudio.com` y `https://www.estudio.com`), con `credentials: true`. Se usa el soporte que trae NestJS, sin dependencias nuevas.
+- **Dirección definitiva**: el sitio se publica sin www y con HTTPS (`https://estudio.com`). `web/public/.htaccess` redirige en un solo salto `http://www…`, `http://…` y `https://www…` a esa dirección, conservando la ruta y los parámetros, sin escribir el dominio en la regla. Se publica con redirección temporal (302) y pasa a permanente (301) después de verificarla en producción (plan 004, "Dirección única del sitio"). Con una sola dirección, `FRONTEND_ORIGINS` puede quedar solo con `https://estudio.com`.
 - **Rutas del frontend en Hostinger**: `web/public/.htaccess` redirige toda ruta que no sea un archivo existente a `index.html`, para que `/panel/usuarios` y las demás rutas funcionen al recargar la página.
 - **Desarrollo**: Vite en `localhost:5173` reenvía `/api` a NestJS en `localhost:3000` con su proxy de desarrollo. El frontend arma las URLs con `VITE_API_URL`: vacía en desarrollo (rutas relativas `/api/...`) y `https://api.estudio.com` en producción. `web/.env.example` documenta la variable.
 - **Bases de datos**: una base de desarrollo y una de tests en el MySQL de desarrollo de Easypanel, separadas de producción. Nunca se usa la base de producción.
@@ -88,7 +89,7 @@ Las fechas se guardan en `DATETIME` con la conexión configurada en `-03:00` (Bu
 | `tokenHash` | char(64) | SHA-256 del secreto de renovación vigente. |
 | `tokenAnteriorHash` | char(64), nullable | SHA-256 del secreto reemplazado, para detectar reúso. RF-15 |
 | `creadaEn` | datetime | |
-| `venceEn` | datetime | Se corre a ahora + 7 días en cada renovación. RF-12 |
+| `venceEn` | datetime | Se corre a ahora + la duración del rol (20 minutos para clientes, 1 hora para integrantes) en cada petición autenticada y en cada renovación. RF-12 |
 | `revocadaEn` | datetime, nullable | |
 | `intentosContrasenaFallidos` | int, default 0 | RF-38 |
 | `primerIntentoFallidoEn` | datetime, nullable | RF-38 |
@@ -145,7 +146,8 @@ Mensajes de 409:
 ### Credenciales
 - **Token de acceso**: JWT HS256 firmado con `JWT_SECRET`, vida de 15 minutos, contenido `{ sub: usuarioId, sid: sesionId }`. No incluye el rol: el rol se lee de la base en cada petición (RF-14).
 - **Token de renovación**: `<sesionId>.<secreto>`, con un secreto aleatorio de 32 bytes. En la base solo se guarda el SHA-256 del secreto. Alcanza con SHA-256 porque el secreto es aleatorio y largo, no una contraseña.
-- **Cookies**: `access_token` (ruta `/api`) y `refresh_token` (ruta `/api/sesion`), ambas `httpOnly`, `Secure` y `SameSite=Lax`. Ningún token queda accesible para el código de la página.
+- **Duración de la sesión** (RF-12): 20 minutos sin uso para los clientes y 1 hora para administradores y abogados (`sessionTtlMs(rol)` en `constantes.ts`). Cuenta como uso cada petición autenticada y cada renovación.
+- **Cookies**: `access_token` (ruta `/api`, 15 minutos) y `refresh_token` (ruta `/api/sesion`, 75 minutos), ambas `httpOnly`, `Secure` y `SameSite=Lax`. Ningún token queda accesible para el código de la página. La cookie de renovación cubre la sesión más larga más la vida del token de acceso; el límite real es `venceEn` en la base.
 
 ### Ingreso [RF-8, RF-9, RF-10, RF-13]
 ```
@@ -153,12 +155,12 @@ ingresar(email, contrasena, ip):
   email = normalizar(email)
   si limitador.superado(ip) o limitador.superado(ip + email): 429
   limitador.contar(ip); limitador.contar(ip + email)
-  credenciales = buscar por email (solo id, contrasenaHash, activo)   // el hash no viaja en otras consultas
+  credenciales = buscar por email (solo id, contrasenaHash, activo, rol)   // el hash no viaja en otras consultas
   hashAComparar = credenciales?.contrasenaHash ?? HASH_FICTICIO       // tiempo similar exista o no el email
   ok = bcrypt.compare(contrasena, hashAComparar)
   si no credenciales o no ok o no credenciales.activo: 401 genérico
   borrar las sesiones del usuario                    // sesión única; también limpia las viejas
-  secreto = aleatorio(32); crear sesión(tokenHash = sha256(secreto), venceEn = ahora + 7 días)
+  secreto = aleatorio(32); crear sesión(tokenHash = sha256(secreto), venceEn = ahora + sessionTtlMs(rol))
   usuario.ultimoIngreso = ahora
   usuario = buscar por id con su cliente               // para la respuesta, sin el hash
   setear cookies (JWT con sid, sesionId.secreto)
@@ -171,6 +173,8 @@ guard de autenticación (global, salvo @Public):
   jwt = cookie access_token; verificar firma y vencimiento, si falla: 401
   sesión = buscar por jwt.sid con su usuario
   si sesión revocada, vencida, o usuario inactivo: 401
+  UPDATE sesión SET venceEn = ahora + sessionTtlMs(usuario.rol)
+    WHERE id = sesión.id AND revocadaEn IS NULL               // cada petición cuenta como uso (RF-12)
   request.usuario = usuario                                   // rol vigente leído de la base
 
 guard de cambio pendiente (global):
@@ -192,7 +196,7 @@ renovar(cookie refresh_token):
   si h != sesión.tokenHash: 401
   si usuario inactivo: 401
   nuevo = aleatorio(32)
-  UPDATE sesión SET tokenAnteriorHash = h, tokenHash = sha256(nuevo), venceEn = ahora + 7 días
+  UPDATE sesión SET tokenAnteriorHash = h, tokenHash = sha256(nuevo), venceEn = ahora + sessionTtlMs(rol)
     WHERE id = sid AND tokenHash = h                 // si otra petición rotó primero: 401
   setear cookies nuevas
 ```
@@ -336,6 +340,7 @@ No se usa `@nestjs/throttler`. Su bloqueo se mide desde que se supera el límite
 | API en otro dominio (por ejemplo, el de Easypanel) | — | Descartada: frontend y API serían de sitios distintos y los navegadores bloquearían las cookies de sesión. |
 | Rol leído de la base en cada petición | Rol dentro del JWT | Un cambio de rol rige en la siguiente acción sin cerrar la sesión (RF-14). |
 | Sesión única revocando las anteriores al ingresar | Límite de sesiones por dispositivo | Es lo que pide RF-13 y es lo más simple. |
+| Vencimiento corrido en el guard en cada petición | Correrlo solo al renovar | Con 20 minutos, renovar cada 15 dejaría una inactividad real de entre 5 y 20 minutos. RF-12 cuenta como uso cada consulta (plan 004, "Sesión por rol"). |
 | Contador de RF-38 dentro de la sesión | Tabla de intentos aparte | Al quinto error se revoca esa sesión, así que el contador vive y muere con ella. |
 | Borrar las sesiones del usuario al ingresar (cierra la anterior y limpia las viejas) | Tarea programada | No suma infraestructura; las sesiones de cada usuario se limpian en su próximo ingreso. |
 | IDs autoincrementales | UUID | Más simple. Todos los accesos pasan por autorización, así que adivinar un id no da acceso. |
@@ -386,7 +391,7 @@ Cada suite corre las migraciones sobre la base de tests y vacía las tablas ante
 | RF-8, RF-9 | `autenticacion.service` (ingresar), `PaginaIngreso` | e2e de ingreso, Vitest |
 | RF-10 | `limitador-intentos.service`, `trust proxy` | Unitario y e2e 429 |
 | RF-11 | Guard de cambio pendiente, `RutaProtegida` | e2e, Vitest |
-| RF-12, RF-15 | `autenticacion.service` (renovar), `cliente-http.ts` | e2e de renovación, Vitest |
+| RF-12, RF-15 | `constantes.ts` (`sessionTtlMs`), guard de autenticación, `autenticacion.service` (ingresar y renovar), `cliente-http.ts` | Unitarios, e2e de renovación y de sesión por rol, Vitest |
 | RF-13 | Ingreso con revocación de sesiones | e2e de sesión única |
 | RF-14 | Guard de autenticación que lee el usuario de la base | e2e de desactivación y rol |
 | RF-16 | `POST /api/sesion/cerrar` | e2e de cierre |
