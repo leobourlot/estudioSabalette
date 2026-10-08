@@ -49,7 +49,7 @@ El panel de administración y el portal de clientes manejan información amparad
 - RF-11: MIENTRAS una cuenta tiene pendiente el cambio de contraseña, EL SISTEMA solo le permite cambiar su contraseña, consultar sus propios datos y cerrar sesión.
 
 ### Sesión
-- RF-12: MIENTRAS el usuario sigue usando el sistema, EL SISTEMA mantiene su sesión abierta sin pedirle que vuelva a ingresar. La sesión vence tras 7 días sin uso.
+- RF-12: MIENTRAS el usuario sigue usando el sistema, EL SISTEMA mantiene su sesión abierta sin pedirle que vuelva a ingresar. La sesión vence tras 20 minutos sin uso para los clientes, y tras 1 hora sin uso para administradores y abogados. Cuenta como uso cada consulta al servidor.
 - RF-13: EL SISTEMA permite una sola sesión abierta por usuario. CUANDO un usuario ingresa desde un dispositivo nuevo, EL SISTEMA cierra su sesión anterior.
 - RF-14: MIENTRAS la sesión está abierta, EL SISTEMA verifica en cada acción que la cuenta siga activa y aplica el rol vigente. Si el rol cambió, el usuario sigue con su sesión y pasa a ver y hacer solo lo que su nuevo rol permite.
 - RF-15: SI se detecta el uso de una credencial de sesión que ya fue reemplazada, ENTONCES EL SISTEMA cierra la sesión de ese usuario, porque indica que la credencial pudo ser robada.
