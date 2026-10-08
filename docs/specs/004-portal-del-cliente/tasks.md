@@ -93,7 +93,7 @@ Reglas para todas las tareas:
   - El responsable activo y, al desactivarlo, `null`.
   - Que un recorrido recursivo de la respuesta no encuentra ninguna clave prohibida.
 
-- [ ] **T13 — Movimientos y movimiento** [RF-20 a RF-23, RF-26, RF-27, RF-29]
+- [x] **T13 — Movimientos y movimiento** [RF-20 a RF-23, RF-26, RF-27, RF-29]
   `PortalService.listMovimientos` y `getMovimiento`, con `ClientVisibilityService`.
   Hecho cuando: los e2e verifican:
   - Solo los visibles, anulados incluidos, en el orden del panel, con el texto para el cliente o, si no hay, la descripción.
