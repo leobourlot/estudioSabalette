@@ -17,3 +17,12 @@
   RewriteCond %{REQUEST_FILENAME} !-d
   RewriteRule . /index.html [L]
 </IfModule>
+
+# index.html no se guarda en la caché del navegador, tampoco en la de ida y vuelta (el botón
+# "atrás"): así no se vuelven a ver pantallas de una sesión ya cerrada (spec 004, RF-6). Los
+# archivos de JavaScript y CSS tienen hash en el nombre y no llevan datos: se siguen guardando.
+<IfModule mod_headers.c>
+  <Files "index.html">
+    Header set Cache-Control "no-store"
+  </Files>
+</IfModule>

@@ -130,7 +130,7 @@ Reglas para todas las tareas:
   - Que con actividad no se vacía, y que al volver a la pestaña después de 20 minutos se vacía sin esperar los 30 segundos.
   - Que un integrante no se vacía por este control.
 
-- [ ] **T19 — Caché del navegador** [RF-6] **(modifica existente: `ProveedorSesion.tsx`, su test y `web/public/.htaccess`)**
+- [x] **T19 — Caché del navegador** [RF-6] **(modifica existente: `ProveedorSesion.tsx`, su test y `web/public/.htaccess`)**
   `pageshow` con `persisted` recarga la aplicación. `.htaccess` agrega `Cache-Control: no-store` solo para `index.html`, dentro de `<IfModule mod_headers.c>`.
   Hecho cuando: un test verifica que `pageshow` con `persisted: true` llama a la recarga y con `false` no, y `.htaccess` tiene el encabezado solo para `index.html`, sin afectar los archivos con hash.
 

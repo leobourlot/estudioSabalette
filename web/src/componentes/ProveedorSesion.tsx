@@ -33,12 +33,16 @@ interface SessionContextValue {
 
 const SessionContext = createContext<SessionContextValue | null>(null);
 
+const reloadPage = () => window.location.reload();
+
 interface ProveedorSesionProps {
   children: ReactNode;
   service?: SessionService;
   subscribeSessionClosed?: (listener: () => void) => () => void;
   /** Avisa cada pedido enviado a la API, para medir la inactividad del cliente. */
   subscribeActivity?: (listener: () => void) => () => void;
+  /** Recarga la aplicación; los tests la reemplazan. */
+  reload?: () => void;
 }
 
 /**
@@ -53,6 +57,7 @@ export function ProveedorSesion({
   service = sessionService,
   subscribeSessionClosed = httpClient.onSessionClosed,
   subscribeActivity = httpClient.onActivity,
+  reload = reloadPage,
 }: ProveedorSesionProps) {
   const [usuario, setUsuario] = useState<UsuarioPropio | null>(null);
   const [cargando, setCargando] = useState(true);
@@ -73,6 +78,17 @@ export function ProveedorSesion({
   }, [service]);
 
   useEffect(() => subscribeSessionClosed(() => setUsuario(null)), [subscribeSessionClosed]);
+
+  // Si el navegador muestra la página desde su caché de ida y vuelta (el botón "atrás"), puede
+  // traer datos de una sesión ya cerrada: se recarga y se vuelve a preguntar a la API quién es
+  // el usuario (spec 004, RF-6).
+  useEffect(() => {
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (event.persisted) reload();
+    };
+    window.addEventListener('pageshow', onPageShow);
+    return () => window.removeEventListener('pageshow', onPageShow);
+  }, [reload]);
 
   const login = useCallback(
     async (email: string, contrasena: string) => {

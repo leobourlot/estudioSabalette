@@ -50,6 +50,8 @@ describe('ProveedorSesion: cierre por inactividad del cliente (spec 004, RF-4, R
       </ProveedorSesion>,
     );
     await screen.findByText('Usuario: Ana');
+    // El texto aparece antes de que corran los efectos: se espera a que arranque el control.
+    await act(async () => {});
     return service;
   }
 
@@ -102,5 +104,53 @@ describe('ProveedorSesion: cierre por inactividad del cliente (spec 004, RF-4, R
     await advance(2 * 60 * MINUTE);
 
     expect(screen.getByText('Usuario: Ana')).toBeTruthy();
+  });
+});
+
+describe('ProveedorSesion: vuelta desde la caché del navegador (spec 004, RF-6)', () => {
+  /** Evento pageshow; con persisted, la página volvió desde la caché de ida y vuelta. */
+  function pageshow(persisted: boolean): Event {
+    const event = new Event('pageshow');
+    Object.defineProperty(event, 'persisted', { value: persisted });
+    return event;
+  }
+
+  async function renderWithReload() {
+    const reload = vi.fn<() => void>();
+    render(
+      <ProveedorSesion
+        service={fakeSessionService({
+          fetchOwnUser: vi.fn().mockResolvedValue(testUser('cliente', { nombre: 'Ana' })),
+        })}
+        subscribeSessionClosed={() => () => {}}
+        subscribeActivity={() => () => {}}
+        reload={reload}
+      >
+        <Estado />
+      </ProveedorSesion>,
+    );
+    await screen.findByText('Usuario: Ana');
+    await act(async () => {});
+    return reload;
+  }
+
+  it('si la página vuelve desde la caché, recarga la aplicación', async () => {
+    const reload = await renderWithReload();
+
+    act(() => {
+      window.dispatchEvent(pageshow(true));
+    });
+
+    expect(reload).toHaveBeenCalledTimes(1);
+  });
+
+  it('una carga normal no recarga', async () => {
+    const reload = await renderWithReload();
+
+    act(() => {
+      window.dispatchEvent(pageshow(false));
+    });
+
+    expect(reload).not.toHaveBeenCalled();
   });
 });
