@@ -17,6 +17,7 @@ import { PanelUsuarioNuevo } from './paginas/PanelUsuarioNuevo';
 import { PanelUsuarios } from './paginas/PanelUsuarios';
 import { PortalCausaDetalle } from './paginas/PortalCausaDetalle';
 import { PortalInicio } from './paginas/PortalInicio';
+import { PortalMovimientoDetalle } from './paginas/PortalMovimientoDetalle';
 
 /**
  * Rutas de la aplicación (planes 001 a 004, "Rutas"). Están separadas del router para poder
@@ -47,6 +48,10 @@ export function RutasAplicacion() {
         <Route element={<DisenoPortal />}>
           <Route path="/portal" element={<PortalInicio />} />
           <Route path="/portal/causas/:id" element={<PortalCausaDetalle />} />
+          <Route
+            path="/portal/causas/:id/movimientos/:movimientoId"
+            element={<PortalMovimientoDetalle />}
+          />
           <Route path="/portal/mi-cuenta" element={<MiCuenta />} />
         </Route>
       </Route>

@@ -172,7 +172,7 @@ Reglas para todas las tareas:
   - "Todavía no hay movimientos para mostrar" en la página 1.
   - El enlace "Abrir" con la página actual, y la paginación sin totales.
 
-- [ ] **T26 — Detalle del movimiento** [RF-22, RF-29] **(modifica existente: `RutasAplicacion.tsx`)**
+- [x] **T26 — Detalle del movimiento** [RF-22, RF-29] **(modifica existente: `RutasAplicacion.tsx`)**
   Ruta `/portal/causas/:id/movimientos/:movimientoId` y página `PortalMovimientoDetalle`.
   Hecho cuando: los tests verifican el texto completo, la carátula, "Volver a la causa" con la misma página y que ante un 404 solo se muestra "No existe ese movimiento".
 
