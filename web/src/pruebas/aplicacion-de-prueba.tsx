@@ -4,8 +4,10 @@ import { vi } from 'vitest';
 import { ProveedorServicios } from '../componentes/ProveedorServicios';
 import { ProveedorSesion } from '../componentes/ProveedorSesion';
 import { RutasAplicacion } from '../RutasAplicacion';
+import type { PortalService } from '../servicios/portal';
 import type { Rol, SessionService, UsuarioPropio } from '../servicios/sesion';
 import type { UsersService, UsuarioDetalle } from '../servicios/usuarios';
+import { fakePortalService } from './portal-de-prueba';
 
 /** Usuario de prueba con el rol indicado. */
 export function testUser(rol: Rol, overrides: Partial<UsuarioPropio> = {}): UsuarioPropio {
@@ -75,7 +77,7 @@ export function fakeUsersService(overrides: Partial<UsersService> = {}): FakeUse
 export function renderApp(
   path: string,
   service: SessionService = fakeSessionService(),
-  services: { users?: UsersService } = {},
+  services: { users?: UsersService; portal?: PortalService } = {},
 ) {
   const listeners = new Set<() => void>();
   const subscribeSessionClosed = (listener: () => void) => {
@@ -84,7 +86,12 @@ export function renderApp(
   };
   const result = render(
     <MemoryRouter initialEntries={[path]}>
-      <ProveedorServicios services={{ users: services.users ?? fakeUsersService() }}>
+      <ProveedorServicios
+        services={{
+          users: services.users ?? fakeUsersService(),
+          portal: services.portal ?? fakePortalService(),
+        }}
+      >
         <ProveedorSesion service={service} subscribeSessionClosed={subscribeSessionClosed}>
           <RutasAplicacion />
         </ProveedorSesion>

@@ -152,7 +152,7 @@ Reglas para todas las tareas:
   - En el portal: el enlace "Cambiar contraseña", el nombre, la dirección y el enlace de WhatsApp con `target="_blank"` y `rel="noopener noreferrer"`, y el botón con su `aria-label`.
   - En el cambio de contraseña: el botón sin el bloque para un cliente, y ninguno de los dos para un integrante.
 
-- [ ] **T23 — Lista de causas** [RF-7 a RF-12, RF-24, RF-25] **(modifica existente: `PortalInicio.tsx` y su test)**
+- [x] **T23 — Lista de causas** [RF-7 a RF-12, RF-24, RF-25] **(modifica existente: `PortalInicio.tsx` y su test)**
   `PortalInicio` reescrita con `ListaCausasPortal` y `Paginacion`, y la página leída de `?pagina=`.
   Hecho cuando: los tests con servicios simulados verifican:
   - Los títulos de grupo, "Sin asignar", el estado, la fecha del último movimiento y el corte de la carátula en dos líneas (clase `line-clamp-2`).
