@@ -134,7 +134,7 @@ Reglas para todas las tareas:
   `pageshow` con `persisted` recarga la aplicación. `.htaccess` agrega `Cache-Control: no-store` solo para `index.html`, dentro de `<IfModule mod_headers.c>`.
   Hecho cuando: un test verifica que `pageshow` con `persisted: true` llama a la recarga y con `false` no, y `.htaccess` tiene el encabezado solo para `index.html`, sin afectar los archivos con hash.
 
-- [ ] **T20 — Servicio del portal** [RF-7, RF-13, RF-20, RF-22] **(modifica existente: `ProveedorServicios.tsx`)**
+- [x] **T20 — Servicio del portal** [RF-7, RF-13, RF-20, RF-22] **(modifica existente: `ProveedorServicios.tsx`)**
   `servicios/portal.ts` con los tipos y una función por ruta.
   Hecho cuando: los tests con `fetch` simulado verifican la ruta y el `pagina` de cada función.
 
