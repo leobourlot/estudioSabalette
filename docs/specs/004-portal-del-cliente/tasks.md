@@ -24,7 +24,7 @@ Reglas para todas las tareas:
   Después de validar la sesión, el guard corre `venceEn` a ahora + `sessionTtlMs(usuario.rol)`, con la condición `revocadaEn IS NULL`.
   Hecho cuando: los tests unitarios verifican que una petición válida extiende `venceEn` según el rol vigente, que una sesión vencida o revocada responde 401 sin extenderse, y que una ruta `@Public` no extiende nada.
 
-- [ ] **T3 — e2e de la sesión por rol** [RF-4; spec 001, RF-12] **(modifica existente: `renovacion.e2e-spec.ts`)**
+- [x] **T3 — e2e de la sesión por rol** [RF-4; spec 001, RF-12] **(modifica existente: `renovacion.e2e-spec.ts`)**
   Suite nueva `sesion-por-rol.e2e-spec.ts`. `renovacion.e2e-spec.ts` reemplaza los 7 días por la duración del rol.
   Hecho cuando: los e2e verifican:
   - Que el ingreso de un cliente deja `venceEn` a 20 minutos y el de un abogado a 1 hora (con un margen de un minuto).
