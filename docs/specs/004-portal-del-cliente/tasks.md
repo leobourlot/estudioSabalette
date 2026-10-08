@@ -65,7 +65,7 @@ Reglas para todas las tareas:
   - El nombre de la parte para una persona física, una jurídica cliente y una jurídica no cliente; el orden por rol y después por apellido o razón social y nombre; y `esVos` solo para la parte del cliente que consulta.
   - `pageOf` en la primera página, en la última y en una posterior a la última.
 
-- [ ] **T9 — Armado de respuestas del portal** [RF-13 a RF-17, RF-30]
+- [x] **T9 — Armado de respuestas del portal** [RF-13 a RF-17, RF-30]
   `portal/portal-detalle.ts`: `CausaPortalResumen`, `CausaPortalDetalle` y `PartePortal`, campo por campo.
   Hecho cuando: los tests unitarios comparan las claves exactas de cada respuesta, verifican que ninguna incluye `dni`, `cuit`, `tipoPersona`, `clienteId`, ids de partes o integrantes, emails, colaboradores, `activa` ni auditoría, y que un responsable desactivado sale como `null`.
 
