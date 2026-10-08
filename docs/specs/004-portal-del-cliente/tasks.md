@@ -101,7 +101,7 @@ Reglas para todas las tareas:
   - Que con 45 visibles y 10 ocultos la paginación recorre solo los visibles y no incluye `total`.
   - Que el detalle de un movimiento incluye `causa: { id, caratula }`.
 
-- [ ] **T14 — Respuestas indistinguibles, acceso y siguiente acción** [RF-1 a RF-3, RF-27 a RF-29]
+- [x] **T14 — Respuestas indistinguibles, acceso y siguiente acción** [RF-1 a RF-3, RF-27 a RF-29]
   Recorrido de las cuatro rutas del portal.
   Hecho cuando: los e2e verifican:
   - Que una causa de otro cliente, una desactivada, una inexistente y `abc` reciben el mismo cuerpo 404, comparado byte a byte, en las cuatro rutas.
