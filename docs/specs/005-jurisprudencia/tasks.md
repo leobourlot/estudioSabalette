@@ -23,7 +23,7 @@ Reglas para todas las tareas:
   - Que el resultado validado con `hasOnlyAllowedCharacters` de las specs 002 y 003 rechaza `< > { } \ | =`, el acento grave y los emojis, y que ningún texto aceptado contiene corchetes.
   - Que un sumario de 4.999 caracteres con un "…" queda en 5.001 caracteres contados con `textLength`.
 
-- [ ] **T2 — Validador del enlace** [RF-6]
+- [x] **T2 — Validador del enlace** [RF-6]
   `jurisprudencia/validadores/enlace.ts`: `linkViolation(enlace)` con las reglas del plan, sin `new URL()`.
   Hecho cuando: los tests unitarios verifican:
   - Que se aceptan el enlace de la Corte Suprema con `?idDocumento=7867721`, uno con `&` y `#`, y uno con `%C3%B1`.
