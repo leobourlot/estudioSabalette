@@ -31,7 +31,7 @@ Reglas para todas las tareas:
   - Que devuelve `'formato'` para `https://` solo, un dominio sin punto, mayúsculas en el dominio, `@` en el dominio y en la ruta, una IP, un puerto, `xn--`, una parte del dominio con guion en un extremo, espacios, comillas simples y dobles, `< > { } [ ] | \ ^`, el acento grave, emojis y letras con tilde.
   - Que recorta los espacios de los extremos antes de validar.
 
-- [ ] **T3 — Reglas puras** [RF-7, RF-9, RF-14, RF-18]
+- [x] **T3 — Reglas puras** [RF-7, RF-9, RF-14, RF-18]
   `jurisprudencia/reglas-jurisprudencia.ts`: `flexibleKey`, `uniqueKeywords`, `isFalloDateInRange` (con `todayInBuenosAires` de la spec 003) y `repeatedRulingMessage`.
   Hecho cuando: los tests unitarios verifican:
   - Que "Daño Moral", "dano moral" y "DANO MORAL" tienen la misma clave, y también "año" y "ano", y "pingüino" y "pinguino". Que "daño-moral" y "daño moral" tienen claves distintas.
