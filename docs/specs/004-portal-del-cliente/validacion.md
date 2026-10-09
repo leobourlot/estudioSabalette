@@ -25,7 +25,7 @@ Rutas abreviadas:
 | RF-3 | Vínculo y visibilidad evaluados en cada pedido; los cambios rigen desde el siguiente | E `portal-acceso` (ocultar un movimiento, desactivar al responsable, desactivar y reactivar la causa, desvincular al cliente, con la misma sesión), `visibilidad-cliente` | ✅ |
 | RF-4 | Sesión de 20 minutos sin uso para clientes (1 hora para integrantes) | U `autenticacion/constantes.spec.ts`, `autenticacion/autenticacion.service.spec.ts`, `autenticacion/autenticacion.guard.spec.ts`; E `sesion-por-rol`, `renovacion`; W `inactividad.test.ts`, `ProveedorSesion.test.tsx` | ✅ |
 | RF-5 | Al cerrarse la sesión, la pantalla descarta los datos | W `ProveedorSesion.test.tsx` (inactividad, sin llamar a la API; al volver a la pestaña), `cliente-http.test.ts` (`onActivity`); el aviso de sesión cerrada y `RutaProtegida` de la spec 001 | ✅ (ver Observaciones) |
-| RF-6 | El navegador no guarda copias del portal | E `respuestas-sin-cache` (`Cache-Control: no-store` en 200, 401, 404 y en el ingreso); W `ProveedorSesion.test.tsx` (`pageshow`); `.htaccess` con `no-store` para `index.html` | ✅ (falta verificar `.htaccess` en producción) |
+| RF-6 | El navegador no guarda copias del portal | E `respuestas-sin-cache` (`Cache-Control: no-store` en 200, 401, 404 y en el ingreso); W `ProveedorSesion.test.tsx` (`pageshow`); `.htaccess` con `no-store` para `index.html`; demo manual (volver atrás después de cerrar sesión) | ✅ (falta verificar `.htaccess` en producción) |
 | RF-7 | Inicio con las causas vinculadas de cualquier estado, de a 20 | E `portal-causas`; W `PortalInicio.test.tsx` | ✅ |
 | RF-8 | Fecha del último movimiento: visibles, no anulados, hasta hoy en Buenos Aires | E `visibilidad-cliente` (`lastVisibleDates`, con el día inclusive), `portal-causas-orden` (cambio de día a las 03:00 UTC) | ✅ |
 | RF-9 | Carátula en dos líneas, número o "Sin asignar", estado y fecha del último movimiento | U `portal/portal-detalle.spec.ts`; E `portal-causas`; W `PortalInicio.test.tsx` | ✅ |
@@ -38,7 +38,7 @@ Rutas abreviadas:
 | RF-16 | Responsable solo si está activo; nunca colaboradores ni datos de integrantes | U `portal/portal-detalle.spec.ts`; E `portal-causa-detalle`, `portal-acceso`; W `PortalCausaDetalle.test.tsx` | ✅ |
 | RF-17 | Nunca auditoría, `activa` ni el aviso de responsable desactivado | U `portal/portal-detalle.spec.ts`; E `portal-causa-detalle` | ✅ |
 | RF-18 | Nombre, dirección y WhatsApp del estudio en el portal, salvo en el cambio de contraseña | W `datos-estudio.test.ts`, `Disenos.test.tsx`, `PaginaCambiarContrasena.test.tsx` | ✅ |
-| RF-19 | Botón de WhatsApp fijo abajo a la derecha, también en el cambio de contraseña, sin tapar contenido | W `Disenos.test.tsx`, `PaginaCambiarContrasena.test.tsx`; que no tape contenido, en la demo manual | ✅ (falta la demo en el celular) |
+| RF-19 | Botón de WhatsApp fijo abajo a la derecha, también en el cambio de contraseña, sin tapar contenido | W `Disenos.test.tsx`, `PaginaCambiarContrasena.test.tsx`; que no tape contenido, en la demo manual | ✅ |
 | RF-20 | Movimientos visibles, anulados incluidos, en el orden del panel, de a 20 | E `portal-movimientos`, `visibilidad-cliente`; W `PortalCausaDetalle.test.tsx` | ✅ |
 | RF-21 | Fecha, tipo, texto visible sin indicar su origen, recorte a 300 con "Ver más" y "Ver menos", "Anulado" y "Fecha futura" | U `movimientos/movimiento-detalle.spec.ts`; E `portal-movimientos`, `visibilidad-cliente`; W `presentacion-portal.test.ts`, `PortalCausaDetalle.test.tsx` | ✅ |
 | RF-22 | Movimiento abierto con su carátula y "Volver a la causa" a la misma página | E `portal-movimientos`; W `PortalCausaDetalle.test.tsx` ("Abrir"), `PortalMovimientoDetalle.test.tsx` | ✅ |
@@ -62,7 +62,7 @@ Rutas abreviadas:
 | Registros del servidor sin textos de movimientos | Filtro global de errores de la spec 003, que cubre también las rutas del portal | ✅ |
 | Persistencia: nada en el almacenamiento ni en la caché del navegador | W `PortalAcceso.test.tsx`; E `respuestas-sin-cache` | ✅ |
 | Rendimiento: menos de 2 segundos con 100 causas y 5.000 movimientos | E `portal-rendimiento` (sin agregar índices) | ✅ |
-| Plataformas: celular de 360 px | Tarjetas en una columna, `break-words`, margen para el botón de WhatsApp | Pendiente de la demo manual |
+| Plataformas: celular de 360 px | Tarjetas en una columna, `break-words`, margen para el botón de WhatsApp; demo manual | ✅ |
 | Fechas en dd/mm/aaaa y hora de Buenos Aires | U `movimientos/movimiento-detalle.spec.ts`; E `portal-causas-orden`; W `presentacion-movimientos.test.ts` (de la spec 003), `PortalInicio.test.tsx` | ✅ |
 | Idioma: mensajes en español | Todos los tests verifican los textos exactos | ✅ |
 
@@ -85,7 +85,7 @@ Rutas abreviadas:
   - Una corrida falló en `PanelCausaDetalle.test.tsx` (spec 003), con la máquina cargada. Pasó solo y en las corridas siguientes.
   - El test de inactividad de T18 fallaba a veces porque avanzaba el reloj simulado antes de que corrieran los efectos. Se corrigió en T19.
 - **Formato:** `api/src/causas/causas.controller.ts` (spec 002) no pasa `prettier --check` por los finales de línea CRLF de su copia de trabajo. Ya estaba así y esta spec no lo toca.
-- **Pendientes del despliegue:**
+- **Pendientes del despliegue** (la aplicación todavía no está desplegada):
   - Probar en producción la redirección a HTTPS sin www (`http://www…`, `http://…`, `https://www…`, también con `?pagina=`), revisar que Hostinger no la duplique y pasarla de `R=302` a `R=301`.
   - Verificar que Hostinger (LiteSpeed) aplica `Cache-Control: no-store` a `index.html`.
   - Dejar `FRONTEND_ORIGINS` solo con `https://estudio.com`.
@@ -96,7 +96,7 @@ Rutas abreviadas:
 - [x] Todos los RF con al menos un test en verde.
 - [x] Tests de que el cliente solo ve sus causas, de las respuestas indistinguibles, de los datos que recibe, de los ocultos fuera de la paginación, del orden y la paginación, del responsable y "Vos", del acceso, de la sesión de 20 minutos y del caché.
 - [x] `pnpm test` y `pnpm lint` sin errores.
-- [ ] Demo manual (ver la guía siguiente): pendiente.
+- [x] Demo manual (ver la guía siguiente): completada sin errores el 2026-10-08.
 
 ## Guía de la demo manual
 
@@ -157,4 +157,4 @@ Contra la base de **desarrollo**. Cada paso dice qué hacer y qué tenés que ve
 
 ## Veredicto
 
-La spec 004 está **cumplida en lo automatizable**: los 30 RF y el cambio de RF-12 de la spec 001 tienen tests en verde, y `pnpm test` y `pnpm lint` pasan. Faltan la demo manual y las verificaciones pendientes del despliegue.
+La spec 004 está **cumplida**: los 30 RF y el cambio de RF-12 de la spec 001 tienen tests en verde, `pnpm test` y `pnpm lint` pasan, y la demo manual se completó sin errores el 2026-10-08. Quedan las verificaciones de "Pendientes del despliegue", que se hacen al desplegar la aplicación.

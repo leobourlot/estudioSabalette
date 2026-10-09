@@ -182,6 +182,6 @@ Reglas para todas las tareas:
 
 ## Cierre
 
-- [ ] **T28 — Validación de la spec**
+- [x] **T28 — Validación de la spec**
   Recorrer `spec.md` requisito por requisito con su test, y hacer la demo manual de los criterios de finalización, incluidos el celular, la vuelta atrás después de cerrar sesión y los 20 minutos de inactividad.
   Hecho cuando: cada RF tiene al menos un test en verde identificado, `pnpm test` y `pnpm lint` pasan, y la demo manual se completó sin errores. La prueba de la redirección en producción y el paso a `R=301` (T4) quedan registrados como pendientes del despliegue si todavía no se hicieron.
