@@ -12,7 +12,7 @@ Reglas para todas las tareas:
 
 ## api
 
-- [ ] **T1 — Conversiones de texto** [RF-3 a RF-5]
+- [x] **T1 — Conversiones de texto** [RF-3 a RF-5]
   `jurisprudencia/validadores/texto-fallo.ts`: `convertText(valor, { multilinea })` con la tabla `TYPOGRAPHIC_REPLACEMENTS` y los ocho pasos del plan, en su orden. `jurisprudencia/validadores/longitudes.ts` con los largos máximos (reutiliza los de carátula, tribunal y número de la spec 002).
   Hecho cuando: los tests unitarios verifican:
   - Cada conversión de la tabla, una por una: comillas dobles y simples, guiones, viñetas, `…`, `№`, corchetes, espacios especiales y tabulación.
