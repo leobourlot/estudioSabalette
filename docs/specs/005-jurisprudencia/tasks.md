@@ -39,7 +39,7 @@ Reglas para todas las tareas:
   - Los límites 1799-12-31 y 1800-01-01, el día actual y el siguiente, y el cambio de día a las 02:59 y a las 03:00 UTC.
   - Los dos mensajes de `repeatedRulingMessage`.
 
-- [ ] **T4 — Entidades** [RF-1, RF-2, RF-10, RF-11]
+- [x] **T4 — Entidades** [RF-1, RF-2, RF-10, RF-11]
   `fallo.entity.ts` (con `IDX_fallos_listado`, `IDX_fallos_repetido` y las fechas de registro con microsegundos), `palabra-clave.entity.ts` (con `clave` en `utf8mb4_bin` y `UQ_palabras_clave_clave`) y `fallo-palabra-clave.entity.ts` (PK compuesta e `IDX_fallo_palabras_clave_palabra`), con los campos, tipos y relaciones del plan.
   Hecho cuando: la api compila y un test unitario verifica que el enum de fuero de `Fallo` tiene exactamente los valores de `JURISDICTIONS`.
 
