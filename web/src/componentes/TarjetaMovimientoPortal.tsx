@@ -14,7 +14,7 @@ interface TarjetaMovimientoPortalProps {
 /**
  * Un movimiento como lo ve el cliente (spec 004, RF-21): fecha, tipo, leyenda "Anulado" o
  * "Fecha futura" y el texto, recortado a 300 caracteres. "Ver más" lo despliega en el mismo
- * lugar, sin otra petición: la API ya lo envió completo.
+ * lugar y "Ver menos" lo vuelve a recortar, sin otra petición: la API ya lo envió completo.
  */
 export function TarjetaMovimientoPortal({ movimiento, href }: TarjetaMovimientoPortalProps) {
   const [expanded, setExpanded] = useState(false);
@@ -36,13 +36,13 @@ export function TarjetaMovimientoPortal({ movimiento, href }: TarjetaMovimientoP
         className={`text-sm text-slate-800 ${movimiento.anulado ? 'line-through' : ''}`}
       />
       <div className="flex gap-4 text-sm">
-        {preview.recortado && !expanded && (
+        {preview.recortado && (
           <button
             type="button"
-            onClick={() => setExpanded(true)}
+            onClick={() => setExpanded((current) => !current)}
             className="text-slate-700 underline"
           >
-            Ver más
+            {expanded ? 'Ver menos' : 'Ver más'}
           </button>
         )}
         <Link to={href} className="text-slate-700 underline">

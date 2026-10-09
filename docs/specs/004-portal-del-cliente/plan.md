@@ -287,7 +287,7 @@ En la misma tarea y el mismo commit que el código (principio 2), `docs/specs/00
   - Si la API responde 404, la página muestra solo el mensaje ("No existe esa causa") [RF-28].
 - **Movimientos** (`MovimientosPortal`, `TarjetaMovimientoPortal`) [RF-20 a RF-23]:
   - Cada movimiento muestra la fecha, el tipo (`tipoMovimientoLabel`), la leyenda "Anulado" o "Fecha futura" según `movementLegend(m)`, y el texto con `TextoLiteral`.
-  - `truncateClientText(texto)` corta en 300 caracteres, contados en puntos de código como en la spec 003, y agrega "…". "Ver más" muestra el texto completo en el mismo lugar, sin otra petición, porque la API ya lo envió [RF-21].
+  - `truncateClientText(texto)` corta en 300 caracteres, contados en puntos de código como en la spec 003, y agrega "…". "Ver más" muestra el texto completo en el mismo lugar y "Ver menos" lo vuelve a recortar, sin otra petición, porque la API ya lo envió [RF-21].
   - "Abrir" lleva al movimiento con la página actual en la dirección.
   - Página 1 sin movimientos: "Todavía no hay movimientos para mostrar" [RF-23].
 - **Movimiento** (`PortalMovimientoDetalle`) [RF-22, RF-29]: el movimiento completo, la carátula y "Volver a la causa" (`/portal/causas/:id?pagina=N`). Ante un 404 muestra solo el mensaje de la API.
@@ -379,7 +379,7 @@ Mismo esquema que en las specs anteriores: migraciones sobre la base de tests, t
   - Con actividad, no se vacía. Un integrante no se vacía por este control.
   - `pageshow` con `persisted` recarga la aplicación.
 - `PortalInicio` con servicios simulados [RF-8 a RF-12, RF-24, RF-25]: títulos de grupo, "Sin asignar", fecha del último movimiento, mensaje de vacío solo en la página 1, nada en una página posterior a la última, y sin petición con `?pagina=abc`. "Anterior" y "Siguiente" sin totales.
-- `PortalCausaDetalle` [RF-13 a RF-23, RF-28]: datos, incidente, partes con "Vos", responsable presente y ausente, leyendas, "Ver más" sin otra petición, mensaje de vacío, enlace "Abrir" con la página y mensaje de 404.
+- `PortalCausaDetalle` [RF-13 a RF-23, RF-28]: datos, incidente, partes con "Vos", responsable presente y ausente, leyendas, "Ver más" y "Ver menos" sin otra petición, mensaje de vacío, enlace "Abrir" con la página y mensaje de 404.
 - `PortalMovimientoDetalle` [RF-22, RF-29]: texto completo, carátula, "Volver a la causa" a la misma página y mensaje de 404.
 - `DisenoPortal` [RF-2, RF-18, RF-19]: enlace "Cambiar contraseña", bloque de contacto con el enlace de WhatsApp correcto y botón de WhatsApp. `PaginaCambiarContrasena`: botón sin bloque para un cliente, y nada para un integrante.
 - `RutasAplicacion`: las rutas del portal no son accesibles para un integrante ni para un visitante [RF-1].

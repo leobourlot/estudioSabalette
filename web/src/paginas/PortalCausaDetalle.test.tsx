@@ -152,11 +152,31 @@ describe('PortalCausaDetalle: movimientos (spec 004, RF-20, RF-21, RF-23, RF-24)
     expect(portal.listMovimientos).toHaveBeenCalledTimes(1);
   });
 
+  it('"Ver menos" vuelve a recortar el texto desplegado, sin otra petición (RF-21)', async () => {
+    const long = `${'a'.repeat(300)}FIN`;
+    const portal = withMovements([testMovimientoCliente({ texto: long })]);
+    openCausa('/portal/causas/7', portal);
+    const item = (await (await movements()).findAllByRole('article'))[0];
+    const user = userEvent.setup();
+
+    expect(within(item).queryByRole('button', { name: 'Ver menos' })).toBeNull();
+    await user.click(within(item).getByRole('button', { name: 'Ver más' }));
+    expect(within(item).queryByRole('button', { name: 'Ver más' })).toBeNull();
+
+    await user.click(within(item).getByRole('button', { name: 'Ver menos' }));
+
+    expect(within(item).getByText(`${'a'.repeat(300)}…`)).toBeTruthy();
+    expect(within(item).getByRole('button', { name: 'Ver más' })).toBeTruthy();
+    expect(within(item).queryByRole('button', { name: 'Ver menos' })).toBeNull();
+    expect(portal.listMovimientos).toHaveBeenCalledTimes(1);
+  });
+
   it('un texto corto no ofrece "Ver más"', async () => {
     openCausa('/portal/causas/7', withMovements([testMovimientoCliente({ texto: 'Corto.' })]));
 
     const item = (await (await movements()).findAllByRole('article'))[0];
     expect(within(item).queryByRole('button', { name: 'Ver más' })).toBeNull();
+    expect(within(item).queryByRole('button', { name: 'Ver menos' })).toBeNull();
   });
 
   it('el enlace "Abrir" lleva al movimiento con la página actual (RF-22)', async () => {

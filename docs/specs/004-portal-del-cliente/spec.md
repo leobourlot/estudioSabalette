@@ -81,7 +81,7 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
 - RF-21: EL SISTEMA muestra de cada movimiento:
   - Su fecha, con el formato dd/mm/aaaa.
   - Su tipo.
-  - El texto visible para el cliente (spec 003, RF-7), con sus saltos de línea y sin indicar si es el texto para el cliente o la descripción. Si tiene hasta 300 caracteres, completo; si es más largo, sus primeros 300 caracteres y la opción "Ver más", que lo despliega completo en el mismo lugar.
+  - El texto visible para el cliente (spec 003, RF-7), con sus saltos de línea y sin indicar si es el texto para el cliente o la descripción. Si tiene hasta 300 caracteres, completo; si es más largo, sus primeros 300 caracteres y la opción "Ver más", que lo despliega completo en el mismo lugar. Desplegado, la opción "Ver menos" lo vuelve a recortar.
   - La leyenda "Anulado", si lo está.
   - La leyenda "Fecha futura", si su fecha es posterior al día actual en Buenos Aires y no está anulado. Un movimiento anulado muestra solo la leyenda "Anulado".
 - RF-22: CUANDO un cliente abre un movimiento que puede ver, EL SISTEMA lo muestra solo, con los mismos datos de RF-21 y el texto completo, junto con la carátula de su causa y un acceso para volver a ella, en la misma página de movimientos en la que estaba.
@@ -169,7 +169,7 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
   - Movimiento visible que se oculta mientras el cliente lo tiene abierto: lo sigue viendo en pantalla hasta su siguiente acción, en la que recibe "No existe ese movimiento". Se acepta (RF-3, RF-29).
   - Texto visible modificado después de que el cliente lo leyó: ve el texto nuevo, sin indicación de que cambió ni acceso a la versión anterior (RF-21, RF-30; spec 003, RF-31).
   - Movimiento sin texto para el cliente: ve la descripción, sin saber que es la descripción interna (RF-21; spec 003, RF-7).
-  - Texto de 2.000 caracteres con líneas en blanco: en la lista se ven los primeros 300 con "Ver más"; desplegado o abierto, completo y con sus saltos de línea (RF-21, RF-22).
+  - Texto de 2.000 caracteres con líneas en blanco: en la lista se ven los primeros 300 con "Ver más"; desplegado o abierto, completo y con sus saltos de línea; "Ver menos" lo vuelve a recortar (RF-21, RF-22).
   - Movimiento de otra causa vinculada pedido dentro de una causa a la que no pertenece: "No existe ese movimiento" (RF-29).
   - Un movimiento se hace visible u oculto mientras el cliente pasa de página: puede ver uno repetido o no ver uno hasta volver a cargar. Se acepta (RF-20).
   - Cliente que abre un movimiento desde la página 3 y vuelve: regresa a la página 3 de movimientos (RF-22).
@@ -177,7 +177,7 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
 - **Identificadores correlativos:** si los identificadores de causas y movimientos que recibe el cliente son números correlativos, puede deducir aproximadamente cuántas causas y movimientos carga el estudio y cuándo. No revela datos de otros clientes. Se acepta (RF-30).
 - **Contacto del estudio:**
   - Mientras el estudio no informe sus datos reales, se muestran los datos genéricos de ejemplo (RF-18).
-  - En el celular, el botón de WhatsApp no tapa la paginación, el botón "Ver más" ni el final del último texto (RF-19).
+  - En el celular, el botón de WhatsApp no tapa la paginación, los botones "Ver más" y "Ver menos" ni el final del último texto (RF-19).
 
 ## Fuera de alcance
 - Cualquier carga o modificación por parte del cliente, salvo su contraseña (spec 001). Tampoco puede editar sus propios datos.
@@ -217,7 +217,7 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
   1. Con un abogado, preparar dos clientes (A y B) y causas: una En trámite y una Finalizada solo con A; una con A y B como partes, más una parte no cliente; una solo con B; y una desactivada con A.
   2. En la causa compartida, cargar movimientos visibles con y sin texto para el cliente (uno de más de 300 caracteres), uno oculto, uno visible anulado, uno con fecha futura y uno anulado con fecha futura.
   3. Ingresar como A y verificar la lista: solo sus causas, en los grupos "En curso" y "Archivadas y finalizadas", con la fecha del último movimiento correcta, sin la desactivada y sin totales.
-  4. Abrir la causa compartida y verificar sus datos, las partes con "Vos" solo en A y sin documentos, el responsable, el contacto del estudio, el botón de WhatsApp y los movimientos: el oculto no aparece, el anulado tiene "Anulado", el futuro tiene "Fecha futura", el anulado futuro solo "Anulado", el largo se despliega con "Ver más" y cada uno muestra el texto que corresponde.
+  4. Abrir la causa compartida y verificar sus datos, las partes con "Vos" solo en A y sin documentos, el responsable, el contacto del estudio, el botón de WhatsApp y los movimientos: el oculto no aparece, el anulado tiene "Anulado", el futuro tiene "Fecha futura", el anulado futuro solo "Anulado", el largo se despliega con "Ver más" y se vuelve a recortar con "Ver menos", y cada uno muestra el texto que corresponde.
   5. Cambiando la dirección, pedir la causa de B, la desactivada, una inexistente y una con letras en el identificador, y verificar que todas responden "No existe esa causa". Hacer lo mismo con el movimiento oculto, uno inexistente y uno mal formado, y verificar "No existe ese movimiento".
   6. Con el abogado, desactivar al responsable, desvincular a A de una causa y ocultar un movimiento visible. Verificar como A, después de actualizar la página, que el responsable ya no se muestra, que la causa desvinculada desapareció y que el movimiento ya no se ve.
   7. Ingresar como B y verificar que ve la causa compartida igual que A, con "Vos" en su propia parte.
