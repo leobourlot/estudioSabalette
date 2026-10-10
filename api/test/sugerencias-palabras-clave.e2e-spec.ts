@@ -147,4 +147,42 @@ describe('sugerencias de palabras clave', () => {
     // Si la ruta se tomara como GET /:id, respondería 404 "No existe ese fallo".
     await suggest({ buscar: 'daño' }).expect(200);
   });
+
+  it('una palabra deja de sugerirse al desactivar su único fallo y vuelve al reactivarlo (RF-15)', async () => {
+    const fallo = await ruling(['prescripción liberatoria']);
+    const act = (action: 'desactivar' | 'reactivar') =>
+      request(app.getHttpServer())
+        .post(`/api/panel/jurisprudencia/${fallo.id}/${action}`)
+        .set('Cookie', `access_token=${session.accessToken}`)
+        .expect(200);
+    const suggested = async () =>
+      summary((await suggest({ buscar: 'prescripcion' }).expect(200)).body);
+
+    expect(await suggested()).toEqual([['prescripción liberatoria', 1]]);
+
+    await act('desactivar');
+    expect(await suggested()).toEqual([]);
+    // Sigue en el catálogo: no se borra, y el filtro la sigue ofreciendo.
+    expect(
+      summary((await suggest({ buscar: 'prescripcion', para: 'filtro' }).expect(200)).body),
+    ).toEqual([['prescripción liberatoria', 0]]);
+
+    await act('reactivar');
+    expect(await suggested()).toEqual([['prescripción liberatoria', 1]]);
+  });
+
+  it('quitarla del único fallo que la usa también la saca de las sugerencias, sin borrarla (RF-15)', async () => {
+    const fallo = await ruling(['caducidad de instancia', 'otra palabra']);
+
+    await request(app.getHttpServer())
+      .patch(`/api/panel/jurisprudencia/${fallo.id}`)
+      .set('Cookie', `access_token=${session.accessToken}`)
+      .send({ palabrasClave: ['otra palabra'] })
+      .expect(200);
+
+    expect((await suggest({ buscar: 'caducidad' }).expect(200)).body).toEqual([]);
+    expect(
+      summary((await suggest({ buscar: 'caducidad', para: 'filtro' }).expect(200)).body),
+    ).toEqual([['caducidad de instancia', 0]]);
+  });
 });
