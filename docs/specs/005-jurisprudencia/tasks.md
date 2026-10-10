@@ -71,7 +71,7 @@ Reglas para todas las tareas:
   DTO de `GET /palabras-clave` (`buscar`, `para`) y de `POST /:id/reactivar` (`confirmarRepetido`).
   Hecho cuando: los tests unitarios cubren un `buscar` de menos de 2 caracteres después de convertir ("Escribí al menos 2 caracteres"), uno con caracteres no permitidos, `para` con su valor por defecto y uno inválido, y una confirmación que no es booleana.
 
-- [ ] **T9 — Armado de respuestas** [RF-19, RF-35]
+- [x] **T9 — Armado de respuestas** [RF-19, RF-35]
   `fallo-detalle.ts`: `PalabraClave`, `PalabraClaveSugerencia`, `FalloResumen` y `FalloDetalle`, campo por campo, con `toAutorResumen` de la spec 003.
   Hecho cuando: los tests unitarios verifican que cada respuesta tiene exactamente las claves de su tipo (sin `clave`, emails ni hashes), que las palabras clave van en orden alfabético y que los autores desactivados quedan marcados.
 
