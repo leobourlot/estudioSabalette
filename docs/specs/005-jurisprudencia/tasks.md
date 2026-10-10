@@ -204,7 +204,7 @@ Reglas para todas las tareas:
   - Cada mensaje de vacío y el botón "Volver a la primera página".
   - Que no se escribe nada en `localStorage` ni `sessionStorage`.
 
-- [ ] **T29 — Formulario y carga** [RF-1, RF-14, RF-16, RF-18, RF-20]
+- [x] **T29 — Formulario y carga** [RF-1, RF-14, RF-16, RF-18, RF-20]
   `FormularioFallo` (con el contador del sumario y `notifyTyping` en cada cambio) y `PanelFalloNuevo` en lugar de la página provisoria.
   Hecho cuando: los tests con servicios simulados verifican:
   - Los campos, el `min` y el `max` de la fecha, el contador sobre 5.000 y los errores de validación sin llamar al servicio.
