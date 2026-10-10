@@ -5,6 +5,7 @@ import { Fallo } from './fallo.entity.js';
 import { JurisprudenciaController } from './jurisprudencia.controller.js';
 import { JurisprudenciaService } from './jurisprudencia.service.js';
 import { PalabraClave } from './palabra-clave.entity.js';
+import { PalabrasClaveService } from './palabras-clave.service.js';
 
 /**
  * Jurisprudencia del estudio (plan 005). No exporta nada a propósito: ningún otro módulo, en
@@ -14,6 +15,6 @@ import { PalabraClave } from './palabra-clave.entity.js';
 @Module({
   imports: [TypeOrmModule.forFeature([Fallo, PalabraClave, FalloPalabraClave])],
   controllers: [JurisprudenciaController],
-  providers: [JurisprudenciaService],
+  providers: [JurisprudenciaService, PalabrasClaveService],
 })
 export class JurisprudenciaModule {}

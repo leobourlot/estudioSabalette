@@ -1,5 +1,15 @@
-import { Controller, Get, NotFoundException, Param, ParseIntPipe } from '@nestjs/common';
-import { Roles } from '../autenticacion/decoradores.js';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
+import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
+import type { Usuario } from '../usuarios/usuario.entity.js';
+import { CreateFalloDto } from './dto/crear-fallo.dto.js';
 import type { FalloDetalle } from './fallo-detalle.js';
 import { JURISPRUDENCIA_MESSAGES, JurisprudenciaService } from './jurisprudencia.service.js';
 
@@ -21,5 +31,10 @@ export class JurisprudenciaController {
   @Get(':id')
   findOne(@Param('id', FalloIdPipe) id: number): Promise<FalloDetalle> {
     return this.jurisprudencia.findOne(id);
+  }
+
+  @Post()
+  create(@CurrentUser() actor: Usuario, @Body() body: CreateFalloDto): Promise<FalloDetalle> {
+    return this.jurisprudencia.create(actor, body);
   }
 }

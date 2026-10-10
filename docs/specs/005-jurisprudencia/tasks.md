@@ -79,7 +79,7 @@ Reglas para todas las tareas:
   `JurisprudenciaModule` sin `exports`, importado en `app.module.ts`. `jurisprudencia.controller.ts` con `@Roles('admin', 'abogado')` y el `ParseIntPipe` con 404, y `GET /:id`. `api/test/utilidades/fallos-de-prueba.ts` (nuevo) con una función para crear fallos.
   Hecho cuando: los e2e verifican la consulta de un fallo activo y de uno desactivado, con su autoría, y el 404 "No existe ese fallo" con un id inexistente y con uno no numérico.
 
-- [ ] **T11 — Carga y catálogo de palabras clave** [RF-2, RF-10 a RF-12, RF-14, RF-16]
+- [x] **T11 — Carga y catálogo de palabras clave** [RF-2, RF-10 a RF-12, RF-14, RF-16]
   `palabras-clave.service.ts` con `resolverPalabras` (`INSERT … ON DUPLICATE KEY UPDATE` dentro de la transacción del fallo) y `POST /`, todavía sin el aviso de repetido.
   Hecho cuando: los e2e verifican:
   - La carga completa y una sin número ni enlace, con quién la cargó y cuándo.
