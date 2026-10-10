@@ -221,7 +221,7 @@ Reglas para todas las tareas:
   - Desactivar y reactivar, con los mensajes de 409.
   - Que un fallo desactivado muestra "Desactivado" y solo la acción "Reactivar".
 
-- [ ] **T31 — Aislamiento del portal en la web** [RF-36]
+- [x] **T31 — Aislamiento del portal en la web** [RF-36]
   Hecho cuando: un test de Vitest lee los archivos fuente y falla si algún archivo del portal (`paginas/Portal*`, los componentes del portal y `servicios/portal.ts`) importa `servicios/jurisprudencia.ts`.
 
 ## Cierre
