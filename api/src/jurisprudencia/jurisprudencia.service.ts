@@ -1,13 +1,18 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, type EntityManager, Repository } from 'typeorm';
+import { QUESTION_CODES, QuestionException } from '../causas/preguntas.js';
 import { toSearchableCaseNumber } from '../causas/validadores/texto-causa.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import type { CreateFalloDto } from './dto/crear-fallo.dto.js';
-import { type FalloDetalle, toFalloDetalle } from './fallo-detalle.js';
+import { type FalloDetalle, toFalloDetalle, toFalloReferencia } from './fallo-detalle.js';
 import { FalloPalabraClave } from './fallo-palabra-clave.entity.js';
 import { Fallo } from './fallo.entity.js';
 import { PalabrasClaveService } from './palabras-clave.service.js';
+import { repeatedRulingMessage } from './reglas-jurisprudencia.js';
+
+/** Datos de un fallo que decide el aviso de repetido (RF-18). */
+type RepeatedCheckData = Pick<Fallo, 'caratula' | 'tribunal' | 'numero' | 'fecha'>;
 
 export const JURISPRUDENCIA_MESSAGES = {
   notFound: 'No existe ese fallo',
@@ -42,6 +47,16 @@ export class JurisprudenciaService {
    * palabra nueva (RF-12).
    */
   async create(actor: Usuario, dto: CreateFalloDto): Promise<FalloDetalle> {
+    // La pregunta de repetido va antes de escribir nada: un 409 no deja palabras nuevas en
+    // el catálogo (RF-12, RF-18).
+    if (dto.confirmarRepetido !== true) {
+      await this.askIfRepeated(this.dataSource.manager, {
+        caratula: dto.caratula,
+        tribunal: dto.tribunal,
+        numero: dto.numero ?? null,
+        fecha: dto.fecha,
+      });
+    }
     const id = await this.dataSource.transaction(async (manager) => {
       const palabraIds = await this.palabrasClave.resolve(manager, dto.palabrasClave);
       const numero = dto.numero ?? null;
@@ -77,5 +92,64 @@ export class JurisprudenciaService {
       fallo,
       fallo.palabrasClave.map((relacion) => relacion.palabraClave),
     );
+  }
+
+  /**
+   * Aviso de repetido (RF-18): si el fallo coincide con otro activo, pregunta con un 409
+   * FALLO_REPETIDO que lleva los datos de ese fallo. La interfaz repite la petición con
+   * `confirmarRepetido: true` si el integrante lo confirma.
+   */
+  private async askIfRepeated(
+    manager: EntityManager,
+    data: RepeatedCheckData,
+    exceptId?: number,
+  ): Promise<void> {
+    const repeated = await this.findRepeated(manager, data, exceptId);
+    if (!repeated) return;
+    throw new QuestionException(
+      QUESTION_CODES.repeatedRuling,
+      repeatedRulingMessage(repeated.porNumero),
+      { fallo: toFalloReferencia(repeated.fallo) },
+    );
+  }
+
+  /**
+   * Primer fallo activo, en el orden del listado (RF-21), con el que coincide: por tribunal y
+   * número si el fallo tiene número; si no coincide por número, por carátula, tribunal y
+   * fecha, tengan o no número. La intercalación utf8mb4_unicode_ci compara sin distinguir
+   * mayúsculas, minúsculas, tildes ni diéresis, y con la ñ como n (RF-9). El número se
+   * compara tal como se escribió, sin quitar separadores. `exceptId` es el propio fallo.
+   */
+  private async findRepeated(
+    manager: EntityManager,
+    data: RepeatedCheckData,
+    exceptId?: number,
+  ): Promise<{ fallo: Fallo; porNumero: boolean } | null> {
+    const base = () => {
+      const builder = manager.createQueryBuilder(Fallo, 'fallo').where('fallo.activo = 1');
+      if (exceptId !== undefined) builder.andWhere('fallo.id <> :exceptId', { exceptId });
+      return builder
+        .orderBy('fallo.fecha', 'DESC')
+        .addOrderBy('fallo.creadoEn', 'DESC')
+        .addOrderBy('fallo.id', 'DESC')
+        .limit(1);
+    };
+
+    if (data.numero !== null) {
+      const byNumber = await base()
+        .andWhere('fallo.tribunal = :tribunal AND fallo.numero = :numero', {
+          tribunal: data.tribunal,
+          numero: data.numero,
+        })
+        .getOne();
+      if (byNumber) return { fallo: byNumber, porNumero: true };
+    }
+    const byCaption = await base()
+      .andWhere(
+        'fallo.caratula = :caratula AND fallo.tribunal = :tribunal AND fallo.fecha = :fecha',
+        { caratula: data.caratula, tribunal: data.tribunal, fecha: data.fecha },
+      )
+      .getOne();
+    return byCaption ? { fallo: byCaption, porNumero: false } : null;
   }
 }

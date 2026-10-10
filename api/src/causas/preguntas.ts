@@ -10,6 +10,8 @@ export const QUESTION_CODES = {
   clientDocument: 'DOCUMENTO_DE_CLIENTE',
   repeatedName: 'NOMBRE_REPETIDO',
   clientName: 'NOMBRE_DE_CLIENTE',
+  // Spec 005, RF-18: el fallo que se carga, modifica o reactiva coincide con otro activo.
+  repeatedRuling: 'FALLO_REPETIDO',
 } as const;
 
 export type QuestionCode = (typeof QUESTION_CODES)[keyof typeof QUESTION_CODES];

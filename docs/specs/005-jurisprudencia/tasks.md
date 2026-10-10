@@ -90,7 +90,7 @@ Reglas para todas las tareas:
   - Que una carga rechazada por validación no agrega palabras al catálogo.
   - Que dos cargas simultáneas con la misma palabra en formas distintas dejan una sola fila.
 
-- [ ] **T12 — Aviso de repetido en la carga** [RF-18] **(modifica existente: `causas/preguntas.ts`)**
+- [x] **T12 — Aviso de repetido en la carga** [RF-18] **(modifica existente: `causas/preguntas.ts`)**
   `QUESTION_CODES.repeatedRuling = 'FALLO_REPETIDO'` y `buscarRepetido` en el service, aplicado en `POST /` antes de la transacción.
   Hecho cuando: los e2e verifican:
   - Mismo tribunal y número con otras mayúsculas, tildes o espacios: 409 `FALLO_REPETIDO` con el primer mensaje y los datos del fallo. Con `confirmarRepetido: true`, 201.
