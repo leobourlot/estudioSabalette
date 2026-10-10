@@ -165,3 +165,58 @@ describe('applyPartyAnswer', () => {
     expect(applyPartyAnswer(NON_CLIENT, { kind: 'cancel', label: 'Cancelar' })).toEqual(NON_CLIENT);
   });
 });
+
+describe('pendingQuestion: fallo repetido (spec 005, RF-18, RF-31)', () => {
+  const fallo = {
+    id: 3,
+    caratula: 'Muñoz c/ Clínica del Sur',
+    tribunal: 'Cámara Civil, Sala B',
+    fecha: '2020-08-14',
+    numero: '5678/2019',
+  };
+
+  it('guardar igual o cancelar, con los datos del fallo con el que coincide', () => {
+    expect(
+      pendingQuestion(
+        question('Ya existe un fallo con ese número en ese tribunal', {
+          codigo: 'FALLO_REPETIDO',
+          fallo,
+        }),
+      ),
+    ).toEqual({
+      codigo: 'FALLO_REPETIDO',
+      message: 'Ya existe un fallo con ese número en ese tribunal',
+      fallo,
+      options: [
+        { kind: 'confirm', field: 'confirmarRepetido', label: 'Guardar igual' },
+        { kind: 'cancel', label: 'Cancelar' },
+      ],
+    });
+  });
+
+  it('con el otro mensaje, las mismas opciones', () => {
+    const pending = pendingQuestion(
+      question('Ya existe un fallo con esa carátula, tribunal y fecha', {
+        codigo: 'FALLO_REPETIDO',
+        fallo: { ...fallo, numero: null },
+      }),
+    );
+
+    expect(pending?.message).toBe('Ya existe un fallo con esa carátula, tribunal y fecha');
+    expect(pending?.fallo?.numero).toBeNull();
+    expect(pending?.options.map((option) => option.label)).toEqual(['Guardar igual', 'Cancelar']);
+  });
+
+  it('si el error no trae los datos del fallo, igual es una pregunta', () => {
+    const pending = pendingQuestion(
+      question('Ya existe un fallo con ese número en ese tribunal', { codigo: 'FALLO_REPETIDO' }),
+    );
+
+    expect(pending?.codigo).toBe('FALLO_REPETIDO');
+    expect(pending?.fallo).toBeUndefined();
+  });
+
+  it('un 409 sin código no es una pregunta: es un rechazo', () => {
+    expect(pendingQuestion(question('El fallo ya está activo', {}))).toBeNull();
+  });
+});

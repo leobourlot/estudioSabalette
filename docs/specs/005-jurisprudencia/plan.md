@@ -382,7 +382,7 @@ servicios/mantener-sesion.ts:
     ultimo = ahora() al crear
     notifyTyping(): si ahora() - ultimo >= KEEP_ALIVE_INTERVAL_MS: ultimo = ahora(); ping()
 ```
-- `FormularioFallo` llama a `notifyTyping()` en cada cambio de un campo. `ping` es `sessionService.fetchOwnUser()` (`GET /api/sesion/usuario`), que el guard cuenta como uso.
+- `FormularioFallo` llama a `notifyTyping()` en cada cambio de un campo. `ping` es `keepSessionAlive()` del servicio de jurisprudencia de la web, que pide `GET /api/sesion/usuario`: el guard lo cuenta como uso. Se pide desde ese servicio y no desde el de sesión porque `ProveedorSesion` no expone su servicio a los componentes, y así no hace falta modificarlo.
 - Si el integrante deja de escribir, no hay más consultas y la sesión vence a la hora, como siempre. Lo no guardado se pierde, porque no se guarda en el navegador [RF-20, RNF de persistencia].
 - Si la consulta encuentra la sesión vencida, `ProveedorSesion` vacía el usuario como ante cualquier 401 (spec 001).
 - Se compara con la hora y no se usa un temporizador, como en `servicios/inactividad.ts`.

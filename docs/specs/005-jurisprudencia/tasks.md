@@ -173,7 +173,7 @@ Reglas para todas las tareas:
   - `emptyListMessage` sin fallos, con resultados vacíos en la página 1 y en otra página.
   - Que `notifyTyping` no consulta antes de 5 minutos, consulta una vez al pasar y vuelve a esperar 5 minutos, con la hora simulada.
 
-- [ ] **T24 — Pregunta, servicios, menú y rutas** [RF-18, RF-31, RF-34] **(modifica existente: `servicios/preguntas.ts` y su test, `ProveedorServicios.tsx`, `DisenoPanel.tsx` y `Disenos.test.tsx`, `RutasAplicacion.tsx`)**
+- [x] **T24 — Pregunta, servicios, menú y rutas** [RF-18, RF-31, RF-34] **(modifica existente: `servicios/preguntas.ts` y su test, `ProveedorServicios.tsx`, `DisenoPanel.tsx` y `Disenos.test.tsx`, `RutasAplicacion.tsx`)**
   `pendingQuestion` reconoce `FALLO_REPETIDO` con las opciones "Guardar igual" y "Cancelar". `ProveedorServicios` suma el servicio de jurisprudencia. `DisenoPanel` suma el enlace "Jurisprudencia". Las tres rutas del panel apuntan a páginas provisorias que se reemplazan en T28 a T30. `web/src/pruebas/jurisprudencia-de-prueba.tsx` (nuevo) con datos y servicios simulados.
   Hecho cuando: los tests verifican la pregunta con los datos del fallo que coincide, el enlace "Jurisprudencia" en el panel, y que las rutas nuevas llevan a un cliente al portal y a un visitante a `/ingresar`.
 

@@ -1,5 +1,6 @@
 import type { NewPartyData, PartyAnswers, ParteDetalle } from './causas';
 import { ApiError } from './cliente-http';
+import type { FalloReferencia } from './jurisprudencia';
 import { partyDocument, partyName } from './presentacion-causas';
 
 /**
@@ -9,10 +10,16 @@ import { partyDocument, partyName } from './presentacion-causas';
  */
 
 export type QuestionCode =
-  'EXPEDIENTE_REPETIDO' | 'DOCUMENTO_DE_CLIENTE' | 'NOMBRE_REPETIDO' | 'NOMBRE_DE_CLIENTE';
+  | 'EXPEDIENTE_REPETIDO'
+  | 'DOCUMENTO_DE_CLIENTE'
+  | 'NOMBRE_REPETIDO'
+  | 'NOMBRE_DE_CLIENTE'
+  // Spec 005, RF-18: el fallo que se carga, modifica o reactiva coincide con otro activo.
+  | 'FALLO_REPETIDO';
 
 /** Campo del cuerpo que lleva la respuesta afirmativa a una pregunta. */
-export type ConfirmationField = 'confirmarExpedienteRepetido' | keyof PartyAnswers;
+export type ConfirmationField =
+  'confirmarExpedienteRepetido' | 'confirmarRepetido' | keyof PartyAnswers;
 
 export type QuestionOption =
   /** Repetir la petición con field en true. */
@@ -30,6 +37,8 @@ export interface PendingQuestion {
   indiceParte?: number;
   /** Parte existente con el mismo nombre (NOMBRE_REPETIDO). */
   parteId?: number;
+  /** Fallo con el que coincide el que se guarda (FALLO_REPETIDO). */
+  fallo?: FalloReferencia;
   options: QuestionOption[];
 }
 
@@ -95,6 +104,8 @@ function optionsFor(codigo: QuestionCode, details: Record<string, unknown>): Que
         },
       ];
     }
+    case 'FALLO_REPETIDO':
+      return [{ kind: 'confirm', field: 'confirmarRepetido', label: 'Guardar igual' }, CANCEL];
   }
 }
 
@@ -103,7 +114,17 @@ const QUESTION_CODES: readonly string[] = [
   'DOCUMENTO_DE_CLIENTE',
   'NOMBRE_REPETIDO',
   'NOMBRE_DE_CLIENTE',
+  'FALLO_REPETIDO',
 ];
+
+/** Los datos del fallo repetido, si el error los trae completos. */
+function repeatedRuling(value: unknown): FalloReferencia | undefined {
+  if (typeof value !== 'object' || value === null) return undefined;
+  const fallo = value as Partial<FalloReferencia>;
+  return typeof fallo.id === 'number' && typeof fallo.caratula === 'string'
+    ? (fallo as FalloReferencia)
+    : undefined;
+}
 
 /** La pregunta que trae un error de la API, o null si es un rechazo u otro error. */
 export function pendingQuestion(error: unknown): PendingQuestion | null {
@@ -119,6 +140,8 @@ export function pendingQuestion(error: unknown): PendingQuestion | null {
   if (typeof error.details.indiceParte === 'number')
     question.indiceParte = error.details.indiceParte;
   if (typeof error.details.parteId === 'number') question.parteId = error.details.parteId;
+  const fallo = repeatedRuling(error.details.fallo);
+  if (fallo) question.fallo = fallo;
   return question;
 }
 

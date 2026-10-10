@@ -10,7 +10,10 @@ import { PaginaNoEncontrada } from './paginas/PaginaNoEncontrada';
 import { PanelCausaDetalle } from './paginas/PanelCausaDetalle';
 import { PanelCausaNueva } from './paginas/PanelCausaNueva';
 import { PanelCausas } from './paginas/PanelCausas';
+import { PanelFalloDetalle } from './paginas/PanelFalloDetalle';
+import { PanelFalloNuevo } from './paginas/PanelFalloNuevo';
 import { PanelInicio } from './paginas/PanelInicio';
+import { PanelJurisprudencia } from './paginas/PanelJurisprudencia';
 import { PanelMovimientoDetalle } from './paginas/PanelMovimientoDetalle';
 import { PanelUsuarioDetalle } from './paginas/PanelUsuarioDetalle';
 import { PanelUsuarioNuevo } from './paginas/PanelUsuarioNuevo';
@@ -20,7 +23,7 @@ import { PortalInicio } from './paginas/PortalInicio';
 import { PortalMovimientoDetalle } from './paginas/PortalMovimientoDetalle';
 
 /**
- * Rutas de la aplicación (planes 001 a 004, "Rutas"). Están separadas del router para poder
+ * Rutas de la aplicación (planes 001 a 005, "Rutas"). Están separadas del router para poder
  * probarlas con un MemoryRouter. RutaProtegida decide el acceso de todas las rutas que
  * dependen de la sesión, incluida /ingresar (que con sesión lleva al inicio de la sección).
  */
@@ -40,6 +43,9 @@ export function RutasAplicacion() {
             path="/panel/causas/:id/movimientos/:movimientoId"
             element={<PanelMovimientoDetalle />}
           />
+          <Route path="/panel/jurisprudencia" element={<PanelJurisprudencia />} />
+          <Route path="/panel/jurisprudencia/nuevo" element={<PanelFalloNuevo />} />
+          <Route path="/panel/jurisprudencia/:id" element={<PanelFalloDetalle />} />
           <Route path="/panel/usuarios" element={<PanelUsuarios />} />
           <Route path="/panel/usuarios/nuevo" element={<PanelUsuarioNuevo />} />
           <Route path="/panel/usuarios/:id" element={<PanelUsuarioDetalle />} />

@@ -147,6 +147,13 @@ export function createJurisprudenciaService(http: HttpClient) {
         `${BASE}/${id}/reactivar`,
         confirmarRepetido ? { confirmarRepetido: true } : undefined,
       ),
+
+    /**
+     * Consulta liviana (el usuario de la sesión) que el servidor cuenta como uso: mantiene la
+     * sesión mientras se escribe en el formulario de un fallo (RF-20). La dispara
+     * createSessionKeepAlive, como mucho una vez cada 5 minutos.
+     */
+    keepSessionAlive: () => http.get<unknown>('/sesion/usuario'),
   };
 }
 

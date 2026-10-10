@@ -168,6 +168,18 @@ describe('servicio de jurisprudencia (spec 005)', () => {
     expect(lastCall().body).toEqual({ confirmarRepetido: true });
   });
 
+  it('keepSessionAlive pide el usuario de la sesión, que el servidor cuenta como uso (RF-20)', async () => {
+    fetchMock.mockResolvedValueOnce(jsonResponse(200, { id: 1 }));
+
+    await jurisprudencia.keepSessionAlive();
+
+    expect(lastCall()).toEqual({
+      url: `${BASE_URL}/api/sesion/usuario`,
+      method: 'GET',
+      body: undefined,
+    });
+  });
+
   it('la pregunta de repetido llega como ApiError con el código y el fallo (RF-18)', async () => {
     const fallo = {
       id: 3,
