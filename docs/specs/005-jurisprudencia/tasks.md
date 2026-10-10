@@ -75,7 +75,7 @@ Reglas para todas las tareas:
   `fallo-detalle.ts`: `PalabraClave`, `PalabraClaveSugerencia`, `FalloResumen` y `FalloDetalle`, campo por campo, con `toAutorResumen` de la spec 003.
   Hecho cuando: los tests unitarios verifican que cada respuesta tiene exactamente las claves de su tipo (sin `clave`, emails ni hashes), que las palabras clave van en orden alfabético y que los autores desactivados quedan marcados.
 
-- [ ] **T10 — Módulo, controller y consulta de un fallo** [RF-19, RF-33, RF-34] **(modifica existente: `app.module.ts`)**
+- [x] **T10 — Módulo, controller y consulta de un fallo** [RF-19, RF-33, RF-34] **(modifica existente: `app.module.ts`)**
   `JurisprudenciaModule` sin `exports`, importado en `app.module.ts`. `jurisprudencia.controller.ts` con `@Roles('admin', 'abogado')` y el `ParseIntPipe` con 404, y `GET /:id`. `api/test/utilidades/fallos-de-prueba.ts` (nuevo) con una función para crear fallos.
   Hecho cuando: los e2e verifican la consulta de un fallo activo y de uno desactivado, con su autoría, y el 404 "No existe ese fallo" con un id inexistente y con uno no numérico.
 

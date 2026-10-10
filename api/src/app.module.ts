@@ -3,6 +3,7 @@ import { AuthenticationModule } from './autenticacion/autenticacion.module.js';
 import { DatabaseModule } from './base-de-datos/base-de-datos.module.js';
 import { CausasModule } from './causas/causas.module.js';
 import { ConfigurationModule } from './configuracion/configuracion.module.js';
+import { JurisprudenciaModule } from './jurisprudencia/jurisprudencia.module.js';
 import { MovimientosModule } from './movimientos/movimientos.module.js';
 import { PortalModule } from './portal/portal.module.js';
 import { UsersModule } from './usuarios/usuarios.module.js';
@@ -16,6 +17,7 @@ import { UsersModule } from './usuarios/usuarios.module.js';
     CausasModule,
     MovimientosModule,
     PortalModule,
+    JurisprudenciaModule,
   ],
 })
 export class AppModule {}
