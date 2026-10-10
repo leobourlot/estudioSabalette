@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, type EntityManager, In, Repository } from 'typeorm';
+import { Brackets, DataSource, type EntityManager, In, Repository } from 'typeorm';
 import { QUESTION_CODES, QuestionException } from '../causas/preguntas.js';
 import { toSearchableCaseNumber } from '../causas/validadores/texto-causa.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
@@ -21,6 +21,9 @@ import { PalabrasClaveService } from './palabras-clave.service.js';
 import { repeatedRulingMessage } from './reglas-jurisprudencia.js';
 
 const PAGE_SIZE = 20;
+
+/** Escapa los comodines de LIKE, para que % y _ se busquen como texto (RF-24). */
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, (char) => `\\${char}`);
 
 /** Página del listado (RF-21). No lleva totales: la paginación se resuelve con haySiguiente. */
 export interface FalloPage {
@@ -249,6 +252,47 @@ export class JurisprudenciaService {
       builder.andWhere('fallo.fecha >= :desde', { desde: query.desde });
     if (query.hasta !== undefined)
       builder.andWhere('fallo.fecha <= :hasta', { hasta: query.hasta });
+    // Filtro por palabras clave (RF-25): solo los fallos que tienen todas las elegidas. Con
+    // IN y no con JOIN, para no repetir fallos y que offset/limit paginen bien.
+    if (query.palabrasClave !== undefined && query.palabrasClave.length > 0) {
+      const palabraIds = [...new Set(query.palabrasClave)];
+      builder.andWhere(
+        `fallo.id IN (
+           SELECT filtro.falloId FROM fallo_palabras_clave filtro
+           WHERE filtro.palabraClaveId IN (:...palabraIds)
+           GROUP BY filtro.falloId
+           HAVING COUNT(*) = :cantidadPalabras
+         )`,
+        { palabraIds, cantidadPalabras: palabraIds.length },
+      );
+    }
+    // Buscador (RF-23): fragmentos de la carátula, el tribunal, el número, el sumario o alguna
+    // palabra clave. La intercalación utf8mb4_unicode_ci compara sin distinguir mayúsculas,
+    // minúsculas ni tildes, y con la ñ como n (RF-9). En el número se ignoran los separadores.
+    if (query.buscar !== undefined && query.buscar !== '') {
+      const numero = toSearchableCaseNumber(query.buscar);
+      builder.andWhere(
+        new Brackets((where) => {
+          where
+            .where('fallo.caratula LIKE :texto')
+            .orWhere('fallo.tribunal LIKE :texto')
+            .orWhere('fallo.numero LIKE :texto')
+            .orWhere('fallo.sumario LIKE :texto');
+          if (numero !== '') where.orWhere('fallo.numeroBusqueda LIKE :numeroBusqueda');
+          where.orWhere(
+            `EXISTS (
+               SELECT 1 FROM fallo_palabras_clave buscada
+               INNER JOIN palabras_clave palabra ON palabra.id = buscada.palabraClaveId
+               WHERE buscada.falloId = fallo.id AND palabra.texto LIKE :texto
+             )`,
+          );
+        }),
+        {
+          texto: `%${escapeLike(query.buscar)}%`,
+          numeroBusqueda: `%${escapeLike(numero)}%`,
+        },
+      );
+    }
 
     const filas = await builder
       .orderBy('fallo.fecha', 'DESC')

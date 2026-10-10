@@ -132,7 +132,7 @@ Reglas para todas las tareas:
   - `hayFallos` en `false` sin fallos y con todos desactivados (aunque haya filtros), y en `true` con fallos que no coinciden.
   - Que una página inexistente devuelve `items` vacío.
 
-- [ ] **T17 — Listado: buscador y filtro por palabras clave** [RF-23 a RF-25]
+- [x] **T17 — Listado: buscador y filtro por palabras clave** [RF-23 a RF-25]
   Búsqueda por fragmento en carátula, tribunal, número, sumario y palabras clave, número sin separadores con `toSearchableCaseNumber`, y el filtro de palabras clave con `HAVING COUNT(*)` (todas).
   Hecho cuando: los e2e verifican:
   - La búsqueda por fragmento en cada campo y en las palabras clave, en mayúsculas, sin tildes y con "ano" para "año".
