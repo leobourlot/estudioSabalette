@@ -67,7 +67,7 @@ Reglas para todas las tareas:
   - Fechas inexistentes, de 1790 y futuras, con sus mensajes, y desde > hasta.
   - `incluirDesactivados` que no es booleano.
 
-- [ ] **T8 — DTO de las sugerencias y de la reactivación** [RF-13, RF-25, RF-31]
+- [x] **T8 — DTO de las sugerencias y de la reactivación** [RF-13, RF-25, RF-31]
   DTO de `GET /palabras-clave` (`buscar`, `para`) y de `POST /:id/reactivar` (`confirmarRepetido`).
   Hecho cuando: los tests unitarios cubren un `buscar` de menos de 2 caracteres después de convertir ("Escribí al menos 2 caracteres"), uno con caracteres no permitidos, `para` con su valor por defecto y uno inválido, y una confirmación que no es booleana.
 
