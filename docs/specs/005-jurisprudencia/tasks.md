@@ -123,7 +123,7 @@ Reglas para todas las tareas:
   - Que en `carga` no aparecen las palabras que solo usan fallos desactivados, y en `filtro` sí, con cantidad 0.
   - Que `_` se busca como texto, y que `%` responde 400, porque una palabra clave no puede tenerlo (en el buscador del listado, `%` se prueba en T17).
 
-- [ ] **T16 — Listado: orden, paginado y filtros simples** [RF-21, RF-22, RF-25 a RF-28]
+- [x] **T16 — Listado: orden, paginado y filtros simples** [RF-21, RF-22, RF-25 a RF-28]
   `GET /` con el orden del plan, 21 filas para `haySiguiente`, `hayFallos` con la página vacía, y los filtros de fuero, fechas e `incluirDesactivados`. Las palabras clave de la página en una segunda consulta.
   Hecho cuando: los e2e verifican:
   - El orden por fecha, por carga y por id con la misma fecha y el mismo `creadoEn`. Con 45 fallos, las tres páginas no repiten ni omiten ninguno, y `haySiguiente` es correcto en cada una.

@@ -14,11 +14,16 @@ import {
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CreateFalloDto } from './dto/crear-fallo.dto.js';
+import { ListFallosQueryDto } from './dto/listar-fallos.dto.js';
 import { UpdateFalloDto } from './dto/modificar-fallo.dto.js';
 import { ReactivateFalloDto } from './dto/reactivar-fallo.dto.js';
 import { SuggestionsQueryDto } from './dto/sugerencias.dto.js';
 import type { FalloDetalle, PalabraClaveSugerencia } from './fallo-detalle.js';
-import { JURISPRUDENCIA_MESSAGES, JurisprudenciaService } from './jurisprudencia.service.js';
+import {
+  type FalloPage,
+  JURISPRUDENCIA_MESSAGES,
+  JurisprudenciaService,
+} from './jurisprudencia.service.js';
 import { PalabrasClaveService } from './palabras-clave.service.js';
 
 /** Un id que no es un número no puede ser un fallo existente: 404, como cualquier otro (RF-33). */
@@ -38,6 +43,11 @@ export class JurisprudenciaController {
     private readonly jurisprudencia: JurisprudenciaService,
     private readonly palabrasClave: PalabrasClaveService,
   ) {}
+
+  @Get()
+  list(@Query() query: ListFallosQueryDto): Promise<FalloPage> {
+    return this.jurisprudencia.list(query);
+  }
 
   // Va antes de GET /:id, para que "palabras-clave" no se tome como un id.
   @Get('palabras-clave')

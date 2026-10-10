@@ -1,16 +1,35 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, type EntityManager, Repository } from 'typeorm';
+import { DataSource, type EntityManager, In, Repository } from 'typeorm';
 import { QUESTION_CODES, QuestionException } from '../causas/preguntas.js';
 import { toSearchableCaseNumber } from '../causas/validadores/texto-causa.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import type { CreateFalloDto } from './dto/crear-fallo.dto.js';
+import type { ListFallosQueryDto } from './dto/listar-fallos.dto.js';
 import type { UpdateFalloDto } from './dto/modificar-fallo.dto.js';
-import { type FalloDetalle, toFalloDetalle, toFalloReferencia } from './fallo-detalle.js';
+import {
+  type FalloDetalle,
+  type FalloResumen,
+  toFalloDetalle,
+  toFalloReferencia,
+  toFalloResumen,
+} from './fallo-detalle.js';
 import { FalloPalabraClave } from './fallo-palabra-clave.entity.js';
 import { Fallo } from './fallo.entity.js';
+import type { PalabraClave } from './palabra-clave.entity.js';
 import { PalabrasClaveService } from './palabras-clave.service.js';
 import { repeatedRulingMessage } from './reglas-jurisprudencia.js';
+
+const PAGE_SIZE = 20;
+
+/** Página del listado (RF-21). No lleva totales: la paginación se resuelve con haySiguiente. */
+export interface FalloPage {
+  items: FalloResumen[];
+  pagina: number;
+  haySiguiente: boolean;
+  /** Si existe algún fallo que pueda aparecer sin buscador ni filtros (RF-27). */
+  hayFallos: boolean;
+}
 
 /** Datos de un fallo que decide el aviso de repetido (RF-18). */
 type RepeatedCheckData = Pick<Fallo, 'caratula' | 'tribunal' | 'numero' | 'fecha'>;
@@ -208,6 +227,72 @@ export class JurisprudenciaService {
       });
     });
     return this.findOne(id);
+  }
+
+  /**
+   * Listado de jurisprudencia, de a 20 (RF-21). Orden: fecha del fallo, momento de carga e
+   * id, siempre del más reciente al más antiguo; el id es único, así ningún fallo se repite
+   * ni se omite entre páginas. Los filtros se combinan y no cambian el orden (RF-25).
+   *
+   * Se pide una fila de más para saber si hay página siguiente, sin contar el total: la spec
+   * no lo pide, y contarlo repetiría la búsqueda sobre todos los sumarios.
+   */
+  async list(query: ListFallosQueryDto): Promise<FalloPage> {
+    const pagina = query.pagina ?? 1;
+    const incluirDesactivados = query.incluirDesactivados === true;
+    const builder = this.fallos.createQueryBuilder('fallo');
+
+    if (!incluirDesactivados) builder.andWhere('fallo.activo = 1');
+    if (query.fuero !== undefined) builder.andWhere('fallo.fuero = :fuero', { fuero: query.fuero });
+    // Las fechas AAAA-MM-DD se comparan como fechas; los extremos se incluyen.
+    if (query.desde !== undefined)
+      builder.andWhere('fallo.fecha >= :desde', { desde: query.desde });
+    if (query.hasta !== undefined)
+      builder.andWhere('fallo.fecha <= :hasta', { hasta: query.hasta });
+
+    const filas = await builder
+      .orderBy('fallo.fecha', 'DESC')
+      .addOrderBy('fallo.creadoEn', 'DESC')
+      .addOrderBy('fallo.id', 'DESC')
+      .offset((pagina - 1) * PAGE_SIZE)
+      .limit(PAGE_SIZE + 1)
+      .getMany();
+    const fallos = filas.slice(0, PAGE_SIZE);
+    const palabras = await this.keywordsByFallo(fallos.map((fallo) => fallo.id));
+
+    return {
+      items: fallos.map((fallo) => toFalloResumen(fallo, palabras.get(fallo.id) ?? [])),
+      pagina,
+      haySiguiente: filas.length > PAGE_SIZE,
+      // Solo hace falta para elegir el mensaje de una página vacía (RF-27).
+      hayFallos: fallos.length > 0 || (await this.anyRuling(incluirDesactivados)),
+    };
+  }
+
+  /** Las palabras clave de los fallos de una página, en una sola consulta. */
+  private async keywordsByFallo(falloIds: number[]): Promise<Map<number, PalabraClave[]>> {
+    const byFallo = new Map<number, PalabraClave[]>();
+    if (falloIds.length === 0) return byFallo;
+    const relaciones = await this.dataSource.getRepository(FalloPalabraClave).find({
+      where: { falloId: In(falloIds) },
+      relations: { palabraClave: true },
+    });
+    for (const relacion of relaciones) {
+      const palabras = byFallo.get(relacion.falloId) ?? [];
+      palabras.push(relacion.palabraClave);
+      byFallo.set(relacion.falloId, palabras);
+    }
+    return byFallo;
+  }
+
+  /**
+   * Si existe algún fallo que pueda aparecer en el listado sin buscador ni filtros: activo o,
+   * con "Mostrar desactivados", cualquiera (RF-27).
+   */
+  private async anyRuling(incluirDesactivados: boolean): Promise<boolean> {
+    const builder = this.fallos.createQueryBuilder('fallo').select('fallo.id');
+    if (!incluirDesactivados) builder.where('fallo.activo = 1');
+    return (await builder.limit(1).getRawOne()) !== undefined;
   }
 
   /** Consulta de un fallo con sus palabras clave y su autoría, activo o desactivado (RF-19, RF-30). */
