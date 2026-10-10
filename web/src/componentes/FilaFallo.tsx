@@ -45,7 +45,7 @@ export function FilaFallo({ fallo }: { fallo: FalloResumen }) {
         {fallo.caratula}
       </Link>
 
-      <ul aria-label="Palabras clave" className="flex flex-wrap gap-2">
+      <ul aria-label="Palabras clave del fallo" className="flex flex-wrap gap-2">
         {fallo.palabrasClave.map((palabra) => (
           <li key={palabra.id} className={`${badgeClass} break-words bg-sky-100 text-sky-900`}>
             {palabra.texto}

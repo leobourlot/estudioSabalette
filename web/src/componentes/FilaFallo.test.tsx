@@ -33,7 +33,7 @@ describe('FilaFallo (RF-22)', () => {
   it('muestra las palabras clave en el orden en que llegan', () => {
     const row = renderRow();
 
-    const keywords = within(within(row).getByRole('list', { name: 'Palabras clave' }))
+    const keywords = within(within(row).getByRole('list', { name: 'Palabras clave del fallo' }))
       .getAllByRole('listitem')
       .map((item) => item.textContent);
     expect(keywords).toEqual(['accidente de tránsito', 'daño moral']);

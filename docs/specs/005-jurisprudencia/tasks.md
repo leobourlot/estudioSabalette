@@ -196,7 +196,7 @@ Reglas para todas las tareas:
   `FiltrosJurisprudencia`: buscador, selector de palabras clave en modo filtro, fuero, desde, hasta y "Mostrar desactivados".
   Hecho cuando: los tests verifican que los filtros devuelven los valores elegidos y que la búsqueda con `<` y desde > hasta muestran el error sin llamar al servicio.
 
-- [ ] **T28 — Listado de jurisprudencia** [RF-21, RF-22, RF-25, RF-27, RF-28]
+- [x] **T28 — Listado de jurisprudencia** [RF-21, RF-22, RF-25, RF-27, RF-28]
   `PanelJurisprudencia` en lugar de la página provisoria.
   Hecho cuando: los tests con servicios simulados verifican:
   - Que buscar y cada filtro llaman al servicio con los parámetros correctos y vuelven a la página 1.
