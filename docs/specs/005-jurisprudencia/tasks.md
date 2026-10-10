@@ -140,7 +140,7 @@ Reglas para todas las tareas:
   - Que "[...]" encuentra los sumarios con "(...)" y que "50%" se busca literal.
   - El filtro con dos palabras clave (solo los fallos que tienen las dos) y su combinación con el buscador y los demás filtros.
 
-- [ ] **T18 — Rendimiento** [RNF de rendimiento]
+- [x] **T18 — Rendimiento** [RNF de rendimiento]
   Utilidad de e2e para insertar en bloque 10.000 fallos con sumarios largos y palabras clave.
   Hecho cuando: un e2e verifica que el listado con buscador y filtros, y las sugerencias, responden en menos de 2 segundos.
 

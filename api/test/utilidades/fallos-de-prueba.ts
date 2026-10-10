@@ -77,3 +77,77 @@ export async function createTestFallo(
   }
   return fallo;
 }
+
+const FUEROS = ['civil', 'penal', 'familia', 'laboral', 'federal', 'otro'] as const;
+
+export interface BulkRulingsOptions {
+  count: number;
+  creadoPorId: number;
+  /** Texto que se repite hasta acercarse al largo máximo del sumario. */
+  sumarioFiller: string;
+  /** Cantidad de palabras del catálogo; cada fallo lleva tres. */
+  keywordCount: number;
+}
+
+/**
+ * Inserta muchos fallos en bloque, con sus palabras clave, para medir el rendimiento. Todos
+ * quedan activos, con fechas repartidas entre 2000 y 2024, los seis fueros y sumarios largos.
+ * Devuelve los ids de las palabras del catálogo, en orden.
+ */
+export async function bulkInsertTestFallos(
+  app: NestExpressApplication,
+  { count, creadoPorId, sumarioFiller, keywordCount }: BulkRulingsOptions,
+): Promise<number[]> {
+  const dataSource = app.get(DataSource);
+  const creadoEn = new Date();
+
+  await dataSource.getRepository(PalabraClave).insert(
+    Array.from({ length: keywordCount }, (_, index) => {
+      const texto = `tema de prueba ${index}`;
+      return { texto, clave: flexibleKey(texto), creadoEn };
+    }),
+  );
+  const keywordIds = (
+    await dataSource
+      .getRepository(PalabraClave)
+      .find({ select: { id: true }, order: { id: 'ASC' } })
+  ).map((palabra) => palabra.id);
+
+  const BATCH = 100;
+  for (let start = 0; start < count; start += BATCH) {
+    const size = Math.min(BATCH, count - start);
+    const result = await dataSource.getRepository(Fallo).insert(
+      Array.from({ length: size }, (_, offset) => {
+        const index = start + offset;
+        const day = String((index % 28) + 1).padStart(2, '0');
+        const month = String((index % 12) + 1).padStart(2, '0');
+        const numero = `${index}/${2000 + (index % 25)}`;
+        return {
+          caratula: `Actor ${index} c/ Demandado ${index} s/ daños y perjuicios`,
+          tribunal: `Cámara de Apelaciones, Sala ${index % 12}`,
+          fuero: FUEROS[index % FUEROS.length],
+          fecha: `${2000 + (index % 25)}-${month}-${day}`,
+          numero,
+          numeroBusqueda: toSearchableCaseNumber(numero),
+          sumario: `${sumarioFiller} Fallo número ${index}.`,
+          enlace: null,
+          activo: true,
+          creadoPorId,
+          creadoEn,
+        };
+      }),
+    );
+    const falloIds = result.identifiers.map((identifier) => identifier.id as number);
+    await dataSource.getRepository(FalloPalabraClave).insert(
+      falloIds.flatMap((falloId, offset) => {
+        const index = start + offset;
+        // Tres palabras distintas por fallo.
+        return [0, 1, 2].map((step) => ({
+          falloId,
+          palabraClaveId: keywordIds[(index + step) % keywordIds.length],
+        }));
+      }),
+    );
+  }
+  return keywordIds;
+}
