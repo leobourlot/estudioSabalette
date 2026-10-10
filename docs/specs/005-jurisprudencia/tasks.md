@@ -155,7 +155,7 @@ Reglas para todas las tareas:
 
 ## web
 
-- [ ] **T20 — Textos y enlace en la web** [RF-3 a RF-6, RF-9]
+- [x] **T20 — Textos y enlace en la web** [RF-3 a RF-6, RF-9]
   `servicios/texto-fallo.ts`: `convertText`, `flexibleKey`, `linkViolation` y `linkDomain`, con la misma tabla y el mismo orden que la API.
   Hecho cuando: los tests de Vitest repiten los casos de T1, T2 y T3 que corresponden a estas funciones, y verifican `linkDomain` con y sin ruta.
 
