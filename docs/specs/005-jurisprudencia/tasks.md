@@ -163,7 +163,7 @@ Reglas para todas las tareas:
   `servicios/jurisprudencia.ts`: tipos y una función por endpoint de `/api/panel/jurisprudencia`.
   Hecho cuando: los tests con `fetch` simulado verifican las rutas, los métodos, los cuerpos y el armado del query string, con las palabras clave del filtro como ids separados por coma.
 
-- [ ] **T22 — Formulario y filtros** [RF-1, RF-7, RF-8, RF-14, RF-17, RF-24 a RF-26]
+- [x] **T22 — Formulario y filtros** [RF-1, RF-7, RF-8, RF-14, RF-17, RF-24 a RF-26]
   `servicios/formulario-fallo.ts`: `validateRulingForm`, cuerpo de alta, cuerpo de edición con solo lo que cambió (las palabras clave solo si cambió la lista o la forma de alguna), lista de palabras sin repetidas por `flexibleKey`, `validateRulingFilters` y `toListQuery`.
   Hecho cuando: los tests verifican las validaciones con los mensajes de la API, el largo del sumario contado después de convertir, los dos cuerpos, las palabras repetidas y los filtros (búsqueda con `<`, de 101 caracteres, fechas inválidas y desde > hasta).
 
