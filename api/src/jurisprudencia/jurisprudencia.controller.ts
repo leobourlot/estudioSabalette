@@ -5,11 +5,13 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CreateFalloDto } from './dto/crear-fallo.dto.js';
+import { UpdateFalloDto } from './dto/modificar-fallo.dto.js';
 import type { FalloDetalle } from './fallo-detalle.js';
 import { JURISPRUDENCIA_MESSAGES, JurisprudenciaService } from './jurisprudencia.service.js';
 
@@ -36,5 +38,14 @@ export class JurisprudenciaController {
   @Post()
   create(@CurrentUser() actor: Usuario, @Body() body: CreateFalloDto): Promise<FalloDetalle> {
     return this.jurisprudencia.create(actor, body);
+  }
+
+  @Patch(':id')
+  update(
+    @CurrentUser() actor: Usuario,
+    @Param('id', FalloIdPipe) id: number,
+    @Body() body: UpdateFalloDto,
+  ): Promise<FalloDetalle> {
+    return this.jurisprudencia.update(actor, id, body);
   }
 }

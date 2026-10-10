@@ -1,10 +1,11 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, type EntityManager, Repository } from 'typeorm';
 import { QUESTION_CODES, QuestionException } from '../causas/preguntas.js';
 import { toSearchableCaseNumber } from '../causas/validadores/texto-causa.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import type { CreateFalloDto } from './dto/crear-fallo.dto.js';
+import type { UpdateFalloDto } from './dto/modificar-fallo.dto.js';
 import { type FalloDetalle, toFalloDetalle, toFalloReferencia } from './fallo-detalle.js';
 import { FalloPalabraClave } from './fallo-palabra-clave.entity.js';
 import { Fallo } from './fallo.entity.js';
@@ -13,6 +14,46 @@ import { repeatedRulingMessage } from './reglas-jurisprudencia.js';
 
 /** Datos de un fallo que decide el aviso de repetido (RF-18). */
 type RepeatedCheckData = Pick<Fallo, 'caratula' | 'tribunal' | 'numero' | 'fecha'>;
+
+/** Datos de un fallo que se pueden modificar (RF-17), sin las palabras clave. */
+type RulingData = Pick<
+  Fallo,
+  'caratula' | 'tribunal' | 'fuero' | 'fecha' | 'numero' | 'sumario' | 'enlace'
+>;
+
+const RULING_FIELDS = [
+  'caratula',
+  'tribunal',
+  'fuero',
+  'fecha',
+  'numero',
+  'sumario',
+  'enlace',
+] as const satisfies readonly (keyof RulingData)[];
+
+const REPEATED_CHECK_FIELDS = [
+  'caratula',
+  'tribunal',
+  'numero',
+  'fecha',
+] as const satisfies readonly (keyof RepeatedCheckData)[];
+
+const snapshot = (fallo: Fallo): RulingData => ({
+  caratula: fallo.caratula,
+  tribunal: fallo.tribunal,
+  fuero: fallo.fuero,
+  fecha: fallo.fecha,
+  numero: fallo.numero,
+  sumario: fallo.sumario,
+  enlace: fallo.enlace,
+});
+
+/** Las dos listas tienen los mismos textos, sin importar el orden. */
+function sameTexts(a: readonly string[], b: readonly string[]): boolean {
+  if (a.length !== b.length) return false;
+  const sorted = [...b].sort();
+  return [...a].sort().every((texto, index) => texto === sorted[index]);
+}
 
 export const JURISPRUDENCIA_MESSAGES = {
   notFound: 'No existe ese fallo',
@@ -84,6 +125,57 @@ export class JurisprudenciaService {
     return this.findOne(id);
   }
 
+  /**
+   * Modifica los datos o las palabras clave de un fallo activo (RF-17) y registra quién lo
+   * hizo (RF-2). El aviso de repetido se controla solo si cambia la carátula, el tribunal, el
+   * número o la fecha (RF-18). Un PATCH que no cambia nada no deja rastro: no es una
+   * modificación.
+   */
+  async update(actor: Usuario, id: number, dto: UpdateFalloDto): Promise<FalloDetalle> {
+    await this.withLockedFallo(id, async (manager, fallo) => {
+      if (!fallo.activo) throw new ConflictException(JURISPRUDENCIA_MESSAGES.deactivated);
+      const antes = snapshot(fallo);
+      const despues: RulingData = {
+        caratula: dto.caratula ?? antes.caratula,
+        tribunal: dto.tribunal ?? antes.tribunal,
+        fuero: dto.fuero ?? antes.fuero,
+        fecha: dto.fecha ?? antes.fecha,
+        // null borra el número o el enlace; ausente, no cambia.
+        numero: dto.numero === undefined ? antes.numero : dto.numero,
+        sumario: dto.sumario ?? antes.sumario,
+        enlace: dto.enlace === undefined ? antes.enlace : dto.enlace,
+      };
+      const changed = (campos: readonly (keyof RulingData)[]) =>
+        campos.some((campo) => antes[campo] !== despues[campo]);
+
+      // La pregunta va antes de escribir nada: un 409 no deja cambios ni palabras nuevas.
+      if (changed(REPEATED_CHECK_FIELDS) && dto.confirmarRepetido !== true) {
+        await this.askIfRepeated(manager, despues, id);
+      }
+
+      const keywordsChanged =
+        dto.palabrasClave !== undefined &&
+        !sameTexts(dto.palabrasClave, await this.keywordTexts(manager, id));
+      if (!changed(RULING_FIELDS) && !keywordsChanged) return;
+
+      if (keywordsChanged) {
+        const palabraIds = await this.palabrasClave.resolve(manager, dto.palabrasClave!);
+        await manager.delete(FalloPalabraClave, { falloId: id });
+        await manager.insert(
+          FalloPalabraClave,
+          palabraIds.map((palabraClaveId) => ({ falloId: id, palabraClaveId })),
+        );
+      }
+      await manager.update(Fallo, id, {
+        ...despues,
+        numeroBusqueda: searchableNumber(despues.numero),
+        modificadoPorId: actor.id,
+        modificadoEn: new Date(),
+      });
+    });
+    return this.findOne(id);
+  }
+
   /** Consulta de un fallo con sus palabras clave y su autoría, activo o desactivado (RF-19, RF-30). */
   async findOne(id: number): Promise<FalloDetalle> {
     const fallo = await this.fallos.findOne({ where: { id }, relations: DETAIL_RELATIONS });
@@ -92,6 +184,35 @@ export class JurisprudenciaService {
       fallo,
       fallo.palabrasClave.map((relacion) => relacion.palabraClave),
     );
+  }
+
+  /** Textos actuales de las palabras clave de un fallo. */
+  private async keywordTexts(manager: EntityManager, falloId: number): Promise<string[]> {
+    const relaciones = await manager.find(FalloPalabraClave, {
+      where: { falloId },
+      relations: { palabraClave: true },
+    });
+    return relaciones.map((relacion) => relacion.palabraClave.texto);
+  }
+
+  /**
+   * Bloqueo del fallo (plan 005): modificar, desactivar y reactivar corren en una transacción
+   * que empieza con un bloqueo exclusivo sobre su fila. Así una desactivación y una
+   * modificación simultáneas se ejecutan de a una, y si la desactivación queda primero la
+   * modificación se rechaza (RF-30).
+   */
+  private withLockedFallo<T>(
+    id: number,
+    work: (manager: EntityManager, fallo: Fallo) => Promise<T>,
+  ): Promise<T> {
+    return this.dataSource.transaction(async (manager) => {
+      const fallo = await manager.findOne(Fallo, {
+        where: { id },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!fallo) throw new NotFoundException(JURISPRUDENCIA_MESSAGES.notFound);
+      return work(manager, fallo);
+    });
   }
 
   /**

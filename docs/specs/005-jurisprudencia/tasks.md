@@ -100,7 +100,7 @@ Reglas para todas las tareas:
   - Con varias coincidencias, se devuelve la primera según el orden del listado.
   - Que un 409 de repetido no agrega palabras al catálogo.
 
-- [ ] **T13 — Modificación** [RF-2, RF-12, RF-17, RF-18, RF-30]
+- [x] **T13 — Modificación** [RF-2, RF-12, RF-17, RF-18, RF-30]
   `PATCH /:id` con el bloqueo del fallo (`SELECT … FOR UPDATE`), el aviso de repetido solo si cambian carátula, tribunal, número o fecha, y el reemplazo de las palabras clave.
   Hecho cuando: los e2e verifican:
   - La modificación de cada dato con quién la hizo y cuándo, y el reemplazo de las palabras clave.
