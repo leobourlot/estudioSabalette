@@ -226,7 +226,7 @@ Reglas para todas las tareas:
 
 ## Cierre
 
-- [ ] **T32 — Validación de la spec**
+- [x] **T32 — Validación de la spec**
   Recorrer `spec.md` requisito por requisito con su test, correr la migración `up` y `down` sobre la base de tests y hacer la demo manual de los criterios de finalización.
   Hecho cuando:
   - Cada RF tiene al menos un test en verde identificado.
