@@ -9,14 +9,17 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CreateFalloDto } from './dto/crear-fallo.dto.js';
 import { UpdateFalloDto } from './dto/modificar-fallo.dto.js';
 import { ReactivateFalloDto } from './dto/reactivar-fallo.dto.js';
-import type { FalloDetalle } from './fallo-detalle.js';
+import { SuggestionsQueryDto } from './dto/sugerencias.dto.js';
+import type { FalloDetalle, PalabraClaveSugerencia } from './fallo-detalle.js';
 import { JURISPRUDENCIA_MESSAGES, JurisprudenciaService } from './jurisprudencia.service.js';
+import { PalabrasClaveService } from './palabras-clave.service.js';
 
 /** Un id que no es un número no puede ser un fallo existente: 404, como cualquier otro (RF-33). */
 const FalloIdPipe = new ParseIntPipe({
@@ -31,7 +34,16 @@ const FalloIdPipe = new ParseIntPipe({
 @Roles('admin', 'abogado')
 @Controller('panel/jurisprudencia')
 export class JurisprudenciaController {
-  constructor(private readonly jurisprudencia: JurisprudenciaService) {}
+  constructor(
+    private readonly jurisprudencia: JurisprudenciaService,
+    private readonly palabrasClave: PalabrasClaveService,
+  ) {}
+
+  // Va antes de GET /:id, para que "palabras-clave" no se tome como un id.
+  @Get('palabras-clave')
+  suggestKeywords(@Query() query: SuggestionsQueryDto): Promise<PalabraClaveSugerencia[]> {
+    return this.palabrasClave.suggest(query.buscar, query.para ?? 'carga');
+  }
 
   @Get(':id')
   findOne(@Param('id', FalloIdPipe) id: number): Promise<FalloDetalle> {

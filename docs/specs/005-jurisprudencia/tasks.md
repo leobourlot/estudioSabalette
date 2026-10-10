@@ -115,13 +115,13 @@ Reglas para todas las tareas:
   - La pregunta al reactivar un fallo que coincide con otro activo, y la reactivación con `confirmarRepetido: true`.
   - Que una desactivación y una modificación simultáneas se ordenan: si la desactivación queda primero, la modificación responde 409.
 
-- [ ] **T15 — Sugerencias de palabras clave** [RF-13, RF-15, RF-25, RF-30]
+- [x] **T15 — Sugerencias de palabras clave** [RF-13, RF-15, RF-25, RF-30]
   `GET /palabras-clave` en `palabras-clave.service.ts`, declarado antes de `GET /:id`.
   Hecho cuando: los e2e verifican:
   - Que "dano" encuentra "daño moral" con la cantidad de fallos activos que la usan.
   - El orden por cantidad y después alfabético, y el límite de 10.
   - Que en `carga` no aparecen las palabras que solo usan fallos desactivados, y en `filtro` sí, con cantidad 0.
-  - Que `%` y `_` se buscan como texto.
+  - Que `_` se busca como texto, y que `%` responde 400, porque una palabra clave no puede tenerlo (en el buscador del listado, `%` se prueba en T17).
 
 - [ ] **T16 — Listado: orden, paginado y filtros simples** [RF-21, RF-22, RF-25 a RF-28]
   `GET /` con el orden del plan, 21 filas para `haySiguiente`, `hayFallos` con la página vacía, y los filtros de fuero, fechas e `incluirDesactivados`. Las palabras clave de la página en una segunda consulta.
