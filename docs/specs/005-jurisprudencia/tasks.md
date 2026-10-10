@@ -185,7 +185,7 @@ Reglas para todas las tareas:
   - Que elegir una sugerencia agrega su texto exacto.
   - Que en modo filtro solo se pueden elegir sugerencias.
 
-- [ ] **T26 — Fila y enlace** [RF-19, RF-22, RNF de textos seguros]
+- [x] **T26 — Fila y enlace** [RF-19, RF-22, RNF de textos seguros]
   `FilaFallo` y `EnlaceFuente`.
   Hecho cuando: los tests verifican:
   - Que la fila muestra fecha, tribunal, carátula con enlace al detalle, fuero, número, palabras clave, sumario recortado a 300 caracteres con "Ver más" y "Ver menos", y la etiqueta "Desactivado".
