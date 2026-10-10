@@ -4,6 +4,7 @@ import {
   addKeyword,
   buildCreateRulingData,
   buildUpdateRulingData,
+  keywordSearchText,
   convertedSumarioLength,
   EMPTY_RULING_FILTERS,
   EMPTY_RULING_FORM,
@@ -16,6 +17,7 @@ import {
   toListQuery,
   validateRulingFilters,
   validateRulingForm,
+  withoutChosen,
 } from './formulario-fallo';
 import { allowedCharactersMessage as sumarioCharactersMessage } from './formulario-movimiento';
 import type { FalloDetalle } from './jurisprudencia';
@@ -355,5 +357,34 @@ describe('filtros del listado (RF-24 a RF-26)', () => {
       hasta: '2024-12-31',
       incluirDesactivados: true,
     });
+  });
+});
+
+describe('sugerencias de palabras clave (RF-13)', () => {
+  it.each([
+    ['vacío', ''],
+    ['de un solo carácter', 'd'],
+    ['de un carácter y espacios', '  d  '],
+    ['de más de 50 caracteres', 'a'.repeat(51)],
+    ['con caracteres que una palabra clave no admite', 'da<'],
+    ['con %', '50%'],
+  ])('no pide sugerencias con un texto %s', (_case, texto) => {
+    expect(keywordSearchText(texto)).toBeNull();
+  });
+
+  it('desde 2 caracteres pide sugerencias con el texto convertido', () => {
+    expect(keywordSearchText('da')).toBe('da');
+    expect(keywordSearchText('  “daño”   moral ')).toBe('"daño" moral');
+    expect(keywordSearchText('a'.repeat(50))).toBe('a'.repeat(50));
+  });
+
+  it('withoutChosen quita las sugerencias ya elegidas, por comparación flexible', () => {
+    const sugerencias = [
+      { id: 1, texto: 'daño moral', cantidad: 12 },
+      { id: 2, texto: 'daño emergente', cantidad: 3 },
+    ];
+
+    expect(withoutChosen(sugerencias, ['DANO MORAL'])).toEqual([sugerencias[1]]);
+    expect(withoutChosen(sugerencias, [])).toEqual(sugerencias);
   });
 });

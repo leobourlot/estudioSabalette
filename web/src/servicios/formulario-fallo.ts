@@ -9,6 +9,7 @@ import type {
   FalloDetalle,
   ListFallosQuery,
   PalabraClave,
+  PalabraClaveSugerencia,
   UpdateFalloData,
 } from './jurisprudencia';
 import {
@@ -169,6 +170,33 @@ export function addKeyword(palabras: readonly string[], texto: string): string[]
 export function removeKeyword(palabras: readonly string[], texto: string): string[] {
   const key = flexibleKey(texto);
   return palabras.filter((palabra) => flexibleKey(palabra) !== key);
+}
+
+/** Mínimo de caracteres escritos para pedir sugerencias (RF-13). */
+export const MIN_SUGGESTION_LENGTH = 2;
+
+/** Espera sin escribir antes de pedir sugerencias, para no consultar en cada tecla. */
+export const SUGGESTION_DELAY_MS = 300;
+
+/**
+ * Texto con el que se piden sugerencias, ya convertido, o null si todavía no corresponde
+ * pedirlas: menos de 2 caracteres, más de 50 o caracteres que una palabra clave no admite
+ * (la API los rechazaría).
+ */
+export function keywordSearchText(texto: string): string | null {
+  const text = singleLine(texto);
+  const length = textLength(text);
+  if (length < MIN_SUGGESTION_LENGTH || length > MAX_KEYWORD_LENGTH) return null;
+  return hasOnlySingleLineCharacters(text) ? text : null;
+}
+
+/** Las sugerencias que todavía no están elegidas, por comparación flexible. */
+export function withoutChosen(
+  sugerencias: readonly PalabraClaveSugerencia[],
+  elegidas: readonly string[],
+): PalabraClaveSugerencia[] {
+  const chosen = new Set(elegidas.map(flexibleKey));
+  return sugerencias.filter((sugerencia) => !chosen.has(flexibleKey(sugerencia.texto)));
 }
 
 // --- Fallo ---

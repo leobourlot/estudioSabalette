@@ -177,7 +177,7 @@ Reglas para todas las tareas:
   `pendingQuestion` reconoce `FALLO_REPETIDO` con las opciones "Guardar igual" y "Cancelar". `ProveedorServicios` suma el servicio de jurisprudencia. `DisenoPanel` suma el enlace "Jurisprudencia". Las tres rutas del panel apuntan a páginas provisorias que se reemplazan en T28 a T30. `web/src/pruebas/jurisprudencia-de-prueba.tsx` (nuevo) con datos y servicios simulados.
   Hecho cuando: los tests verifican la pregunta con los datos del fallo que coincide, el enlace "Jurisprudencia" en el panel, y que las rutas nuevas llevan a un cliente al portal y a un visitante a `/ingresar`.
 
-- [ ] **T25 — Selector de palabras clave** [RF-12 a RF-14, RF-25]
+- [x] **T25 — Selector de palabras clave** [RF-12 a RF-14, RF-25]
   `SelectorPalabrasClave`, en modo carga y modo filtro.
   Hecho cuando: los tests con servicios simulados verifican:
   - Que pide sugerencias desde 2 caracteres, después de 300 ms sin escribir, y las muestra con su cantidad.
