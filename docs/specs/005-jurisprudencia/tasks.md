@@ -213,7 +213,7 @@ Reglas para todas las tareas:
   - Que escribir consulta la sesión como mucho una vez cada 5 minutos.
   - Que no se escribe nada en `localStorage` ni `sessionStorage`.
 
-- [ ] **T30 — Detalle del fallo** [RF-17, RF-19, RF-29 a RF-32]
+- [x] **T30 — Detalle del fallo** [RF-17, RF-19, RF-29 a RF-32]
   `PanelFalloDetalle` en lugar de la página provisoria.
   Hecho cuando: los tests con servicios simulados verifican:
   - La muestra de los datos, el sumario con `TextoLiteral`, el enlace con su dominio y la autoría (marcada si el autor está desactivado).
