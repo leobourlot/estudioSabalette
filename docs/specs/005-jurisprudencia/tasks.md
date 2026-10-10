@@ -167,7 +167,7 @@ Reglas para todas las tareas:
   `servicios/formulario-fallo.ts`: `validateRulingForm`, cuerpo de alta, cuerpo de edición con solo lo que cambió (las palabras clave solo si cambió la lista o la forma de alguna), lista de palabras sin repetidas por `flexibleKey`, `validateRulingFilters` y `toListQuery`.
   Hecho cuando: los tests verifican las validaciones con los mensajes de la API, el largo del sumario contado después de convertir, los dos cuerpos, las palabras repetidas y los filtros (búsqueda con `<`, de 101 caracteres, fechas inválidas y desde > hasta).
 
-- [ ] **T23 — Presentación y sesión mientras se escribe** [RF-19, RF-20, RF-27, RF-28]
+- [x] **T23 — Presentación y sesión mientras se escribe** [RF-19, RF-20, RF-27, RF-28]
   `servicios/presentacion-jurisprudencia.ts` con `emptyListMessage`, y `servicios/mantener-sesion.ts` con `KEEP_ALIVE_INTERVAL_MS` y `createSessionKeepAlive`.
   Hecho cuando: los tests verifican:
   - `emptyListMessage` sin fallos, con resultados vacíos en la página 1 y en otra página.
