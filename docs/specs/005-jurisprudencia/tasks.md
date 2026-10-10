@@ -43,7 +43,7 @@ Reglas para todas las tareas:
   `fallo.entity.ts` (con `IDX_fallos_listado`, `IDX_fallos_repetido` y las fechas de registro con microsegundos), `palabra-clave.entity.ts` (con `clave` en `utf8mb4_bin` y `UQ_palabras_clave_clave`) y `fallo-palabra-clave.entity.ts` (PK compuesta e `IDX_fallo_palabras_clave_palabra`), con los campos, tipos y relaciones del plan.
   Hecho cuando: la api compila y un test unitario verifica que el enum de fuero de `Fallo` tiene exactamente los valores de `JURISDICTIONS`.
 
-- [ ] **T5 — Migración** [RF-1, RF-2, RF-10, RF-11] **(modifica existente: `esquema.ts`)**
+- [x] **T5 — Migración** [RF-1, RF-2, RF-10, RF-11] **(modifica existente: `esquema.ts`)**
   Migración `crear-fallos-y-palabras-clave` con las tres tablas, sus índices y sus claves foráneas. Se agregan las entidades y la migración al final de las listas de `esquema.ts`.
   Hecho cuando: un e2e corre `up` sobre la base de tests con las tablas de las specs 001 a 003, guarda un fallo con fecha 1887-05-03 y la lee como el texto `1887-05-03`, verifica que una segunda palabra clave con la misma `clave` es rechazada por el índice único, y corre `down` sin errores.
 

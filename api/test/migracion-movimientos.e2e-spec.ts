@@ -2,6 +2,7 @@ import { DataSource, type QueryRunner } from 'typeorm';
 import { afterAll, beforeAll, describe, expect, it } from 'vitest';
 import { ENTITIES, MIGRATIONS } from '../src/base-de-datos/esquema.js';
 import { buildDataSourceOptions } from '../src/base-de-datos/opciones-base-de-datos.js';
+import { CrearMovimientosYCambios1791333903330 } from '../src/migraciones/1791333903330-crear-movimientos-y-cambios.js';
 import { loadTestEnvironment } from './utilidades/base-de-tests.js';
 
 const TABLES = ['movimientos', 'movimiento_cambios'];
@@ -140,7 +141,10 @@ describe('migración de movimientos', () => {
   });
 
   it('down elimina las tablas sin tocar las de las specs 001 y 002', async () => {
-    await dataSource.undoLastMigration();
+    // Las migraciones posteriores se deshacen primero, y después la de movimientos.
+    const fromMovimientos =
+      MIGRATIONS.length - MIGRATIONS.indexOf(CrearMovimientosYCambios1791333903330);
+    for (let index = 0; index < fromMovimientos; index++) await dataSource.undoLastMigration();
 
     for (const table of TABLES) expect(await queryRunner.hasTable(table)).toBe(false);
     for (const table of PREVIOUS_TABLES) expect(await queryRunner.hasTable(table)).toBe(true);
