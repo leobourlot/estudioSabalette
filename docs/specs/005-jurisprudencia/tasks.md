@@ -144,7 +144,7 @@ Reglas para todas las tareas:
   Utilidad de e2e para insertar en bloque 10.000 fallos con sumarios largos y palabras clave.
   Hecho cuando: un e2e verifica que el listado con buscador y filtros, y las sugerencias, responden en menos de 2 segundos.
 
-- [ ] **T19 — Acceso, autoría y aislamiento** [RF-34 a RF-36, RNF de reglas propias]
+- [x] **T19 — Acceso, autoría y aislamiento** [RF-34 a RF-36, RNF de reglas propias]
   Hecho cuando:
   - Los e2e verifican que un cliente recibe 403, un visitante 401 y una cuenta con cambio de contraseña pendiente 403 en cada endpoint de `/api/panel/jurisprudencia`.
   - Un e2e verifica que un autor desactivado sigue figurando en el fallo, marcado como desactivado.
