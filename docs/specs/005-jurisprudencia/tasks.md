@@ -192,7 +192,7 @@ Reglas para todas las tareas:
   - Que `EnlaceFuente` muestra la dirección como texto literal con el dominio destacado, y arma un `<a>` con `target="_blank"`, `rel="noopener noreferrer"` y `referrerPolicy="no-referrer"`.
   - Que un enlace inválido se muestra solo como texto.
 
-- [ ] **T27 — Filtros** [RF-24 a RF-26]
+- [x] **T27 — Filtros** [RF-24 a RF-26]
   `FiltrosJurisprudencia`: buscador, selector de palabras clave en modo filtro, fuero, desde, hasta y "Mostrar desactivados".
   Hecho cuando: los tests verifican que los filtros devuelven los valores elegidos y que la búsqueda con `<` y desde > hasta muestran el error sin llamar al servicio.
 
