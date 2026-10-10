@@ -159,7 +159,7 @@ Reglas para todas las tareas:
   `servicios/texto-fallo.ts`: `convertText`, `flexibleKey`, `linkViolation` y `linkDomain`, con la misma tabla y el mismo orden que la API.
   Hecho cuando: los tests de Vitest repiten los casos de T1, T2 y T3 que corresponden a estas funciones, y verifican `linkDomain` con y sin ruta.
 
-- [ ] **T21 — Servicio de jurisprudencia** [RF-13, RF-16 a RF-19, RF-21 a RF-32]
+- [x] **T21 — Servicio de jurisprudencia** [RF-13, RF-16 a RF-19, RF-21 a RF-32]
   `servicios/jurisprudencia.ts`: tipos y una función por endpoint de `/api/panel/jurisprudencia`.
   Hecho cuando: los tests con `fetch` simulado verifican las rutas, los métodos, los cuerpos y el armado del query string, con las palabras clave del filtro como ids separados por coma.
 
