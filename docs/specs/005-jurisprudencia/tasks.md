@@ -108,7 +108,7 @@ Reglas para todas las tareas:
   - Que no hay pregunta si no cambian esos cuatro datos, que el fallo no se compara consigo mismo, y la pregunta cuando el cambio lo hace coincidir con otro.
   - El 409 "El fallo está desactivado. Reactivalo para modificarlo".
 
-- [ ] **T14 — Desactivación y reactivación** [RF-2, RF-29 a RF-32]
+- [x] **T14 — Desactivación y reactivación** [RF-2, RF-29 a RF-32]
   `POST /:id/desactivar` y `POST /:id/reactivar` con el bloqueo del fallo y la pregunta de repetido al reactivar.
   Hecho cuando: los e2e verifican:
   - La desactivación y la reactivación con quién las hizo y cuándo, y el 409 al repetir cada acción.

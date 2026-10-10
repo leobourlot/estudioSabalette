@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -12,6 +14,7 @@ import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CreateFalloDto } from './dto/crear-fallo.dto.js';
 import { UpdateFalloDto } from './dto/modificar-fallo.dto.js';
+import { ReactivateFalloDto } from './dto/reactivar-fallo.dto.js';
 import type { FalloDetalle } from './fallo-detalle.js';
 import { JURISPRUDENCIA_MESSAGES, JurisprudenciaService } from './jurisprudencia.service.js';
 
@@ -47,5 +50,24 @@ export class JurisprudenciaController {
     @Body() body: UpdateFalloDto,
   ): Promise<FalloDetalle> {
     return this.jurisprudencia.update(actor, id, body);
+  }
+
+  @Post(':id/desactivar')
+  @HttpCode(HttpStatus.OK)
+  deactivate(
+    @CurrentUser() actor: Usuario,
+    @Param('id', FalloIdPipe) id: number,
+  ): Promise<FalloDetalle> {
+    return this.jurisprudencia.deactivate(actor, id);
+  }
+
+  @Post(':id/reactivar')
+  @HttpCode(HttpStatus.OK)
+  reactivate(
+    @CurrentUser() actor: Usuario,
+    @Param('id', FalloIdPipe) id: number,
+    @Body() body: ReactivateFalloDto,
+  ): Promise<FalloDetalle> {
+    return this.jurisprudencia.reactivate(actor, id, body.confirmarRepetido === true);
   }
 }

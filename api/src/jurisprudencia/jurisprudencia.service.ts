@@ -176,6 +176,40 @@ export class JurisprudenciaService {
     return this.findOne(id);
   }
 
+  /**
+   * Desactiva un fallo (RF-29): reemplaza al borrado. Cuenta como modificación (RF-2). Sus
+   * palabras clave se conservan; dejan de contar para las sugerencias de la carga porque esa
+   * consulta solo cuenta fallos activos (RF-30).
+   */
+  async deactivate(actor: Usuario, id: number): Promise<FalloDetalle> {
+    await this.withLockedFallo(id, async (manager, fallo) => {
+      if (!fallo.activo) throw new ConflictException(JURISPRUDENCIA_MESSAGES.alreadyDeactivated);
+      await manager.update(Fallo, id, {
+        activo: false,
+        modificadoPorId: actor.id,
+        modificadoEn: new Date(),
+      });
+    });
+    return this.findOne(id);
+  }
+
+  /**
+   * Reactiva un fallo (RF-31). Si coincide con otro fallo activo, primero pregunta, como en la
+   * carga (RF-18).
+   */
+  async reactivate(actor: Usuario, id: number, confirmado: boolean): Promise<FalloDetalle> {
+    await this.withLockedFallo(id, async (manager, fallo) => {
+      if (fallo.activo) throw new ConflictException(JURISPRUDENCIA_MESSAGES.alreadyActive);
+      if (!confirmado) await this.askIfRepeated(manager, fallo, id);
+      await manager.update(Fallo, id, {
+        activo: true,
+        modificadoPorId: actor.id,
+        modificadoEn: new Date(),
+      });
+    });
+    return this.findOne(id);
+  }
+
   /** Consulta de un fallo con sus palabras clave y su autoría, activo o desactivado (RF-19, RF-30). */
   async findOne(id: number): Promise<FalloDetalle> {
     const fallo = await this.fallos.findOne({ where: { id }, relations: DETAIL_RELATIONS });
