@@ -47,7 +47,7 @@ Reglas para todas las tareas:
   Migración `crear-fallos-y-palabras-clave` con las tres tablas, sus índices y sus claves foráneas. Se agregan las entidades y la migración al final de las listas de `esquema.ts`.
   Hecho cuando: un e2e corre `up` sobre la base de tests con las tablas de las specs 001 a 003, guarda un fallo con fecha 1887-05-03 y la lee como el texto `1887-05-03`, verifica que una segunda palabra clave con la misma `clave` es rechazada por el índice único, y corre `down` sin errores.
 
-- [ ] **T6 — DTO de alta y modificación** [RF-1, RF-3 a RF-8, RF-14, RF-17]
+- [x] **T6 — DTO de alta y modificación** [RF-1, RF-3 a RF-8, RF-14, RF-17]
   `dto/reglas-fallo.ts` (transformaciones con `convertText` y reglas con los mensajes del plan, reutilizando `usuarios/dto/reglas.ts` y los mensajes de caracteres de las specs 002 y 003), y los DTO de `POST` y de `PATCH` parcial.
   Hecho cuando: los tests unitarios cubren:
   - Obligatorios ausentes o vacíos, largos y caracteres de carátula, tribunal, número y sumario. Fuero fuera de la lista.
