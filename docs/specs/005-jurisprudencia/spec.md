@@ -137,7 +137,7 @@ Los integrantes del estudio usan fallos de los tribunales para fundar sus escrit
 
 ## Requisitos no funcionales
 - Validación: el servidor valida todos los datos recibidos y rechaza los campos desconocidos, sin confiar en las validaciones de la interfaz (como en las specs 001 a 003). La interfaz aplica las mismas conversiones y reglas que el servidor.
-- Reglas propias de la jurisprudencia: las conversiones de RF-3 y las reglas del enlace de RF-6 solo valen para esta spec. Las causas (spec 002) y los movimientos (spec 003) siguen con sus reglas sin cambios: rechazan esos caracteres en lugar de convertirlos.
+- Reglas propias de la jurisprudencia: las reglas del enlace de RF-6 solo valen para esta spec. Las conversiones de RF-3 valen para esta spec y para los modelos de escritos (spec 006, RF-3), que las usan sin cambiarlas. Las causas (spec 002) y los movimientos (spec 003) siguen con sus reglas sin cambios: rechazan esos caracteres en lugar de convertirlos.
 - Textos seguros: la carátula, el tribunal, el número, el sumario, las palabras clave y la dirección del enlace se muestran siempre como texto literal, nunca interpretados como código ni como formato (como en la spec 003). El enlace solo funciona como enlace si cumple RF-6.
 - Registros del servidor: ningún dato de los fallos (textos, palabras clave, enlaces), ni el texto buscado ni los filtros, se escribe en los registros del servidor ni en los mensajes de error. Los mensajes de error indican el campo y la regla, sin repetir lo recibido.
 - Aislamiento: ningún dato de jurisprudencia se envía a clientes ni a visitantes (RF-36, principio 5).
