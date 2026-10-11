@@ -277,7 +277,7 @@ Reglas para todas las tareas:
   - Que pasada 1 hora sin pedidos el escrito deja de mostrarse y la página lleva a `/ingresar`, y que un 401 hace lo mismo.
   - Que no se escribe nada en `localStorage` ni `sessionStorage`.
 
-- [ ] **T37 — Cerrar sesión vacía el portapapeles** [RF-44] **(modifica existente: `DisenoSeccion.tsx` y `Disenos.test.tsx`)**
+- [x] **T37 — Cerrar sesión vacía el portapapeles** [RF-44] **(modifica existente: `DisenoSeccion.tsx` y `Disenos.test.tsx`)**
   `DisenoSeccion.handleLogout` llama a `clearClipboard()` antes de esperar el cierre de sesión, solo si el usuario no es un cliente.
   Hecho cuando: los tests verifican que "Cerrar sesión" vacía el portapapeles simulado para un administrador y para un abogado, que no lo toca para un cliente, y que la sesión se cierra igual si el portapapeles falla.
 

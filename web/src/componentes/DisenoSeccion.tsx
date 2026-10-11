@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
 import { STUDIO_CONTACT } from '../servicios/datos-estudio';
+import { clearClipboard } from '../servicios/portapapeles';
 import { fullName } from '../servicios/presentacion';
 import { ROUTES } from '../servicios/sesion';
 import { useSession } from './ProveedorSesion';
@@ -25,6 +26,10 @@ export function DisenoSeccion({ title, links, footer }: DisenoSeccionProps) {
   const navigate = useNavigate();
 
   async function handleLogout() {
+    // Un integrante pudo copiar un escrito completado: se vacía el portapapeles para que no
+    // quede en el equipo (spec 006, RF-44). Va antes de esperar el cierre, dentro del clic,
+    // porque el navegador solo deja escribir el portapapeles ante una acción del usuario.
+    if (usuario && usuario.rol !== 'cliente') void clearClipboard();
     await logout();
     navigate(ROUTES.login, { replace: true });
   }

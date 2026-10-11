@@ -47,6 +47,41 @@ describe('DisenoPanel (RF-16)', () => {
     expect(service.logout).toHaveBeenCalledTimes(1);
   });
 
+  it.each(['admin', 'abogado'] as const)(
+    'cerrar sesión como %s vacía el portapapeles, para que un escrito copiado no quede en el equipo (spec 006, RF-44)',
+    async (rol) => {
+      // userEvent.setup() instala un portapapeles simulado en el navegador de pruebas.
+      const user = userEvent.setup();
+      const service = await openAs('/panel', testUser(rol), 'Panel');
+      await navigator.clipboard.writeText('Señor Juez:\n\nLuis Gómez, DNI 20.111.222.');
+      const writeText = vi.spyOn(navigator.clipboard, 'writeText');
+
+      await user.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
+
+      expect(await screen.findByRole('heading', { name: 'Ingresar' })).toBeTruthy();
+      expect(writeText).toHaveBeenCalledExactlyOnceWith('');
+      // El portapapeles simulado no devuelve texto si quedó vacío.
+      expect(await navigator.clipboard.readText().catch(() => '')).toBe('');
+      expect(service.logout).toHaveBeenCalledTimes(1);
+      writeText.mockRestore();
+    },
+  );
+
+  it('si el navegador no deja vaciar el portapapeles, la sesión se cierra igual (spec 006, RF-44)', async () => {
+    const user = userEvent.setup();
+    const writeText = vi
+      .spyOn(navigator.clipboard, 'writeText')
+      .mockRejectedValue(new Error('sin permiso'));
+    const service = await openAs('/panel', testUser('abogado'), 'Panel');
+
+    await user.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
+
+    expect(await screen.findByRole('heading', { name: 'Ingresar' })).toBeTruthy();
+    expect(writeText).toHaveBeenCalledExactlyOnceWith('');
+    expect(service.logout).toHaveBeenCalledTimes(1);
+    writeText.mockRestore();
+  });
+
   it('la navegación lleva a las páginas del panel', async () => {
     await openAs('/panel', testUser('admin'), 'Panel');
 
@@ -108,6 +143,18 @@ describe('DisenoPortal (RF-16)', () => {
     await userEvent.setup().click(screen.getByRole('button', { name: 'Cerrar sesión' }));
 
     expect(await screen.findByRole('heading', { name: 'Ingresar' })).toBeTruthy();
+    expect(service.logout).toHaveBeenCalledTimes(1);
+  });
+
+  it('cerrar sesión como cliente no toca el portapapeles: los escritos son solo del panel (spec 006, RF-44)', async () => {
+    const user = userEvent.setup();
+    const service = await openAs('/portal/mi-cuenta', testUser('cliente'), 'Mi cuenta');
+    await navigator.clipboard.writeText('algo que copió el cliente');
+
+    await user.click(screen.getByRole('button', { name: 'Cerrar sesión' }));
+
+    expect(await screen.findByRole('heading', { name: 'Ingresar' })).toBeTruthy();
+    expect(await navigator.clipboard.readText()).toBe('algo que copió el cliente');
     expect(service.logout).toHaveBeenCalledTimes(1);
   });
 });
