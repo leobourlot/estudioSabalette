@@ -242,7 +242,7 @@ Reglas para todas las tareas:
   - La pregunta de título repetido con todos los modelos que coinciden: "Guardar igual" repite la petición con `confirmarRepetido: true` y "Cancelar" no guarda.
   - Que no se escribe nada en `localStorage` ni `sessionStorage`.
 
-- [ ] **T33 — Ficha del modelo** [RF-14, RF-16, RF-25 a RF-28]
+- [x] **T33 — Ficha del modelo** [RF-14, RF-16, RF-25 a RF-28]
   `PanelModeloDetalle` en lugar de la página provisoria.
   Hecho cuando: los tests con servicios simulados verifican:
   - La muestra de los datos, el texto con `TextoLiteral`, las variables que usa o "Este modelo no usa variables", y la autoría (marcada si el autor está desactivado).
