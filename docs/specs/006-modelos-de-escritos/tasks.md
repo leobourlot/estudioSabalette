@@ -40,7 +40,7 @@ Reglas para todas las tareas:
   - El orden por apellido y nombre, con las razones sociales junto con los apellidos, sin distinguir mayúsculas ni tildes, y los homónimos por id.
   - "10/10/2026", "10 de octubre de 2026", "1 de marzo de 2026" y un día de diciembre.
 
-- [ ] **T4 — Valores de las variables** [RF-9, RF-34 a RF-38]
+- [x] **T4 — Valores de las variables** [RF-9, RF-34 a RF-38]
   `modelos-escritos/completar-escrito.ts`: `caseValues(causa, ahora)`, que arma las personas con `partyIdentity` de la spec 002 y devuelve, por variable, su texto y sus faltantes.
   Hecho cuando: los tests unitarios, con causas armadas en memoria, verifican:
   - Cada variable con su dato y con su marca de faltante: número, juzgado, expediente principal (también en una causa que no es incidente), actores, demandados, terceros y clientes.
