@@ -8,6 +8,8 @@ import { Fallo } from '../jurisprudencia/fallo.entity.js';
 import { PalabraClave } from '../jurisprudencia/palabra-clave.entity.js';
 import { CrearMovimientosYCambios1791333903330 } from '../migraciones/1791333903330-crear-movimientos-y-cambios.js';
 import { CrearFallosYPalabrasClave1791589649680 } from '../migraciones/1791589649680-crear-fallos-y-palabras-clave.js';
+import { CrearModelosEscritos1791689533533 } from '../migraciones/1791689533533-crear-modelos-escritos.js';
+import { ModeloEscrito } from '../modelos-escritos/modelo-escrito.entity.js';
 import { CambioMovimiento } from '../movimientos/cambio-movimiento.entity.js';
 import { Movimiento } from '../movimientos/movimiento.entity.js';
 import { Cliente } from '../usuarios/cliente.entity.js';
@@ -28,6 +30,7 @@ export const ENTITIES = [
   Fallo,
   PalabraClave,
   FalloPalabraClave,
+  ModeloEscrito,
 ];
 
 export const MIGRATIONS = [
@@ -35,4 +38,5 @@ export const MIGRATIONS = [
   CrearCausasPartesYColaboradores1791156117399,
   CrearMovimientosYCambios1791333903330,
   CrearFallosYPalabrasClave1791589649680,
+  CrearModelosEscritos1791689533533,
 ];

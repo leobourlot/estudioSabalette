@@ -63,7 +63,7 @@ Reglas para todas las tareas:
   `modelos-escritos/modelo-escrito.entity.ts` con los campos, tipos y relaciones del plan: `texto` en `mediumtext`, `fuero` con default `otro`, fechas de registro con microsegundos e `IDX_modelos_escritos_listado`.
   Hecho cuando: la api compila y un test unitario verifica que el enum de fuero tiene exactamente los valores de `JURISDICTIONS` y el de tipo, los siete del plan.
 
-- [ ] **T7 — Migración** [RF-1, RF-2] **(modifica existente: `esquema.ts`)**
+- [x] **T7 — Migración** [RF-1, RF-2] **(modifica existente: `esquema.ts`)**
   Migración `crear-modelos-escritos` con la tabla, su índice y sus claves foráneas. Se agregan la entidad y la migración al final de las listas de `esquema.ts`.
   Hecho cuando: un e2e corre `up` sobre la base de tests con las tablas de las specs 001 a 005, guarda un modelo con un texto de 50.000 caracteres con tildes y lo lee igual, verifica que un modelo guardado sin fuero queda con `otro`, y corre `down` sin errores.
 
