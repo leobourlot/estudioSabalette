@@ -202,7 +202,7 @@ Reglas para todas las tareas:
   - Que `clearClipboard` escribe un texto vacío y no falla si el navegador lo rechaza.
   - Que `STAFF_IDLE_LIMIT_MS` es de 60 minutos.
 
-- [ ] **T27 — Pregunta, servicios, menú y rutas** [RF-15, RF-27, RF-50] **(modifica existente: `servicios/preguntas.ts` y su test, `ProveedorServicios.tsx`, `DisenoPanel.tsx` y `Disenos.test.tsx`, `RutasAplicacion.tsx`)**
+- [x] **T27 — Pregunta, servicios, menú y rutas** [RF-15, RF-27, RF-50] **(modifica existente: `servicios/preguntas.ts` y su test, `ProveedorServicios.tsx`, `DisenoPanel.tsx` y `Disenos.test.tsx`, `RutasAplicacion.tsx`)**
   `pendingQuestion` reconoce `MODELO_REPETIDO` con las opciones "Guardar igual" y "Cancelar" y la lista de modelos. `ProveedorServicios` suma el servicio de modelos. `DisenoPanel` suma el enlace "Modelos". Las cinco rutas del panel apuntan a páginas provisorias que se reemplazan en T30 y T32 a T35. `web/src/pruebas/modelos-de-prueba.tsx` (nuevo) con datos y servicios simulados.
   Hecho cuando: los tests verifican la pregunta con los modelos que coinciden, el enlace "Modelos" en el panel, y que las rutas nuevas llevan a un cliente al portal y a un visitante a `/ingresar`.
 

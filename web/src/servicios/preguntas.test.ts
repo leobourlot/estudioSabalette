@@ -220,3 +220,50 @@ describe('pendingQuestion: fallo repetido (spec 005, RF-18, RF-31)', () => {
     expect(pendingQuestion(question('El fallo ya está activo', {}))).toBeNull();
   });
 });
+
+describe('pendingQuestion: título de modelo repetido (spec 006, RF-15, RF-27)', () => {
+  const modelos = [
+    { id: 4, titulo: 'OFICIO AL REGISTRO', tipo: 'oficio', fuero: 'otro' },
+    { id: 3, titulo: 'Oficio al Registro', tipo: 'oficio', fuero: 'civil' },
+  ];
+
+  it('guardar igual o cancelar, con todos los modelos con los que coincide', () => {
+    expect(
+      pendingQuestion(
+        question('Ya existe un modelo con ese título', { codigo: 'MODELO_REPETIDO', modelos }),
+      ),
+    ).toEqual({
+      codigo: 'MODELO_REPETIDO',
+      message: 'Ya existe un modelo con ese título',
+      modelos,
+      options: [
+        { kind: 'confirm', field: 'confirmarRepetido', label: 'Guardar igual' },
+        { kind: 'cancel', label: 'Cancelar' },
+      ],
+    });
+  });
+
+  it('si el error no trae los modelos, igual es una pregunta', () => {
+    const pending = pendingQuestion(
+      question('Ya existe un modelo con ese título', { codigo: 'MODELO_REPETIDO' }),
+    );
+
+    expect(pending?.codigo).toBe('MODELO_REPETIDO');
+    expect(pending?.modelos).toBeUndefined();
+  });
+
+  it('descarta los modelos que llegan incompletos', () => {
+    const pending = pendingQuestion(
+      question('Ya existe un modelo con ese título', {
+        codigo: 'MODELO_REPETIDO',
+        modelos: [modelos[0], null, { id: 'x' }, 'texto'],
+      }),
+    );
+
+    expect(pending?.modelos).toEqual([modelos[0]]);
+  });
+
+  it('un 409 de modelos sin código no es una pregunta: es un rechazo', () => {
+    expect(pendingQuestion(question('El modelo ya está activo', {}))).toBeNull();
+  });
+});

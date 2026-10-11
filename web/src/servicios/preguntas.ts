@@ -1,6 +1,7 @@
 import type { NewPartyData, PartyAnswers, ParteDetalle } from './causas';
 import { ApiError } from './cliente-http';
 import type { FalloReferencia } from './jurisprudencia';
+import type { ModeloReferencia } from './modelos-escritos';
 import { partyDocument, partyName } from './presentacion-causas';
 
 /**
@@ -15,7 +16,9 @@ export type QuestionCode =
   | 'NOMBRE_REPETIDO'
   | 'NOMBRE_DE_CLIENTE'
   // Spec 005, RF-18: el fallo que se carga, modifica o reactiva coincide con otro activo.
-  | 'FALLO_REPETIDO';
+  | 'FALLO_REPETIDO'
+  // Spec 006, RF-15: el título del modelo que se carga, modifica o reactiva coincide con el de otro activo.
+  | 'MODELO_REPETIDO';
 
 /** Campo del cuerpo que lleva la respuesta afirmativa a una pregunta. */
 export type ConfirmationField =
@@ -39,6 +42,8 @@ export interface PendingQuestion {
   parteId?: number;
   /** Fallo con el que coincide el que se guarda (FALLO_REPETIDO). */
   fallo?: FalloReferencia;
+  /** Modelos activos con el mismo título que el que se guarda (MODELO_REPETIDO). */
+  modelos?: ModeloReferencia[];
   options: QuestionOption[];
 }
 
@@ -105,6 +110,7 @@ function optionsFor(codigo: QuestionCode, details: Record<string, unknown>): Que
       ];
     }
     case 'FALLO_REPETIDO':
+    case 'MODELO_REPETIDO':
       return [{ kind: 'confirm', field: 'confirmarRepetido', label: 'Guardar igual' }, CANCEL];
   }
 }
@@ -115,7 +121,20 @@ const QUESTION_CODES: readonly string[] = [
   'NOMBRE_REPETIDO',
   'NOMBRE_DE_CLIENTE',
   'FALLO_REPETIDO',
+  'MODELO_REPETIDO',
 ];
+
+/** Los modelos con el mismo título, si el error los trae; se descartan los que vienen incompletos. */
+function repeatedTemplates(value: unknown): ModeloReferencia[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  return value.filter(
+    (modelo): modelo is ModeloReferencia =>
+      typeof modelo === 'object' &&
+      modelo !== null &&
+      typeof (modelo as Partial<ModeloReferencia>).id === 'number' &&
+      typeof (modelo as Partial<ModeloReferencia>).titulo === 'string',
+  );
+}
 
 /** Los datos del fallo repetido, si el error los trae completos. */
 function repeatedRuling(value: unknown): FalloReferencia | undefined {
@@ -142,6 +161,8 @@ export function pendingQuestion(error: unknown): PendingQuestion | null {
   if (typeof error.details.parteId === 'number') question.parteId = error.details.parteId;
   const fallo = repeatedRuling(error.details.fallo);
   if (fallo) question.fallo = fallo;
+  const modelos = repeatedTemplates(error.details.modelos);
+  if (modelos) question.modelos = modelos;
   return question;
 }
 
