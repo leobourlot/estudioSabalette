@@ -77,7 +77,7 @@ Reglas para todas las tareas:
   - En `PATCH`, el rechazo de `activo` y de otros campos desconocidos.
   - Que ningún mensaje repite el valor recibido (un texto con una marca de prueba no aparece en el mensaje).
 
-- [ ] **T9 — DTO del listado y de la reactivación** [RF-18, RF-21, RF-22, RF-27]
+- [x] **T9 — DTO del listado y de la reactivación** [RF-18, RF-21, RF-22, RF-27]
   DTO de `GET /` con `pagina`, `buscar`, `tipo`, `fuero` e `incluirDesactivados`, y de `POST /:id/reactivar` con `confirmarRepetido`.
   Hecho cuando: los tests unitarios cubren:
   - Los valores por defecto y una página inválida.
