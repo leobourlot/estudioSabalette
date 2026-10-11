@@ -181,7 +181,7 @@ Reglas para todas las tareas:
   `servicios/texto-modelo.ts`: `convertModelText` (con el `convertText` de `servicios/texto-fallo.ts`), las reglas de caracteres y largos, el catálogo de variables, las reglas de las marcas e `insertVariable`.
   Hecho cuando: los tests de Vitest repiten los casos de T1 y T2, y verifican `insertVariable` al principio del texto, en el medio y reemplazando una selección.
 
-- [ ] **T24 — Servicio de modelos** [RF-13 a RF-32, RF-48]
+- [x] **T24 — Servicio de modelos** [RF-13 a RF-32, RF-48]
   `servicios/modelos-escritos.ts`: tipos y una función por endpoint de `/api/panel/modelos-escritos`, la del escrito completado y `keepSessionAlive`.
   Hecho cuando: los tests con `fetch` simulado verifican las rutas, los métodos, los cuerpos y el armado del query string (sin enviar los filtros vacíos ni `incluirDesactivados` desmarcado).
 
