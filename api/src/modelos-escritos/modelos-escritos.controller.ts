@@ -1,5 +1,15 @@
-import { Controller, Get, NotFoundException, Param, ParseIntPipe } from '@nestjs/common';
-import { Roles } from '../autenticacion/decoradores.js';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  ParseIntPipe,
+  Post,
+} from '@nestjs/common';
+import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
+import type { Usuario } from '../usuarios/usuario.entity.js';
+import { CreateModeloDto } from './dto/crear-modelo.dto.js';
 import type { ModeloDetalle } from './modelo-detalle.js';
 import { MODELOS_MESSAGES, ModelosEscritosService } from './modelos-escritos.service.js';
 
@@ -21,5 +31,10 @@ export class ModelosEscritosController {
   @Get(':id')
   findOne(@Param('id', ModeloIdPipe) id: number): Promise<ModeloDetalle> {
     return this.modelos.findOne(id);
+  }
+
+  @Post()
+  create(@CurrentUser() actor: Usuario, @Body() body: CreateModeloDto): Promise<ModeloDetalle> {
+    return this.modelos.create(actor, body);
   }
 }

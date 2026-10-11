@@ -96,7 +96,7 @@ Reglas para todas las tareas:
   `ModelosEscritosModule` sin `exports`, con `ModeloEscrito` y `Causa`, importado en `app.module.ts`. `modelos-escritos.controller.ts` con `@Roles('admin', 'abogado')`, el `ParseIntPipe` con 404 y `GET /:id`. `api/test/utilidades/modelos-de-prueba.ts` (nuevo) con funciones para vaciar la tabla y crear modelos.
   Hecho cuando: los e2e verifican la consulta de un modelo activo y de uno desactivado, con su texto, sus variables y su autoría, y el 404 "No existe ese modelo" con un id inexistente y con uno no numérico.
 
-- [ ] **T12 — Carga** [RF-1 a RF-13]
+- [x] **T12 — Carga** [RF-1 a RF-13]
   `POST /` en `modelos-escritos.service.ts`, todavía sin el aviso de título repetido.
   Hecho cuando: los e2e verifican:
   - La carga completa y una sin fuero (queda `otro`) ni descripción, con quién la cargó y cuándo.
