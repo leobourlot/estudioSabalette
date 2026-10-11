@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { RolProcesal } from '../causas/parte.entity.js';
-import { type CasePartySource, type CaseSource, caseValues } from './completar-escrito.js';
+import {
+  type CasePartySource,
+  type CaseSource,
+  caseValues,
+  completeText,
+} from './completar-escrito.js';
 import { VARIABLES } from './variables.js';
 
 const NOW = new Date('2026-10-10T15:00:00Z');
@@ -459,5 +464,142 @@ describe('caseValues: fecha (RF-9)', () => {
     const despues = valuesOf(causa(), new Date('2026-03-01T03:00:00Z'));
     expect(despues.FECHA.texto).toBe('01/03/2026');
     expect(despues.FECHA_EN_LETRAS.texto).toBe('1 de marzo de 2026');
+  });
+});
+
+const complete = (texto: string, source: CaseSource) =>
+  completeText(texto, caseValues(source, NOW));
+
+describe('completeText: reemplazo (RF-31, RF-33)', () => {
+  it('reemplaza cada marca por su dato y deja igual el resto, con sus saltos de línea', () => {
+    const source = causa({ partes: [fisica('actor', 'Luis', 'Gómez')] });
+    const texto =
+      'Señor Juez:\n\n#ACTORES#, en los autos "#CARATULA#", Expte. Nº #NUMERO_EXPEDIENTE#,\ndigo:\n\n#FECHA_EN_LETRAS#.';
+    expect(complete(texto, source).texto).toBe(
+      'Señor Juez:\n\nLuis Gómez, en los autos "Gómez, Luis c/ Acme S.A. s/ daños", Expte. Nº 1234/2026,\ndigo:\n\n10 de octubre de 2026.',
+    );
+  });
+
+  it('reemplaza la misma variable en todos sus lugares', () => {
+    expect(complete('#JUZGADO# y otra vez #JUZGADO#.', causa()).texto).toBe(
+      'Juzgado Civil Nº 3 y otra vez Juzgado Civil Nº 3.',
+    );
+  });
+
+  it('no toca los numerales que no son marcas', () => {
+    const texto = 'Local # 3, Expte. #123#, firma #____#.';
+    expect(complete(texto, causa()).texto).toBe(texto);
+  });
+
+  it('un dato que contiene una marca de variable se inserta tal cual', () => {
+    const source = causa({ caratula: 'Gómez c/ #FECHA# S.A. s/ #JUZGADO#' });
+    expect(complete('Autos "#CARATULA#" del #FECHA#.', source).texto).toBe(
+      'Autos "Gómez c/ #FECHA# S.A. s/ #JUZGADO#" del 10/10/2026.',
+    );
+  });
+
+  it('un dato con signos de reemplazo de una expresión se inserta tal cual', () => {
+    const source = causa({ juzgado: 'Juzgado $& $1 $$ Nº 3' });
+    expect(complete('Ante #JUZGADO#.', source).texto).toBe('Ante Juzgado $& $1 $$ Nº 3.');
+  });
+
+  it('un texto sin marcas vuelve igual, sin faltantes ni avisos', () => {
+    const source = causa({
+      numeroExpediente: null,
+      responsable: { nombre: 'Laura', apellido: 'Sabalette', activo: false },
+      partes: [clienteFisico('actor', 'Luis', 'Gómez', '20111222', { activo: false })],
+    });
+    expect(complete('Texto fijo, sin variables.', source)).toEqual({
+      texto: 'Texto fijo, sin variables.',
+      faltantes: [],
+      clientesDesactivados: [],
+      responsableDesactivado: false,
+    });
+  });
+});
+
+describe('completeText: datos faltantes (RF-39)', () => {
+  it('pone la marca en el lugar del dato y lo informa', () => {
+    const result = complete(
+      'Expte. Nº #NUMERO_EXPEDIENTE#, ante #JUZGADO#.',
+      causa({ numeroExpediente: null, juzgado: null }),
+    );
+    expect(result.texto).toBe('Expte. Nº (FALTA NÚMERO DE EXPEDIENTE), ante (FALTA JUZGADO).');
+    expect(result.faltantes).toEqual(['número de expediente', 'juzgado']);
+  });
+
+  it('un dato que falta y se usa varias veces se marca en cada lugar y se informa una vez', () => {
+    const result = complete('#JUZGADO#, #JUZGADO# y #JUZGADO#.', causa({ juzgado: null }));
+    expect(result.texto).toBe('(FALTA JUZGADO), (FALTA JUZGADO) y (FALTA JUZGADO).');
+    expect(result.faltantes).toEqual(['juzgado']);
+  });
+
+  it('dos variables a las que les falta lo mismo lo informan una sola vez', () => {
+    const result = complete('#DEMANDADOS# / #DEMANDADOS_CON_DOCUMENTO#', causa());
+    expect(result.faltantes).toEqual(['demandados']);
+  });
+
+  it('solo informa lo que les falta a las variables que el texto usa', () => {
+    const source = causa({ numeroExpediente: null, juzgado: null });
+    expect(complete('Autos "#CARATULA#".', source).faltantes).toEqual([]);
+    expect(complete('Ante #JUZGADO#.', source).faltantes).toEqual(['juzgado']);
+  });
+
+  it('informa de quién es el dato que falta, en el orden en que aparece', () => {
+    const source = causa({
+      partes: [
+        fisica('demandado', 'Luis', 'Gómez'),
+        clienteFisico('actor', 'María', 'López', '27333444'),
+      ],
+    });
+    const result = complete(
+      '#CLIENTES_DOMICILIO#. Contra #DEMANDADOS_CON_DOCUMENTO#, Expte. #EXPEDIENTE_PRINCIPAL#.',
+      source,
+    );
+    expect(result.texto).toBe(
+      '(FALTA DOMICILIO). Contra Luis Gómez, (FALTA DNI), Expte. (FALTA EXPEDIENTE PRINCIPAL).',
+    );
+    expect(result.faltantes).toEqual([
+      'domicilio de María López',
+      'DNI de Luis Gómez',
+      'expediente principal',
+    ]);
+  });
+});
+
+describe('completeText: avisos (RF-40)', () => {
+  const source = causa({
+    responsable: { nombre: 'Laura', apellido: 'Sabalette', activo: false },
+    partes: [
+      clienteFisico('actor', 'Luis', 'Gómez', '20111222', { activo: false }),
+      clienteFisico('actor', 'María', 'López', '27333444'),
+    ],
+  });
+
+  it.each(['#CLIENTES#', '#CLIENTES_CON_DOCUMENTO#', '#CLIENTES_DOMICILIO#'])(
+    'informa los clientes desactivados si el texto usa %s',
+    (marca) => {
+      expect(complete(`Por ${marca}.`, source).clientesDesactivados).toEqual(['Luis Gómez']);
+    },
+  );
+
+  it('no los informa si el texto no usa una variable de clientes, aunque figuren por su rol', () => {
+    const result = complete('#ACTORES# y #ACTORES_CON_DOCUMENTO#.', source);
+    expect(result.texto).toContain('Luis Gómez');
+    expect(result.clientesDesactivados).toEqual([]);
+  });
+
+  it('informa el responsable desactivado solo si el texto usa su variable', () => {
+    const conResponsable = complete('Firma: #ABOGADO_RESPONSABLE#.', source);
+    expect(conResponsable.texto).toBe('Firma: Laura Sabalette.');
+    expect(conResponsable.responsableDesactivado).toBe(true);
+    expect(complete('Autos "#CARATULA#".', source).responsableDesactivado).toBe(false);
+  });
+
+  it('no informa nada si los clientes y el responsable están activos', () => {
+    const activos = causa({ partes: [clienteFisico('actor', 'Luis', 'Gómez', '20111222')] });
+    const result = complete('#CLIENTES#, #ABOGADO_RESPONSABLE#.', activos);
+    expect(result.clientesDesactivados).toEqual([]);
+    expect(result.responsableDesactivado).toBe(false);
   });
 });

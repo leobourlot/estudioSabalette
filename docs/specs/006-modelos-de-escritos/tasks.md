@@ -50,7 +50,7 @@ Reglas para todas las tareas:
   - Que `ABOGADO_RESPONSABLE` pone al responsable aunque sea administrador o esté desactivado.
   - `FECHA` y `FECHA_EN_LETRAS` con el cambio de día a las 02:59 y a las 03:00 UTC.
 
-- [ ] **T5 — Reemplazo, faltantes y avisos** [RF-31, RF-33, RF-39, RF-40]
+- [x] **T5 — Reemplazo, faltantes y avisos** [RF-31, RF-33, RF-39, RF-40]
   En `completar-escrito.ts`: `completeText(texto, valores)`, que reemplaza las marcas en una sola pasada y devuelve el texto, los faltantes, los clientes desactivados y si el responsable está desactivado.
   Hecho cuando: los tests unitarios verifican:
   - Que la misma variable se reemplaza en todos sus lugares y el resto del texto queda igual, con sus saltos de línea.

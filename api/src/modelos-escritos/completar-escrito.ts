@@ -18,7 +18,7 @@ import {
   personSortKeys,
   type PersonSortKeys,
 } from './formato-escrito.js';
-import type { VariableName } from './variables.js';
+import { isVariableName, replaceMarks, usedVariables, type VariableName } from './variables.js';
 
 /** Una parte con la cuenta de su cliente cargada, si es cliente. */
 export type CasePartySource = Pick<
@@ -228,5 +228,43 @@ export function caseValues(causa: CaseSource, ahora: Date): CaseValues {
       .filter((client) => !client.activo)
       .map((client) => client.nombre),
     responsableDesactivado: !causa.responsable.activo,
+  };
+}
+
+/** Variables que ponen datos de los clientes de la causa (RF-40). */
+const CLIENT_VARIABLES: readonly VariableName[] = [
+  'CLIENTES',
+  'CLIENTES_CON_DOCUMENTO',
+  'CLIENTES_DOMICILIO',
+];
+
+/** El escrito completado y lo que hay que avisarle a quien lo completa. */
+export interface CompletedText {
+  texto: string;
+  /** Lo que le falta a la causa, sin repetir y en el orden en que aparece (RF-39). */
+  faltantes: string[];
+  /** Solo si el texto usa una variable de clientes (RF-40). */
+  clientesDesactivados: string[];
+  /** Solo si el texto usa ABOGADO_RESPONSABLE (RF-40). */
+  responsableDesactivado: boolean;
+}
+
+/**
+ * Reemplaza cada marca del texto de un modelo por su valor (RF-31), en una sola pasada: un dato
+ * insertado no se vuelve a examinar, así que una carátula con "#FECHA#" queda tal cual (RF-33).
+ * Los faltantes y los avisos salen solo de las variables que el texto usa.
+ */
+export function completeText(texto: string, values: CaseValues): CompletedText {
+  const used = usedVariables(texto);
+  return {
+    // El texto guardado solo tiene marcas del catálogo (RF-10); otra quedaría como se escribió.
+    texto: replaceMarks(texto, (clave, marca) =>
+      isVariableName(clave) ? values.valores[clave].texto : marca,
+    ),
+    faltantes: [...new Set(used.flatMap((nombre) => values.valores[nombre].faltantes))],
+    clientesDesactivados: used.some((nombre) => CLIENT_VARIABLES.includes(nombre))
+      ? values.clientesDesactivados
+      : [],
+    responsableDesactivado: used.includes('ABOGADO_RESPONSABLE') && values.responsableDesactivado,
   };
 }
