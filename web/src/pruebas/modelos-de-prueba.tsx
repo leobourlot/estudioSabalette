@@ -94,13 +94,20 @@ export function fakeModelosService(overrides: Partial<ModelosService> = {}): Fak
 export const lawyerSession = () =>
   fakeSessionService({ fetchOwnUser: vi.fn().mockResolvedValue(testUser('abogado')) });
 
-/** Muestra la ruta actual y su estado de navegación, para verificar navegaciones. */
+/**
+ * Deja a la vista de los tests la ruta actual y su estado de navegación, para verificar
+ * navegaciones. Van ocultos, para que no cuenten como contenido ni como avisos de la página.
+ */
 function CurrentLocation() {
   const location = useLocation();
   return (
     <>
-      <output data-testid="ruta-actual">{location.pathname}</output>
-      <output data-testid="estado-actual">{JSON.stringify(location.state)}</output>
+      <span hidden data-testid="ruta-actual">
+        {location.pathname}
+      </span>
+      <span hidden data-testid="estado-actual">
+        {JSON.stringify(location.state)}
+      </span>
     </>
   );
 }

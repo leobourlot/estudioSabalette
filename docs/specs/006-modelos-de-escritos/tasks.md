@@ -258,7 +258,7 @@ Reglas para todas las tareas:
   - Que en una causa desactivada muestra "La causa está desactivada" y no lista modelos.
   - Que cada fila lleva al escrito y pasa la página, la búsqueda y los filtros en el estado de navegación.
 
-- [ ] **T35 — Escrito: texto, avisos y volver** [RF-32, RF-39 a RF-41, RF-47]
+- [x] **T35 — Escrito: texto, avisos y volver** [RF-32, RF-39 a RF-41, RF-47]
   `AvisosEscrito` y `PanelEscrito` en lugar de la página provisoria.
   Hecho cuando: los tests con servicios simulados verifican:
   - La carátula, el título del modelo y el texto con sus saltos de línea.
