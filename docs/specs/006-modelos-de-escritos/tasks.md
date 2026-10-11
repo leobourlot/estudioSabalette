@@ -223,7 +223,7 @@ Reglas para todas las tareas:
   - Que una búsqueda con `<` muestra el error sin llamar al servicio.
   - Que con un estado inicial la lista abre en esa página, con esa búsqueda y esos filtros.
 
-- [ ] **T30 — Sección de modelos** [RF-18, RF-22]
+- [x] **T30 — Sección de modelos** [RF-18, RF-22]
   `PanelModelos` en lugar de la página provisoria: `ListaModelos` con "Mostrar desactivados" y el enlace "Nuevo modelo".
   Hecho cuando: los tests verifican que cada fila lleva a la ficha del modelo, que "Mostrar desactivados" pide `incluirDesactivados`, y que no se escribe nada en `localStorage` ni `sessionStorage`.
 
