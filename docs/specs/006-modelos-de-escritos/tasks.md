@@ -281,7 +281,7 @@ Reglas para todas las tareas:
   `DisenoSeccion.handleLogout` llama a `clearClipboard()` antes de esperar el cierre de sesión, solo si el usuario no es un cliente.
   Hecho cuando: los tests verifican que "Cerrar sesión" vacía el portapapeles simulado para un administrador y para un abogado, que no lo toca para un cliente, y que la sesión se cierra igual si el portapapeles falla.
 
-- [ ] **T38 — Aislamiento en la web** [RF-52, RF-53]
+- [x] **T38 — Aislamiento en la web** [RF-52, RF-53]
   Hecho cuando: un test de Vitest lee los archivos fuente y falla si algún archivo del portal importa un módulo de modelos o usa `useModelosService`, o si algún archivo de modelos importa `servicios/jurisprudencia.ts` o usa `useJurisprudenciaService`. El test incluye un caso que confirma que la regla detecta un archivo que sí usa modelos.
 
 ## Cierre
