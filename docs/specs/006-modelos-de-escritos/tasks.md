@@ -185,7 +185,7 @@ Reglas para todas las tareas:
   `servicios/modelos-escritos.ts`: tipos y una función por endpoint de `/api/panel/modelos-escritos`, la del escrito completado y `keepSessionAlive`.
   Hecho cuando: los tests con `fetch` simulado verifican las rutas, los métodos, los cuerpos y el armado del query string (sin enviar los filtros vacíos ni `incluirDesactivados` desmarcado).
 
-- [ ] **T25 — Formulario y filtros** [RF-1, RF-6, RF-10, RF-14, RF-21, RF-22]
+- [x] **T25 — Formulario y filtros** [RF-1, RF-6, RF-10, RF-14, RF-21, RF-22]
   `servicios/formulario-modelo.ts`: `validateModelForm`, cuerpo de alta, cuerpo de edición con solo lo que cambió, `validateModelFilters` y `toListQuery`.
   Hecho cuando: los tests verifican:
   - Las validaciones con los mensajes de la API, incluidos los de variables pegadas y de variables que no existen.
