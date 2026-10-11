@@ -124,6 +124,8 @@ interface RenderModelsOptions {
   causas?: CausasService;
   /** Estado de navegación con el que se llega a `path`. */
   state?: unknown;
+  /** Para simular que la API cerró la sesión (un 401 que no se pudo renovar). */
+  subscribeSessionClosed?: (listener: () => void) => () => void;
 }
 
 /**
@@ -145,7 +147,12 @@ export function renderModelsApp(path: string, options: RenderModelsOptions = {})
           modelos,
         }}
       >
-        <ProveedorSesion service={session}>
+        <ProveedorSesion
+          service={session}
+          {...(options.subscribeSessionClosed
+            ? { subscribeSessionClosed: options.subscribeSessionClosed }
+            : {})}
+        >
           <RutasAplicacion />
         </ProveedorSesion>
         <CurrentLocation />

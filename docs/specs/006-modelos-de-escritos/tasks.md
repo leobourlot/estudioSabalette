@@ -267,7 +267,7 @@ Reglas para todas las tareas:
   - Que los 404 y 409 de la API se muestran con su mensaje y el enlace a la causa.
   - Que no hay botones de descargar, imprimir, exportar, enviar ni editar.
 
-- [ ] **T36 — Escrito: copiar, sesión e inactividad** [RF-44 a RF-46, RF-48]
+- [x] **T36 — Escrito: copiar, sesión e inactividad** [RF-44 a RF-46, RF-48]
   En `PanelEscrito`: "Copiar" con su leyenda, el uso de la sesión y el cierre por inactividad.
   Hecho cuando: los tests verifican:
   - Que "Copiar" escribe en el portapapeles simulado el texto exacto del escrito, sin título, carátula ni avisos, y muestra "Escrito copiado".
