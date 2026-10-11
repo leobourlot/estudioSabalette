@@ -12,6 +12,8 @@ export const MODELOS_MESSAGES = {
   notFound: 'No existe ese modelo',
   repeatedTitle: 'Ya existe un modelo con ese título',
   deactivated: 'El modelo está desactivado. Reactivalo para modificarlo',
+  alreadyDeactivated: 'El modelo ya está desactivado',
+  alreadyActive: 'El modelo ya está activo',
 } as const;
 
 /** Datos de un modelo que se pueden modificar (RF-14). */
@@ -93,6 +95,40 @@ export class ModelosEscritosService {
 
       await manager.update(ModeloEscrito, id, {
         ...despues,
+        modificadoPorId: actor.id,
+        modificadoEn: new Date(),
+      });
+    });
+    return this.findOne(id);
+  }
+
+  /**
+   * Desactiva un modelo (RF-25): reemplaza al borrado. Cuenta como modificación (RF-2). Deja
+   * de aparecer en el listado normal y de ofrecerse en las causas, porque esas consultas solo
+   * traen modelos activos.
+   */
+  async deactivate(actor: Usuario, id: number): Promise<ModeloDetalle> {
+    await this.withLockedModelo(id, async (manager, modelo) => {
+      if (!modelo.activo) throw new ConflictException(MODELOS_MESSAGES.alreadyDeactivated);
+      await manager.update(ModeloEscrito, id, {
+        activo: false,
+        modificadoPorId: actor.id,
+        modificadoEn: new Date(),
+      });
+    });
+    return this.findOne(id);
+  }
+
+  /**
+   * Reactiva un modelo (RF-27). Si su título coincide con el de otro modelo activo, primero
+   * pregunta, como en la carga (RF-15).
+   */
+  async reactivate(actor: Usuario, id: number, confirmado: boolean): Promise<ModeloDetalle> {
+    await this.withLockedModelo(id, async (manager, modelo) => {
+      if (modelo.activo) throw new ConflictException(MODELOS_MESSAGES.alreadyActive);
+      if (!confirmado) await this.askIfRepeated(manager, modelo.titulo, id);
+      await manager.update(ModeloEscrito, id, {
+        activo: true,
         modificadoPorId: actor.id,
         modificadoEn: new Date(),
       });

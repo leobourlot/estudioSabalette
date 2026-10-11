@@ -2,6 +2,8 @@ import {
   Body,
   Controller,
   Get,
+  HttpCode,
+  HttpStatus,
   NotFoundException,
   Param,
   ParseIntPipe,
@@ -12,6 +14,7 @@ import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CreateModeloDto } from './dto/crear-modelo.dto.js';
 import { UpdateModeloDto } from './dto/modificar-modelo.dto.js';
+import { ReactivateModeloDto } from './dto/reactivar-modelo.dto.js';
 import type { ModeloDetalle } from './modelo-detalle.js';
 import { MODELOS_MESSAGES, ModelosEscritosService } from './modelos-escritos.service.js';
 
@@ -47,5 +50,24 @@ export class ModelosEscritosController {
     @Body() body: UpdateModeloDto,
   ): Promise<ModeloDetalle> {
     return this.modelos.update(actor, id, body);
+  }
+
+  @Post(':id/desactivar')
+  @HttpCode(HttpStatus.OK)
+  deactivate(
+    @CurrentUser() actor: Usuario,
+    @Param('id', ModeloIdPipe) id: number,
+  ): Promise<ModeloDetalle> {
+    return this.modelos.deactivate(actor, id);
+  }
+
+  @Post(':id/reactivar')
+  @HttpCode(HttpStatus.OK)
+  reactivate(
+    @CurrentUser() actor: Usuario,
+    @Param('id', ModeloIdPipe) id: number,
+    @Body() body: ReactivateModeloDto,
+  ): Promise<ModeloDetalle> {
+    return this.modelos.reactivate(actor, id, body.confirmarRepetido === true);
   }
 }

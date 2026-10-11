@@ -123,7 +123,7 @@ Reglas para todas las tareas:
   - Que no hay pregunta si no cambia el título, que el modelo no se compara consigo mismo, y la pregunta cuando el cambio lo hace coincidir con otro.
   - El 409 "El modelo está desactivado. Reactivalo para modificarlo".
 
-- [ ] **T16 — Desactivación y reactivación** [RF-2, RF-25 a RF-28]
+- [x] **T16 — Desactivación y reactivación** [RF-2, RF-25 a RF-28]
   `POST /:id/desactivar` y `POST /:id/reactivar` con el bloqueo del modelo y la pregunta de título repetido al reactivar.
   Hecho cuando: los e2e verifican:
   - La desactivación y la reactivación con quién las hizo y cuándo, y el 409 al repetir cada acción.
