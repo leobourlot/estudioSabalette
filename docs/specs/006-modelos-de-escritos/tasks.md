@@ -67,7 +67,7 @@ Reglas para todas las tareas:
   Migración `crear-modelos-escritos` con la tabla, su índice y sus claves foráneas. Se agregan la entidad y la migración al final de las listas de `esquema.ts`.
   Hecho cuando: un e2e corre `up` sobre la base de tests con las tablas de las specs 001 a 005, guarda un modelo con un texto de 50.000 caracteres con tildes y lo lee igual, verifica que un modelo guardado sin fuero queda con `otro`, y corre `down` sin errores.
 
-- [ ] **T8 — DTO de alta y modificación** [RF-1, RF-3 a RF-8, RF-10, RF-14]
+- [x] **T8 — DTO de alta y modificación** [RF-1, RF-3 a RF-8, RF-10, RF-14]
   `dto/reglas-modelo.ts` (transformaciones con `convertText`, `convertModelText` y `canonicalMarks`, y reglas con los mensajes del plan, reutilizando `usuarios/dto/reglas.ts` y las reglas de las specs 002 y 003), y los DTO de `POST` y de `PATCH` parcial.
   Hecho cuando: los tests unitarios cubren:
   - Obligatorios ausentes o vacíos, largos y caracteres de título, descripción y texto. Tipo y fuero fuera de la lista, y fuero ausente.
