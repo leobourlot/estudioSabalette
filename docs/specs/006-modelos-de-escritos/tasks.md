@@ -213,7 +213,7 @@ Reglas para todas las tareas:
   - Que pasados 60 minutos sin pedidos al servidor se cierra la sesión con el aviso de inactividad, y que un pedido reinicia la cuenta.
   - Que al desmontar el componente se dejan de escuchar los pedidos y se detiene el control.
 
-- [ ] **T29 — Lista de modelos** [RF-18 a RF-24]
+- [x] **T29 — Lista de modelos** [RF-18 a RF-24]
   `FiltrosModelos`, `FilaModelo` y `ListaModelos`, con las opciones de mostrar o no "Mostrar desactivados", el destino de cada fila y el estado inicial.
   Hecho cuando: los tests con servicios simulados verifican:
   - Que la fila muestra el título, el tipo, el fuero, la descripción y la etiqueta "Desactivado", y no el texto.
