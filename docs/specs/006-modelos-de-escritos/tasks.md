@@ -104,7 +104,7 @@ Reglas para todas las tareas:
   - Que se acepta un modelo sin ninguna variable y uno con un email en el texto.
   - Los rechazos de validación, con un texto con una marca de prueba que no aparece en la respuesta.
 
-- [ ] **T13 — Tamaño del cuerpo** [RF-1] **(modifica existente: `configurar-aplicacion.ts`)**
+- [x] **T13 — Tamaño del cuerpo** [RF-1] **(modifica existente: `configurar-aplicacion.ts`)**
   `configureApp` suma el límite de 512 KB para los cuerpos JSON.
   Hecho cuando: los e2e verifican que se acepta un modelo con un texto de 50.000 caracteres de varios bytes, y que un cuerpo de más de 512 KB responde 413 sin repetir lo recibido. Los e2e de las specs 001 a 005 siguen pasando.
 

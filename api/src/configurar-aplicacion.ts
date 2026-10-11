@@ -7,6 +7,9 @@ import { formatValidationErrors } from './configuracion/errores-de-validacion.js
 import { NoDataExceptionFilter } from './configuracion/errores-sin-datos.filter.js';
 import type { Environment } from './configuracion/validar-entorno.js';
 
+/** Tamaño máximo del cuerpo JSON de un pedido. */
+export const JSON_BODY_LIMIT = '512kb';
+
 /**
  * Configuración HTTP común a main.ts y a los tests e2e, para que los tests ejerciten
  * exactamente la misma aplicación que corre en producción.
@@ -22,6 +25,11 @@ export function configureApp(app: NestExpressApplication): void {
   app.set('trust proxy', config.get('TRUST_PROXY_HOPS', { infer: true }));
 
   app.use(cookieParser());
+
+  // El texto de un modelo de escrito tiene hasta 50.000 caracteres, que con letras de varios
+  // bytes superan los 100 KB que Express acepta por defecto (plan 006, "Tamaño del cuerpo").
+  // El límite es de toda la API: cada DTO sigue limitando sus campos.
+  app.useBodyParser('json', { limit: JSON_BODY_LIMIT });
 
   // Ninguna respuesta de la API queda guardada en el navegador, salga bien o mal: así no se
   // pueden volver a ver datos después de cerrar la sesión (plan 004, "Caché del navegador").
