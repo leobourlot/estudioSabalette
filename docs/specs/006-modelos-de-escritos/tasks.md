@@ -84,7 +84,7 @@ Reglas para todas las tareas:
   - `buscar` convertido, con `@` (se acepta), con `<` ("La búsqueda tiene caracteres no permitidos"), de 101 caracteres y con solo espacios (equivale a no enviarlo).
   - Tipo y fuero fuera de la lista, `incluirDesactivados` que no es booleano y una confirmación que no es booleana.
 
-- [ ] **T10 — Armado de respuestas** [RF-16, RF-19, RF-33, RF-51]
+- [x] **T10 — Armado de respuestas** [RF-16, RF-19, RF-33, RF-51]
   `modelo-detalle.ts`: `ModeloResumen`, `ModeloDetalle`, `ModeloReferencia` y `EscritoCompletado`, campo por campo, con `toAutorResumen` de la spec 003.
   Hecho cuando: los tests unitarios verifican:
   - Que cada respuesta tiene exactamente las claves de su tipo, sin emails ni hashes.
