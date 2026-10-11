@@ -155,7 +155,7 @@ Reglas para todas las tareas:
   - Que con un cliente y el responsable desactivados llegan los dos avisos, y sus nombres figuran en el texto.
   - Que la respuesta lleva `Cache-Control: no-store` y solo las claves de `EscritoCompletado`.
 
-- [ ] **T20 — Escrito: rechazos y solo lectura** [RF-2, RF-26, RF-41 a RF-43, RF-46, RF-49]
+- [x] **T20 — Escrito: rechazos y solo lectura** [RF-2, RF-26, RF-41 a RF-43, RF-46, RF-49]
   Los controles del plan en `escritos.service.ts`: primero la causa, después el modelo.
   Hecho cuando: los e2e verifican:
   - Causa desactivada: 409 "La causa está desactivada". Causa Archivada y Finalizada: 200.
