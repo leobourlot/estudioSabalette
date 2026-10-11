@@ -5,11 +5,13 @@ import {
   NotFoundException,
   Param,
   ParseIntPipe,
+  Patch,
   Post,
 } from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CreateModeloDto } from './dto/crear-modelo.dto.js';
+import { UpdateModeloDto } from './dto/modificar-modelo.dto.js';
 import type { ModeloDetalle } from './modelo-detalle.js';
 import { MODELOS_MESSAGES, ModelosEscritosService } from './modelos-escritos.service.js';
 
@@ -36,5 +38,14 @@ export class ModelosEscritosController {
   @Post()
   create(@CurrentUser() actor: Usuario, @Body() body: CreateModeloDto): Promise<ModeloDetalle> {
     return this.modelos.create(actor, body);
+  }
+
+  @Patch(':id')
+  update(
+    @CurrentUser() actor: Usuario,
+    @Param('id', ModeloIdPipe) id: number,
+    @Body() body: UpdateModeloDto,
+  ): Promise<ModeloDetalle> {
+    return this.modelos.update(actor, id, body);
   }
 }

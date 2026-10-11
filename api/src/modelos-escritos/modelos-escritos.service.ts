@@ -1,16 +1,37 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, type EntityManager, Repository } from 'typeorm';
 import { QUESTION_CODES, QuestionException } from '../causas/preguntas.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import type { CreateModeloDto } from './dto/crear-modelo.dto.js';
+import type { UpdateModeloDto } from './dto/modificar-modelo.dto.js';
 import { type ModeloDetalle, toModeloDetalle, toModeloReferencia } from './modelo-detalle.js';
 import { ModeloEscrito } from './modelo-escrito.entity.js';
 
 export const MODELOS_MESSAGES = {
   notFound: 'No existe ese modelo',
   repeatedTitle: 'Ya existe un modelo con ese título',
+  deactivated: 'El modelo está desactivado. Reactivalo para modificarlo',
 } as const;
+
+/** Datos de un modelo que se pueden modificar (RF-14). */
+type ModelData = Pick<ModeloEscrito, 'titulo' | 'tipo' | 'fuero' | 'descripcion' | 'texto'>;
+
+const MODEL_FIELDS = [
+  'titulo',
+  'tipo',
+  'fuero',
+  'descripcion',
+  'texto',
+] as const satisfies readonly (keyof ModelData)[];
+
+const snapshot = (modelo: ModeloEscrito): ModelData => ({
+  titulo: modelo.titulo,
+  tipo: modelo.tipo,
+  fuero: modelo.fuero,
+  descripcion: modelo.descripcion,
+  texto: modelo.texto,
+});
 
 /** Relaciones que necesita toModeloDetalle. */
 const DETAIL_RELATIONS = { creadoPor: true, modificadoPor: true };
@@ -46,11 +67,64 @@ export class ModelosEscritosService {
     return this.findOne(modelo.id);
   }
 
+  /**
+   * Modifica los datos de un modelo activo (RF-14) y registra quién lo hizo (RF-2). El aviso
+   * de título repetido se controla solo si cambia el título (RF-15). Un PATCH que no cambia
+   * nada no deja rastro: no es una modificación.
+   */
+  async update(actor: Usuario, id: number, dto: UpdateModeloDto): Promise<ModeloDetalle> {
+    await this.withLockedModelo(id, async (manager, modelo) => {
+      if (!modelo.activo) throw new ConflictException(MODELOS_MESSAGES.deactivated);
+      const antes = snapshot(modelo);
+      const despues: ModelData = {
+        titulo: dto.titulo ?? antes.titulo,
+        tipo: dto.tipo ?? antes.tipo,
+        fuero: dto.fuero ?? antes.fuero,
+        // null borra la descripción; ausente, no cambia.
+        descripcion: dto.descripcion === undefined ? antes.descripcion : dto.descripcion,
+        texto: dto.texto ?? antes.texto,
+      };
+
+      // La pregunta va antes de escribir nada: un 409 no deja cambios.
+      if (despues.titulo !== antes.titulo && dto.confirmarRepetido !== true) {
+        await this.askIfRepeated(manager, despues.titulo, id);
+      }
+      if (MODEL_FIELDS.every((campo) => antes[campo] === despues[campo])) return;
+
+      await manager.update(ModeloEscrito, id, {
+        ...despues,
+        modificadoPorId: actor.id,
+        modificadoEn: new Date(),
+      });
+    });
+    return this.findOne(id);
+  }
+
   /** Consulta de un modelo con su texto y su autoría, activo o desactivado (RF-16, RF-26). */
   async findOne(id: number): Promise<ModeloDetalle> {
     const modelo = await this.modelos.findOne({ where: { id }, relations: DETAIL_RELATIONS });
     if (!modelo) throw new NotFoundException(MODELOS_MESSAGES.notFound);
     return toModeloDetalle(modelo);
+  }
+
+  /**
+   * Bloqueo del modelo (plan 006): modificar, desactivar y reactivar corren en una transacción
+   * que empieza con un bloqueo exclusivo sobre su fila. Así una desactivación y una
+   * modificación simultáneas se ejecutan de a una, y si la desactivación queda primero la
+   * modificación se rechaza (RF-26).
+   */
+  private withLockedModelo<T>(
+    id: number,
+    work: (manager: EntityManager, modelo: ModeloEscrito) => Promise<T>,
+  ): Promise<T> {
+    return this.dataSource.transaction(async (manager) => {
+      const modelo = await manager.findOne(ModeloEscrito, {
+        where: { id },
+        lock: { mode: 'pessimistic_write' },
+      });
+      if (!modelo) throw new NotFoundException(MODELOS_MESSAGES.notFound);
+      return work(manager, modelo);
+    });
   }
 
   /**

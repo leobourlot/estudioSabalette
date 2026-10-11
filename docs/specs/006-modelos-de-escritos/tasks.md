@@ -115,7 +115,7 @@ Reglas para todas las tareas:
   - Con dos coincidencias, la respuesta trae las dos.
   - Un título igual al de un modelo desactivado: sin pregunta.
 
-- [ ] **T15 — Modificación** [RF-2, RF-14, RF-15, RF-26]
+- [x] **T15 — Modificación** [RF-2, RF-14, RF-15, RF-26]
   `PATCH /:id` con el bloqueo del modelo (`SELECT … FOR UPDATE`) y la pregunta de título repetido solo si cambia el título.
   Hecho cuando: los e2e verifican:
   - La modificación de cada dato con quién la hizo y cuándo.
