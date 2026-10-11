@@ -21,7 +21,7 @@ Reglas para todas las tareas:
   - Que el título (caracteres de la spec 002) y la descripción (caracteres de la spec 003) rechazan `@`.
   - Que un texto de 50.000 caracteres contados con `textLength` pasa y uno de 50.001 no, también cuando el largo cambia al convertir ("…").
 
-- [ ] **T2 — Variables** [RF-7 a RF-12]
+- [x] **T2 — Variables** [RF-7 a RF-12]
   `modelos-escritos/variables.ts`: el catálogo fijo (nombre, grupo y descripción de cada variable de RF-9), `variableKey`, `findMarks`, `canonicalMarks`, `hasJoinedMarks`, `unknownVariables` y `usedVariables`.
   Hecho cuando: los tests unitarios verifican:
   - Que el catálogo tiene exactamente las variables de RF-9, sin `ABOGADO_QUE_COMPLETA`.
