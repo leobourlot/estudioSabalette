@@ -92,7 +92,7 @@ Reglas para todas las tareas:
   - Que `EscritoCompletado` solo lleva el id y la carátula de la causa, el id y el título del modelo, el texto, los faltantes y los dos avisos.
   - Que los autores desactivados quedan marcados.
 
-- [ ] **T11 — Módulo, controller y consulta de un modelo** [RF-16, RF-49, RF-50] **(modifica existente: `app.module.ts`)**
+- [x] **T11 — Módulo, controller y consulta de un modelo** [RF-16, RF-49, RF-50] **(modifica existente: `app.module.ts`)**
   `ModelosEscritosModule` sin `exports`, con `ModeloEscrito` y `Causa`, importado en `app.module.ts`. `modelos-escritos.controller.ts` con `@Roles('admin', 'abogado')`, el `ParseIntPipe` con 404 y `GET /:id`. `api/test/utilidades/modelos-de-prueba.ts` (nuevo) con funciones para vaciar la tabla y crear modelos.
   Hecho cuando: los e2e verifican la consulta de un modelo activo y de uno desactivado, con su texto, sus variables y su autoría, y el 404 "No existe ese modelo" con un id inexistente y con uno no numérico.
 
