@@ -139,7 +139,7 @@ Reglas para todas las tareas:
   - `hayModelos` en `false` sin modelos y con todos desactivados (aunque haya filtros), y en `true` con modelos que no coinciden.
   - Que una página inexistente devuelve `items` vacío.
 
-- [ ] **T18 — Listado: buscador** [RF-20, RF-21]
+- [x] **T18 — Listado: buscador** [RF-20, RF-21]
   Búsqueda por fragmento en el título, la descripción y el texto.
   Hecho cuando: los e2e verifican:
   - La búsqueda por fragmento en cada campo, en mayúsculas y sin tildes ("CEDULA" encuentra "Cédula").

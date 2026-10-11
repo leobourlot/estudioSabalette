@@ -1,6 +1,6 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DataSource, type EntityManager, Repository } from 'typeorm';
+import { Brackets, DataSource, type EntityManager, Repository } from 'typeorm';
 import type { Fuero } from '../causas/causa.entity.js';
 import { QUESTION_CODES, QuestionException } from '../causas/preguntas.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
@@ -25,6 +25,9 @@ export const MODELOS_MESSAGES = {
 } as const;
 
 const PAGE_SIZE = 20;
+
+/** Escapa los comodines de LIKE, para que % y _ se busquen como texto (RF-21). */
+const escapeLike = (value: string) => value.replace(/[\\%_]/g, (char) => `\\${char}`);
 
 /** Fuero de los modelos que no son de un fuero específico (RF-1). */
 const GENERAL_FUERO: Fuero = 'otro';
@@ -195,6 +198,21 @@ export class ModelosEscritosService {
         fuero: query.fuero,
         general: GENERAL_FUERO,
       });
+    }
+
+    // Buscador (RF-20): fragmentos del título, la descripción o el texto. La intercalación
+    // utf8mb4_unicode_ci compara sin distinguir mayúsculas, minúsculas ni tildes, y con la ñ
+    // como n (spec 005, RF-9).
+    if (query.buscar !== undefined && query.buscar !== '') {
+      builder.andWhere(
+        new Brackets((where) => {
+          where
+            .where('modelo.titulo LIKE :texto')
+            .orWhere('modelo.descripcion LIKE :texto')
+            .orWhere('modelo.texto LIKE :texto');
+        }),
+        { texto: `%${escapeLike(query.buscar)}%` },
+      );
     }
 
     const filas = await builder
