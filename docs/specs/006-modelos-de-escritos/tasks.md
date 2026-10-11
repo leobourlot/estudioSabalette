@@ -227,7 +227,7 @@ Reglas para todas las tareas:
   `PanelModelos` en lugar de la página provisoria: `ListaModelos` con "Mostrar desactivados" y el enlace "Nuevo modelo".
   Hecho cuando: los tests verifican que cada fila lleva a la ficha del modelo, que "Mostrar desactivados" pide `incluirDesactivados`, y que no se escribe nada en `localStorage` ni `sessionStorage`.
 
-- [ ] **T31 — Catálogo y formulario** [RF-1, RF-10, RF-11, RF-17]
+- [x] **T31 — Catálogo y formulario** [RF-1, RF-10, RF-11, RF-17]
   `CatalogoVariables` y `FormularioModelo` (con el contador del texto y el uso de la sesión en cada cambio).
   Hecho cuando: los tests verifican:
   - Los campos, el fuero en "Otro" por defecto y el contador sobre 50.000.
