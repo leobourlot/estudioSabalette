@@ -167,7 +167,7 @@ Reglas para todas las tareas:
   Utilidad de e2e para insertar en bloque 500 modelos con textos de 50.000 caracteres, y una causa con 50 partes.
   Hecho cuando: un e2e verifica que el listado con buscador y filtros responde en menos de 2 segundos, y que completar un modelo de 50.000 caracteres en esa causa también.
 
-- [ ] **T22 — Acceso, autoría y aislamiento** [RF-50 a RF-53, RNF de registros, RNF de reglas de textos]
+- [x] **T22 — Acceso, autoría y aislamiento** [RF-50 a RF-53, RNF de registros, RNF de reglas de textos]
   Hecho cuando:
   - Los e2e verifican que un cliente recibe 403, un visitante 401 y una cuenta con cambio de contraseña pendiente 403 en cada endpoint de `/api/panel/modelos-escritos` y en el del escrito.
   - Un e2e verifica que un autor desactivado sigue figurando en el modelo, marcado como desactivado.
