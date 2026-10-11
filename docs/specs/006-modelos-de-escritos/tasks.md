@@ -59,7 +59,7 @@ Reglas para todas las tareas:
   - Que `clientesDesactivados` solo se informa si el texto usa una variable de clientes, y `responsableDesactivado` solo si usa `ABOGADO_RESPONSABLE`.
   - Que un texto sin marcas vuelve igual, sin faltantes ni avisos.
 
-- [ ] **T6 — Entidad** [RF-1, RF-2]
+- [x] **T6 — Entidad** [RF-1, RF-2]
   `modelos-escritos/modelo-escrito.entity.ts` con los campos, tipos y relaciones del plan: `texto` en `mediumtext`, `fuero` con default `otro`, fechas de registro con microsegundos e `IDX_modelos_escritos_listado`.
   Hecho cuando: la api compila y un test unitario verifica que el enum de fuero tiene exactamente los valores de `JURISDICTIONS` y el de tipo, los siete del plan.
 
