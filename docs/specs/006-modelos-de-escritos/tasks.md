@@ -31,7 +31,7 @@ Reglas para todas las tareas:
   - Que `unknownVariables` devuelve `CARATUAL`, `DEMANDADO` y `A` para `#CARATUAL#`, `#DEMANDADO#` y `#A#`.
   - Que `usedVariables` devuelve los nombres sin repetir y en orden, y una lista vacía en un texto sin marcas.
 
-- [ ] **T3 — Formato del escrito** [RF-9, RF-34 a RF-36]
+- [x] **T3 — Formato del escrito** [RF-9, RF-34 a RF-36]
   `modelos-escritos/formato-escrito.ts`: nombre de una persona, `formatDni`, `formatCuit`, `joinPeople`, orden de las personas con `Intl.Collator` y fecha en números y en letras a partir de `AAAA-MM-DD`.
   Hecho cuando: los tests unitarios verifican:
   - "Luis Gómez" para una persona física y la razón social para una jurídica.
