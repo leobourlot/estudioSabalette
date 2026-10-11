@@ -235,7 +235,7 @@ Reglas para todas las tareas:
   - Los errores de validación sin llamar al servicio, con la lista de las variables que no existen debajo de su mensaje.
   - Que escribir consulta la sesión como mucho una vez cada 5 minutos.
 
-- [ ] **T32 — Carga de un modelo** [RF-13, RF-15]
+- [x] **T32 — Carga de un modelo** [RF-13, RF-15]
   `PreguntaModeloRepetido` y `PanelModeloNuevo` en lugar de la página provisoria.
   Hecho cuando: los tests con servicios simulados verifican:
   - La carga y la ida a la ficha.
