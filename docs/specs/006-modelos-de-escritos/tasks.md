@@ -12,7 +12,7 @@ Reglas para todas las tareas:
 
 ## api
 
-- [ ] **T1 — Textos de un modelo** [RF-3 a RF-5]
+- [x] **T1 — Textos de un modelo** [RF-3 a RF-5]
   `modelos-escritos/validadores/texto-modelo.ts`: `convertModelText` (el `convertText` de la spec 005 en multilínea, más la quita de espacios al inicio y al final de cada línea) y `hasOnlyModelTextCharacters` (los caracteres de los movimientos más `@`). `modelos-escritos/validadores/longitudes.ts` con los largos máximos: título 150, descripción 500, texto 50.000 y búsqueda 100.
   Hecho cuando: los tests unitarios verifican:
   - Que las conversiones de la spec 005 se siguen aplicando: comillas tipográficas, guiones largos, "…", corchetes a paréntesis, tabulaciones e invisibles.
