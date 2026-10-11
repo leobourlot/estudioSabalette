@@ -108,7 +108,7 @@ Reglas para todas las tareas:
   `configureApp` suma el límite de 512 KB para los cuerpos JSON.
   Hecho cuando: los e2e verifican que se acepta un modelo con un texto de 50.000 caracteres de varios bytes, y que un cuerpo de más de 512 KB responde 413 sin repetir lo recibido. Los e2e de las specs 001 a 005 siguen pasando.
 
-- [ ] **T14 — Título repetido en la carga** [RF-15] **(modifica existente: `causas/preguntas.ts`)**
+- [x] **T14 — Título repetido en la carga** [RF-15] **(modifica existente: `causas/preguntas.ts`)**
   `QUESTION_CODES.repeatedTemplate = 'MODELO_REPETIDO'` y `findRepeated` en el service, aplicado en `POST /`.
   Hecho cuando: los e2e verifican:
   - Mismo título con otras mayúsculas, tildes o espacios: 409 `MODELO_REPETIDO` con el mensaje y todos los modelos activos con los que coincide. Con `confirmarRepetido: true`, 201.
