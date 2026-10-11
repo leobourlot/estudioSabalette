@@ -177,7 +177,7 @@ Reglas para todas las tareas:
 
 ## web
 
-- [ ] **T23 — Textos y variables en la web** [RF-3, RF-4, RF-7 a RF-12]
+- [x] **T23 — Textos y variables en la web** [RF-3, RF-4, RF-7 a RF-12]
   `servicios/texto-modelo.ts`: `convertModelText` (con el `convertText` de `servicios/texto-fallo.ts`), las reglas de caracteres y largos, el catálogo de variables, las reglas de las marcas e `insertVariable`.
   Hecho cuando: los tests de Vitest repiten los casos de T1 y T2, y verifican `insertVariable` al principio del texto, en el medio y reemplazando una selección.
 
