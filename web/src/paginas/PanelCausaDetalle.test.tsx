@@ -188,6 +188,32 @@ describe('PanelCausaDetalle: datos y edición (RF-11, RF-12, RF-33, RF-41)', () 
     ).toBeNull();
   });
 
+  it('en una causa activa ofrece "Completar un modelo", que lleva a los modelos de la causa (spec 006, RF-29)', async () => {
+    await openDetail();
+
+    const link = screen.getByRole('link', { name: 'Completar un modelo' });
+
+    expect(link.getAttribute('href')).toBe('/panel/causas/7/modelos');
+  });
+
+  it('una causa archivada o finalizada también lo ofrece (spec 006, RF-42)', async () => {
+    await openDetail(detail({ estado: 'finalizada' }));
+
+    expect(screen.getByRole('link', { name: 'Completar un modelo' })).toBeTruthy();
+  });
+
+  it('en una causa desactivada no ofrece "Completar un modelo" (spec 006, RF-41)', async () => {
+    await openDetail(
+      detail({
+        activa: false,
+        desactivadaEn: '2026-10-03T15:00:00.000Z',
+        desactivadaPor: { id: 1, nombre: 'Juan', apellido: 'Álvarez' },
+      }),
+    );
+
+    expect(screen.queryByRole('link', { name: 'Completar un modelo' })).toBeNull();
+  });
+
   it('muestra el error si la causa no existe', async () => {
     const causas = fakeCausasService({
       getCausa: vi.fn().mockRejectedValue(new ApiError(404, ['No existe esa causa'])),

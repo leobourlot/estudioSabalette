@@ -1,5 +1,5 @@
 import { type ReactNode, useEffect, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 import { AccionesCausa } from '../componentes/AccionesCausa';
 import { type Avisos, AvisosResultado } from '../componentes/AvisosResultado';
 import { EditorAbogados } from '../componentes/EditorAbogados';
@@ -127,7 +127,18 @@ export function PanelCausaDetalle() {
 
   return (
     <main className="mx-auto max-w-5xl space-y-6 p-8">
-      <h1 className="text-2xl font-semibold text-slate-800">{causa.caratula}</h1>
+      <div className="flex flex-wrap items-start justify-between gap-4">
+        <h1 className="text-2xl font-semibold text-slate-800">{causa.caratula}</h1>
+        {/* Un modelo solo se completa en una causa activa, cualquiera sea su estado (spec 006, RF-29, RF-41). */}
+        {causa.activa && (
+          <Link
+            to={`/panel/causas/${causa.id}/modelos`}
+            className="shrink-0 rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+          >
+            Completar un modelo
+          </Link>
+        )}
+      </div>
       {avisos && <AvisosResultado {...avisos} />}
       {actionAvisos && <AvisosResultado {...actionAvisos} />}
 

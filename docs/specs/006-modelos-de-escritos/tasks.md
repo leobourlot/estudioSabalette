@@ -250,7 +250,7 @@ Reglas para todas las tareas:
   - Desactivar y reactivar, con los mensajes de 409.
   - Que un modelo desactivado muestra "Desactivado" y solo la acción "Reactivar".
 
-- [ ] **T34 — Elegir un modelo desde una causa** [RF-29, RF-30, RF-41] **(modifica existente: `PanelCausaDetalle.tsx` y su test)**
+- [x] **T34 — Elegir un modelo desde una causa** [RF-29, RF-30, RF-41] **(modifica existente: `PanelCausaDetalle.tsx` y su test)**
   `PanelCausaDetalle` suma el enlace "Completar un modelo" en las causas activas. `PanelCausaModelos` en lugar de la página provisoria.
   Hecho cuando: los tests verifican:
   - Que el enlace aparece en una causa activa y no en una desactivada.
