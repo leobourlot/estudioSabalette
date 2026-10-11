@@ -1,11 +1,19 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DataSource, type EntityManager, Repository } from 'typeorm';
+import type { Fuero } from '../causas/causa.entity.js';
 import { QUESTION_CODES, QuestionException } from '../causas/preguntas.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import type { CreateModeloDto } from './dto/crear-modelo.dto.js';
+import type { ListModelosQueryDto } from './dto/listar-modelos.dto.js';
 import type { UpdateModeloDto } from './dto/modificar-modelo.dto.js';
-import { type ModeloDetalle, toModeloDetalle, toModeloReferencia } from './modelo-detalle.js';
+import {
+  type ModeloDetalle,
+  type ModeloResumen,
+  toModeloDetalle,
+  toModeloReferencia,
+  toModeloResumen,
+} from './modelo-detalle.js';
 import { ModeloEscrito } from './modelo-escrito.entity.js';
 
 export const MODELOS_MESSAGES = {
@@ -15,6 +23,30 @@ export const MODELOS_MESSAGES = {
   alreadyDeactivated: 'El modelo ya está desactivado',
   alreadyActive: 'El modelo ya está activo',
 } as const;
+
+const PAGE_SIZE = 20;
+
+/** Fuero de los modelos que no son de un fuero específico (RF-1). */
+const GENERAL_FUERO: Fuero = 'otro';
+
+/** Columnas del listado: todas las de ModeloResumen, sin el texto (RF-19). */
+const LIST_COLUMNS = [
+  'id',
+  'titulo',
+  'tipo',
+  'fuero',
+  'descripcion',
+  'activo',
+] as const satisfies readonly (keyof ModeloResumen)[];
+
+/** Página del listado (RF-18). No lleva totales: la paginación se resuelve con haySiguiente. */
+export interface ModeloPage {
+  items: ModeloResumen[];
+  pagina: number;
+  haySiguiente: boolean;
+  /** Si existe algún modelo que pueda aparecer sin buscador ni filtros (RF-23). */
+  hayModelos: boolean;
+}
 
 /** Datos de un modelo que se pueden modificar (RF-14). */
 type ModelData = Pick<ModeloEscrito, 'titulo' | 'tipo' | 'fuero' | 'descripcion' | 'texto'>;
@@ -134,6 +166,62 @@ export class ModelosEscritosService {
       });
     });
     return this.findOne(id);
+  }
+
+  /**
+   * Listado de modelos, de a 20 (RF-18). Orden: título y, a igual título, primero el último
+   * registrado; el id es único, así ningún modelo se repite ni se omite entre páginas. La
+   * intercalación utf8mb4_unicode_ci ordena sin distinguir mayúsculas, minúsculas ni tildes.
+   * Nunca trae el texto (RF-19). Los filtros se combinan y no cambian el orden (RF-22).
+   *
+   * Se pide una fila de más para saber si hay página siguiente, sin contar el total: la spec
+   * no lo pide, y contarlo repetiría la búsqueda sobre todos los textos.
+   */
+  async list(query: ListModelosQueryDto): Promise<ModeloPage> {
+    const pagina = query.pagina ?? 1;
+    const incluirDesactivados = query.incluirDesactivados === true;
+    const builder = this.modelos
+      .createQueryBuilder('modelo')
+      .select(LIST_COLUMNS.map((column) => `modelo.${column}`));
+
+    if (!incluirDesactivados) builder.andWhere('modelo.activo = 1');
+    if (query.tipo !== undefined) builder.andWhere('modelo.tipo = :tipo', { tipo: query.tipo });
+    // Los modelos de fuero "otro" no son de un fuero específico: se ven con cualquier fuero
+    // elegido. Con "otro", solo esos (RF-22).
+    if (query.fuero === GENERAL_FUERO) {
+      builder.andWhere('modelo.fuero = :general', { general: GENERAL_FUERO });
+    } else if (query.fuero !== undefined) {
+      builder.andWhere('(modelo.fuero = :fuero OR modelo.fuero = :general)', {
+        fuero: query.fuero,
+        general: GENERAL_FUERO,
+      });
+    }
+
+    const filas = await builder
+      .orderBy('modelo.titulo', 'ASC')
+      .addOrderBy('modelo.id', 'DESC')
+      .offset((pagina - 1) * PAGE_SIZE)
+      .limit(PAGE_SIZE + 1)
+      .getMany();
+    const modelos = filas.slice(0, PAGE_SIZE);
+
+    return {
+      items: modelos.map(toModeloResumen),
+      pagina,
+      haySiguiente: filas.length > PAGE_SIZE,
+      // Solo hace falta para elegir el mensaje de una página vacía (RF-23).
+      hayModelos: modelos.length > 0 || (await this.anyModel(incluirDesactivados)),
+    };
+  }
+
+  /**
+   * Si existe algún modelo que pueda aparecer en el listado sin buscador ni filtros: activo o,
+   * con "Mostrar desactivados", cualquiera (RF-23).
+   */
+  private async anyModel(incluirDesactivados: boolean): Promise<boolean> {
+    const builder = this.modelos.createQueryBuilder('modelo').select('modelo.id');
+    if (!incluirDesactivados) builder.where('modelo.activo = 1');
+    return (await builder.limit(1).getRawOne()) !== undefined;
   }
 
   /** Consulta de un modelo con su texto y su autoría, activo o desactivado (RF-16, RF-26). */

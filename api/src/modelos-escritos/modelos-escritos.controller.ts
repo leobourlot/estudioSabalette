@@ -9,14 +9,20 @@ import {
   ParseIntPipe,
   Patch,
   Post,
+  Query,
 } from '@nestjs/common';
 import { CurrentUser, Roles } from '../autenticacion/decoradores.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { CreateModeloDto } from './dto/crear-modelo.dto.js';
+import { ListModelosQueryDto } from './dto/listar-modelos.dto.js';
 import { UpdateModeloDto } from './dto/modificar-modelo.dto.js';
 import { ReactivateModeloDto } from './dto/reactivar-modelo.dto.js';
 import type { ModeloDetalle } from './modelo-detalle.js';
-import { MODELOS_MESSAGES, ModelosEscritosService } from './modelos-escritos.service.js';
+import {
+  type ModeloPage,
+  MODELOS_MESSAGES,
+  ModelosEscritosService,
+} from './modelos-escritos.service.js';
 
 /** Un id que no es un número no puede ser un modelo existente: 404, como cualquier otro (RF-49). */
 export const ModeloIdPipe = new ParseIntPipe({
@@ -32,6 +38,12 @@ export const ModeloIdPipe = new ParseIntPipe({
 @Controller('panel/modelos-escritos')
 export class ModelosEscritosController {
   constructor(private readonly modelos: ModelosEscritosService) {}
+
+  // También es la lista de modelos de una causa, que no envía incluirDesactivados (RF-29).
+  @Get()
+  list(@Query() query: ListModelosQueryDto): Promise<ModeloPage> {
+    return this.modelos.list(query);
+  }
 
   @Get(':id')
   findOne(@Param('id', ModeloIdPipe) id: number): Promise<ModeloDetalle> {

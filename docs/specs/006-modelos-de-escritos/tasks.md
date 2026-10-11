@@ -130,7 +130,7 @@ Reglas para todas las tareas:
   - La pregunta al reactivar un modelo cuyo título coincide con el de otro activo, y la reactivación con `confirmarRepetido: true`.
   - Que una desactivación y una modificación simultáneas se ordenan: si la desactivación queda primero, la modificación responde 409.
 
-- [ ] **T17 — Listado: orden, paginado y filtros** [RF-18, RF-19, RF-22 a RF-24]
+- [x] **T17 — Listado: orden, paginado y filtros** [RF-18, RF-19, RF-22 a RF-24]
   `GET /` con el orden del plan, 21 filas para `haySiguiente`, `hayModelos` con la página vacía, y los filtros de tipo, fuero e `incluirDesactivados`.
   Hecho cuando: los e2e verifican:
   - El orden por título sin distinguir mayúsculas ni tildes y, a igual título, primero el último registrado. Con 45 modelos, las tres páginas no repiten ni omiten ninguno, y `haySiguiente` es correcto en cada una.
