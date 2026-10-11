@@ -193,7 +193,7 @@ Reglas para todas las tareas:
   - El cuerpo de alta y el de edición, que queda vacío si no cambió nada.
   - Los filtros: búsqueda con `<`, con `@` y de 101 caracteres.
 
-- [ ] **T26 — Presentación, portapapeles y sesión del escrito** [RF-23, RF-24, RF-32, RF-39, RF-40, RF-44, RF-45, RF-48]
+- [x] **T26 — Presentación, portapapeles y sesión del escrito** [RF-23, RF-24, RF-32, RF-39, RF-40, RF-44, RF-45, RF-48]
   `servicios/presentacion-modelos.ts` (etiquetas de tipo de escrito, `emptyModelListMessage`, textos de los avisos y de la leyenda), `servicios/portapapeles.ts` (`copyText` y `clearClipboard`) y `servicios/sesion-escrito.ts` (`STAFF_IDLE_LIMIT_MS` y el estado de la lista para volver).
   Hecho cuando: los tests verifican:
   - `emptyModelListMessage` sin modelos, con resultados vacíos en la página 1 y en otra página.
