@@ -206,7 +206,7 @@ Reglas para todas las tareas:
   `pendingQuestion` reconoce `MODELO_REPETIDO` con las opciones "Guardar igual" y "Cancelar" y la lista de modelos. `ProveedorServicios` suma el servicio de modelos. `DisenoPanel` suma el enlace "Modelos". Las cinco rutas del panel apuntan a páginas provisorias que se reemplazan en T30 y T32 a T35. `web/src/pruebas/modelos-de-prueba.tsx` (nuevo) con datos y servicios simulados.
   Hecho cuando: los tests verifican la pregunta con los modelos que coinciden, el enlace "Modelos" en el panel, y que las rutas nuevas llevan a un cliente al portal y a un visitante a `/ingresar`.
 
-- [ ] **T28 — Uso de la sesión e inactividad** [RF-17, RF-48]
+- [x] **T28 — Uso de la sesión e inactividad** [RF-17, RF-48]
   `componentes/useUsoDeSesion.ts` (con `createSessionKeepAlive` y el `keepSessionAlive` del servicio de modelos) y `componentes/useCierrePorInactividad.ts` (con `isIdleExpired`, `IDLE_CHECK_INTERVAL_MS` e `IDLE_NOTICE`).
   Hecho cuando: los tests, con la hora simulada, verifican:
   - Que el uso consulta la sesión como mucho una vez cada 5 minutos.
