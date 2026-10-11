@@ -147,7 +147,7 @@ Reglas para todas las tareas:
   - Que "50%" se busca literal.
   - La combinación del buscador con los filtros.
 
-- [ ] **T19 — Escrito completado** [RF-30 a RF-40]
+- [x] **T19 — Escrito completado** [RF-30 a RF-40]
   `escritos.controller.ts` y `escritos.service.ts`: `GET /api/panel/causas/:causaId/escritos/:modeloId`, que carga la causa con su responsable y sus partes y usa `caseValues` y `completeText`.
   Hecho cuando: los e2e verifican:
   - Con una causa sin número ni juzgado, dos actores clientes (uno sin domicilio), un demandado persona jurídica con CUIT y otro persona física sin DNI: el texto, los faltantes y los avisos esperados.

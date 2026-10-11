@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Causa } from '../causas/causa.entity.js';
+import { EscritosController } from './escritos.controller.js';
+import { EscritosService } from './escritos.service.js';
 import { ModeloEscrito } from './modelo-escrito.entity.js';
 import { ModelosEscritosController } from './modelos-escritos.controller.js';
 import { ModelosEscritosService } from './modelos-escritos.service.js';
@@ -13,7 +15,7 @@ import { ModelosEscritosService } from './modelos-escritos.service.js';
  */
 @Module({
   imports: [TypeOrmModule.forFeature([ModeloEscrito, Causa])],
-  controllers: [ModelosEscritosController],
-  providers: [ModelosEscritosService],
+  controllers: [ModelosEscritosController, EscritosController],
+  providers: [ModelosEscritosService, EscritosService],
 })
 export class ModelosEscritosModule {}
