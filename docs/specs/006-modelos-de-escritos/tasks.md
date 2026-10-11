@@ -163,7 +163,7 @@ Reglas para todas las tareas:
   - Causa o modelo inexistente, e ids no numéricos: 404 con su mensaje.
   - Que `modificadoPor` y `modificadoEn` de la causa y del modelo no cambian, y que la cantidad de filas de todas las tablas es la misma antes y después de completar.
 
-- [ ] **T21 — Rendimiento** [RNF de rendimiento]
+- [x] **T21 — Rendimiento** [RNF de rendimiento]
   Utilidad de e2e para insertar en bloque 500 modelos con textos de 50.000 caracteres, y una causa con 50 partes.
   Hecho cuando: un e2e verifica que el listado con buscador y filtros responde en menos de 2 segundos, y que completar un modelo de 50.000 caracteres en esa causa también.
 

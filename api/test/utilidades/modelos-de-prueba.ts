@@ -18,6 +18,48 @@ export async function clearModelTables(app: NestExpressApplication): Promise<voi
   }
 }
 
+const TIPOS = ['demanda', 'contestacion_demanda', 'escrito_tramite', 'recurso', 'oficio'] as const;
+const FUEROS = ['civil', 'penal', 'familia', 'laboral', 'federal', 'otro'] as const;
+
+export interface BulkModelsOptions {
+  count: number;
+  creadoPorId: number;
+  /** Texto de cada modelo, sin su número: se usa cerca del largo máximo. */
+  textFiller: string;
+}
+
+/**
+ * Inserta muchos modelos en bloque, para medir el rendimiento. Todos quedan activos, con los
+ * tipos y los fueros repartidos, y con el mismo texto largo más su número.
+ */
+export async function bulkInsertTestModelos(
+  app: NestExpressApplication,
+  { count, creadoPorId, textFiller }: BulkModelsOptions,
+): Promise<void> {
+  const repository = app.get(DataSource).getRepository(ModeloEscrito);
+  const creadoEn = new Date();
+  // Lotes chicos: cada modelo pesa unos 50 KB.
+  const BATCH = 20;
+  for (let start = 0; start < count; start += BATCH) {
+    const size = Math.min(BATCH, count - start);
+    await repository.insert(
+      Array.from({ length: size }, (_, offset) => {
+        const index = start + offset;
+        return {
+          titulo: `Modelo de prueba ${String(index).padStart(4, '0')}`,
+          tipo: TIPOS[index % TIPOS.length],
+          fuero: FUEROS[index % FUEROS.length],
+          descripcion: `Descripción del modelo ${index}`,
+          texto: `${textFiller}\nModelo número ${index}.`,
+          activo: true,
+          creadoPorId,
+          creadoEn,
+        };
+      }),
+    );
+  }
+}
+
 type ModelTestData = Partial<Omit<ModeloEscrito, 'id' | 'creadoPor' | 'modificadoPor'>> & {
   creadoPorId: number;
 };
