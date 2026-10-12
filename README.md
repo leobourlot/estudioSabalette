@@ -66,7 +66,7 @@ La estructura de `web/src` y `api/src` es orientativa. Cada `plan.md` define los
 | 003-movimientos | Registro e historial de movimientos; visibilidad para el cliente | 002 | Terminada |
 | 004-portal-del-cliente | El cliente ve sus causas y los movimientos visibles | 001, 003 | Terminada |
 | 005-jurisprudencia | Carátula, palabras clave, sumario y búsqueda | 001 | Terminada |
-| 006-modelos-de-escritos | Plantillas con variables completadas con datos de una causa | 002 | Pendiente |
+| 006-modelos-de-escritos | Plantillas con variables completadas con datos de una causa | 002 | Terminada |
 | 007-sitio-publico | Estudio, integrantes, servicios, contacto, WhatsApp | — | Pendiente |
 
 Cada spec pasa por el ciclo completo (spec → clarificación → plan → tareas → implementación → validación) antes de empezar la siguiente.

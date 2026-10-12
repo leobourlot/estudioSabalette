@@ -129,7 +129,7 @@ Rutas abreviadas:
 - [x] Todos los RF con al menos un test en verde.
 - [x] Tests de acceso y aislamiento, de cada conversión y del largo, de `@`, de las marcas de variable, de cada variable del catálogo, del formato de nombres y documentos, del orden y los separadores, de la respuesta del escrito, de la vuelta a la lista, de la pasada única, de los avisos, de las fechas, de los rechazos, de que completar no guarda nada, del caché y el almacenamiento, de la sesión en la pantalla del escrito, de "Copiar" y la leyenda, del portapapeles al cerrar sesión, del orden y la paginación, del buscador y los filtros, del título repetido, de la sesión mientras se escribe, de la desactivación, de los mensajes de error sin datos y de las reglas de las otras specs.
 - [x] `pnpm test` y `pnpm lint` sin errores.
-- [ ] Demo manual (ver la guía siguiente): pendiente.
+- [x] Demo manual (ver la guía siguiente): completada sin errores el 2026-10-12.
 
 ## Guía de la demo manual
 
@@ -253,4 +253,4 @@ Contra la base de **desarrollo**. Cada paso dice qué hacer y qué tenés que ve
 
 ## Veredicto
 
-Los 53 RF tienen tests en verde, y `pnpm test` y `pnpm lint` pasan. Falta la demo manual para dar la spec 006 por **cumplida**. Quedan además las verificaciones de "Pendientes del despliegue", que se hacen al desplegar la aplicación.
+La spec 006 está **cumplida**: los 53 RF tienen tests en verde, `pnpm test` y `pnpm lint` pasan, y la demo manual se completó sin errores el 2026-10-12. Quedan las verificaciones de "Pendientes del despliegue", que se hacen al desplegar la aplicación.
