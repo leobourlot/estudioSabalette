@@ -64,11 +64,11 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
 
 ### Contacto con el estudio
 - RF-18: EL SISTEMA muestra en todas las pantallas del portal, salvo la de cambio de contraseña, los datos de contacto del estudio:
-  - Nombre del estudio.
+  - Nombre del estudio: "Pertusatti | Sabalette - Abogadas".
   - Dirección, como texto.
-  - WhatsApp, como enlace que abre una conversación con el estudio, sin mensaje precargado.
+  - WhatsApp (+54 9 3455 41-4147), como enlace que abre una conversación con el estudio, sin mensaje precargado.
 
-  Son los mismos datos del sitio web del estudio, fijos en el sistema, y no se editan desde el panel. Hasta que el estudio informe los reales, se usan datos genéricos de ejemplo.
+  Son los mismos datos del sitio público (spec 007, RF-22), fijos en el sistema, y no se editan desde el panel. La dirección se muestra recién cuando el estudio la informe: hasta entonces el portal no muestra ninguna, ni un espacio vacío en su lugar, y nunca una de ejemplo. Los demás datos de contacto del sitio público (horarios, email, redes sociales y "Cómo llegar") no se muestran en el portal.
 - RF-19: EL SISTEMA muestra en todas las pantallas que ve el cliente, incluida la de cambio de contraseña, un botón de WhatsApp siempre visible abajo a la derecha, que abre una conversación con el estudio sin mensaje precargado. El botón nunca tapa contenido ni controles: al llegar al final de la pantalla, todo lo que queda debajo se puede ver y usar.
 
 ### Movimientos
@@ -176,7 +176,7 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
 - **Respuestas indistinguibles:** una causa ajena y una inexistente pueden tardar distinto en responder. Se acepta (requisitos no funcionales).
 - **Identificadores correlativos:** si los identificadores de causas y movimientos que recibe el cliente son números correlativos, puede deducir aproximadamente cuántas causas y movimientos carga el estudio y cuándo. No revela datos de otros clientes. Se acepta (RF-30).
 - **Contacto del estudio:**
-  - Mientras el estudio no informe sus datos reales, se muestran los datos genéricos de ejemplo (RF-18).
+  - Mientras el estudio no informe su dirección, el portal muestra solo el nombre y el WhatsApp, sin dirección de ejemplo ni espacio vacío en su lugar (RF-18; spec 007, RF-24).
   - En el celular, el botón de WhatsApp no tapa la paginación, los botones "Ver más" y "Ver menos" ni el final del último texto (RF-19).
 
 ## Fuera de alcance

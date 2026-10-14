@@ -49,12 +49,12 @@ El panel de administración y el portal de clientes manejan información amparad
 - RF-11: MIENTRAS una cuenta tiene pendiente el cambio de contraseña, EL SISTEMA solo le permite cambiar su contraseña, consultar sus propios datos y cerrar sesión.
 
 ### Sesión
-- RF-12: MIENTRAS el usuario sigue usando el sistema, EL SISTEMA mantiene su sesión abierta sin pedirle que vuelva a ingresar. La sesión vence tras 20 minutos sin uso para los clientes, y tras 1 hora sin uso para administradores y abogados. Cuenta como uso cada consulta al servidor.
+- RF-12: MIENTRAS el usuario sigue usando el sistema, EL SISTEMA mantiene su sesión abierta sin pedirle que vuelva a ingresar. La sesión vence tras 20 minutos sin uso para los clientes, y tras 1 hora sin uso para administradores y abogados. Cuenta como uso cada consulta al servidor, salvo la que hace el sitio público para saber si hay sesión (spec 007, RF-31).
 - RF-13: EL SISTEMA permite una sola sesión abierta por usuario. CUANDO un usuario ingresa desde un dispositivo nuevo, EL SISTEMA cierra su sesión anterior.
 - RF-14: MIENTRAS la sesión está abierta, EL SISTEMA verifica en cada acción que la cuenta siga activa y aplica el rol vigente. Si el rol cambió, el usuario sigue con su sesión y pasa a ver y hacer solo lo que su nuevo rol permite.
 - RF-15: SI se detecta el uso de una credencial de sesión que ya fue reemplazada, ENTONCES EL SISTEMA cierra la sesión de ese usuario, porque indica que la credencial pudo ser robada.
 - RF-16: CUANDO un usuario cierra sesión, EL SISTEMA cierra su sesión.
-- RF-17: SI la sesión venció o fue cerrada mientras el usuario navegaba, ENTONCES EL SISTEMA lo lleva a la pantalla de ingreso y, tras ingresar, sigue lo indicado en RF-8.
+- RF-17: SI la sesión venció o fue cerrada mientras el usuario navegaba, ENTONCES EL SISTEMA lo lleva a la pantalla de ingreso y, tras ingresar, sigue lo indicado en RF-8. En el sitio público no se lo lleva: sigue viendo el sitio hasta que vaya al panel o al portal (spec 007, RF-32).
 
 ### Autorización
 - RF-18: EL SISTEMA niega por defecto el acceso a toda información y acción que no sea pública. Solo son accesibles sin sesión las páginas públicas y la pantalla de ingreso.
