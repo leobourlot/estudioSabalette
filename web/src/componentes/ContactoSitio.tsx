@@ -71,7 +71,7 @@ export function ContactoSitio({ mensaje, contact = STUDIO_CONTACT }: ContactoSit
     <section
       id="contacto"
       aria-labelledby="contacto-titulo"
-      className="bg-gradient-to-br from-estudio-oscuro to-estudio-azul px-4 pt-16 pb-28 text-estudio-blanco"
+      className="bg-gradient-to-br from-estudio-oscuro to-estudio-azul px-4 py-16 text-estudio-blanco"
     >
       <div className="mx-auto max-w-3xl">
         <h2

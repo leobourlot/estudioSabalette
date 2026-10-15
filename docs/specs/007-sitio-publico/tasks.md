@@ -240,7 +240,7 @@ Pedidos por el estudio durante la demo manual (spec: RF-3, RF-4, RF-6, RF-23, RF
   Una sola consulta de sesión para el encabezado y el menú, el acceso dentro del menú debajo de 420 px y el menú desplegado a lo ancho.
   Hecho cuando: los tests verifican que el acceso está en el menú y en el encabezado con las clases de cada ancho, que la sesión se consulta una vez, que el panel del menú se ubica respecto del encabezado (`inset-x-0`), y que el acceso del menú cambia con la sesión.
 
-- [ ] **T38 — Pie de página** [RF-44] **(modifica existente: `componentes/DisenoSitio.tsx`, `vite.config.ts` y los tests de las páginas)**
+- [x] **T38 — Pie de página** [RF-44] **(modifica existente: `componentes/DisenoSitio.tsx`, `vite.config.ts` y los tests de las páginas)**
   `PieSitio` y `public/marca/bourder-web.svg`; el año de publicación desde `vite.config.ts`.
   Hecho cuando: los tests verifican el logo y el nombre al inicio, los accesos, el WhatsApp con el mensaje de la página, que sin redes ni email no hay íconos ni email, que con datos de prueba hay un ícono por cuenta con su nombre, las dos leyendas y el enlace a https://bourderweb.com.ar aparte.
 

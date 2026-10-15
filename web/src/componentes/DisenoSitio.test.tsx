@@ -25,7 +25,7 @@ describe('DisenoSitio (spec 007, RF-4, RF-23, RF-26 y RF-28)', () => {
     const parts = Array.from(container.firstElementChild!.children).map(
       (el) => el.id || el.tagName.toLowerCase(),
     );
-    expect(parts).toEqual(['a', 'header', 'contenido', 'contacto', 'a']);
+    expect(parts).toEqual(['a', 'header', 'contenido', 'contacto', 'footer', 'a']);
   });
 
   it('"Saltar al contenido" lleva al contenido, que puede recibir el foco', () => {
@@ -37,21 +37,21 @@ describe('DisenoSitio (spec 007, RF-4, RF-23, RF-26 y RF-28)', () => {
     expect(screen.getByRole('main').getAttribute('tabindex')).toBe('-1');
   });
 
-  it('el botón y el bloque de contacto usan el mensaje de la página (RF-27)', () => {
+  it('el botón, el bloque de contacto y el pie usan el mensaje de la página (RF-27)', () => {
     renderLayout();
 
-    const text = (name: string) =>
-      new URL(screen.getByRole('link', { name }).getAttribute('href')!).searchParams.get('text');
-    expect(text('Escribinos por WhatsApp')).toBe(MESSAGE);
-    expect(text('+54 9 3455 41-4147')).toBe(MESSAGE);
+    const texts = (name: string) =>
+      screen
+        .getAllByRole('link', { name })
+        .map((a) => new URL(a.getAttribute('href')!).searchParams.get('text'));
+    expect(texts('Escribinos por WhatsApp')).toEqual([MESSAGE]);
+    expect(texts('+54 9 3455 41-4147')).toEqual([MESSAGE, MESSAGE]);
   });
 
-  it('el contacto deja lugar abajo para el botón (RF-28)', () => {
+  it('el pie de página deja lugar abajo para el botón (RF-28)', () => {
     renderLayout();
 
-    expect(screen.getByRole('region', { name: 'Contactate con nosotros' }).className).toContain(
-      'pb-28',
-    );
+    expect(screen.getByRole('contentinfo').className).toContain('pb-28');
   });
 });
 

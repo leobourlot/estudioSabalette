@@ -42,6 +42,7 @@ const SITE_MODULES = new Set([
   'MenuSitio',
   'NombreEstudio',
   'OtrosServicios',
+  'PieSitio',
   'TarjetaAbogada',
   'TarjetaServicio',
   'VolverA',

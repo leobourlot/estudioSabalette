@@ -5,6 +5,7 @@ import { BotonWhatsapp } from './BotonWhatsapp';
 import { ContactoSitio } from './ContactoSitio';
 import { EncabezadoSitio } from './EncabezadoSitio';
 import { FOCUS_RING } from './estilos-sitio';
+import { PieSitio } from './PieSitio';
 import { useFocoEnAncla } from './useFocoEnAncla';
 
 interface DisenoSitioProps {
@@ -16,10 +17,10 @@ interface DisenoSitioProps {
 }
 
 /**
- * Diseño de todas las páginas públicas (spec 007, RF-4, RF-23, RF-26 y RF-28): "Saltar al
- * contenido", el encabezado, la página, el bloque de contacto y el botón de WhatsApp. El bloque de
- * contacto termina con un margen mayor que el botón, así al final de la página todo se puede ver
- * y usar.
+ * Diseño de todas las páginas públicas (spec 007, RF-4, RF-23, RF-26, RF-28 y RF-44): "Saltar
+ * al contenido", el encabezado, la página, el bloque de contacto, el pie de página y el botón de
+ * WhatsApp. El pie termina con un margen mayor que el botón, así al final de la página todo se
+ * puede ver y usar.
  */
 export function DisenoSitio({ mensaje, children, consultarSesion }: DisenoSitioProps) {
   useFocoEnAncla();
@@ -37,6 +38,7 @@ export function DisenoSitio({ mensaje, children, consultarSesion }: DisenoSitioP
         {children}
       </main>
       <ContactoSitio mensaje={mensaje} />
+      <PieSitio mensaje={mensaje} />
       <BotonWhatsapp mensaje={mensaje} />
     </div>
   );
