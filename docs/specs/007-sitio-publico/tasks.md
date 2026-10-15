@@ -13,7 +13,7 @@ Reglas para todas las tareas:
 
 ## api
 
-- [ ] **T1 — Validación compartida de la sesión** [RF-31] **(modifica existente: `autenticacion/autenticacion.guard.ts`, `docs/specs/001-autenticacion-y-roles/plan.md`)**
+- [x] **T1 — Validación compartida de la sesión** [RF-31] **(modifica existente: `autenticacion/autenticacion.guard.ts`, `docs/specs/001-autenticacion-y-roles/plan.md`)**
   `autenticacion/sesion-valida.ts`: `findValidSession(sesiones, jwt, token)`, con la validación que hoy hace el guard. El guard la usa y sigue extendiendo `venceEn` como hasta ahora. El plan 001 ("Cada petición protegida") menciona la función.
   Hecho cuando:
   - Los tests unitarios verifican `null` sin token, con un token mal firmado, con `sub` o `sid` no enteros, y con una sesión inexistente, revocada, vencida, de otro usuario o de una cuenta desactivada; y la sesión con su usuario cuando es válida.

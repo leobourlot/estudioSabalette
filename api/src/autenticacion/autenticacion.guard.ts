@@ -13,11 +13,9 @@ import { Sesion } from '../usuarios/sesion.entity.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import { ACCESS_TOKEN_COOKIE, INVALID_SESSION_MESSAGE, sessionTtlMs } from './constantes.js';
 import { IS_PUBLIC_KEY } from './decoradores.js';
+import { findValidSession } from './sesion-valida.js';
 
-export interface AccessTokenPayload {
-  sub: number;
-  sid: number;
-}
+export type { AccessTokenPayload } from './sesion-valida.js';
 
 export interface AuthenticatedRequest extends Request {
   usuario?: Usuario;
@@ -28,8 +26,9 @@ export interface AuthenticatedRequest extends Request {
  * Guard global: toda ruta exige sesión salvo las marcadas con @Public() (RF-18).
  * En cada petición verifica el token de acceso y relee de la base la sesión y el usuario,
  * así una sesión revocada, un usuario desactivado o un cambio de rol rigen al instante (RF-14).
- * Cada petición cuenta como uso: corre el vencimiento de la sesión según el rol vigente
- * (spec 001, RF-12; spec 004, RF-4).
+ * La validación es la de findValidSession, que comparte con el estado de la sesión del sitio
+ * público (spec 007). Cada petición cuenta como uso: corre el vencimiento de la sesión según el
+ * rol vigente (spec 001, RF-12; spec 004, RF-4).
  */
 @Injectable()
 export class AuthenticationGuard implements CanActivate {
@@ -47,21 +46,12 @@ export class AuthenticationGuard implements CanActivate {
     if (isPublic) return true;
 
     const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
-    const payload = await this.verifyAccessToken(request.cookies?.[ACCESS_TOKEN_COOKIE]);
-
-    const session = await this.sessions.findOne({
-      where: { id: payload.sid },
-      relations: { usuario: true },
-    });
-    if (
-      !session ||
-      session.revocadaEn !== null ||
-      session.venceEn.getTime() <= Date.now() ||
-      session.usuarioId !== payload.sub ||
-      !session.usuario?.activo
-    ) {
-      throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
-    }
+    const session = await findValidSession(
+      this.sessions,
+      this.jwt,
+      request.cookies?.[ACCESS_TOKEN_COOKIE],
+    );
+    if (!session) throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
 
     // Condicionado a que siga abierta: no revive una sesión cerrada mientras tanto.
     await this.sessions.update(
@@ -72,22 +62,5 @@ export class AuthenticationGuard implements CanActivate {
     request.usuario = session.usuario;
     request.sesion = session;
     return true;
-  }
-
-  private async verifyAccessToken(token: unknown): Promise<AccessTokenPayload> {
-    if (typeof token !== 'string' || token === '') {
-      throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
-    }
-    try {
-      const payload = await this.jwt.verifyAsync<AccessTokenPayload>(token, {
-        algorithms: ['HS256'],
-      });
-      if (!Number.isInteger(payload.sub) || !Number.isInteger(payload.sid)) {
-        throw new Error('Contenido del token inválido');
-      }
-      return payload;
-    } catch {
-      throw new UnauthorizedException(INVALID_SESSION_MESSAGE);
-    }
   }
 }

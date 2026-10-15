@@ -170,9 +170,10 @@ ingresar(email, contrasena, ip):
 ### Cada petición protegida [RF-14, RF-18, RF-19, RF-11]
 ```
 guard de autenticación (global, salvo @Public):
-  jwt = cookie access_token; verificar firma y vencimiento, si falla: 401
-  sesión = buscar por jwt.sid con su usuario
-  si sesión revocada, vencida, o usuario inactivo: 401
+  sesión = findValidSession(sesiones, jwt, cookie access_token)  // sesion-valida.ts (plan 007)
+    // firma y vencimiento del token; sesión existente, no revocada ni vencida,
+    // del usuario del token y con la cuenta activa. Solo lee.
+  si sesión es null: 401
   UPDATE sesión SET venceEn = ahora + sessionTtlMs(usuario.rol)
     WHERE id = sesión.id AND revocadaEn IS NULL               // cada petición cuenta como uso (RF-12)
   request.usuario = usuario                                   // rol vigente leído de la base
