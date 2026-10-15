@@ -126,7 +126,7 @@ Reglas para todas las tareas:
   `AccesoIngreso`, con `fetchSessionSection` inyectable.
   Hecho cuando: los tests verifican "Ingresar" mientras se consulta, con `null` y ante un error; "Ir a mi portal" a `/portal` y "Ir al panel" a `/panel`; que son enlaces comunes y no muestran ningún dato de la cuenta; y que se vuelve a consultar en `pageshow` con `persisted`.
 
-- [ ] **T19 — Encabezado y menú** [RF-4 a RF-6]
+- [x] **T19 — Encabezado y menú** [RF-4 a RF-6]
   `EncabezadoSitio` (logo y nombre como enlace a `/`, menú y acceso) y `MenuSitio` (fila de enlaces y `<details>` "Menú").
   Hecho cuando: los tests verifican los enlaces "Servicios" (`/#servicios`), "Abogadas" (`/#abogadas`) y "Contacto" (`#contacto`); que el menú plegado abre y cierra, se cierra al elegir una opción y con Escape, y devuelve el foco a "Menú"; y que sin interacción los enlaces están en el HTML.
 
