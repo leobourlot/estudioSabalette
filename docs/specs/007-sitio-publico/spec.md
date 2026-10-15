@@ -36,13 +36,15 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Azul oscuro #2C3256 y azul #415789, en degradado hacia la derecha, como en el logo.
   - Blanco #FCFFFF.
 
+  Los títulos del sitio público usan una tipografía con serifa de licencia libre (Cormorant Garamond), con sus archivos dentro del propio sitio (RF-40).
+
 ### Navegación
 - RF-4: EL SISTEMA muestra en todas las páginas públicas un encabezado con:
   - El logo del estudio, que lleva al inicio.
   - Un menú con "Servicios", "Abogadas" y "Contacto".
-  - El acceso de ingreso (RF-29, RF-30).
+  - El acceso de ingreso (RF-29, RF-30). MIENTRAS la pantalla mide menos de 420 px de ancho, el acceso va dentro del menú plegado, como su última opción, para que el logo, el nombre y "Menú" entren en una sola línea.
 - RF-5: CUANDO un visitante elige "Servicios" o "Abogadas" en el menú, desde cualquier página, EL SISTEMA lo lleva a esa sección del inicio. CUANDO elige "Contacto", lo lleva al bloque de contacto del final de la página en la que está (RF-23).
-- RF-6: MIENTRAS la pantalla mide menos de 768 px de ancho, EL SISTEMA muestra el menú plegado detrás de un botón "Menú", que lo abre y lo cierra e indica si está abierto. Al elegir una opción, el menú se cierra. El logo y el botón "Menú" quedan siempre a la vista.
+- RF-6: MIENTRAS la pantalla mide menos de 768 px de ancho, EL SISTEMA muestra el menú plegado detrás de un botón "Menú", que lo abre y lo cierra e indica si está abierto. Al elegir una opción, el menú se cierra. El logo, el nombre y el botón "Menú" quedan siempre a la vista, en una misma línea. Abierto, el menú se despliega debajo del encabezado a lo ancho de la pantalla, con todas sus opciones a la vista: nunca queda cortado ni fuera de la pantalla.
 - RF-7: EL SISTEMA muestra en cada página de servicio el acceso "Volver a servicios", que lleva a la sección Servicios del inicio, y bajo el título "Otros servicios" los accesos a los otros tres servicios. En cada página de abogada muestra el acceso "Volver a abogadas", que lleva a la sección Abogadas del inicio.
 - RF-8: EL SISTEMA da a cada página pública, a cada pestaña de Derecho Laboral y a cada sección del inicio estas direcciones, en minúsculas, sin tildes y con las palabras separadas por guiones:
   - Inicio: `/`
@@ -96,13 +98,12 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Nombre: "Pertusatti | Sabalette - Abogadas".
   - WhatsApp: +54 9 3455 41-4147.
   - Dirección, días y horarios de atención, email y redes sociales: los que informe el estudio (ver Dudas abiertas).
-- RF-23: EL SISTEMA muestra al final de todas las páginas públicas un bloque de contacto, con el título "Contacto", que tiene:
-  - El nombre del estudio.
-  - El WhatsApp: el número escrito y un enlace que abre una conversación con el estudio (RF-27).
-  - La dirección, como texto, y el enlace "Cómo llegar", que abre esa dirección en Google Maps.
-  - Los días y horarios de atención.
-  - El email, escrito, como enlace para escribirle al estudio.
-  - Las redes sociales, cada una como un enlace que nombra la red.
+- RF-23: EL SISTEMA muestra al final de todas las páginas públicas, antes del pie de página (RF-44), un bloque de contacto sobre el degradado del logo, con el título "Contactate con nosotros", una línea corta debajo del título y el texto "Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal." (T-17). Debajo, cada dato en su renglón, con un ícono dentro de un recuadro, una etiqueta corta en mayúsculas y el dato:
+  - "Ubicación": la dirección, como texto, y el enlace "Cómo llegar", que abre esa dirección en Google Maps.
+  - "Teléfono / WhatsApp": el número escrito, como enlace que abre una conversación con el estudio (RF-27).
+  - "Disponibilidad": los días y horarios de atención.
+  - "Email": el email, escrito, como enlace para escribirle al estudio.
+  - Cada red social, con el nombre de la red como etiqueta (por ejemplo, "Instagram") y sus cuentas (por ejemplo, "@estudio"), cada una como enlace a su perfil.
 - RF-24: MIENTRAS el estudio no haya informado un dato de contacto, EL SISTEMA no muestra ese dato, ni su título, ni un espacio vacío en su lugar. Nunca muestra un dato de ejemplo o inventado. El enlace "Cómo llegar" solo se muestra cuando hay dirección.
 - RF-25: CUANDO un visitante elige un enlace que lo lleva fuera del sitio (WhatsApp, "Cómo llegar", el email o una red social), EL SISTEMA lo abre aparte, sin reemplazar la página que estaba viendo. El sitio abierto no recibe ningún control sobre la página de origen ni la dirección desde la que se llegó.
 
@@ -138,6 +139,22 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 - RF-42: SI una dirección trae datos agregados que el sitio no espera, ENTONCES EL SISTEMA los ignora: nunca los muestra en pantalla ni los usa para armar el mensaje de WhatsApp, un enlace o el destino después de ingresar.
 - RF-43: EL SISTEMA no permite que ninguna de sus pantallas (el sitio público, la pantalla de ingreso, la de cambio de contraseña, el portal ni el panel) se muestre dentro de otro sitio, para que nadie pueda disfrazarlas y engañar a quien las usa.
 
+### Pie de página
+- RF-44: EL SISTEMA muestra al final de todas las páginas públicas, después del bloque de contacto, un pie de página con:
+  - El logo y el nombre del estudio, que llevan al inicio.
+  - Los accesos "Servicios", "Abogadas" y "Contacto", como en el menú (RF-5).
+  - El WhatsApp, escrito, como enlace con el mensaje de la página (RF-27), y el email, cuando el estudio lo informe (RF-24).
+  - Un ícono por cada red social informada, como enlace a su perfil, que el lector de pantalla anuncia con el nombre de la red. Sin redes informadas, no se muestra ninguno (RF-24).
+  - La leyenda "© <año> Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.", con el año en que se publicó el sitio (T-18).
+  - La leyenda "Diseñado por" con el logo y el nombre "Bourder Web", que llevan a https://bourderweb.com.ar (T-18). Como todo enlace externo, se abre aparte (RF-25).
+
+### Animaciones
+- RF-45: EL SISTEMA anima las páginas públicas: las secciones, las tarjetas y los bloques de texto aparecen con un movimiento suave al entrar en la pantalla; el menú plegado se despliega y se repliega; el contenido de las pestañas de Derecho Laboral cambia con una transición; la foto de una abogada aparece sobre sus iniciales; y las tarjetas, los botones y los enlaces responden al pasar el puntero o al recibir el foco. En todos los casos:
+  - MIENTRAS el visitante pidió a su dispositivo reducir las animaciones, todo aparece directamente, sin movimiento.
+  - Sin el código de la página, todo el contenido se ve, sin animaciones (RF-35).
+  - La apertura del inicio (el nombre del estudio y T-1) se ve desde el primer momento, sin esperar a ninguna animación.
+  - Cada animación dura como mucho 0,6 segundos, no hace parpadear nada, no mueve el contenido que ya está en su lugar y no impide usar ningún control mientras ocurre.
+
 ## Requisitos no funcionales
 - Plataformas: el sitio se usa desde el celular tanto como desde la computadora.
   - En una pantalla de 360 px de ancho, todo se ve y se usa sin desplazamiento horizontal: el menú, las cuatro tarjetas, las tarjetas de las abogadas y las dos pestañas de Derecho Laboral, que entran una al lado de la otra.
@@ -154,18 +171,20 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Ninguna información depende solo del color.
   - El texto se puede agrandar hasta el 200 % sin que se corte ni se superponga. Agrandado, las pestañas pueden pasar una debajo de la otra.
   - El logo y las fotos tienen texto alternativo. Las iniciales que reemplazan a una foto no se anuncian, porque el nombre está al lado.
-  - Si el visitante pidió a su dispositivo reducir las animaciones, el sitio no las muestra.
+  - Si el visitante pidió a su dispositivo reducir las animaciones, el sitio no las muestra (RF-45).
 - Rendimiento: en un celular con conexión 4G, el texto de cada página se puede leer en menos de 3 segundos. El logo y las fotos que tardan en cargar no mueven el texto ya mostrado.
 - Disponibilidad: el contenido público es fijo, así que se ve completo aunque el servidor del panel y del portal no responda (RF-29).
 - Persistencia: el contenido del sitio público y los datos de contacto son públicos y fijos, y viven fuera de la base, como admite el principio 5. La única consulta del sitio público al servidor es la de RF-31, que no modifica la sesión.
 - Aislamiento: las páginas públicas no reciben del servidor ningún dato de causas, clientes, jurisprudencia, modelos ni escritos, ni de la cuenta de quien navega, más allá de lo que indica RF-31.
 - Textos seguros: los textos del sitio son fijos. Nada de lo que venga en una dirección se muestra en pantalla ni se interpreta como código (RF-9, RF-42).
-- Stack: si cumplir con RF-35 a RF-38 o con RF-43 exige sumar algo al stack o cambiar cómo se publica el sitio, el plan lo justifica (principio 1).
+- Stack: si cumplir con RF-35 a RF-38 o con RF-43 exige sumar algo al stack o cambiar cómo se publica el sitio, el plan lo justifica (principio 1). Las animaciones de RF-45 se hacen con la biblioteca Motion, a pedido del estudio; el plan justifica la dependencia.
 - Idioma: todos los textos del sitio en español.
 
 ## Casos límite
 - **Navegación:**
-  - Visitante que llega desde un buscador directamente a la página de un servicio, sin pasar por el inicio: tiene el encabezado, "Volver a servicios", los otros servicios y el bloque de contacto (RF-4, RF-7, RF-23).
+  - Visitante que llega desde un buscador directamente a la página de un servicio, sin pasar por el inicio: tiene el encabezado, "Volver a servicios", los otros servicios, el bloque de contacto y el pie de página (RF-4, RF-7, RF-23, RF-44).
+  - Pantalla de 360 px: el logo, el nombre y "Menú" van en una línea; el acceso de ingreso ("Ingresar", "Ir a mi portal" o "Ir al panel") es la última opción del menú plegado, y el menú abierto se ve completo, a lo ancho de la pantalla (RF-4, RF-6).
+  - Pantalla de entre 420 y 767 px: el acceso de ingreso vuelve al encabezado, al lado de "Menú" (RF-4).
   - "Servicios" o "Abogadas" elegidos desde una página de detalle: llevan al inicio, ya ubicado en esa sección (RF-5).
   - "Contacto" elegido en la página de dirección inexistente: lleva a su propio bloque de contacto (RF-5, RF-9).
   - Menú abierto en el celular y el visitante elige una opción: el menú se cierra y se ve el destino (RF-6).
@@ -190,7 +209,8 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Tarjeta de Carolina Pertusatti sin resumen al lado de la de Vanesa Sabalette Rabello con resumen: las dos se ven ordenadas aunque tengan distinta cantidad de texto (RF-20).
   - El estudio entrega solo el resumen o solo el texto de Carolina Pertusatti: su tarjeta sigue sin resumen ni página hasta tener los dos (RF-20).
 - **Contacto:**
-  - Hoy solo están informados el nombre y el WhatsApp: el bloque de contacto muestra solo esos dos, sin títulos vacíos (RF-24).
+  - Hoy solo están informados el nombre y el WhatsApp: el bloque de contacto muestra el título, el texto y solo el renglón "Teléfono / WhatsApp", y el pie de página no muestra íconos de redes ni email (RF-24, RF-44).
+  - Una red con dos cuentas (por ejemplo, la del estudio y la de una abogada): las dos van en el mismo renglón, bajo el nombre de la red (RF-23).
   - Hay dirección pero no horarios, o al revés: se muestra solo lo informado (RF-24).
   - El estudio informa una sola red social: se muestra solo esa (RF-23, RF-24).
   - La dirección genérica y el número genérico que tenía el portal dejan de existir: ni el sitio ni el portal los muestran (RF-22, RF-24; spec 004, RF-18).
@@ -224,6 +244,11 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - El sitio no muestra ningún aviso de cookies, porque a un visitante sin sesión no le guarda nada (RF-39, RF-40).
   - Al abrir WhatsApp, Google Maps, el email o una red social, el visitante pasa a un servicio de otra empresa, con sus propias reglas. El sitio solo lo enlaza (RF-25, RF-40).
   - Otro sitio intenta mostrar una página del sistema dentro de las suyas: no se muestra (RF-43).
+- **Pie de página y animaciones:**
+  - El año de la leyenda es el de la última publicación del sitio: cambia al volver a publicarlo (RF-44).
+  - Visitante que pidió reducir las animaciones: ve todo en su lugar desde el principio (RF-45).
+  - Navegador que no ejecuta el código de la página: ve todo el contenido, sin animaciones (RF-35, RF-45).
+  - Visitante que baja rápido hasta el final: las secciones que pasaron por la pantalla ya aparecieron, y ninguna queda oculta (RF-45).
 - **Sin conexión:** la página ya abierta sigue visible. Abrir otra depende de la conexión; no hay modo sin conexión (Fuera de alcance).
 
 ## Fuera de alcance
@@ -266,6 +291,9 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - La lista de direcciones para buscadores, la dirección principal de cada página, los datos del estudio para buscadores y la indicación de no listar las pantallas privadas (RF-37, RF-38).
   - Que las páginas públicas no tienen ningún campo para escribir, no guardan nada en el navegador de un visitante sin sesión y no piden al servidor ningún dato de causas, clientes, jurisprudencia, modelos ni escritos (RF-39, RF-41).
   - Que las pantallas del sistema indican que no se pueden mostrar dentro de otro sitio, y que los enlaces externos se abren aparte sin control sobre la página de origen (RF-25, RF-43).
+  - El acceso de ingreso dentro del menú en pantallas chicas y el menú desplegado a lo ancho (RF-4, RF-6).
+  - El bloque de contacto con sus textos y sus renglones, y el pie de página con sus datos, sus leyendas y el enlace a Bourder Web (RF-23, RF-44).
+  - Que con la reducción de movimiento no hay animaciones, y que sin el código de la página todo el contenido se ve (RF-35, RF-45).
 - `pnpm test` y `pnpm lint` sin errores.
 - Demo manual:
   1. Sin sesión, abrir el inicio desde un celular y verificar la apertura, las cuatro tarjetas con su frase, las dos tarjetas de las abogadas (iniciales en lugar de foto, Carolina Pertusatti sin resumen ni "Más información") y el bloque de contacto solo con los datos informados.
@@ -279,6 +307,8 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   9. En el portal y en el panel, desde un celular, verificar el nombre en dos líneas ("Pertusatti | Sabalette" y debajo "Abogadas") y, en el portal, el WhatsApp nuevo sin ninguna dirección de ejemplo.
   10. Recorrer el inicio y la página de Derecho Laboral solo con el teclado, incluidos el menú y las pestañas, y verificar que el foco siempre se ve. Repetir con un lector de pantalla y verificar que anuncia cada página nueva.
   11. Repetir los pasos 1 a 6 desde una computadora.
+  12. En una pantalla de 360 px, verificar que el logo, el nombre y "Menú" van en una línea, que el menú abierto se ve completo con el acceso de ingreso como última opción, y que el pie de página muestra sus datos, la leyenda y "Diseñado por Bourder Web" con su enlace.
+  13. Recorrer el inicio y verificar las animaciones; repetir con la reducción de movimiento activada en el dispositivo y verificar que todo aparece sin movimiento.
 - Al publicar el sitio en su dirección definitiva:
   1. Compartir por WhatsApp la dirección del inicio y la de Sucesiones, y verificar el título, la descripción y el logo en la vista previa (RF-36).
   2. Verificar con las herramientas de los buscadores que leen el texto de cada página, la lista de direcciones, los datos del estudio y que no listan las pantallas privadas (RF-35, RF-37, RF-38).
@@ -289,13 +319,13 @@ Ninguna impide planificar: cada dato pendiente tiene definido qué se muestra mi
 - [NECESITA ACLARACIÓN] Dirección del estudio, tal como debe leerse (calle, número, piso u oficina, ciudad y provincia).
 - [NECESITA ACLARACIÓN] Días y horarios de atención.
 - [NECESITA ACLARACIÓN] Email de contacto del estudio.
-- [NECESITA ACLARACIÓN] Redes sociales: cuáles son y la dirección de cada perfil.
+- [NECESITA ACLARACIÓN] Redes sociales: cuáles son, sus cuentas y la dirección de cada perfil.
 - [NECESITA ACLARACIÓN] Foto de Vanesa Sabalette Rabello.
 - [NECESITA ACLARACIÓN] Carolina Pertusatti: su resumen para la tarjeta, su texto completo y su foto.
 - [NECESITA ACLARACIÓN] Logo del estudio en buena calidad, para el encabezado y para la vista previa al compartir. El que se entregó es una imagen pequeña.
 
 ## Anexo — Textos aprobados
-Los textos de los servicios y de la abogada son los de la clienta. Las frases de las tarjetas y el resumen son recortes de esos textos, aprobados el 12/10/2026. Los mensajes de WhatsApp, los títulos, las descripciones y los textos de la interfaz se redactaron para esta spec.
+Los textos de los servicios y de la abogada son los de la clienta. Las frases de las tarjetas y el resumen son recortes de esos textos, aprobados el 12/10/2026. Los mensajes de WhatsApp, los títulos, las descripciones y los textos de la interfaz se redactaron para esta spec. Los textos del bloque de contacto (T-17) y del pie de página (T-18) se tomaron del modelo que eligió el estudio y se aprobaron el 15/10/2026.
 
 ### T-1 — Apertura del inicio
 > Brindamos asesoramiento jurídico integral, con especial dedicación al Derecho Laboral.
@@ -442,6 +472,10 @@ El título del inicio es el nombre del estudio. El de las demás páginas y pant
 - Menú y encabezado: "Servicios", "Abogadas", "Contacto", "Menú", "Ingresar", "Ir a mi portal", "Ir al panel", "Saltar al contenido".
 - Inicio: "Nuestros servicios", "Conocer más", "Abogadas", "Abogada", "Más información".
 - Páginas de detalle: "Volver a servicios", "Otros servicios", "Volver a abogadas", "Empresas", "Trabajadores".
-- Contacto: "Contacto", "WhatsApp", "Dirección", "Cómo llegar", "Horarios de atención", "Email", "Redes sociales".
+- Contacto: "Contactate con nosotros", "Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal.", "Ubicación", "Cómo llegar", "Teléfono / WhatsApp", "Disponibilidad", "Email".
 - Botón de WhatsApp: "Escribinos por WhatsApp".
 - Dirección inexistente: "No encontramos esa página", "Puede que la dirección esté mal escrita o que la página ya no exista.", "Ir al inicio".
+
+### T-18 — Pie de página
+- Derechos: "© <año> Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.", donde <año> es el año en que se publicó el sitio.
+- Diseño: "Diseñado por", seguido del logo y el nombre "Bourder Web", que llevan a https://bourderweb.com.ar.

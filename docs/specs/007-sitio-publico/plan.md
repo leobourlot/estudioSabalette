@@ -414,7 +414,7 @@ En la misma tarea y el mismo commit que el código (principio 2):
 
 ## Dependencias nuevas
 
-Ninguna. El prerenderizado usa el modo SSR de Vite y `react-dom/server`, ya instalados; `StaticRouter` viene en `react-router-dom` 7; el script corre con Node 24 sin compilar. Los íconos de las redes son SVG propios, como el de WhatsApp.
+Una, `motion`, sumada por los cambios de la demo manual (ver esa sección). Para lo demás, ninguna: el prerenderizado usa el modo SSR de Vite y `react-dom/server`, ya instalados; `StaticRouter` viene en `react-router-dom` 7; el script corre con Node 24 sin compilar. Los íconos de las redes son SVG propios, como el de WhatsApp.
 
 ## Variables de entorno
 
@@ -530,3 +530,64 @@ Los pasos de la demo manual de la spec. El contraste, el recorrido con teclado y
 | RNF de rendimiento | Sitio separado del panel y del portal, HTML prerenderizado, fotos con tamaño fijo | Al publicar |
 | RNF de disponibilidad | Contenido fijo; `fetchSessionSection` con límite de tiempo | `estado-sesion.test.ts` |
 | Spec 001, RF-12 y RF-17 (excepciones) | `GET /sesion/estado` sin extensión; sitio sin `ProveedorSesion` | e2e de estado, aislamiento |
+
+## Cambios de la demo manual [RF-3, RF-4, RF-6, RF-23, RF-44, RF-45]
+
+Durante la demo manual el estudio pidió cuatro cambios, que la spec ya incluye: el bloque de contacto con otro formato, el encabezado en pantallas chicas, un pie de página y animaciones con Motion.
+
+### Tipografía de los títulos [RF-3, RF-40]
+- Cormorant Garamond (licencia SIL Open Font License), pesos 500 y 600, solo el subconjunto latino, en `web/public/fuentes/` junto con su licencia. Los archivos `.woff2` se copian del paquete `@fontsource/cormorant-garamond` (descargado con `npm pack`, sin sumarlo como dependencia).
+- `index.css` declara las `@font-face` con `font-display: swap`: el texto se ve enseguida con la serifa del sistema y cambia al cargar la tipografía. `tailwind.config.js` suma `fontFamily.titulos: ['"Cormorant Garamond"', 'Georgia', 'serif']`, que usan los títulos del sitio público (`font-titulos`).
+- `index.html` precarga el peso de los títulos (`<link rel="preload" as="font" crossorigin>`), del propio sitio.
+
+### Datos de las redes [RF-23, RF-44]
+`RedSocial` pasa a `{ red, usuario, url }`: `usuario` es la cuenta como se muestra (por ejemplo, "@estudio"). El bloque de contacto agrupa por `red`: un renglón por red, con sus cuentas. El pie de página muestra un ícono por cuenta.
+
+### Bloque de contacto [RF-23]
+`ContactoSitio` se rehace con el formato del modelo:
+```
+<section id="contacto" aria-labelledby="contacto-titulo">          // degradado del logo
+  <h2 id="contacto-titulo" tabIndex=-1 class="font-titulos">Contactate con nosotros</h2>
+  <span aria-hidden class="línea corta"/>
+  <p>Estamos disponibles para escucharte. …</p>
+  <dl>
+    por cada dato informado, en este orden:
+      Ubicación · Teléfono / WhatsApp · Disponibilidad · Email · cada red
+      <div class="renglón">
+        <span aria-hidden class="recuadro con ícono"/>               // íconos propios en IconosContacto
+        <dt class="etiqueta en mayúsculas">…</dt>
+        <dd>dato (y "Cómo llegar" en Ubicación)</dd>
+      </div>
+  </dl>
+</section>
+```
+Deja de ser `<footer>`: el pie de página es otro elemento. Sigue al final de todas las páginas públicas, con `id="contacto"` para el menú.
+
+### Encabezado en pantallas chicas [RF-4, RF-6]
+- El encabezado pasa a ser `relative` y su fila no se parte: logo (40 px en pantallas chicas), nombre y "Menú" entran en 360 px.
+- Debajo de 420 px (`max-[419px]:`), `AccesoIngreso` se oculta en el encabezado y aparece como última opción del menú plegado; desde 420 px, al revés. Los dos son el mismo componente con la misma consulta: el encabezado consulta una sola vez y pasa la sección a los dos lugares.
+- El menú plegado deja de posicionarse respecto de "Menú": se despliega como panel `absolute inset-x-0 top-full` del encabezado, a lo ancho de la pantalla, así nunca queda cortado. Este era el error de la demo: el panel de 224 px se alineaba a la derecha de "Menú", que en 360 px quedaba a la izquierda, y salía de la pantalla.
+
+### Pie de página [RF-44]
+`PieSitio` (`<footer>`) después de `ContactoSitio` en `DisenoSitio`: logo y nombre al inicio, accesos del menú, WhatsApp con el mensaje de la página y email, íconos de las redes (`IconoRed` con `aria-label` del nombre de la red), "© <año> Pertusatti | Sabalette - Abogadas. Todos los derechos reservados." y "Diseñado por" con el logo y el nombre de Bourder Web enlazados a https://bourderweb.com.ar (`target="_blank"`, `rel="noopener noreferrer"`).
+- El año sale de `__ANIO_PUBLICACION__`, una constante que Vite define al construir (`define` en `vite.config.ts`), igual en el build del navegador y en el de Node: el HTML prerenderizado y la hidratación coinciden. En los tests vale el año actual.
+- El logo de Bourder Web va en `public/marca/bourder-web.svg`, con `alt=""`: el enlace se anuncia con su nombre.
+
+### Animaciones [RF-45]
+- Dependencia `motion` (ver "Dependencias nuevas"). Se usa solo en el sitio público, con `LazyMotion` y las funciones `domAnimation`, para cargar lo mínimo.
+- `componentes/Aparecer.tsx`: `m.div` con `initial="oculto"` y `whileInView="visible"` (una sola vez, con margen), opacidad y un desplazamiento de 16 px. Con `useReducedMotion()`, la transición dura 0 y no hay desplazamiento. Lo usan las secciones, las tarjetas (con un pequeño escalonado), los bloques de texto y el pie.
+- La apertura del inicio no usa `Aparecer`: se ve desde el primer momento.
+- El menú plegado y el contenido de las pestañas usan `AnimatePresence` con opacidad; la foto ya aparece con su transición de opacidad. Las tarjetas y los botones suman una elevación al pasar el puntero o recibir el foco, con clases de Tailwind (`motion-safe:`).
+- Sin el código de la página, Motion deja en el HTML prerenderizado el estado inicial (opacidad 0). Por eso `index.html` lleva `<noscript><style>[data-aparecer]{opacity:1!important;transform:none!important}</style></noscript>`, y `Aparecer` marca sus elementos con `data-aparecer`: sin código, todo se ve (RF-35).
+- Los tests corren con jsdom, que no tiene `IntersectionObserver`: `configuracion-tests.ts` suma uno de prueba que da todo por visible.
+
+### Cambios en los tests existentes
+- `contenido-sitio.test.ts` lee los textos nuevos de T-17 y T-18.
+- `ContactoSitio.test.tsx`, `EncabezadoSitio.test.tsx`, `DisenoSitio.test.tsx` y los de las páginas (títulos en orden, el `contentinfo` pasa a ser el pie) se ajustan.
+- `aislamiento-sitio.test.ts` suma `motion/react` a los paquetes permitidos y los módulos nuevos a la lista del sitio.
+
+### Dependencia nueva
+
+| Dependencia | Para qué | Alternativa descartada | Motivo |
+|---|---|---|---|
+| `motion` 14 (`motion/react`) | Animaciones del sitio público (RF-45): aparición al entrar en pantalla, menú y pestañas | Transiciones de CSS con un `IntersectionObserver` propio | El estudio pidió Motion. Resuelve la aparición al entrar en pantalla, la salida de elementos (`AnimatePresence`) y la reducción de movimiento, y con `LazyMotion` suma unos 20 KB comprimidos, solo en las páginas públicas. |

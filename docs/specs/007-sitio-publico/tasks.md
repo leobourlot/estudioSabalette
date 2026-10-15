@@ -219,3 +219,35 @@ Reglas para todas las tareas:
   - En Hostinger: una dirección inexistente responde 404; la barra final y `/servicios/derecho-laboral` redirigen; el panel y el portal cargan desde `app.html`; los encabezados de seguridad están presentes; y el texto de cada página se lee en menos de 3 segundos desde un celular con 4G.
   - Las redirecciones nuevas pasan de 302 a 301.
   - `validacion.md` registra el resultado.
+
+## Cambios de la demo manual
+
+Pedidos por el estudio durante la demo manual (spec: RF-3, RF-4, RF-6, RF-23, RF-44 y RF-45; plan: "Cambios de la demo manual"). Se hacen antes de cerrar T32. Estas tareas sí agregan una dependencia, `motion`, prevista en el plan.
+
+- [ ] **T34 — Textos nuevos y cuentas de las redes** [RF-2, RF-23, RF-44] **(modifica existente: `servicios/contenido-sitio.ts`, `servicios/datos-estudio.ts` y sus tests)**
+  `TEXTOS.contacto` con los textos nuevos de T-17, `TEXTOS.pie` con T-18, y `RedSocial` con `usuario`.
+  Hecho cuando: los tests comparan T-17 y T-18 con el anexo, carácter por carácter, y verifican el año en la leyenda.
+
+- [ ] **T35 — Tipografía de los títulos** [RF-3, RF-40] **(modifica existente: `index.css`, `index.html`, `tailwind.config.js`)**
+  Cormorant Garamond en `public/fuentes/` con su licencia, `@font-face` con `font-display: swap`, precarga y `font-titulos`.
+  Hecho cuando: un test verifica que los archivos de la tipografía y su licencia están en el sitio, y que `index.css` y `index.html` solo apuntan a archivos propios.
+
+- [ ] **T36 — Bloque de contacto con el formato nuevo** [RF-23 a RF-25, RF-27] **(modifica existente: `componentes/ContactoSitio.tsx` y su test)**
+  Título, línea, texto y un renglón por dato con su ícono en un recuadro; íconos propios.
+  Hecho cuando: los tests verifican el título y el texto, que con los datos de hoy solo está "Teléfono / WhatsApp", que con datos completos están los cinco renglones en orden, "Cómo llegar" y una red con dos cuentas, y que los enlaces se abren aparte.
+
+- [ ] **T37 — Encabezado en pantallas chicas** [RF-4, RF-6] **(modifica existente: `componentes/EncabezadoSitio.tsx`, `componentes/MenuSitio.tsx`, `componentes/AccesoIngreso.tsx` y sus tests)**
+  Una sola consulta de sesión para el encabezado y el menú, el acceso dentro del menú debajo de 420 px y el menú desplegado a lo ancho.
+  Hecho cuando: los tests verifican que el acceso está en el menú y en el encabezado con las clases de cada ancho, que la sesión se consulta una vez, que el panel del menú se ubica respecto del encabezado (`inset-x-0`), y que el acceso del menú cambia con la sesión.
+
+- [ ] **T38 — Pie de página** [RF-44] **(modifica existente: `componentes/DisenoSitio.tsx`, `vite.config.ts` y los tests de las páginas)**
+  `PieSitio` y `public/marca/bourder-web.svg`; el año de publicación desde `vite.config.ts`.
+  Hecho cuando: los tests verifican el logo y el nombre al inicio, los accesos, el WhatsApp con el mensaje de la página, que sin redes ni email no hay íconos ni email, que con datos de prueba hay un ícono por cuenta con su nombre, las dos leyendas y el enlace a https://bourderweb.com.ar aparte.
+
+- [ ] **T39 — Animaciones** [RF-35, RF-45] **(modifica existente: `package.json`, `index.html`, `configuracion-tests.ts`, componentes y páginas del sitio, `aislamiento-sitio.test.ts`)**
+  `motion` con `LazyMotion`, `Aparecer`, el menú y las pestañas con `AnimatePresence`, el `<noscript>` de `index.html` y el `IntersectionObserver` de prueba.
+  Hecho cuando: los tests verifican que con la reducción de movimiento las transiciones duran 0, que la apertura del inicio no se anima, que el HTML prerenderizado marca con `data-aparecer` lo que se anima y que `index.html` lo muestra sin código; la suite de la web y el build pasan.
+
+- [ ] **T40 — Revalidación** **(modifica existente: `validacion.md`)**
+  Actualizar `validacion.md` con los RF nuevos y cambiados y la guía de la demo (pasos 12 y 13).
+  Hecho cuando: `pnpm test` y `pnpm lint` pasan y la validación queda lista para retomar la demo manual.
