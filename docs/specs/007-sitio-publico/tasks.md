@@ -152,7 +152,7 @@ Reglas para todas las tareas:
   - Que elegir "Trabajadores" con el teclado cambia la dirección, el contenido, el título del documento y el mensaje de WhatsApp, y deja el foco en esa pestaña.
   - Que volver atrás muestra Empresas.
 
-- [ ] **T24 — Abogada y página inexistente** [RF-9, RF-19, RF-20, RF-42]
+- [x] **T24 — Abogada y página inexistente** [RF-9, RF-19, RF-20, RF-42]
   `SitioAbogada` y `SitioNoEncontrada`.
   Hecho cuando: los tests verifican la página de Vanesa Sabalette Rabello ("Volver a abogadas", foto, `<h1>`, "Abogada" y cada párrafo de T-14), y "No encontramos esa página" con su texto, "Ir al inicio" y los cuatro servicios, sin mostrar la dirección pedida ni lo que venga después del `?`.
 
