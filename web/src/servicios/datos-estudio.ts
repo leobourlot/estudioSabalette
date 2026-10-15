@@ -1,3 +1,5 @@
+import { REDES_DE_MUESTRA } from './redes-de-muestra';
+
 /**
  * Datos de contacto del estudio (spec 007, RF-3 y RF-22 a RF-24; spec 004, RF-18 y RF-19). Son
  * públicos y fijos, y viven en el código (principio 5): no se editan desde el panel. Son la única
@@ -54,4 +56,25 @@ export function whatsappUrl(mensaje?: string, contact: StudioContact = STUDIO_CO
 /** Enlace "Cómo llegar": la dirección en Google Maps (spec 007, RF-23). */
 export function mapsUrl(direccion: string): string {
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(direccion)}`;
+}
+
+/**
+ * Las redes que se muestran: las del estudio o, si se pide y el estudio todavía no informó
+ * ninguna, las de muestra (spec 007, RF-24). Regla pura, para los tests.
+ */
+export function pickNetworks(
+  redes: readonly RedSocial[],
+  muestra: readonly RedSocial[] | null,
+): readonly RedSocial[] {
+  return redes.length === 0 && muestra ? muestra : redes;
+}
+
+/**
+ * Las redes del bloque de contacto y del pie. Las de muestra solo en la versión de desarrollo:
+ * al construir para publicar, Vite reemplaza la condición por `false` y elimina la rama, así las
+ * redes de muestra no quedan ni en el código publicado (spec 007, RF-24).
+ */
+export function networksToShow(contact: StudioContact = STUDIO_CONTACT): readonly RedSocial[] {
+  if (import.meta.env.MODE === 'development') return pickNetworks(contact.redes, REDES_DE_MUESTRA);
+  return contact.redes;
 }

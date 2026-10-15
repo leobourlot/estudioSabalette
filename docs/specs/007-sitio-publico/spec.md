@@ -100,11 +100,11 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Dirección, días y horarios de atención, email y redes sociales: los que informe el estudio (ver Dudas abiertas).
 - RF-23: EL SISTEMA muestra al final de todas las páginas públicas, antes del pie de página (RF-44), un bloque de contacto sobre el degradado del logo, con el título "Contactate con nosotros", una línea corta debajo del título y el texto "Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal." (T-17). Debajo, cada dato en su renglón, con un ícono dentro de un recuadro, una etiqueta corta en mayúsculas y el dato:
   - "Ubicación": la dirección, como texto, y el enlace "Cómo llegar", que abre esa dirección en Google Maps.
-  - "Teléfono / WhatsApp": el número escrito, como enlace que abre una conversación con el estudio (RF-27).
+  - "Teléfono / WhatsApp": con el ícono de WhatsApp, el número escrito, como enlace que abre una conversación con el estudio (RF-27).
   - "Disponibilidad": los días y horarios de atención.
   - "Email": el email, escrito, como enlace para escribirle al estudio.
   - Cada red social, con el nombre de la red como etiqueta (por ejemplo, "Instagram") y sus cuentas (por ejemplo, "@estudio"), cada una como enlace a su perfil.
-- RF-24: MIENTRAS el estudio no haya informado un dato de contacto, EL SISTEMA no muestra ese dato, ni su título, ni un espacio vacío en su lugar. Nunca muestra un dato de ejemplo o inventado. El enlace "Cómo llegar" solo se muestra cuando hay dirección.
+- RF-24: MIENTRAS el estudio no haya informado un dato de contacto, EL SISTEMA no muestra ese dato, ni su título, ni un espacio vacío en su lugar. Nunca muestra un dato de ejemplo o inventado. El enlace "Cómo llegar" solo se muestra cuando hay dirección. Única excepción: en la versión de desarrollo, la que se usa para construir y probar el sitio antes de publicarlo, mientras el estudio no haya informado sus redes se muestran redes de muestra (Instagram, Facebook, X y LinkedIn, con una cuenta de muestra y el enlace a la página principal de cada red), para ver cómo quedan el bloque de contacto y el pie de página. El sitio publicado nunca las incluye.
 - RF-25: CUANDO un visitante elige un enlace que lo lleva fuera del sitio (WhatsApp, "Cómo llegar", el email o una red social), EL SISTEMA lo abre aparte, sin reemplazar la página que estaba viendo. El sitio abierto no recibe ningún control sobre la página de origen ni la dirección desde la que se llegó.
 
 ### WhatsApp
@@ -144,7 +144,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - El logo y el nombre del estudio, que llevan al inicio.
   - Los accesos "Servicios", "Abogadas" y "Contacto", como en el menú (RF-5).
   - El WhatsApp, escrito, como enlace con el mensaje de la página (RF-27), y el email, cuando el estudio lo informe (RF-24).
-  - Un ícono por cada red social informada, como enlace a su perfil, que el lector de pantalla anuncia con el nombre de la red. Sin redes informadas, no se muestra ninguno (RF-24).
+  - Las redes: el WhatsApp del estudio y cada cuenta de las redes informadas, cada una con el ícono y el nombre de la red (por ejemplo, "WhatsApp" o "Instagram"), como enlace a su perfil. Si una red tiene más de una cuenta, cada enlace suma la cuenta al nombre. Sin redes informadas, solo se muestra el WhatsApp (RF-24).
   - La leyenda "© <año> Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.", con el año en que se publicó el sitio (T-18).
   - La leyenda "Diseñado por" con el logo y el nombre "Bourder Web", que llevan a https://bourderweb.com.ar (T-18). Como todo enlace externo, se abre aparte (RF-25).
 
@@ -247,6 +247,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 - **Pie de página y animaciones:**
   - El año de la leyenda es el de la última publicación del sitio: cambia al volver a publicarlo (RF-44).
   - Visitante que pidió reducir las animaciones: ve todo en su lugar desde el principio (RF-45).
+  - En la versión de desarrollo, sin redes informadas: el contacto y el pie muestran las redes de muestra; el sitio publicado, construido con los mismos datos, no muestra ninguna (RF-24).
   - Navegador que no ejecuta el código de la página: ve todo el contenido, sin animaciones (RF-35, RF-45).
   - Visitante que baja rápido hasta el final: las secciones que pasaron por la pantalla ya aparecieron, y ninguna queda oculta (RF-45).
 - **Sin conexión:** la página ya abierta sigue visible. Abrir otra depende de la conexión; no hay modo sin conexión (Fuera de alcance).

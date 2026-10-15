@@ -251,3 +251,7 @@ Pedidos por el estudio durante la demo manual (spec: RF-3, RF-4, RF-6, RF-23, RF
 - [x] **T40 — Revalidación** **(modifica existente: `validacion.md`)**
   Actualizar `validacion.md` con los RF nuevos y cambiados y la guía de la demo (pasos 12 y 13).
   Hecho cuando: `pnpm test` y `pnpm lint` pasan y la validación queda lista para retomar la demo manual.
+
+- [x] **T41 — Redes con ícono y nombre, y redes de muestra en desarrollo** [RF-23, RF-24, RF-44] **(modifica existente: `servicios/datos-estudio.ts`, `componentes/ContactoSitio.tsx`, `componentes/PieSitio.tsx`, `componentes/IconosRedes.tsx` y sus tests, `validacion.md`)**
+  Las redes de muestra solo en desarrollo, el ícono de WhatsApp en el contacto y las redes del pie con ícono y nombre.
+  Hecho cuando: los tests verifican que `pickNetworks` usa las de muestra solo si se piden y no hay reales; que en los tests no aparecen; que el contacto lleva el ícono de WhatsApp; que el pie muestra "WhatsApp" y cada red con su nombre, sumando la cuenta cuando una red tiene varias; y que el build para publicar no contiene "cuenta-de-muestra".

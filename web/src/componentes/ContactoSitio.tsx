@@ -2,13 +2,14 @@ import type { ReactNode } from 'react';
 import { TEXTOS } from '../servicios/contenido-sitio';
 import {
   mapsUrl,
+  networksToShow,
   type RedSocial,
   STUDIO_CONTACT,
   type StudioContact,
   whatsappUrl,
 } from '../servicios/datos-estudio';
 import { Aparecer } from './Aparecer';
-import { IconoEmail, IconoReloj, IconoTelefono, IconoUbicacion } from './IconosContacto';
+import { IconoEmail, IconoReloj, IconoUbicacion } from './IconosContacto';
 import { IconoRed } from './IconosRedes';
 
 interface ContactoSitioProps {
@@ -95,7 +96,7 @@ export function ContactoSitio({ mensaje, contact = STUDIO_CONTACT }: ContactoSit
                 </a>
               </Renglon>
             )}
-            <Renglon icono={<IconoTelefono />} etiqueta={TEXTOS.contacto.telefono}>
+            <Renglon icono={<IconoRed red="WhatsApp" />} etiqueta={TEXTOS.contacto.telefono}>
               <a href={whatsappUrl(mensaje, contact)} className={LINK} {...EXTERNAL}>
                 {contact.whatsappVisible}
               </a>
@@ -116,7 +117,7 @@ export function ContactoSitio({ mensaje, contact = STUDIO_CONTACT }: ContactoSit
                 </a>
               </Renglon>
             )}
-            {groupByNetwork(contact.redes).map(([red, cuentas]) => (
+            {groupByNetwork(networksToShow(contact)).map(([red, cuentas]) => (
               <Renglon key={red} icono={<IconoRed red={red} />} etiqueta={red}>
                 {cuentas.map((cuenta) => (
                   <a key={cuenta.url} href={cuenta.url} className={`${LINK} mr-4`} {...EXTERNAL}>

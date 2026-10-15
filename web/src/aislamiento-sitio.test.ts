@@ -59,6 +59,7 @@ const SITE_MODULES = new Set([
   'estado-sesion',
   'marca',
   'presentacion-sitio',
+  'redes-de-muestra',
   'rutas-sitio',
 ]);
 

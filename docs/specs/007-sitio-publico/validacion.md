@@ -1,15 +1,15 @@
 # Validación 007 — Sitio público
 
-Recorrido de `spec.md` requisito por requisito (tarea T32, actualizado en T40 con los cambios de la demo manual). Corrida del 2026-10-15, después de T39: `pnpm test` y `pnpm lint` sin errores, y Prettier sin diferencias.
+Recorrido de `spec.md` requisito por requisito (tarea T32, actualizado en T40 con los cambios de la demo manual). Corrida del 2026-10-15, después de T41: `pnpm test` y `pnpm lint` sin errores, y Prettier sin diferencias.
 
 | Paquete | Suite | Archivos | Tests |
 |---|---|---|---|
 | api | Unitarios (Vitest) | 50 | 1263 |
 | api | e2e contra la base de tests (Vitest + Supertest) | 75 | 829 |
-| web | Vitest + Testing Library | 110 | 1646 |
-| | **Total** | **235** | **3738** |
+| web | Vitest + Testing Library | 110 | 1653 |
+| | **Total** | **235** | **3745** |
 
-Las cifras incluyen los tests de las specs 001 a 006, que siguen en verde. De esta spec son 23 unitarios y 14 e2e en la API, y 288 de la web. La API no cambió después de T3: su corrida completa es la de ese commit.
+Las cifras incluyen los tests de las specs 001 a 006, que siguen en verde. De esta spec son 23 unitarios y 14 e2e en la API, y 295 de la web. La API no cambió después de T3: su corrida completa es la de ese commit.
 
 Rutas abreviadas:
 - **U**: tests unitarios de `api/src/autenticacion/...`.
@@ -53,7 +53,7 @@ Rutas abreviadas:
 | RF-41 | Ningún dato de causas, clientes, cuentas, jurisprudencia, modelos ni escritos | E `sesion-estado` (solo la clave `seccion`); W `aislamiento-sitio.test.ts` | ✅ |
 | RF-42 | Lo que trae la dirección no se muestra ni se usa | W `SitioAbogada.test.tsx` (`SitioNoEncontrada`), `rutas-sitio.test.ts` (`decideEntry`), `DisenoSitio.test.tsx` | ✅ |
 | RF-43 | Ninguna pantalla dentro de otro sitio | W `htaccess.test.ts` | ✅ (en Hostinger: T33) |
-| RF-44 | Pie de página: logo y nombre, accesos, WhatsApp con el mensaje de la página, email y redes solo informados, leyenda con el año de publicación y "Diseñado por" Bourder Web aparte | W `PieSitio.test.tsx`, `contenido-sitio.test.ts` (T-18), `DisenoSitio.test.tsx` | ✅ |
+| RF-44 | Pie de página: logo y nombre, accesos, WhatsApp con el mensaje de la página, email, WhatsApp y cada red con su ícono y su nombre (con la cuenta si la red tiene varias), leyenda con el año de publicación y "Diseñado por" Bourder Web aparte | W `PieSitio.test.tsx`, `contenido-sitio.test.ts` (T-18), `DisenoSitio.test.tsx` | ✅ |
 | RF-45 | Animaciones: aparición al entrar en pantalla, menú, pestañas, foto y respuesta al puntero; sin movimiento con la reducción pedida; nada oculto sin código; apertura del inicio sin animar; hasta 0,6 s | W `animaciones.test.tsx`, `entrada-sitio.test.tsx` (hidratación sin diferencias), `SitioDerechoLaboral.test.tsx` | ✅ (cómo se ven: demo manual, paso 14) |
 
 ## Requisitos no funcionales
@@ -72,7 +72,7 @@ Rutas abreviadas:
 ## Observaciones
 - **Cambios de la demo manual.** El estudio pidió durante la demo el bloque de contacto con otro formato, el acceso dentro del menú en pantallas chicas (y el arreglo del menú que se cortaba a la izquierda), un pie de página, la tipografía con serifa y animaciones con Motion. La spec, el plan y las tareas (T34 a T40) los incluyen; la demo se retoma desde el principio.
 - **Tests lentos con la máquina cargada.** Durante T38 fallaron, una vez cada uno, dos tests del cambio de contraseña (tipean contraseñas largas y pasaron los 5 segundos) y uno de jurisprudencia. Solos pasan, y la suite completa pasó en las corridas siguientes. No son de esta spec; si vuelven a fallar, conviene darles más tiempo.
-- **Redes y email en el pie.** Mientras el estudio no informe sus redes ni su email, el pie no muestra íconos ni email: no hay nada inventado (RF-24).
+- **Redes de muestra (T41).** A pedido del estudio, con `pnpm dev` el contacto y el pie muestran Instagram, Facebook, X y LinkedIn con "@cuenta-de-muestra" y el enlace a la página principal de cada red, para ver cómo quedan. Es la única excepción a RF-24 y vale solo en desarrollo: se verificó que el build para publicar no contiene "cuenta-de-muestra" y que un build en modo desarrollo sí. En el sitio publicado, mientras el estudio no informe sus redes ni su email, el pie solo muestra el WhatsApp.
 - **Logo de Bourder Web.** Se recortó el `viewBox` del SVG al dibujo, para que se vea a la altura del texto.
 - **Logo provisorio.** El logo es la imagen de 150 px que entregó el estudio. Se usa también para la vista previa al compartir (`servicios/marca.ts`), hasta que llegue el logo en buena calidad y una imagen de 1200 × 630.
 - **Texto alternativo del logo.** Junto al nombre escrito, el logo lleva `alt=""` y el enlace se anuncia con el nombre del estudio, como dice el plan. Donde el logo va solo (la vista previa), su texto alternativo es el nombre.

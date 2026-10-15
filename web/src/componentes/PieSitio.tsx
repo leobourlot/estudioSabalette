@@ -1,5 +1,11 @@
 import { copyrightNotice, TEXTOS } from '../servicios/contenido-sitio';
-import { STUDIO_CONTACT, type StudioContact, whatsappUrl } from '../servicios/datos-estudio';
+import {
+  networksToShow,
+  type RedSocial,
+  STUDIO_CONTACT,
+  type StudioContact,
+  whatsappUrl,
+} from '../servicios/datos-estudio';
 import { LOGO_PATH } from '../servicios/marca';
 import { IconoRed } from './IconosRedes';
 import { NombreEstudio } from './NombreEstudio';
@@ -22,6 +28,14 @@ const LINK =
 /** Los enlaces que llevan fuera del sitio se abren aparte, sin control sobre esta página (RF-25). */
 const EXTERNAL = { target: '_blank', rel: 'noopener noreferrer' } as const;
 
+/** Las redes con más de una cuenta: cada enlace suma la cuenta al nombre de la red (RF-44). */
+function repeatedNetworks(redes: readonly RedSocial[]): Set<string> {
+  const seen = new Set<string>();
+  const repeated = new Set<string>();
+  for (const { red } of redes) (seen.has(red) ? repeated : seen).add(red);
+  return repeated;
+}
+
 const MENU = [
   { href: '/#servicios', label: TEXTOS.menu.servicios },
   { href: '/#abogadas', label: TEXTOS.menu.abogadas },
@@ -30,16 +44,20 @@ const MENU = [
 
 /**
  * Pie de todas las páginas públicas, después del bloque de contacto (spec 007, RF-44): el logo y
- * el nombre, los accesos del menú, el WhatsApp y el email, un ícono por cuenta de las redes
- * informadas, la leyenda de derechos y "Diseñado por Bourder Web". Lo que el estudio no informó no
- * se muestra (RF-24). Termina con un margen mayor que el botón de WhatsApp, así al final de la
- * página todo se puede ver y usar (RF-28).
+ * el nombre, los accesos del menú, el WhatsApp y el email, el WhatsApp y cada cuenta de las redes
+ * con su ícono y el nombre de la red, la leyenda de derechos y "Diseñado por Bourder Web". Lo que
+ * el estudio no informó no se muestra (RF-24), salvo las redes de muestra en desarrollo. Termina
+ * con un margen mayor que el botón de WhatsApp, así al final de la página todo se puede ver y usar
+ * (RF-28).
  */
 export function PieSitio({
   mensaje,
   contact = STUDIO_CONTACT,
   anio = __ANIO_PUBLICACION__,
 }: PieSitioProps) {
+  const redes = networksToShow(contact);
+  const repeated = repeatedNetworks(redes);
+
   return (
     <footer className="bg-estudio-oscuro px-4 pt-12 pb-28 text-sm text-slate-200">
       <div className="mx-auto max-w-5xl">
@@ -70,23 +88,24 @@ export function PieSitio({
                 {contact.email}
               </a>
             )}
-            {contact.redes.length > 0 && (
-              <ul className="mt-2 flex gap-2">
-                {contact.redes.map((red) => (
-                  <li key={red.url}>
-                    <a
-                      href={red.url}
-                      aria-label={`${red.red} ${red.usuario}`}
-                      className={`${LINK} w-11 justify-center rounded-full border border-estudio-blanco/30`}
-                      {...EXTERNAL}
-                    >
-                      <IconoRed red={red.red} />
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )}
           </div>
+
+          <ul aria-label="Redes" className="flex flex-col">
+            <li>
+              <a href={whatsappUrl(mensaje, contact)} className={LINK} {...EXTERNAL}>
+                <IconoRed red="WhatsApp" />
+                WhatsApp
+              </a>
+            </li>
+            {redes.map((red) => (
+              <li key={`${red.url} ${red.usuario}`}>
+                <a href={red.url} className={LINK} {...EXTERNAL}>
+                  <IconoRed red={red.red} />
+                  {repeated.has(red.red) ? `${red.red} ${red.usuario}` : red.red}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
 
         <div className="mt-10 flex flex-col gap-3 border-t border-estudio-blanco/15 pt-6 sm:flex-row sm:items-center sm:justify-between">

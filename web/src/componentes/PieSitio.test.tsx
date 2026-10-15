@@ -43,14 +43,24 @@ describe('PieSitio (spec 007, RF-44)', () => {
     expect(new URL(whatsapp.getAttribute('href')!).searchParams.get('text')).toBe(MESSAGE);
   });
 
-  it('con los datos de hoy no muestra email ni íconos de redes (RF-24)', () => {
+  it('con los datos de hoy, de las redes solo muestra WhatsApp, con su ícono (RF-24)', () => {
     render(<PieSitio mensaje={MESSAGE} anio={2026} />);
 
-    expect(footer().queryByRole('link', { name: /@|Instagram/ })).toBeNull();
-    expect(screen.getByRole('contentinfo').querySelectorAll('svg')).toHaveLength(0);
+    const redes = within(screen.getByRole('list', { name: 'Redes' }));
+    expect(redes.getAllByRole('link').map((a) => a.textContent)).toEqual(['WhatsApp']);
+    const whatsapp = redes.getByRole('link', { name: 'WhatsApp' });
+    expect(new URL(whatsapp.getAttribute('href')!).searchParams.get('text')).toBe(MESSAGE);
+    expect(whatsapp.querySelector('svg')!.getAttribute('aria-hidden')).toBe('true');
+    expect(footer().queryByRole('link', { name: /@/ })).toBeNull();
   });
 
-  it('con datos de prueba muestra el email y un ícono por cuenta, con el nombre de la red', () => {
+  it('en los tests no aparecen las redes de muestra, que son solo de desarrollo', () => {
+    render(<PieSitio mensaje={MESSAGE} anio={2026} />);
+
+    expect(screen.getByRole('contentinfo').textContent).not.toContain('Facebook');
+  });
+
+  it('con datos de prueba muestra el email y cada cuenta con su ícono y el nombre de la red', () => {
     render(<PieSitio mensaje={MESSAGE} contact={withNetworks} anio={2026} />);
 
     expect(footer().getByRole('link', { name: 'estudio@ejemplo.test' }).getAttribute('href')).toBe(
@@ -59,10 +69,10 @@ describe('PieSitio (spec 007, RF-44)', () => {
     expect(
       footer()
         .getAllByRole('link', { name: /^Instagram/ })
-        .map((a) => [a.getAttribute('aria-label'), a.getAttribute('href')]),
+        .map((a) => [a.textContent, a.getAttribute('href'), Boolean(a.querySelector('svg'))]),
     ).toEqual([
-      ['Instagram @estudio', 'https://instagram.com/estudio'],
-      ['Instagram @abogada', 'https://instagram.com/abogada'],
+      ['Instagram @estudio', 'https://instagram.com/estudio', true],
+      ['Instagram @abogada', 'https://instagram.com/abogada', true],
     ]);
   });
 
@@ -101,10 +111,23 @@ describe('PieSitio (spec 007, RF-44)', () => {
     const external = footer()
       .getAllByRole('link')
       .filter((a) => a.getAttribute('href')!.match(/^(https?:|mailto:)/));
-    expect(external).toHaveLength(5);
+    expect(external).toHaveLength(6);
     for (const link of external) {
       expect(link.getAttribute('target')).toBe('_blank');
       expect(link.getAttribute('rel')).toBe('noopener noreferrer');
     }
+  });
+});
+
+describe('PieSitio: redes de una sola cuenta (RF-44)', () => {
+  it('muestran solo el nombre de la red', () => {
+    const contact: StudioContact = {
+      ...STUDIO_CONTACT,
+      redes: [{ red: 'LinkedIn', usuario: 'Estudio', url: 'https://linkedin.com/company/x' }],
+    };
+    render(<PieSitio mensaje={MESSAGE} contact={contact} anio={2026} />);
+
+    const redes = within(screen.getByRole('list', { name: 'Redes' }));
+    expect(redes.getAllByRole('link').map((a) => a.textContent)).toEqual(['WhatsApp', 'LinkedIn']);
   });
 });

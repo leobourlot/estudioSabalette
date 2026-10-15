@@ -591,3 +591,10 @@ Deja de ser `<footer>`: el pie de página es otro elemento. Sigue al final de to
 | Dependencia | Para qué | Alternativa descartada | Motivo |
 |---|---|---|---|
 | `motion` 14 (`motion/react`) | Animaciones del sitio público (RF-45): aparición al entrar en pantalla, menú y pestañas | Transiciones de CSS con un `IntersectionObserver` propio | El estudio pidió Motion. Resuelve la aparición al entrar en pantalla, la salida de elementos (`AnimatePresence`) y la reducción de movimiento, y con `LazyMotion` suma unos 30 KB comprimidos (medido en el build de T39), solo en las páginas públicas. |
+
+### Redes de muestra en desarrollo [RF-23, RF-24, RF-44]
+Pedido por el estudio después de la demo, para ver cómo quedan las redes antes de tener las reales.
+- `servicios/redes-de-muestra.ts`: Instagram, Facebook, X y LinkedIn, cada una con la cuenta "@cuenta-de-muestra" y el enlace a la página principal de la red (nunca a una cuenta de alguien).
+- `servicios/datos-estudio.ts`: `pickNetworks(redes, usarMuestra)` es la regla pura (las de muestra solo si se pide y no hay redes reales) y `networksToShow(contact)` la aplica con `import.meta.env.MODE === 'development'`. Vite reemplaza esa condición al construir: en el build para publicar es `false`, la rama se elimina y las redes de muestra no quedan ni en el código publicado. En los tests el modo es `test`: se ven solo las redes que el test pasa.
+- `ContactoSitio` y `PieSitio` usan `networksToShow`. El renglón "Teléfono / WhatsApp" pasa a llevar el ícono de WhatsApp, y el pie muestra el WhatsApp y cada cuenta con su ícono y el nombre de la red escrito.
+- `IconosRedes` suma WhatsApp y X.

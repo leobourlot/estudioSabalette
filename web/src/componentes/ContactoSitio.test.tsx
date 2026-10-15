@@ -108,3 +108,19 @@ describe('ContactoSitio (spec 007, RF-23 a RF-25)', () => {
     }
   });
 });
+
+describe('ContactoSitio: WhatsApp (spec 007, RF-23)', () => {
+  it('el renglón "Teléfono / WhatsApp" lleva el ícono de WhatsApp', () => {
+    render(<ContactoSitio mensaje={MESSAGE} />);
+
+    const row = within(block()).getByText('Teléfono / WhatsApp').closest('li')!;
+    const icon = row.querySelector('[aria-hidden="true"] svg')!;
+    expect(icon.querySelector('path')!.getAttribute('d')).toMatch(/^M12 2a10 10/);
+  });
+
+  it('en los tests no aparecen las redes de muestra, que son solo de desarrollo', () => {
+    render(<ContactoSitio mensaje={MESSAGE} />);
+
+    expect(labels()).toEqual(['Teléfono / WhatsApp']);
+  });
+});
