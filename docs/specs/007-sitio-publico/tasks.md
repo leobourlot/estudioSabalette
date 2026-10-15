@@ -122,7 +122,7 @@ Reglas para todas las tareas:
   - Que "Cómo llegar" no aparece sin dirección.
   - Que todos los enlaces externos llevan `target="_blank"` y `rel="noopener noreferrer"`.
 
-- [ ] **T18 — Acceso de ingreso** [RF-29, RF-30, RF-32]
+- [x] **T18 — Acceso de ingreso** [RF-29, RF-30, RF-32]
   `AccesoIngreso`, con `fetchSessionSection` inyectable.
   Hecho cuando: los tests verifican "Ingresar" mientras se consulta, con `null` y ante un error; "Ir a mi portal" a `/portal` y "Ir al panel" a `/panel`; que son enlaces comunes y no muestran ningún dato de la cuenta; y que se vuelve a consultar en `pageshow` con `persisted`.
 
