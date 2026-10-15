@@ -166,7 +166,7 @@ Reglas para todas las tareas:
   `main.tsx` usa `decideEntry`: reemplaza la dirección si hace falta, carga `App` para las rutas de la aplicación y `entrada-sitio.tsx` para las demás. `entrada-sitio.tsx` hidrata si `#root` tiene contenido. `RutasAplicacion` deja `/` y `*`.
   Hecho cuando: los tests verifican que `entrada-sitio` hidrata un `#root` con el HTML de `renderPublicPage` sin avisos de diferencias, y que monta desde cero un `#root` vacío. Con `pnpm --filter web dev`, `/`, una página de servicio, `/ingresar` y `/panel` muestran lo que corresponde, y `/Servicios/Sucesiones` lleva a `/servicios/sucesiones`.
 
-- [ ] **T27 — Render del servidor y archivos del sitio** [RF-35, RF-37, RF-38]
+- [x] **T27 — Render del servidor y archivos del sitio** [RF-35, RF-37, RF-38]
   `entrada-servidor.tsx` (`renderPublicPage` con `StaticRouter`) y `servicios/archivos-sitio.ts` (`buildSiteFiles`).
   Hecho cuando: los tests verifican:
   - Un archivo por página pública, con su `<h1>`, su texto y sus enlaces dentro de `#root`, su cabecera, "Ingresar" y ningún "Ir a mi portal".
