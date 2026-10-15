@@ -19,7 +19,7 @@ Reglas para todas las tareas:
   - Los tests unitarios verifican `null` sin token, con un token mal firmado, con `sub` o `sid` no enteros, y con una sesión inexistente, revocada, vencida, de otro usuario o de una cuenta desactivada; y la sesión con su usuario cuando es válida.
   - `autenticacion.guard.spec.ts`, `sesion.e2e-spec.ts` y `renovacion.e2e-spec.ts` siguen en verde sin cambiar sus casos.
 
-- [ ] **T2 — Sección de la sesión** [RF-31, RF-41] **(modifica existente: `autenticacion/autenticacion.service.ts` y `autenticacion.service.spec.ts`)**
+- [x] **T2 — Sección de la sesión** [RF-31, RF-41] **(modifica existente: `autenticacion/autenticacion.service.ts` y `autenticacion.service.spec.ts`)**
   `sessionSection(token)`: `'portal'`, `'panel'` o `null`, con `findValidSession` y sin escribir nada.
   Hecho cuando: los tests unitarios verifican `'portal'` para un cliente (también con cambio de contraseña pendiente), `'panel'` para un administrador y un abogado, `null` sin sesión válida, y que nunca se llama a `update` del repositorio de sesiones.
 

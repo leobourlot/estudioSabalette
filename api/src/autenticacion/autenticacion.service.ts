@@ -16,6 +16,10 @@ import {
   parseRefreshToken,
   sameHash,
 } from './tokens.js';
+import { findValidSession } from './sesion-valida.js';
+
+/** Sección a la que lleva el acceso del sitio público (spec 007, RF-30). */
+export type SeccionSesion = 'portal' | 'panel';
 
 export const INVALID_CREDENTIALS_MESSAGE = 'Email o contraseña incorrectos';
 export const WRONG_CURRENT_PASSWORD_MESSAGE = 'La contraseña actual no es correcta';
@@ -212,6 +216,17 @@ export class AuthenticationService {
       primerIntentoFallidoEn: windowExpired ? new Date(now) : session.primerIntentoFallidoEn,
     });
     throw new BadRequestException(WRONG_CURRENT_PASSWORD_MESSAGE);
+  }
+
+  /**
+   * Sección a la que va la sesión del token de acceso, para el acceso del sitio público:
+   * "portal" para un cliente, "panel" para un integrante, o null si no hay una sesión válida
+   * (spec 007, RF-29 a RF-31). Solo lee: no extiende ni renueva la sesión.
+   */
+  async sessionSection(token: unknown): Promise<SeccionSesion | null> {
+    const session = await findValidSession(this.sessions, this.jwt, token);
+    if (!session) return null;
+    return session.usuario.rol === 'cliente' ? 'portal' : 'panel';
   }
 
   /** Usuario con sus datos de cliente, para responder sus datos propios (RF-35). */

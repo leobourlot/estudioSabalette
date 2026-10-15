@@ -237,3 +237,71 @@ describe('AuthenticationService.refresh', () => {
     },
   );
 });
+
+describe('AuthenticationService.sessionSection (spec 007, RF-31)', () => {
+  const jwt = new JwtService({ secret: SECRET, signOptions: { algorithm: 'HS256' } });
+  let sessions: { findOne: ReturnType<typeof vi.fn>; update: ReturnType<typeof vi.fn> };
+  let service: AuthenticationService;
+
+  function givenSession(usuario: Partial<Usuario>, sesion: Partial<Sesion> = {}) {
+    sessions.findOne.mockResolvedValue({
+      id: 40,
+      usuarioId: 7,
+      usuario: { ...storedUser, ...usuario },
+      revocadaEn: null,
+      venceEn: new Date(NOW.getTime() + MINUTE),
+      ...sesion,
+    } as Sesion);
+  }
+
+  const token = () => jwt.signAsync({ sub: 7, sid: 40 }, { expiresIn: '15m' });
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    vi.setSystemTime(NOW);
+    sessions = { findOne: vi.fn(), update: vi.fn() };
+    service = new AuthenticationService(
+      { findOne: vi.fn() } as unknown as Repository<Usuario>,
+      sessions as unknown as Repository<Sesion>,
+      { hash: vi.fn().mockResolvedValue('$2b$12$hash-ficticio') } as unknown as PasswordsService,
+      jwt,
+    );
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+    // Nunca escribe: consultar el estado no extiende ni renueva la sesión.
+    expect(sessions.update).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['un cliente', { rol: 'cliente' }, 'portal'],
+    [
+      'un cliente con cambio de contraseña pendiente',
+      { rol: 'cliente', debeCambiarContrasena: true },
+      'portal',
+    ],
+    ['un abogado', { rol: 'abogado' }, 'panel'],
+    ['un administrador', { rol: 'admin' }, 'panel'],
+  ] as const)('devuelve la sección de %s', async (_caso, usuario, seccion) => {
+    givenSession(usuario);
+
+    await expect(service.sessionSection(await token())).resolves.toBe(seccion);
+  });
+
+  it('devuelve null sin token', async () => {
+    await expect(service.sessionSection(undefined)).resolves.toBeNull();
+  });
+
+  it('devuelve null con una sesión revocada', async () => {
+    givenSession({ rol: 'cliente' }, { revocadaEn: new Date(NOW.getTime() - MINUTE) });
+
+    await expect(service.sessionSection(await token())).resolves.toBeNull();
+  });
+
+  it('devuelve null con la cuenta desactivada', async () => {
+    givenSession({ rol: 'abogado', activo: false });
+
+    await expect(service.sessionSection(await token())).resolves.toBeNull();
+  });
+});
