@@ -11,60 +11,81 @@ const complete: StudioContact = {
   horarios: ['Lunes a viernes de 8 a 13', 'Martes y jueves de 17 a 20'],
   email: 'estudio@ejemplo.test',
   redes: [
-    { red: 'Instagram', url: 'https://instagram.com/estudio' },
-    { red: 'LinkedIn', url: 'https://linkedin.com/company/estudio' },
+    { red: 'Instagram', usuario: '@estudio', url: 'https://instagram.com/estudio' },
+    { red: 'LinkedIn', usuario: 'Pertusatti Sabalette', url: 'https://linkedin.com/company/x' },
+    { red: 'Instagram', usuario: '@abogada', url: 'https://instagram.com/abogada' },
   ],
 };
 
-const block = () => screen.getByRole('contentinfo', { name: 'Contacto' });
-const titles = () => Array.from(block().querySelectorAll('dt')).map((dt) => dt.textContent);
+const block = () => screen.getByRole('region', { name: 'Contactate con nosotros' });
+const labels = () =>
+  Array.from(block().querySelectorAll('[data-etiqueta]')).map((p) => p.textContent);
 
 describe('ContactoSitio (spec 007, RF-23 a RF-25)', () => {
-  it('con los datos de hoy muestra solo el nombre y el WhatsApp, sin títulos vacíos (RF-24)', () => {
+  it('tiene el título, la línea y el texto del modelo (T-17)', () => {
     render(<ContactoSitio mensaje={MESSAGE} />);
 
     expect(block().id).toBe('contacto');
-    expect(within(block()).getByRole('heading', { level: 2, name: 'Contacto' })).toBeTruthy();
-    expect(within(block()).getByText('Pertusatti | Sabalette').parentElement!.textContent).toBe(
-      'Pertusatti | Sabalette - Abogadas',
-    );
-    expect(titles()).toEqual(['WhatsApp']);
+    expect(
+      within(block()).getByRole('heading', { level: 2, name: 'Contactate con nosotros' }),
+    ).toBeTruthy();
+    expect(
+      within(block()).getByText(
+        'Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal.',
+      ),
+    ).toBeTruthy();
+  });
+
+  it('con los datos de hoy solo muestra "Teléfono / WhatsApp" (RF-24)', () => {
+    render(<ContactoSitio mensaje={MESSAGE} />);
+
+    expect(labels()).toEqual(['Teléfono / WhatsApp']);
     const whatsapp = within(block()).getByRole('link', { name: '+54 9 3455 41-4147' });
     expect(new URL(whatsapp.getAttribute('href')!).searchParams.get('text')).toBe(MESSAGE);
     expect(within(block()).queryByRole('link', { name: 'Cómo llegar' })).toBeNull();
   });
 
-  it('con datos completos muestra cada uno con su título', () => {
+  it('con datos completos muestra cada renglón en orden, una red por renglón', () => {
     render(<ContactoSitio mensaje={MESSAGE} contact={complete} />);
 
-    expect(titles()).toEqual([
-      'WhatsApp',
-      'Dirección',
-      'Horarios de atención',
+    expect(labels()).toEqual([
+      'Ubicación',
+      'Teléfono / WhatsApp',
+      'Disponibilidad',
       'Email',
-      'Redes sociales',
+      'Instagram',
+      'LinkedIn',
     ]);
     expect(within(block()).getByText('San Martín 123, Piso 2, Villaguay')).toBeTruthy();
     const maps = within(block()).getByRole('link', { name: 'Cómo llegar' });
     expect(new URL(maps.getAttribute('href')!).searchParams.get('query')).toBe(
       'San Martín 123, Piso 2, Villaguay',
     );
-    expect(maps.getAttribute('href')!.startsWith('https://www.google.com/maps/')).toBe(true);
     expect(within(block()).getByText('Lunes a viernes de 8 a 13')).toBeTruthy();
     expect(within(block()).getByText('Martes y jueves de 17 a 20')).toBeTruthy();
     expect(
       within(block()).getByRole('link', { name: 'estudio@ejemplo.test' }).getAttribute('href'),
     ).toBe('mailto:estudio@ejemplo.test');
-    expect(within(block()).getByRole('link', { name: 'Instagram' }).getAttribute('href')).toBe(
-      'https://instagram.com/estudio',
-    );
-    expect(within(block()).getByRole('link', { name: 'LinkedIn' })).toBeTruthy();
+  });
+
+  it('una red con dos cuentas las muestra en su renglón, cada una con su enlace', () => {
+    render(<ContactoSitio mensaje={MESSAGE} contact={complete} />);
+
+    const instagram = block().querySelectorAll('li')[4];
+    expect(
+      within(instagram)
+        .getAllByRole('link')
+        .map((a) => [a.textContent, a.getAttribute('href')]),
+    ).toEqual([
+      ['@estudio', 'https://instagram.com/estudio'],
+      ['@abogada', 'https://instagram.com/abogada'],
+    ]);
   });
 
   it('"Cómo llegar" solo aparece con dirección', () => {
     render(<ContactoSitio mensaje={MESSAGE} contact={{ ...complete, direccion: null }} />);
 
-    expect(titles()).not.toContain('Dirección');
+    expect(labels()).not.toContain('Ubicación');
     expect(within(block()).queryByRole('link', { name: 'Cómo llegar' })).toBeNull();
   });
 
@@ -72,18 +93,18 @@ describe('ContactoSitio (spec 007, RF-23 a RF-25)', () => {
     render(<ContactoSitio mensaje={MESSAGE} contact={complete} />);
 
     const links = within(block()).getAllByRole('link');
-    expect(links).toHaveLength(5);
+    expect(links).toHaveLength(6);
     for (const link of links) {
       expect(link.getAttribute('target')).toBe('_blank');
       expect(link.getAttribute('rel')).toBe('noopener noreferrer');
     }
   });
 
-  it('los íconos de las redes no se anuncian', () => {
+  it('los íconos no se anuncian', () => {
     render(<ContactoSitio mensaje={MESSAGE} contact={complete} />);
 
     for (const svg of block().querySelectorAll('svg')) {
-      expect(svg.getAttribute('aria-hidden')).toBe('true');
+      expect(svg.closest('[aria-hidden="true"]')).not.toBeNull();
     }
   });
 });

@@ -26,7 +26,7 @@ describe('SitioInicio (spec 007, RF-11, RF-12 y RF-18)', () => {
       'h2 Abogadas',
       'h3 Carolina Pertusatti',
       'h3 Vanesa Sabalette Rabello',
-      'h2 Contacto',
+      'h2 Contactate con nosotros',
     ]);
   });
 

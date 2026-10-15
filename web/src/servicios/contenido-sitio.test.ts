@@ -12,6 +12,7 @@ import {
   ABOGADAS,
   APERTURA,
   type Bloque,
+  copyrightNotice,
   hasOwnPage,
   INTRO_SERVICIOS,
   MENSAJES_WHATSAPP,
@@ -202,5 +203,22 @@ describe('textos de la interfaz contra el anexo (T-17)', () => {
 
   it('dirección inexistente', () => {
     expect(Object.values(TEXTOS.noEncontrada)).toEqual(lineFor('Dirección inexistente'));
+  });
+});
+
+describe('pie de página contra el anexo (T-18, RF-44)', () => {
+  const section = annexSection('T-18');
+  const line = (prefix: string) => section.find((l) => l.startsWith(`- ${prefix}:`))!;
+
+  it('la leyenda de derechos, con el año', () => {
+    expect([TEXTOS.pie.derechos]).toEqual(quotedStrings(line('Derechos')));
+    expect(copyrightNotice(2026)).toBe(
+      '© 2026 Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.',
+    );
+  });
+
+  it('"Diseñado por" y Bourder Web, con su dirección', () => {
+    expect([TEXTOS.pie.disenadoPor, TEXTOS.pie.bourderWeb]).toEqual(quotedStrings(line('Diseño')));
+    expect(line('Diseño')).toContain(TEXTOS.pie.bourderWebUrl);
   });
 });

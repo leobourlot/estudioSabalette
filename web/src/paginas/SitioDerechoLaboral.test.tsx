@@ -139,7 +139,7 @@ describe('SitioDerechoLaboral (spec 007, RF-15 a RF-17)', () => {
       'h1 Derecho Laboral',
       'h2 Trabajadores',
       'h2 Otros servicios',
-      'h2 Contacto',
+      'h2 Contactate con nosotros',
     ]);
   });
 });

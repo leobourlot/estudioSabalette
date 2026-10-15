@@ -224,7 +224,7 @@ Reglas para todas las tareas:
 
 Pedidos por el estudio durante la demo manual (spec: RF-3, RF-4, RF-6, RF-23, RF-44 y RF-45; plan: "Cambios de la demo manual"). Se hacen antes de cerrar T32. Estas tareas sí agregan una dependencia, `motion`, prevista en el plan.
 
-- [ ] **T34 — Textos nuevos y cuentas de las redes** [RF-2, RF-23, RF-44] **(modifica existente: `servicios/contenido-sitio.ts`, `servicios/datos-estudio.ts` y sus tests)**
+- [x] **T34 — Textos nuevos y cuentas de las redes** [RF-2, RF-23, RF-44] **(modifica existente: `servicios/contenido-sitio.ts`, `servicios/datos-estudio.ts` y sus tests)**
   `TEXTOS.contacto` con los textos nuevos de T-17, `TEXTOS.pie` con T-18, y `RedSocial` con `usuario`.
   Hecho cuando: los tests comparan T-17 y T-18 con el anexo, carácter por carácter, y verifican el año en la leyenda.
 
@@ -232,7 +232,7 @@ Pedidos por el estudio durante la demo manual (spec: RF-3, RF-4, RF-6, RF-23, RF
   Cormorant Garamond en `public/fuentes/` con su licencia, `@font-face` con `font-display: swap`, precarga y `font-titulos`.
   Hecho cuando: un test verifica que los archivos de la tipografía y su licencia están en el sitio, y que `index.css` y `index.html` solo apuntan a archivos propios.
 
-- [ ] **T36 — Bloque de contacto con el formato nuevo** [RF-23 a RF-25, RF-27] **(modifica existente: `componentes/ContactoSitio.tsx` y su test)**
+- [x] **T36 — Bloque de contacto con el formato nuevo** [RF-23 a RF-25, RF-27] **(modifica existente: `componentes/ContactoSitio.tsx` y su test)**
   Título, línea, texto y un renglón por dato con su ícono en un recuadro; íconos propios.
   Hecho cuando: los tests verifican el título y el texto, que con los datos de hoy solo está "Teléfono / WhatsApp", que con datos completos están los cinco renglones en orden, "Cómo llegar" y una red con dos cuentas, y que los enlaces se abren aparte.
 

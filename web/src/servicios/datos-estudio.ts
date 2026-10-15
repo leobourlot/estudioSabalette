@@ -7,6 +7,8 @@
 export interface RedSocial {
   /** Nombre de la red, tal como se muestra (por ejemplo, "Instagram"). */
   red: string;
+  /** La cuenta, como se muestra (por ejemplo, "@estudio"). Una red puede tener varias. */
+  usuario: string;
   url: string;
 }
 

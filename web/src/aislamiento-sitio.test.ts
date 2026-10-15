@@ -37,6 +37,7 @@ const SITE_MODULES = new Set([
   'DisenoSitio',
   'EncabezadoSitio',
   'FotoAbogada',
+  'IconosContacto',
   'IconosRedes',
   'MenuSitio',
   'NombreEstudio',

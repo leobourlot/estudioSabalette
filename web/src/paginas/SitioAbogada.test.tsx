@@ -37,7 +37,10 @@ describe('SitioAbogada (spec 007, RF-7 y RF-19)', () => {
       (p) => p.textContent,
     );
     expect(paragraphs).toEqual(['Abogada', ...vanesa.texto!]);
-    expect(headingOutline(container)).toEqual(['h1 Vanesa Sabalette Rabello', 'h2 Contacto']);
+    expect(headingOutline(container)).toEqual([
+      'h1 Vanesa Sabalette Rabello',
+      'h2 Contactate con nosotros',
+    ]);
   });
 
   it('usa el mensaje general de WhatsApp y pone su título', () => {
@@ -78,7 +81,7 @@ describe('SitioNoEncontrada (spec 007, RF-9 y RF-42)', () => {
     renderAt(PATH, <SitioNoEncontrada />);
 
     expect(screen.getByRole('banner')).toBeTruthy();
-    expect(screen.getByRole('contentinfo', { name: 'Contacto' })).toBeTruthy();
+    expect(screen.getByRole('region', { name: 'Contactate con nosotros' })).toBeTruthy();
     expect(whatsappText()).toBe(MENSAJES_WHATSAPP.general);
     expect(document.title).toBe('Página no encontrada · Pertusatti | Sabalette - Abogadas');
   });

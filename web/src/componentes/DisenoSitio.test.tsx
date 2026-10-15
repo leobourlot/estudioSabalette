@@ -49,7 +49,9 @@ describe('DisenoSitio (spec 007, RF-4, RF-23, RF-26 y RF-28)', () => {
   it('el contacto deja lugar abajo para el botón (RF-28)', () => {
     renderLayout();
 
-    expect(screen.getByRole('contentinfo', { name: 'Contacto' }).className).toContain('pb-28');
+    expect(screen.getByRole('region', { name: 'Contactate con nosotros' }).className).toContain(
+      'pb-28',
+    );
   });
 });
 
@@ -73,7 +75,7 @@ describe('useFocoEnAncla (RNF de accesibilidad)', () => {
     });
 
     expect(document.activeElement).toBe(
-      screen.getByRole('heading', { level: 2, name: 'Contacto' }),
+      screen.getByRole('heading', { level: 2, name: 'Contactate con nosotros' }),
     );
   });
 

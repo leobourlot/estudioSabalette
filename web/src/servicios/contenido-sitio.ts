@@ -235,7 +235,7 @@ export const MENSAJES_WHATSAPP = {
   sucesiones: 'Hola, me contacto desde el sitio web por una consulta sobre sucesiones.',
 } as const;
 
-/** T-17: los textos de la interfaz del sitio público. */
+/** T-17 y T-18: los textos de la interfaz del sitio público. */
 export const TEXTOS = {
   menu: {
     servicios: 'Servicios',
@@ -262,13 +262,14 @@ export const TEXTOS = {
     trabajadores: 'Trabajadores',
   },
   contacto: {
-    contacto: 'Contacto',
-    whatsapp: 'WhatsApp',
-    direccion: 'Dirección',
+    titulo: 'Contactate con nosotros',
+    texto:
+      'Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal.',
+    ubicacion: 'Ubicación',
     comoLlegar: 'Cómo llegar',
-    horarios: 'Horarios de atención',
+    telefono: 'Teléfono / WhatsApp',
+    disponibilidad: 'Disponibilidad',
     email: 'Email',
-    redes: 'Redes sociales',
   },
   botonWhatsapp: 'Escribinos por WhatsApp',
   noEncontrada: {
@@ -276,4 +277,15 @@ export const TEXTOS = {
     texto: 'Puede que la dirección esté mal escrita o que la página ya no exista.',
     irAlInicio: 'Ir al inicio',
   },
+  pie: {
+    derechos: '© <año> Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.',
+    disenadoPor: 'Diseñado por',
+    bourderWeb: 'Bourder Web',
+    bourderWebUrl: 'https://bourderweb.com.ar',
+  },
 } as const;
+
+/** T-18: la leyenda de derechos con el año en que se publicó el sitio (RF-44). */
+export function copyrightNotice(anio: number): string {
+  return TEXTOS.pie.derechos.replace('<año>', String(anio));
+}

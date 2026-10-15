@@ -106,7 +106,7 @@ describe('legalServiceData (RF-37)', () => {
       direccion: 'San Martín 123, Villaguay',
       horarios: ['Lunes a viernes de 8 a 13'],
       email: 'estudio@ejemplo.test',
-      redes: [{ red: 'Instagram', url: 'https://instagram.com/estudio' }],
+      redes: [{ red: 'Instagram', usuario: '@estudio', url: 'https://instagram.com/estudio' }],
     };
 
     expect(legalServiceData(SITE, contact)).toMatchObject({
