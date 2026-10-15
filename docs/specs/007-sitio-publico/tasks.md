@@ -73,7 +73,7 @@ Reglas para todas las tareas:
   - Que `<`, `&` y comillas se escapan, y que ningún texto puede cerrar la etiqueta del `ld+json`.
   - `noindex` en la página inexistente y en la aplicación, y no en las demás.
 
-- [ ] **T9 — Estado de la sesión en la web** [RF-29 a RF-31]
+- [x] **T9 — Estado de la sesión en la web** [RF-29 a RF-31]
   `servicios/estado-sesion.ts`: `fetchSessionSection()` con `fetch` directo y límite de 5 segundos, y `sessionAccessLink(seccion)`.
   Hecho cuando: los tests, con `fetch` simulado, verifican:
   - `'portal'` y `'panel'` con la respuesta correspondiente, y que el pedido lleva `credentials: 'include'`.
