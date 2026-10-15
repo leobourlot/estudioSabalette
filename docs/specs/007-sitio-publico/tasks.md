@@ -65,7 +65,7 @@ Reglas para todas las tareas:
   - `isAppPath`: `/ingresar`, `/cambiar-contrasena`, `/panel`, `/panel/x`, `/portal/x` sí; `/ingresar/x`, `/panelx` y `/` no.
   - `decideEntry` para una dirección normal, una con mayúsculas, una de la aplicación y una inexistente.
 
-- [ ] **T8 — Cabecera de cada página** [RF-34, RF-36 a RF-38]
+- [x] **T8 — Cabecera de cada página** [RF-34, RF-36 a RF-38]
   `servicios/cabecera-pagina.ts`: `buildHead(pagina, urlSitio)`.
   Hecho cuando: los tests verifican:
   - `<title>`, descripción, `canonical` con la dirección principal y las etiquetas de vista previa (`og:*` y `twitter:card`) de cada página.
