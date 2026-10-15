@@ -156,7 +156,7 @@ Reglas para todas las tareas:
   `SitioAbogada` y `SitioNoEncontrada`.
   Hecho cuando: los tests verifican la página de Vanesa Sabalette Rabello ("Volver a abogadas", foto, `<h1>`, "Abogada" y cada párrafo de T-14), y "No encontramos esa página" con su texto, "Ir al inicio" y los cuatro servicios, sin mostrar la dirección pedida ni lo que venga después del `?`.
 
-- [ ] **T25 — Rutas del sitio público** [RF-1, RF-8, RF-9, RF-20]
+- [x] **T25 — Rutas del sitio público** [RF-1, RF-8, RF-9, RF-20]
   `RutasSitio.tsx` y `SitioPublico.tsx`, sin `ProveedorSesion`.
   Hecho cuando: los tests verifican que cada dirección de `PUBLIC_PAGES` muestra su página; que `/abogadas/carolina-pertusatti`, `/servicios/derecho-laboral/otra` y una dirección cualquiera muestran la página inexistente; y que `/servicios`, `/abogadas` y `/servicios/derecho-laboral` llevan a su destino.
 
