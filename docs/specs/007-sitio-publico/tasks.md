@@ -114,7 +114,7 @@ Reglas para todas las tareas:
   - Las iniciales sin foto, mientras carga, después de `onError` y con una imagen ya rota al montarse; la foto con `alt="Foto de <nombre>"`, `width` y `height` fijos; y que las iniciales no se anuncian.
   - La tarjeta completa de Vanesa Sabalette Rabello, con "Más información" a su página, y la de Carolina Pertusatti solo con foto, nombre y "Abogada".
 
-- [ ] **T17 — Bloque de contacto del sitio** [RF-23 a RF-25, RF-27]
+- [x] **T17 — Bloque de contacto del sitio** [RF-23 a RF-25, RF-27]
   `ContactoSitio` (`id="contacto"`) e `IconosRedes`.
   Hecho cuando: los tests verifican:
   - Con los datos de hoy: el título "Contacto", el nombre y el WhatsApp escrito con su enlace y el mensaje recibido; ningún otro título.
