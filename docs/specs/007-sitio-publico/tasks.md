@@ -107,7 +107,7 @@ Reglas para todas las tareas:
   `BloquesTexto` (un `<p>` por párrafo, un `<ul>` por lista) y `TarjetaServicio` (`<h3>`, frase y "Conocer más" con el nombre del servicio como texto oculto).
   Hecho cuando: los tests verifican los párrafos y los puntos de una lista, que un texto con `<b>` se muestra literal, y que cada "Conocer más" lleva a su dirección y se anuncia con el nombre del servicio.
 
-- [ ] **T16 — Foto y tarjeta de abogada** [RF-18, RF-20, RF-21]
+- [x] **T16 — Foto y tarjeta de abogada** [RF-18, RF-20, RF-21]
   `presentacion-sitio.ts`: `initialsOf(nombre)`. `FotoAbogada` y `TarjetaAbogada`.
   Hecho cuando: los tests verifican:
   - `initialsOf`: "CP" y "VSR".
