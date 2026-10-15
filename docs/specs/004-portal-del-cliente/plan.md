@@ -209,7 +209,7 @@ La cookie de renovación pasa a vivir `REFRESH_COOKIE_MAX_AGE_MS` (75 minutos) d
 
 ### Caché del navegador [RF-6]
 - La API responde `Cache-Control: no-store` en todas sus respuestas, con un middleware de Express en `configurar-aplicacion.ts`. Se aplica a toda la API y no solo al portal: ninguna respuesta de la API debe quedar guardada en el navegador.
-- `web/public/.htaccess` agrega `Cache-Control: no-store` solo para `index.html`, dentro de `<IfModule mod_headers.c>`. Así el navegador no guarda la página en su caché de ida y vuelta (la del botón "atrás"). Los archivos de JavaScript y CSS, que tienen hash en el nombre y no llevan datos, se siguen guardando.
+- `web/public/.htaccess` agrega `Cache-Control: no-store` solo para la página de la aplicación, dentro de `<IfModule mod_headers.c>`. Así el navegador no la guarda en su caché de ida y vuelta (la del botón "atrás"). Los archivos de JavaScript y CSS, que tienen hash en el nombre y no llevan datos, se siguen guardando. Desde la spec 007 la aplicación se sirve con `app.html` y la regla aplica a ese archivo; `index.html` pasa a ser el inicio del sitio público, que no tiene datos de nadie (plan 007, ".htaccess").
 - Como segunda barrera, `ProveedorSesion` escucha `pageshow`: si la página vuelve desde esa caché (`event.persisted`), recarga la aplicación, que vuelve a preguntar a la API quién es el usuario.
 
 ### Inactividad en la pantalla [RF-4, RF-5]
@@ -241,10 +241,10 @@ Junto con la corrección de la sesión, `web/public/.htaccess` suma una redirecc
   RewriteCond %{HTTP_HOST} ^www\. [NC]
   RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
   RewriteRule ^ https://%1%{REQUEST_URI} [R=302,L]
-  ...reglas existentes que sirven index.html
+  ...reglas del sitio público y de la aplicación (plan 007, ".htaccess")
 </IfModule>
 ```
-- Va antes de las reglas que sirven `index.html`, y en un solo salto lleva `http://www…`, `http://…` y `https://www…` a `https://` sin www. `%{REQUEST_URI}` conserva la ruta y los parámetros: `www.estudio.com/portal/causas/5?pagina=2` lleva a `estudio.com/portal/causas/5?pagina=2`.
+- Va antes de las demás reglas, y en un solo salto lleva `http://www…`, `http://…` y `https://www…` a `https://` sin www. `%{REQUEST_URI}` conserva la ruta y los parámetros: `www.estudio.com/portal/causas/5?pagina=2` lleva a `estudio.com/portal/causas/5?pagina=2`.
 - El dominio no queda escrito en la regla: se toma del pedido, así que el mismo archivo sirve para cualquier dominio.
 - Se publica con `R=302`. Recién después de verificar en producción que funciona se pasa a `R=301`, porque los navegadores guardan las redirecciones permanentes indefinidamente. Antes de publicarla se revisa que el panel de Hostinger no haga ya alguna de estas redirecciones, para no duplicarlas.
 - En producción, `FRONTEND_ORIGINS` puede quedar solo con `https://estudio.com`. Esa variable vive en Easypanel: este plan no la toca y queda como aviso para el despliegue.
@@ -394,7 +394,7 @@ Mismo esquema que en las specs anteriores: migraciones sobre la base de tests, t
 | RF-3 | `ClientLinkService` y `ClientVisibilityService` en cada petición | e2e de siguiente acción |
 | RF-4 | `sessionTtlMs`, extensión en el guard, `CLIENT_IDLE_LIMIT_MS` | Unitarios y e2e de sesión, Vitest de inactividad |
 | RF-5 | Control de inactividad en `ProveedorSesion`, `endSession`, aviso de sesión cerrada del cliente HTTP | Vitest de `ProveedorSesion` y `cliente-http` |
-| RF-6 | `Cache-Control: no-store` en la API y en `index.html`, `pageshow` | e2e de acceso, Vitest |
+| RF-6 | `Cache-Control: no-store` en la API y en la página de la aplicación (`app.html` desde la spec 007), `pageshow` | e2e de acceso, Vitest |
 | RF-7, RF-12 | `listCausas`, `PortalInicio` | e2e de lista, Vitest |
 | RF-8 | `lastVisibleDates` | e2e de lista |
 | RF-9 | `CausaPortalResumen`, `ListaCausasPortal` | e2e de lista, Vitest |

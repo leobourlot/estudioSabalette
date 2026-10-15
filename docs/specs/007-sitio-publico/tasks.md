@@ -182,7 +182,7 @@ Reglas para todas las tareas:
   - Sin `VITE_URL_SITIO`, el build falla con "Falta VITE_URL_SITIO".
   - Abrir `dist/servicios/sucesiones.html` con el código de la página desactivado muestra el texto completo y los enlaces.
 
-- [ ] **T29 — .htaccess** [RF-8 a RF-10, RF-25, RF-38, RF-43; spec 004, RF-6] **(modifica existente: `web/public/.htaccess`, `docs/specs/004-portal-del-cliente/plan.md`)**
+- [x] **T29 — .htaccess** [RF-8 a RF-10, RF-25, RF-38, RF-43; spec 004, RF-6] **(modifica existente: `web/public/.htaccess`, `docs/specs/004-portal-del-cliente/plan.md`)**
   Las reglas del plan: 404 real, sin listados, barra final, redirecciones con 302, `app.html` para la aplicación, páginas prerenderizadas, encabezados de seguridad y caché. El plan 004 ("Caché del navegador" y "Dirección única del sitio") pasa la regla `no-store` a `app.html`.
   Hecho cuando: `htaccess.test.ts` verifica que estén `ErrorDocument 404 /404.html`, `Options -Indexes`, `DirectorySlash Off`, la regla de dirección única del plan 004, cada redirección, las reglas de `app.html`, `frame-ancestors 'none'`, `X-Frame-Options "DENY"`, `Referrer-Policy`, `no-store` y `noindex` en `app.html`, y `noindex` en `404.html`.
 

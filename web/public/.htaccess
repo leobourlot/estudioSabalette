@@ -1,5 +1,14 @@
-# Hostinger: toda ruta que no sea un archivo o carpeta existente se sirve con index.html,
-# para que las rutas de React (por ejemplo /panel/usuarios) funcionen al recargar.
+# Hostinger (plan 007, ".htaccess"). Cada página pública es un HTML prerenderizado; el ingreso,
+# el cambio de contraseña, el panel y el portal se sirven con app.html; cualquier otra dirección
+# no existe y responde 404 con su página (spec 007, RF-8 a RF-10 y RF-38).
+
+# Una dirección que no existe responde 404 real, con la página "No encontramos esa página".
+ErrorDocument 404 /404.html
+# /servicios no se vuelve /servicios/: las direcciones van sin barra final (RF-8).
+DirectorySlash Off
+# Sin listados de carpetas.
+Options -Indexes
+
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
@@ -12,17 +21,48 @@
   RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
   RewriteRule ^ https://%1%{REQUEST_URI} [R=302,L]
 
-  RewriteRule ^index\.html$ - [L]
-  RewriteCond %{REQUEST_FILENAME} !-f
-  RewriteCond %{REQUEST_FILENAME} !-d
-  RewriteRule . /index.html [L]
+  # Redirecciones del sitio público (RF-8). Temporales (302) hasta verificarlas en producción;
+  # después pasan a permanentes (301), como la dirección única.
+  RewriteRule ^(.+)/$ /$1 [R=302,L]
+  RewriteRule ^servicios$ /#servicios [R=302,NE,L]
+  RewriteRule ^abogadas$ /#abogadas [R=302,NE,L]
+  RewriteRule ^servicios/derecho-laboral$ /servicios/derecho-laboral/empresas [R=302,L]
+
+  # Archivos internos: se sirven tal cual.
+  RewriteRule ^(index|app|404)\.html$ - [L]
+
+  # La aplicación: ingreso, cambio de contraseña, panel y portal, existan o no sus direcciones
+  # (RF-10). Sin sesión, la aplicación lleva al ingreso.
+  RewriteRule ^(ingresar|cambiar-contrasena)$ /app.html [L]
+  RewriteRule ^(panel|portal)(/.*)?$ /app.html [L]
+
+  # Las páginas prerenderizadas: /servicios/sucesiones se sirve con servicios/sucesiones.html.
+  RewriteCond %{DOCUMENT_ROOT}/$1.html -f
+  RewriteRule ^(.+)$ /$1.html [L]
+
+  # Cualquier otra dirección no existe: 404.html con código 404 (ErrorDocument).
 </IfModule>
 
-# index.html no se guarda en la caché del navegador, tampoco en la de ida y vuelta (el botón
-# "atrás"): así no se vuelven a ver pantallas de una sesión ya cerrada (spec 004, RF-6). Los
-# archivos de JavaScript y CSS tienen hash en el nombre y no llevan datos: se siguen guardando.
 <IfModule mod_headers.c>
-  <Files "index.html">
+  # Ninguna pantalla se puede mostrar dentro de otro sitio (RF-43). X-Frame-Options es para los
+  # navegadores que no entienden frame-ancestors.
+  Header always set Content-Security-Policy "frame-ancestors 'none'"
+  Header always set X-Frame-Options "DENY"
+  # Los sitios a los que se llega desde acá no reciben la dirección de origen (RF-25).
+  Header always set Referrer-Policy "same-origin"
+
+  # La aplicación no se guarda en la caché del navegador, tampoco en la de ida y vuelta (el botón
+  # "atrás"): así no se vuelven a ver pantallas de una sesión ya cerrada (spec 004, RF-6). Los
+  # archivos de JavaScript y CSS tienen hash en el nombre y no llevan datos: se siguen guardando.
+  <Files "app.html">
     Header set Cache-Control "no-store"
+    Header set X-Robots-Tag "noindex"
   </Files>
+  <Files "404.html">
+    Header set X-Robots-Tag "noindex"
+  </Files>
+  # Las páginas públicas no tienen datos de nadie: el navegador las guarda y revisa si cambiaron.
+  <FilesMatch "^(?!app\.html$).+\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
 </IfModule>
