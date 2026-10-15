@@ -130,7 +130,7 @@ Reglas para todas las tareas:
   `EncabezadoSitio` (logo y nombre como enlace a `/`, menú y acceso) y `MenuSitio` (fila de enlaces y `<details>` "Menú").
   Hecho cuando: los tests verifican los enlaces "Servicios" (`/#servicios`), "Abogadas" (`/#abogadas`) y "Contacto" (`#contacto`); que el menú plegado abre y cierra, se cierra al elegir una opción y con Escape, y devuelve el foco a "Menú"; y que sin interacción los enlaces están en el HTML.
 
-- [ ] **T20 — Diseño del sitio** [RF-4, RF-23, RF-26, RF-28; RNF de accesibilidad]
+- [x] **T20 — Diseño del sitio** [RF-4, RF-23, RF-26, RF-28; RNF de accesibilidad]
   `DisenoSitio` ("Saltar al contenido", encabezado, `<main id="contenido">`, contacto, botón de WhatsApp con el mensaje de la página, margen inferior) y `useFocoEnAncla`.
   Hecho cuando: los tests verifican el orden de las partes, que "Saltar al contenido" lleva a `#contenido`, el mensaje de WhatsApp recibido en el botón y en el contacto, y que con `#servicios` en la dirección el foco queda en el título de esa sección.
 
