@@ -1,7 +1,8 @@
-import { screen, within } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-de-prueba';
+import { BloqueContactoEstudio } from './BloqueContactoEstudio';
 import { STUDIO_CONTACT, whatsappUrl } from '../servicios/datos-estudio';
 import type { UsuarioPropio } from '../servicios/sesion';
 
@@ -106,9 +107,14 @@ describe('DisenoPortal (RF-16)', () => {
   it('muestra los datos de contacto del estudio, con el WhatsApp como enlace (spec 004, RF-18)', async () => {
     await openAs('/portal/mi-cuenta', testUser('cliente'), 'Mi cuenta');
 
-    const contact = within(screen.getByRole('contentinfo', { name: 'Contacto del estudio' }));
+    const footer = screen.getByRole('contentinfo', { name: 'Contacto del estudio' });
+    const contact = within(footer);
     expect(contact.getByText(STUDIO_CONTACT.nombre)).toBeTruthy();
-    expect(contact.getByText(STUDIO_CONTACT.direccion)).toBeTruthy();
+    // Sin dirección informada, el bloque no la muestra ni deja un renglón vacío (spec 007, RF-24).
+    expect(Array.from(footer.querySelectorAll('p')).map((p) => p.textContent)).toEqual([
+      STUDIO_CONTACT.nombre,
+      'WhatsApp',
+    ]);
     const link = contact.getByRole('link', { name: 'WhatsApp' });
     expect(link.getAttribute('href')).toBe(whatsappUrl());
     expect(link.getAttribute('target')).toBe('_blank');
@@ -156,5 +162,17 @@ describe('DisenoPortal (RF-16)', () => {
     expect(await screen.findByRole('heading', { name: 'Ingresar' })).toBeTruthy();
     expect(await navigator.clipboard.readText()).toBe('algo que copió el cliente');
     expect(service.logout).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('BloqueContactoEstudio (spec 004, RF-18)', () => {
+  it('muestra la dirección como texto cuando el estudio la informa', () => {
+    render(
+      <BloqueContactoEstudio
+        contact={{ ...STUDIO_CONTACT, direccion: 'San Martín 123, Villaguay' }}
+      />,
+    );
+
+    expect(screen.getByText('San Martín 123, Villaguay')).toBeTruthy();
   });
 });

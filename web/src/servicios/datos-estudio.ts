@@ -1,26 +1,55 @@
 /**
- * Datos de contacto del estudio (spec 004, RF-18 y RF-19). Son públicos y fijos, los mismos del
- * sitio web del estudio, y viven en el código (principio 5): no se editan desde el panel. El
- * sitio público (spec 007) usa esta misma fuente.
+ * Datos de contacto del estudio (spec 007, RF-3 y RF-22 a RF-24; spec 004, RF-18 y RF-19). Son
+ * públicos y fijos, y viven en el código (principio 5): no se editan desde el panel. Son la única
+ * fuente del nombre y del contacto para el sitio público, el ingreso, el portal y el panel.
  */
+
+export interface RedSocial {
+  /** Nombre de la red, tal como se muestra (por ejemplo, "Instagram"). */
+  red: string;
+  url: string;
+}
 
 export interface StudioContact {
   nombre: string;
-  /** Se muestra como texto. */
-  direccion: string;
+  /** El nombre como se muestra en pantalla: la primera línea no se corta (RF-3). */
+  nombreLineas: readonly [string, string];
   /** Número con código de país y de área, solo dígitos, como lo pide wa.me. */
   whatsapp: string;
+  /** El mismo número, como se muestra. */
+  whatsappVisible: string;
+  /** Se muestra como texto. null mientras el estudio no la informe (RF-24). */
+  direccion: string | null;
+  /** Días y horarios de atención, un renglón por elemento. Vacío mientras no se informen. */
+  horarios: readonly string[];
+  email: string | null;
+  redes: readonly RedSocial[];
 }
 
-// PENDIENTE: la dirección y el número de WhatsApp son genéricos. Reemplazarlos por los reales
-// cuando el estudio los informe.
+// PENDIENTE (spec 007, dudas abiertas): dirección, horarios, email y redes. Hasta que el
+// estudio los informe no se muestran, y nunca se reemplazan por datos de ejemplo (RF-24).
 export const STUDIO_CONTACT: StudioContact = {
-  nombre: 'Estudio Sabalette',
-  direccion: 'Av. Ejemplo 1234, Ciudad Autónoma de Buenos Aires',
-  whatsapp: '5491100000000',
+  nombre: 'Pertusatti | Sabalette - Abogadas',
+  nombreLineas: ['Pertusatti | Sabalette', 'Abogadas'],
+  whatsapp: '5493455414147',
+  whatsappVisible: '+54 9 3455 41-4147',
+  direccion: null,
+  horarios: [],
+  email: null,
+  redes: [],
 };
 
-/** Enlace que abre una conversación de WhatsApp con el estudio, sin mensaje precargado. */
-export function whatsappUrl(contact: StudioContact = STUDIO_CONTACT): string {
-  return `https://wa.me/${contact.whatsapp}`;
+/**
+ * Enlace que abre una conversación de WhatsApp con el estudio. Con un mensaje, lo deja escrito
+ * para que el visitante lo cambie o lo envíe (spec 007, RF-27); sin mensaje, la abre vacía, como
+ * en el ingreso y el portal (spec 004, RF-19).
+ */
+export function whatsappUrl(mensaje?: string, contact: StudioContact = STUDIO_CONTACT): string {
+  const base = `https://wa.me/${contact.whatsapp}`;
+  return mensaje ? `${base}?text=${encodeURIComponent(mensaje)}` : base;
+}
+
+/** Enlace "Cómo llegar": la dirección en Google Maps (spec 007, RF-23). */
+export function mapsUrl(direccion: string): string {
+  return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(direccion)}`;
 }

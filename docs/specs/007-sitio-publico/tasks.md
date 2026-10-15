@@ -34,7 +34,7 @@ Reglas para todas las tareas:
 
 ## web — servicios
 
-- [ ] **T4 — Datos de contacto reales** [RF-3, RF-22, RF-24, RF-27; spec 004, RF-18] **(modifica existente: `servicios/datos-estudio.ts` y su test, `componentes/BloqueContactoEstudio.tsx`, `componentes/Disenos.test.tsx`, `docs/specs/004-portal-del-cliente/plan.md`)**
+- [x] **T4 — Datos de contacto reales** [RF-3, RF-22, RF-24, RF-27; spec 004, RF-18] **(modifica existente: `servicios/datos-estudio.ts` y su test, `componentes/BloqueContactoEstudio.tsx`, `componentes/Disenos.test.tsx`, `docs/specs/004-portal-del-cliente/plan.md`)**
   `STUDIO_CONTACT` con el nombre, el nombre en dos líneas, el WhatsApp real (para el enlace y para mostrar), `direccion: null`, `horarios: []`, `email: null` y `redes: []`. `whatsappUrl(mensaje?)` y `mapsUrl(direccion)`. `BloqueContactoEstudio` omite la dirección si es `null`. El plan 004 ("Datos de contacto") deja de hablar de datos genéricos.
   Hecho cuando: los tests verifican:
   - El nombre "Pertusatti | Sabalette - Abogadas", sus dos líneas y el número `5493455414147` y `+54 9 3455 41-4147`.

@@ -295,8 +295,8 @@ En la misma tarea y el mismo commit que el código (principio 2), `docs/specs/00
 - **Celular** [RNF de plataformas]: tarjetas en una columna en lugar de tablas, `break-words` en carátulas, nombres y textos, y márgenes de 16 px a 360 px de ancho.
 
 ### Datos de contacto [RF-18, RF-19]
-- `servicios/datos-estudio.ts` exporta `STUDIO_CONTACT = { nombre, direccion, whatsapp }` y `whatsappUrl()`, que arma `https://wa.me/<número>` sin mensaje precargado. El nombre es "Estudio Sabalette", el que ya muestra el encabezado. La dirección y el número son genéricos y están marcados en el código para reemplazarlos cuando el estudio informe los reales. `DisenoSeccion` toma el nombre de ahí, para que haya una sola fuente. La spec 007 usará la misma.
-- `BloqueContactoEstudio`: nombre, dirección como texto y WhatsApp como enlace (`target="_blank"`, `rel="noopener noreferrer"`).
+- `servicios/datos-estudio.ts` exporta `STUDIO_CONTACT` y `whatsappUrl()`, que sin mensaje arma `https://wa.me/<número>` sin mensaje precargado. Desde la spec 007 tiene los datos reales: el nombre "Pertusatti | Sabalette - Abogadas" y el WhatsApp +54 9 3455 41-4147. La dirección es `null` hasta que el estudio la informe: nunca se usa una de ejemplo. `DisenoSeccion` toma el nombre de ahí, para que haya una sola fuente, que es la misma del sitio público (plan 007, "Datos de contacto").
+- `BloqueContactoEstudio`: nombre, dirección como texto si está informada, y WhatsApp como enlace (`target="_blank"`, `rel="noopener noreferrer"`).
 - `BotonWhatsapp`: enlace fijo abajo a la derecha (`fixed bottom-4 right-4`), con un ícono SVG propio y `aria-label="Escribinos por WhatsApp"`. Está en `DisenoPortal` y, para los clientes, en `PaginaCambiarContrasena`, que no muestra el bloque de contacto. Lo pide RF-19, que excluye esa pantalla solo de RF-18.
 
 ## Dependencias nuevas
