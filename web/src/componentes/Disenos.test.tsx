@@ -181,3 +181,17 @@ describe('BloqueContactoEstudio (spec 004, RF-18)', () => {
     expect(screen.getByText('San Martín 123, Villaguay')).toBeTruthy();
   });
 });
+
+describe('títulos del documento (spec 007, RF-34)', () => {
+  it('el panel pone su título', async () => {
+    await openAs('/panel', testUser('abogado'), 'Panel');
+
+    expect(document.title).toBe('Panel · Pertusatti | Sabalette - Abogadas');
+  });
+
+  it('el portal pone su título', async () => {
+    await openAs('/portal/mi-cuenta', testUser('cliente'), 'Mi cuenta');
+
+    expect(document.title).toBe('Portal de clientes · Pertusatti | Sabalette - Abogadas');
+  });
+});

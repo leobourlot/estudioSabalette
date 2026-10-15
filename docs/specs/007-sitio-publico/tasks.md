@@ -87,7 +87,7 @@ Reglas para todas las tareas:
   Colores `estudio` en Tailwind. `NombreEstudio`: "Pertusatti | Sabalette" sin cortarse y "Abogadas" debajo. `DisenoSeccion` y `BloqueContactoEstudio` lo usan.
   Hecho cuando: los tests verifican que el encabezado del panel y del portal y el bloque de contacto del portal muestran el nombre en dos líneas, y que la primera línea no se puede cortar.
 
-- [ ] **T11 — Títulos del documento** [RF-3, RF-34] **(modifica existente: `componentes/DisenoPanel.tsx`, `componentes/DisenoPortal.tsx`, `paginas/PaginaCambiarContrasena.tsx` y sus tests)**
+- [x] **T11 — Títulos del documento** [RF-3, RF-34] **(modifica existente: `componentes/DisenoPanel.tsx`, `componentes/DisenoPortal.tsx`, `paginas/PaginaCambiarContrasena.tsx` y sus tests)**
   `useTituloDocumento(titulo)`. El panel, el portal y el cambio de contraseña ponen su título de T-16. `PaginaCambiarContrasena` suma `NombreEstudio`.
   Hecho cuando: los tests verifican el título del documento en el panel, en el portal y en el cambio de contraseña, que cambia al cambiar el título pedido, y el nombre del estudio en el cambio de contraseña.
 

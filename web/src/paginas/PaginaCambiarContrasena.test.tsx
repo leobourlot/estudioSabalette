@@ -140,3 +140,14 @@ describe('PaginaCambiarContrasena (RF-11, RF-36 a RF-39)', () => {
     expect(await screen.findByRole('heading', { name: 'Mis causas' })).toBeTruthy();
   });
 });
+
+describe('PaginaCambiarContrasena: nombre y título (spec 007, RF-3 y RF-34)', () => {
+  it('muestra el nombre del estudio y pone el título del documento', async () => {
+    await openPage();
+
+    expect(screen.getByText('Pertusatti | Sabalette').parentElement!.textContent).toBe(
+      'Pertusatti | Sabalette - Abogadas',
+    );
+    expect(document.title).toBe('Cambiar contraseña · Pertusatti | Sabalette - Abogadas');
+  });
+});

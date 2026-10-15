@@ -1,8 +1,11 @@
 import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BotonWhatsapp } from '../componentes/BotonWhatsapp';
+import { NombreEstudio } from '../componentes/NombreEstudio';
 import { useSession } from '../componentes/ProveedorSesion';
+import { useTituloDocumento } from '../componentes/useTituloDocumento';
 import { ApiError, errorMessage } from '../servicios/cliente-http';
+import { APP_TITLES } from '../servicios/rutas-sitio';
 import { resolveLandingRoute, ROUTES } from '../servicios/sesion';
 import { findPasswordRuleViolation } from '../servicios/validaciones';
 
@@ -43,6 +46,7 @@ function PasswordField({ id, label, autoComplete, value, onChange }: PasswordFie
  */
 export function PaginaCambiarContrasena() {
   const { usuario, changePassword, logout, endSession } = useSession();
+  useTituloDocumento(APP_TITLES.cambioContrasena);
   const navigate = useNavigate();
   const [actual, setActual] = useState('');
   const [nueva, setNueva] = useState('');
@@ -98,6 +102,9 @@ export function PaginaCambiarContrasena() {
         noValidate
         className="w-full max-w-sm space-y-5 rounded-lg bg-white p-8 shadow"
       >
+        <p className="text-sm font-semibold text-estudio-oscuro">
+          <NombreEstudio />
+        </p>
         <h1 className="text-2xl font-semibold text-slate-800">Cambiar contraseña</h1>
 
         {pendiente && (
