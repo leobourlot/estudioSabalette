@@ -23,7 +23,7 @@ Reglas para todas las tareas:
   `sessionSection(token)`: `'portal'`, `'panel'` o `null`, con `findValidSession` y sin escribir nada.
   Hecho cuando: los tests unitarios verifican `'portal'` para un cliente (también con cambio de contraseña pendiente), `'panel'` para un administrador y un abogado, `null` sin sesión válida, y que nunca se llama a `update` del repositorio de sesiones.
 
-- [ ] **T3 — Estado de la sesión** [RF-29 a RF-31, RF-41] **(modifica existente: `autenticacion/sesion.controller.ts`, `docs/specs/001-autenticacion-y-roles/plan.md`)**
+- [x] **T3 — Estado de la sesión** [RF-29 a RF-31, RF-41] **(modifica existente: `autenticacion/sesion.controller.ts`, `docs/specs/001-autenticacion-y-roles/plan.md`)**
   `GET /api/sesion/estado`, `@Public()`, que solo delega en `sessionSection`. El contrato del plan 001 suma el endpoint.
   Hecho cuando: `sesion-estado.e2e-spec.ts` verifica:
   - 200 `{ seccion: null }` sin cookie, con un token inválido, con la sesión cerrada, reemplazada por un ingreso desde otro dispositivo o vencida, y con la cuenta desactivada.

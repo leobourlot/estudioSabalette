@@ -111,8 +111,11 @@ Todas las respuestas de error usan el formato por defecto de NestJS (`statusCode
 | `POST /cerrar` | Público, usa la cookie de renovación si existe | — | 204 y borra las cookies | — |
 | `GET /usuario` | Con sesión, también con cambio pendiente | — | 200 `UsuarioPropio` | 401 |
 | `PUT /contrasena` | Con sesión, también con cambio pendiente | `{ contrasenaActual, contrasenaNueva }` | 204 | 400 (contraseña actual incorrecta o reglas de RF-39), 401 con el mensaje de RF-38 al quinto error |
+| `GET /estado` | Público, usa la cookie de acceso si existe | — | 200 `{ seccion: "portal" \| "panel" \| null }` | — |
 
 `/cerrar` es público para que cerrar sesión funcione aunque el token de acceso haya vencido.
+
+`/estado` es del sitio público (plan 007, "Contrato de la API"): responde siempre 200, solo con la sección, y no extiende ni renueva la sesión (spec 001, RF-12; spec 007, RF-31).
 
 `UsuarioPropio`: `{ id, rol, esPrincipal, email, nombre, apellido, debeCambiarContrasena, cliente?: { tipoPersona, dni, cuit, razonSocial, telefono, domicilio } }`.
 

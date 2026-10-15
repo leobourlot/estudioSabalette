@@ -15,8 +15,8 @@ import type { Request, Response } from 'express';
 import { toUsuarioPropio, type UsuarioPropio } from '../usuarios/usuario-propio.js';
 import type { Usuario } from '../usuarios/usuario.entity.js';
 import type { AuthenticatedRequest } from './autenticacion.guard.js';
-import { AuthenticationService } from './autenticacion.service.js';
-import { REFRESH_TOKEN_COOKIE } from './constantes.js';
+import { AuthenticationService, type SeccionSesion } from './autenticacion.service.js';
+import { ACCESS_TOKEN_COOKIE, REFRESH_TOKEN_COOKIE } from './constantes.js';
 import { clearSessionCookies, setSessionCookies } from './cookies-de-sesion.js';
 import { AllowPendingPasswordChange, CurrentUser, Public } from './decoradores.js';
 import { ChangePasswordDto } from './dto/cambiar-contrasena.dto.js';
@@ -109,6 +109,19 @@ export class SessionController {
       if (error instanceof UnauthorizedException) clearSessionCookies(response);
       throw error;
     }
+  }
+
+  /**
+   * Estado de la sesión para el sitio público (spec 007, RF-29 a RF-31): solo a qué sección
+   * lleva, o null. Es pública y responde siempre 200, para que el navegador no intente renovar
+   * la sesión. No la extiende ni la renueva.
+   */
+  @Public()
+  @Get('estado')
+  async status(@Req() request: Request): Promise<{ seccion: SeccionSesion | null }> {
+    return {
+      seccion: await this.authentication.sessionSection(request.cookies?.[ACCESS_TOKEN_COOKIE]),
+    };
   }
 
   /** Datos propios del usuario (RF-35), también con el cambio de contraseña pendiente (RF-11). */
