@@ -12,7 +12,7 @@ interface TarjetaServicioProps {
  */
 export function TarjetaServicio({ servicio }: TarjetaServicioProps) {
   return (
-    <article className="flex flex-col rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+    <article className="flex w-full flex-col rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md focus-within:shadow-md motion-safe:hover:-translate-y-1 motion-safe:focus-within:-translate-y-1 motion-reduce:transition-none">
       <h3 className="font-titulos text-2xl font-semibold text-estudio-oscuro">{servicio.nombre}</h3>
       <p className="mt-2 flex-1 break-words text-slate-700">{servicio.frase}</p>
       <a href={servicio.ruta} className={`mt-4 self-start ${PRIMARY_BUTTON}`}>

@@ -1,5 +1,7 @@
+import { m, useReducedMotion } from 'motion/react';
 import { type KeyboardEvent, type ReactNode, useRef, useState } from 'react';
 import { TEXTOS } from '../servicios/contenido-sitio';
+import { switchTransition } from './animaciones';
 import { FOCUS_RING } from './estilos-sitio';
 
 /** "Servicios" y "Abogadas" llevan a su sección del inicio; "Contacto", al bloque de esta página. */
@@ -46,12 +48,15 @@ interface MenuSitioProps {
  * código de la página (RF-35). Abierto, se despliega debajo del encabezado a lo ancho de la
  * pantalla: se ubica respecto del encabezado, que es el único elemento posicionado, así nunca
  * queda cortado. Con el código cargado, se cierra al elegir una opción o con Escape, y el foco
- * vuelve a "Menú".
+ * vuelve a "Menú". Cada vez que se abre, el panel se despliega con una animación corta (RF-45);
+ * la primera vez que se dibuja no se anima, así el HTML prerenderizado no lo trae oculto.
  */
 export function MenuSitio({ acceso }: MenuSitioProps) {
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const summaryRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
+  const [openings, setOpenings] = useState(0);
+  const reduceMotion = useReducedMotion() ?? false;
 
   function close() {
     if (!detailsRef.current?.open) return;
@@ -72,7 +77,11 @@ export function MenuSitio({ acceso }: MenuSitioProps) {
       <details
         ref={detailsRef}
         className="md:hidden"
-        onToggle={(event) => setOpen(event.currentTarget.open)}
+        onToggle={(event) => {
+          const isOpen = event.currentTarget.open;
+          setOpen(isOpen);
+          if (isOpen) setOpenings((count) => count + 1);
+        }}
         onKeyDown={handleKeyDown}
       >
         <summary
@@ -82,15 +91,19 @@ export function MenuSitio({ acceso }: MenuSitioProps) {
         >
           {TEXTOS.menu.menu}
         </summary>
-        <nav
+        <m.nav
+          key={openings}
           aria-label="Principal"
           className="absolute inset-x-0 top-full z-20 border-b border-slate-200 bg-white px-4 py-3 shadow-lg"
+          initial={openings === 0 ? false : { opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={switchTransition(reduceMotion)}
         >
           <Links
             onChoose={close}
             extra={acceso && <li className="mt-2 min-[420px]:hidden">{acceso}</li>}
           />
-        </nav>
+        </m.nav>
       </details>
     </>
   );

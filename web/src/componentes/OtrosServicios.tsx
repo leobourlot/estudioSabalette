@@ -1,4 +1,5 @@
 import { type ClaveServicio, SERVICIOS, TEXTOS } from '../servicios/contenido-sitio';
+import { Aparecer } from './Aparecer';
 import { TEXT_LINK } from './estilos-sitio';
 
 interface OtrosServiciosProps {
@@ -17,15 +18,17 @@ export function OtrosServicios({ actual }: OtrosServiciosProps) {
         >
           {TEXTOS.detalle.otrosServicios}
         </h2>
-        <ul className="mt-4 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-x-6">
-          {SERVICIOS.filter((servicio) => servicio.clave !== actual).map((servicio) => (
-            <li key={servicio.clave}>
-              <a href={servicio.ruta} className={TEXT_LINK}>
-                {servicio.nombre}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <Aparecer>
+          <ul className="mt-4 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-x-6">
+            {SERVICIOS.filter((servicio) => servicio.clave !== actual).map((servicio) => (
+              <li key={servicio.clave}>
+                <a href={servicio.ruta} className={TEXT_LINK}>
+                  {servicio.nombre}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </Aparecer>
       </div>
     </nav>
   );

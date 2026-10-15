@@ -1,3 +1,4 @@
+import { Aparecer } from '../componentes/Aparecer';
 import { BloquesTexto } from '../componentes/BloquesTexto';
 import { DisenoSitio } from '../componentes/DisenoSitio';
 import { OtrosServicios } from '../componentes/OtrosServicios';
@@ -30,9 +31,9 @@ export function SitioServicio({ clave }: SitioServicioProps) {
           <h1 className="mt-4 break-words font-titulos text-4xl font-semibold text-estudio-oscuro">
             {servicio.titulo}
           </h1>
-          <div className="mt-6">
+          <Aparecer className="mt-6">
             <BloquesTexto bloques={servicio.bloques} />
-          </div>
+          </Aparecer>
         </div>
       </article>
       <OtrosServicios actual={clave} />

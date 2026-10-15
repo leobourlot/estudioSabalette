@@ -1,3 +1,4 @@
+import { Aparecer } from '../componentes/Aparecer';
 import { DisenoSitio } from '../componentes/DisenoSitio';
 import { FotoAbogada } from '../componentes/FotoAbogada';
 import { useTituloDocumento } from '../componentes/useTituloDocumento';
@@ -34,13 +35,13 @@ export function SitioAbogada({ abogada }: SitioAbogadaProps) {
               </p>
             </div>
           </div>
-          <div className="mt-8 space-y-4 text-slate-700">
+          <Aparecer className="mt-8 space-y-4 text-slate-700">
             {(abogada.texto ?? []).map((parrafo) => (
               <p key={parrafo} className="break-words">
                 {parrafo}
               </p>
             ))}
-          </div>
+          </Aparecer>
         </div>
       </article>
     </DisenoSitio>

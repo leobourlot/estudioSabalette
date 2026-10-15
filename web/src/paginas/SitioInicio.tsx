@@ -1,3 +1,5 @@
+import { Aparecer } from '../componentes/Aparecer';
+import { STAGGER_S } from '../componentes/animaciones';
 import { DisenoSitio } from '../componentes/DisenoSitio';
 import { NombreEstudio } from '../componentes/NombreEstudio';
 import { TarjetaAbogada } from '../componentes/TarjetaAbogada';
@@ -41,13 +43,17 @@ export function SitioInicio() {
 
       <section id="servicios" aria-labelledby="servicios-titulo" className="px-4 py-12">
         <div className="mx-auto max-w-5xl">
-          <h2 id="servicios-titulo" tabIndex={-1} className={SECTION_TITLE}>
-            {TEXTOS.inicio.nuestrosServicios}
-          </h2>
-          <p className="mt-3 max-w-3xl text-slate-700">{INTRO_SERVICIOS}</p>
+          <Aparecer>
+            <h2 id="servicios-titulo" tabIndex={-1} className={SECTION_TITLE}>
+              {TEXTOS.inicio.nuestrosServicios}
+            </h2>
+            <p className="mt-3 max-w-3xl text-slate-700">{INTRO_SERVICIOS}</p>
+          </Aparecer>
           <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {SERVICIOS.map((servicio) => (
-              <TarjetaServicio key={servicio.clave} servicio={servicio} />
+            {SERVICIOS.map((servicio, index) => (
+              <Aparecer key={servicio.clave} className="flex" retraso={index * STAGGER_S}>
+                <TarjetaServicio servicio={servicio} />
+              </Aparecer>
             ))}
           </div>
         </div>
@@ -55,12 +61,16 @@ export function SitioInicio() {
 
       <section id="abogadas" aria-labelledby="abogadas-titulo" className="bg-white px-4 py-12">
         <div className="mx-auto max-w-5xl">
-          <h2 id="abogadas-titulo" tabIndex={-1} className={SECTION_TITLE}>
-            {TEXTOS.inicio.abogadas}
-          </h2>
+          <Aparecer>
+            <h2 id="abogadas-titulo" tabIndex={-1} className={SECTION_TITLE}>
+              {TEXTOS.inicio.abogadas}
+            </h2>
+          </Aparecer>
           <div className="mt-8 grid items-start gap-6 sm:grid-cols-2">
-            {ABOGADAS.map((abogada) => (
-              <TarjetaAbogada key={abogada.slug} abogada={abogada} />
+            {ABOGADAS.map((abogada, index) => (
+              <Aparecer key={abogada.slug} retraso={index * STAGGER_S}>
+                <TarjetaAbogada abogada={abogada} />
+              </Aparecer>
             ))}
           </div>
         </div>

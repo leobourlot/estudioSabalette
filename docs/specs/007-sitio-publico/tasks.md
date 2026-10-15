@@ -244,7 +244,7 @@ Pedidos por el estudio durante la demo manual (spec: RF-3, RF-4, RF-6, RF-23, RF
   `PieSitio` y `public/marca/bourder-web.svg`; el año de publicación desde `vite.config.ts`.
   Hecho cuando: los tests verifican el logo y el nombre al inicio, los accesos, el WhatsApp con el mensaje de la página, que sin redes ni email no hay íconos ni email, que con datos de prueba hay un ícono por cuenta con su nombre, las dos leyendas y el enlace a https://bourderweb.com.ar aparte.
 
-- [ ] **T39 — Animaciones** [RF-35, RF-45] **(modifica existente: `package.json`, `index.html`, `configuracion-tests.ts`, componentes y páginas del sitio, `aislamiento-sitio.test.ts`)**
+- [x] **T39 — Animaciones** [RF-35, RF-45] **(modifica existente: `package.json`, `index.html`, `configuracion-tests.ts`, componentes y páginas del sitio, `aislamiento-sitio.test.ts`)**
   `motion` con `LazyMotion`, `Aparecer`, el menú y las pestañas con `AnimatePresence`, el `<noscript>` de `index.html` y el `IntersectionObserver` de prueba.
   Hecho cuando: los tests verifican que con la reducción de movimiento las transiciones duran 0, que la apertura del inicio no se anima, que el HTML prerenderizado marca con `data-aparecer` lo que se anima y que `index.html` lo muestra sin código; la suite de la web y el build pasan.
 

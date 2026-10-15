@@ -590,4 +590,4 @@ Deja de ser `<footer>`: el pie de página es otro elemento. Sigue al final de to
 
 | Dependencia | Para qué | Alternativa descartada | Motivo |
 |---|---|---|---|
-| `motion` 14 (`motion/react`) | Animaciones del sitio público (RF-45): aparición al entrar en pantalla, menú y pestañas | Transiciones de CSS con un `IntersectionObserver` propio | El estudio pidió Motion. Resuelve la aparición al entrar en pantalla, la salida de elementos (`AnimatePresence`) y la reducción de movimiento, y con `LazyMotion` suma unos 20 KB comprimidos, solo en las páginas públicas. |
+| `motion` 14 (`motion/react`) | Animaciones del sitio público (RF-45): aparición al entrar en pantalla, menú y pestañas | Transiciones de CSS con un `IntersectionObserver` propio | El estudio pidió Motion. Resuelve la aparición al entrar en pantalla, la salida de elementos (`AnimatePresence`) y la reducción de movimiento, y con `LazyMotion` suma unos 30 KB comprimidos (medido en el build de T39), solo en las páginas públicas. |

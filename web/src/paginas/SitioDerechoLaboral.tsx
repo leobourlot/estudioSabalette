@@ -1,4 +1,7 @@
+import { m, useReducedMotion } from 'motion/react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { switchTransition } from '../componentes/animaciones';
 import { BloquesTexto } from '../componentes/BloquesTexto';
 import { DisenoSitio } from '../componentes/DisenoSitio';
 import { FOCUS_RING } from '../componentes/estilos-sitio';
@@ -16,7 +19,7 @@ import { publicPageFor } from '../servicios/rutas-sitio';
 const LABORAL = SERVICIOS.find((s) => s.clave === 'derecho-laboral')!;
 
 const TAB =
-  'flex min-h-11 items-center justify-center border-b-4 px-4 py-2 text-center motion-reduce:transition-none';
+  'flex min-h-11 items-center justify-center border-b-4 px-4 py-2 text-center transition-colors motion-reduce:transition-none';
 const TAB_SELECTED = 'border-estudio-oscuro font-bold text-estudio-oscuro';
 const TAB_OTHER = 'border-transparent text-slate-600 hover:text-estudio-oscuro';
 
@@ -30,10 +33,14 @@ interface SitioDerechoLaboralProps {
  * se usa como enlace, y la elegida se anuncia como la página actual. Las pestañas cambian con el
  * router, sin cargar otra vez la página: no se mueve de lugar y el foco queda en la pestaña
  * elegida, porque los enlaces son siempre los mismos elementos (RF-16). Sin el código de la página,
- * cada pestaña es un enlace común a su página prerenderizada.
+ * cada pestaña es un enlace común a su página prerenderizada. Al elegir una pestaña, su contenido
+ * aparece con una transición corta (RF-45); al abrir la página no se anima, así el HTML
+ * prerenderizado no lo trae oculto.
  */
 export function SitioDerechoLaboral({ pestana }: SitioDerechoLaboralProps) {
   const actual = PESTANAS_LABORAL.find((p) => p.clave === pestana)!;
+  const [elegida, setElegida] = useState(false);
+  const reduceMotion = useReducedMotion() ?? false;
   const page = publicPageFor(actual.ruta)!;
   useTituloDocumento(page.titulo);
 
@@ -54,6 +61,7 @@ export function SitioDerechoLaboral({ pestana }: SitioDerechoLaboralProps) {
                   <Link
                     to={p.ruta}
                     aria-current={p.clave === pestana ? 'page' : undefined}
+                    onClick={() => setElegida(true)}
                     className={`${TAB} ${p.clave === pestana ? TAB_SELECTED : TAB_OTHER} ${FOCUS_RING}`}
                   >
                     {p.etiqueta}
@@ -63,7 +71,14 @@ export function SitioDerechoLaboral({ pestana }: SitioDerechoLaboralProps) {
             </ul>
           </nav>
 
-          <section aria-labelledby="pestana-titulo" className="mt-6">
+          <m.section
+            key={pestana}
+            aria-labelledby="pestana-titulo"
+            className="mt-6"
+            initial={elegida ? { opacity: 0 } : false}
+            animate={{ opacity: 1 }}
+            transition={switchTransition(reduceMotion)}
+          >
             <h2 id="pestana-titulo" className="sr-only">
               {actual.etiqueta}
             </h2>
@@ -80,7 +95,7 @@ export function SitioDerechoLaboral({ pestana }: SitioDerechoLaboralProps) {
               </ul>
             )}
             <BloquesTexto bloques={actual.bloques} />
-          </section>
+          </m.section>
         </div>
       </article>
       <OtrosServicios actual="derecho-laboral" />

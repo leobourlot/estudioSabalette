@@ -13,7 +13,7 @@ interface TarjetaAbogadaProps {
  */
 export function TarjetaAbogada({ abogada }: TarjetaAbogadaProps) {
   return (
-    <article className="flex flex-col items-center rounded-lg border border-slate-200 bg-white p-6 text-center shadow-sm">
+    <article className="flex flex-col items-center rounded-lg border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:shadow-md focus-within:shadow-md motion-safe:hover:-translate-y-1 motion-safe:focus-within:-translate-y-1 motion-reduce:transition-none">
       <FotoAbogada abogada={abogada} tamano="mediana" diferida />
       <h3 className="mt-4 font-titulos text-2xl font-semibold text-estudio-oscuro">
         {abogada.nombre}

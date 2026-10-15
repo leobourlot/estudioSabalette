@@ -31,6 +31,8 @@ const SITE_MODULES = new Set([
   'SitioNoEncontrada',
   // Componentes.
   'AccesoIngreso',
+  'Aparecer',
+  'animaciones',
   'BloquesTexto',
   'BotonWhatsapp',
   'ContactoSitio',
@@ -66,6 +68,8 @@ const ALLOWED_PACKAGES = new Set([
   'react-dom/client',
   'react-dom/server',
   'react-router-dom',
+  // Animaciones del sitio público (spec 007, RF-45; plan 007, "Dependencia nueva").
+  'motion/react',
 ]);
 
 const moduleName = (path: string) =>

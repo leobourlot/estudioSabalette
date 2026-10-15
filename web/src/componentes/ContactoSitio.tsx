@@ -7,6 +7,7 @@ import {
   type StudioContact,
   whatsappUrl,
 } from '../servicios/datos-estudio';
+import { Aparecer } from './Aparecer';
 import { IconoEmail, IconoReloj, IconoTelefono, IconoUbicacion } from './IconosContacto';
 import { IconoRed } from './IconosRedes';
 
@@ -84,46 +85,48 @@ export function ContactoSitio({ mensaje, contact = STUDIO_CONTACT }: ContactoSit
         <span aria-hidden="true" className="mt-4 block h-px w-14 bg-estudio-blanco/70" />
         <p className="mt-5 max-w-xl text-slate-200">{TEXTOS.contacto.texto}</p>
 
-        <ul className="mt-10 space-y-6">
-          {contact.direccion && (
-            <Renglon icono={<IconoUbicacion />} etiqueta={TEXTOS.contacto.ubicacion}>
-              <p className="break-words">{contact.direccion}</p>
-              <a href={mapsUrl(contact.direccion)} className={`${LINK} underline`} {...EXTERNAL}>
-                {TEXTOS.contacto.comoLlegar}
-              </a>
-            </Renglon>
-          )}
-          <Renglon icono={<IconoTelefono />} etiqueta={TEXTOS.contacto.telefono}>
-            <a href={whatsappUrl(mensaje, contact)} className={LINK} {...EXTERNAL}>
-              {contact.whatsappVisible}
-            </a>
-          </Renglon>
-          {contact.horarios.length > 0 && (
-            <Renglon icono={<IconoReloj />} etiqueta={TEXTOS.contacto.disponibilidad}>
-              {contact.horarios.map((horario) => (
-                <p key={horario} className="break-words">
-                  {horario}
-                </p>
-              ))}
-            </Renglon>
-          )}
-          {contact.email && (
-            <Renglon icono={<IconoEmail />} etiqueta={TEXTOS.contacto.email}>
-              <a href={`mailto:${contact.email}`} className={LINK} {...EXTERNAL}>
-                {contact.email}
-              </a>
-            </Renglon>
-          )}
-          {groupByNetwork(contact.redes).map(([red, cuentas]) => (
-            <Renglon key={red} icono={<IconoRed red={red} />} etiqueta={red}>
-              {cuentas.map((cuenta) => (
-                <a key={cuenta.url} href={cuenta.url} className={`${LINK} mr-4`} {...EXTERNAL}>
-                  {cuenta.usuario}
+        <Aparecer className="mt-10">
+          <ul className="space-y-6">
+            {contact.direccion && (
+              <Renglon icono={<IconoUbicacion />} etiqueta={TEXTOS.contacto.ubicacion}>
+                <p className="break-words">{contact.direccion}</p>
+                <a href={mapsUrl(contact.direccion)} className={`${LINK} underline`} {...EXTERNAL}>
+                  {TEXTOS.contacto.comoLlegar}
                 </a>
-              ))}
+              </Renglon>
+            )}
+            <Renglon icono={<IconoTelefono />} etiqueta={TEXTOS.contacto.telefono}>
+              <a href={whatsappUrl(mensaje, contact)} className={LINK} {...EXTERNAL}>
+                {contact.whatsappVisible}
+              </a>
             </Renglon>
-          ))}
-        </ul>
+            {contact.horarios.length > 0 && (
+              <Renglon icono={<IconoReloj />} etiqueta={TEXTOS.contacto.disponibilidad}>
+                {contact.horarios.map((horario) => (
+                  <p key={horario} className="break-words">
+                    {horario}
+                  </p>
+                ))}
+              </Renglon>
+            )}
+            {contact.email && (
+              <Renglon icono={<IconoEmail />} etiqueta={TEXTOS.contacto.email}>
+                <a href={`mailto:${contact.email}`} className={LINK} {...EXTERNAL}>
+                  {contact.email}
+                </a>
+              </Renglon>
+            )}
+            {groupByNetwork(contact.redes).map(([red, cuentas]) => (
+              <Renglon key={red} icono={<IconoRed red={red} />} etiqueta={red}>
+                {cuentas.map((cuenta) => (
+                  <a key={cuenta.url} href={cuenta.url} className={`${LINK} mr-4`} {...EXTERNAL}>
+                    {cuenta.usuario}
+                  </a>
+                ))}
+              </Renglon>
+            ))}
+          </ul>
+        </Aparecer>
       </div>
     </section>
   );

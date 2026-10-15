@@ -12,6 +12,15 @@
       crossorigin
     />
     <!--cabecera-->
+    <!-- Sin el código de la página, lo que se anima al aparecer se ve igual (spec 007, RF-35 y RF-45). -->
+    <noscript>
+      <style>
+        [data-aparecer] {
+          opacity: 1 !important;
+          transform: none !important;
+        }
+      </style>
+    </noscript>
   </head>
   <body>
     <div id="root"><!--app--></div>
