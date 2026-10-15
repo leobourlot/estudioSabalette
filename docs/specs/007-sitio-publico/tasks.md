@@ -186,7 +186,7 @@ Reglas para todas las tareas:
   Las reglas del plan: 404 real, sin listados, barra final, redirecciones con 302, `app.html` para la aplicación, páginas prerenderizadas, encabezados de seguridad y caché. El plan 004 ("Caché del navegador" y "Dirección única del sitio") pasa la regla `no-store` a `app.html`.
   Hecho cuando: `htaccess.test.ts` verifica que estén `ErrorDocument 404 /404.html`, `Options -Indexes`, `DirectorySlash Off`, la regla de dirección única del plan 004, cada redirección, las reglas de `app.html`, `frame-ancestors 'none'`, `X-Frame-Options "DENY"`, `Referrer-Policy`, `no-store` y `noindex` en `app.html`, y `noindex` en `404.html`.
 
-- [ ] **T30 — Fotos sin datos de cámara** [RF-21]
+- [x] **T30 — Fotos sin datos de cámara** [RF-21]
   `public/fotos/` (vacía por ahora) y `fotos.test.ts`.
   Hecho cuando: el test recorre `public/fotos/` y falla si un archivo tiene un bloque EXIF o XMP. Incluye un caso de control con una imagen de prueba con EXIF, fuera de `public/`.
 
