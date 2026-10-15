@@ -220,3 +220,60 @@ export function hasOwnPage(abogada: Abogada): boolean {
 export function lawyerPath(abogada: Abogada): string {
   return `/abogadas/${abogada.slug}`;
 }
+
+/** T-15: el mensaje de WhatsApp de cada página pública (RF-27). */
+export const MENSAJES_WHATSAPP = {
+  /** Inicio, páginas de las abogadas y página de dirección inexistente. */
+  general: 'Hola, me contacto desde el sitio web del estudio.',
+  empresas:
+    'Hola, me contacto desde el sitio web por una consulta de Derecho Laboral para empresas.',
+  trabajadores:
+    'Hola, me contacto desde el sitio web por una consulta de Derecho Laboral para trabajadores.',
+  accidentes:
+    'Hola, me contacto desde el sitio web por una consulta sobre accidentes de trabajo y enfermedades profesionales.',
+  danos: 'Hola, me contacto desde el sitio web por una consulta sobre Derecho de Daños.',
+  sucesiones: 'Hola, me contacto desde el sitio web por una consulta sobre sucesiones.',
+} as const;
+
+/** T-17: los textos de la interfaz del sitio público. */
+export const TEXTOS = {
+  menu: {
+    servicios: 'Servicios',
+    abogadas: 'Abogadas',
+    contacto: 'Contacto',
+    menu: 'Menú',
+    ingresar: 'Ingresar',
+    irAlPortal: 'Ir a mi portal',
+    irAlPanel: 'Ir al panel',
+    saltarAlContenido: 'Saltar al contenido',
+  },
+  inicio: {
+    nuestrosServicios: 'Nuestros servicios',
+    conocerMas: 'Conocer más',
+    abogadas: 'Abogadas',
+    abogada: 'Abogada',
+    masInformacion: 'Más información',
+  },
+  detalle: {
+    volverAServicios: 'Volver a servicios',
+    otrosServicios: 'Otros servicios',
+    volverAAbogadas: 'Volver a abogadas',
+    empresas: 'Empresas',
+    trabajadores: 'Trabajadores',
+  },
+  contacto: {
+    contacto: 'Contacto',
+    whatsapp: 'WhatsApp',
+    direccion: 'Dirección',
+    comoLlegar: 'Cómo llegar',
+    horarios: 'Horarios de atención',
+    email: 'Email',
+    redes: 'Redes sociales',
+  },
+  botonWhatsapp: 'Escribinos por WhatsApp',
+  noEncontrada: {
+    titulo: 'No encontramos esa página',
+    texto: 'Puede que la dirección esté mal escrita o que la página ya no exista.',
+    irAlInicio: 'Ir al inicio',
+  },
+} as const;

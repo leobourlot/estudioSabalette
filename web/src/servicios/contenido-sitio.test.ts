@@ -5,6 +5,7 @@ import {
   quoteBlocks,
   quoteParagraphs,
   quotesByItem,
+  quotedStrings,
   quoteText,
 } from '../pruebas/anexo-spec-007';
 import {
@@ -13,8 +14,10 @@ import {
   type Bloque,
   hasOwnPage,
   INTRO_SERVICIOS,
+  MENSAJES_WHATSAPP,
   PESTANAS_LABORAL,
   SERVICIOS,
+  TEXTOS,
   type ClaveServicio,
 } from './contenido-sitio';
 
@@ -140,5 +143,64 @@ describe('abogadas (RF-18 a RF-20)', () => {
 
   it('todavía no tienen foto (spec 007, dudas abiertas)', () => {
     expect(ABOGADAS.map((a) => a.foto)).toEqual([null, null]);
+  });
+});
+
+describe('mensajes de WhatsApp contra el anexo (T-15, RF-27)', () => {
+  const messages = quotesByItem(annexSection('T-15'));
+
+  it('cada página pública tiene el suyo', () => {
+    expect(MENSAJES_WHATSAPP.general).toBe(
+      messages.get('Inicio, páginas de las abogadas y página de dirección inexistente:'),
+    );
+    expect(MENSAJES_WHATSAPP.empresas).toBe(messages.get('Derecho Laboral, pestaña Empresas:'));
+    expect(MENSAJES_WHATSAPP.trabajadores).toBe(
+      messages.get('Derecho Laboral, pestaña Trabajadores:'),
+    );
+    expect(MENSAJES_WHATSAPP.accidentes).toBe(
+      messages.get('Accidentes de trabajo y enfermedades profesionales:'),
+    );
+    expect(MENSAJES_WHATSAPP.danos).toBe(messages.get('Derecho de Daños:'));
+    expect(MENSAJES_WHATSAPP.sucesiones).toBe(messages.get('Sucesiones:'));
+  });
+
+  it('no hay mensajes que el anexo no tenga', () => {
+    expect(Object.keys(MENSAJES_WHATSAPP)).toHaveLength(messages.size);
+  });
+});
+
+describe('textos de la interfaz contra el anexo (T-17)', () => {
+  const lineFor = (prefix: string) => {
+    const line = annexSection('T-17').find((l) => l.startsWith(`- ${prefix}:`));
+    if (!line) throw new Error(`No está "${prefix}" en T-17`);
+    return quotedStrings(line);
+  };
+
+  it('menú y encabezado', () => {
+    expect(Object.values(TEXTOS.menu)).toEqual(lineFor('Menú y encabezado'));
+  });
+
+  it('inicio', () => {
+    expect(Object.values(TEXTOS.inicio)).toEqual(lineFor('Inicio'));
+  });
+
+  it('páginas de detalle, con las etiquetas de las pestañas', () => {
+    expect(Object.values(TEXTOS.detalle)).toEqual(lineFor('Páginas de detalle'));
+    expect(PESTANAS_LABORAL.map((p) => p.etiqueta)).toEqual([
+      TEXTOS.detalle.empresas,
+      TEXTOS.detalle.trabajadores,
+    ]);
+  });
+
+  it('contacto', () => {
+    expect(Object.values(TEXTOS.contacto)).toEqual(lineFor('Contacto'));
+  });
+
+  it('botón de WhatsApp', () => {
+    expect([TEXTOS.botonWhatsapp]).toEqual(lineFor('Botón de WhatsApp'));
+  });
+
+  it('dirección inexistente', () => {
+    expect(Object.values(TEXTOS.noEncontrada)).toEqual(lineFor('Dirección inexistente'));
   });
 });

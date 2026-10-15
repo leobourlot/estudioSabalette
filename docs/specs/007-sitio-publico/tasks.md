@@ -52,7 +52,7 @@ Reglas para todas las tareas:
   - Que `hasOwnPage` es falso para Carolina Pertusatti y verdadero para Vanesa Sabalette Rabello, y falso si falta solo el resumen o solo el texto.
   - Que el test falla si se cambia una letra de un texto (caso de control).
 
-- [ ] **T6 — Mensajes de WhatsApp y textos de la interfaz** [RF-2, RF-27]
+- [x] **T6 — Mensajes de WhatsApp y textos de la interfaz** [RF-2, RF-27]
   En `contenido-sitio.ts`: `MENSAJES_WHATSAPP` (T-15) y `TEXTOS` (T-17).
   Hecho cuando: los tests verifican que cada mensaje y cada texto coincide con el anexo, y que hay un mensaje para el inicio, para cada pestaña y para cada servicio.
 
