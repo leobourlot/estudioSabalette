@@ -115,10 +115,11 @@ describe('RutaProtegida — orden de decisiones (RF-17, RF-20)', () => {
     });
   });
 
-  it('las páginas públicas se ven sin sesión', async () => {
+  it('el sitio público no es parte de la aplicación: "/" no tiene página acá (spec 007)', async () => {
     renderAt('/', async () => null);
 
-    expect(await heading('Estudio Sabalette')).toBeTruthy();
+    await Promise.resolve();
+    expect(screen.queryByRole('heading')).toBeNull();
   });
 });
 

@@ -162,7 +162,7 @@ Reglas para todas las tareas:
 
 ## web — publicación
 
-- [ ] **T26 — Entrada: sitio o aplicación** [RF-8, RF-35, RF-42] **(modifica existente: `main.tsx`, `RutasAplicacion.tsx`, `componentes/RutaProtegida.test.tsx`; borra `paginas/PaginaInicio.tsx` y `paginas/PaginaNoEncontrada.tsx`)**
+- [x] **T26 — Entrada: sitio o aplicación** [RF-8, RF-35, RF-42] **(modifica existente: `main.tsx`, `RutasAplicacion.tsx`, `componentes/RutaProtegida.test.tsx`; borra `paginas/PaginaInicio.tsx` y `paginas/PaginaNoEncontrada.tsx`)**
   `main.tsx` usa `decideEntry`: reemplaza la dirección si hace falta, carga `App` para las rutas de la aplicación y `entrada-sitio.tsx` para las demás. `entrada-sitio.tsx` hidrata si `#root` tiene contenido. `RutasAplicacion` deja `/` y `*`.
   Hecho cuando: los tests verifican que `entrada-sitio` hidrata un `#root` con el HTML de `renderPublicPage` sin avisos de diferencias, y que monta desde cero un `#root` vacío. Con `pnpm --filter web dev`, `/`, una página de servicio, `/ingresar` y `/panel` muestran lo que corresponde, y `/Servicios/Sucesiones` lleva a `/servicios/sucesiones`.
 

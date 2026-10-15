@@ -5,8 +5,6 @@ import { RutaProtegida } from './componentes/RutaProtegida';
 import { MiCuenta } from './paginas/MiCuenta';
 import { PaginaCambiarContrasena } from './paginas/PaginaCambiarContrasena';
 import { PaginaIngreso } from './paginas/PaginaIngreso';
-import { PaginaInicio } from './paginas/PaginaInicio';
-import { PaginaNoEncontrada } from './paginas/PaginaNoEncontrada';
 import { PanelCausaDetalle } from './paginas/PanelCausaDetalle';
 import { PanelCausaModelos } from './paginas/PanelCausaModelos';
 import { PanelCausaNueva } from './paginas/PanelCausaNueva';
@@ -31,11 +29,12 @@ import { PortalMovimientoDetalle } from './paginas/PortalMovimientoDetalle';
  * Rutas de la aplicación (planes 001 a 006, "Rutas"). Están separadas del router para poder
  * probarlas con un MemoryRouter. RutaProtegida decide el acceso de todas las rutas que
  * dependen de la sesión, incluida /ingresar (que con sesión lleva al inicio de la sección).
+ * El sitio público y su página de dirección inexistente son otro árbol (RutasSitio, spec 007):
+ * main.tsx solo carga la aplicación en el ingreso, el cambio de contraseña, el panel y el portal.
  */
 export function RutasAplicacion() {
   return (
     <Routes>
-      <Route path="/" element={<PaginaInicio />} />
       <Route element={<RutaProtegida />}>
         <Route path="/ingresar" element={<PaginaIngreso />} />
         <Route path="/cambiar-contrasena" element={<PaginaCambiarContrasena />} />
@@ -75,7 +74,6 @@ export function RutasAplicacion() {
           <Route path="/portal/mi-cuenta" element={<MiCuenta />} />
         </Route>
       </Route>
-      <Route path="*" element={<PaginaNoEncontrada />} />
     </Routes>
   );
 }
