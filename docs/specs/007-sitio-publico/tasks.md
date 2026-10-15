@@ -190,7 +190,7 @@ Reglas para todas las tareas:
   `public/fotos/` (vacía por ahora) y `fotos.test.ts`.
   Hecho cuando: el test recorre `public/fotos/` y falla si un archivo tiene un bloque EXIF o XMP. Incluye un caso de control con una imagen de prueba con EXIF, fuera de `public/`.
 
-- [ ] **T31 — Aislamiento del sitio público** [RF-36, RF-39 a RF-41]
+- [x] **T31 — Aislamiento del sitio público** [RF-36, RF-39 a RF-41]
   `aislamiento-sitio.test.ts`, como los de las specs 005 y 006.
   Hecho cuando: el test lee el código del sitio público y falla si:
   - Importa `cliente-http`, `sesion`, `ProveedorSesion`, `ProveedorServicios` o algún servicio de causas, movimientos, portal, usuarios, jurisprudencia o modelos.
