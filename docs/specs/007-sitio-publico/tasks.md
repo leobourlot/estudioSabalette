@@ -56,7 +56,7 @@ Reglas para todas las tareas:
   En `contenido-sitio.ts`: `MENSAJES_WHATSAPP` (T-15) y `TEXTOS` (T-17).
   Hecho cuando: los tests verifican que cada mensaje y cada texto coincide con el anexo, y que hay un mensaje para el inicio, para cada pestaña y para cada servicio.
 
-- [ ] **T7 — Direcciones y títulos** [RF-8, RF-10, RF-34]
+- [x] **T7 — Direcciones y títulos** [RF-8, RF-10, RF-34]
   `servicios/rutas-sitio.ts`: `PUBLIC_PAGES` (dirección, archivo, título y descripción de T-16, mensaje de WhatsApp, si se indexa), `REDIRECTS`, `isAppPath`, `normalizePublicPath` y `decideEntry(ruta)` (`redirigir`, `aplicacion` o `sitio`). `servicios/presentacion-sitio.ts`: `pageTitle(nombre)`.
   Hecho cuando: los tests verifican:
   - Que cada título y descripción coincide con T-16, y los títulos de ingreso, cambio de contraseña, portal y panel.
