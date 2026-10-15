@@ -1,17 +1,28 @@
+import { TEXTOS } from '../servicios/contenido-sitio';
 import { whatsappUrl } from '../servicios/datos-estudio';
+
+interface BotonWhatsappProps {
+  /**
+   * Mensaje ya escrito de la página pública (spec 007, RF-27). Sin mensaje, la conversación se
+   * abre vacía.
+   */
+  mensaje?: string;
+}
 
 /**
  * Botón de WhatsApp siempre visible abajo a la derecha, en todas las pantallas que ve el
- * cliente (spec 004, RF-19). Abre una conversación con el estudio, sin mensaje precargado. Las
- * pantallas que lo muestran dejan un margen inferior para que nunca tape contenido.
+ * cliente (spec 004, RF-19), en las páginas públicas y en la pantalla de ingreso (spec 007,
+ * RF-26). En el portal y en el ingreso abre la conversación sin mensaje; en las páginas públicas,
+ * con el mensaje de la página (RF-27). Las pantallas que lo muestran dejan un margen inferior
+ * para que nunca tape contenido.
  */
-export function BotonWhatsapp() {
+export function BotonWhatsapp({ mensaje }: BotonWhatsappProps) {
   return (
     <a
-      href={whatsappUrl()}
+      href={whatsappUrl(mensaje)}
       target="_blank"
       rel="noopener noreferrer"
-      aria-label="Escribinos por WhatsApp"
+      aria-label={TEXTOS.botonWhatsapp}
       className="fixed bottom-4 right-4 z-10 flex h-14 w-14 items-center justify-center rounded-full bg-green-600 text-white shadow-lg hover:bg-green-700"
     >
       <svg viewBox="0 0 24 24" aria-hidden="true" className="h-7 w-7 fill-current">

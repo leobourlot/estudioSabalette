@@ -91,7 +91,7 @@ Reglas para todas las tareas:
   `useTituloDocumento(titulo)`. El panel, el portal y el cambio de contraseña ponen su título de T-16. `PaginaCambiarContrasena` suma `NombreEstudio`.
   Hecho cuando: los tests verifican el título del documento en el panel, en el portal y en el cambio de contraseña, que cambia al cambiar el título pedido, y el nombre del estudio en el cambio de contraseña.
 
-- [ ] **T12 — Botón de WhatsApp con mensaje** [RF-26, RF-27] **(modifica existente: `componentes/BotonWhatsapp.tsx` y sus tests)**
+- [x] **T12 — Botón de WhatsApp con mensaje** [RF-26, RF-27] **(modifica existente: `componentes/BotonWhatsapp.tsx` y sus tests)**
   Propiedad opcional `mensaje`.
   Hecho cuando: los tests verifican el enlace sin mensaje (el portal y el cambio de contraseña siguen igual) y con mensaje, el nombre "Escribinos por WhatsApp", `target="_blank"` y `rel="noopener noreferrer"`.
 
