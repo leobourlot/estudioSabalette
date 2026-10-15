@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react';
 import { NavLink, Outlet, useNavigate } from 'react-router-dom';
-import { STUDIO_CONTACT } from '../servicios/datos-estudio';
 import { clearClipboard } from '../servicios/portapapeles';
 import { fullName } from '../servicios/presentacion';
 import { ROUTES } from '../servicios/sesion';
+import { NombreEstudio } from './NombreEstudio';
 import { useSession } from './ProveedorSesion';
 
 export interface SectionLink {
@@ -38,8 +38,8 @@ export function DisenoSeccion({ title, links, footer }: DisenoSeccionProps) {
     <div className="min-h-screen bg-slate-50">
       <header className="border-b border-slate-200 bg-white">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-4 px-4 py-3">
-          <p className="font-semibold text-slate-800">
-            <span>{STUDIO_CONTACT.nombre}</span>{' '}
+          <p className="flex items-center gap-2 font-semibold text-slate-800">
+            <NombreEstudio />
             <span className="font-normal text-slate-500">· {title}</span>
           </p>
           <nav className="flex gap-4 text-sm">

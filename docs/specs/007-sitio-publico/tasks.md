@@ -83,7 +83,7 @@ Reglas para todas las tareas:
 
 ## web — componentes
 
-- [ ] **T10 — Identidad visual y nombre en dos líneas** [RF-3] **(modifica existente: `tailwind.config.js`, `componentes/DisenoSeccion.tsx`, `componentes/BloqueContactoEstudio.tsx`, `componentes/Disenos.test.tsx`)**
+- [x] **T10 — Identidad visual y nombre en dos líneas** [RF-3] **(modifica existente: `tailwind.config.js`, `componentes/DisenoSeccion.tsx`, `componentes/BloqueContactoEstudio.tsx`, `componentes/Disenos.test.tsx`)**
   Colores `estudio` en Tailwind. `NombreEstudio`: "Pertusatti | Sabalette" sin cortarse y "Abogadas" debajo. `DisenoSeccion` y `BloqueContactoEstudio` lo usan.
   Hecho cuando: los tests verifican que el encabezado del panel y del portal y el bloque de contacto del portal muestran el nombre en dos líneas, y que la primera línea no se puede cortar.
 

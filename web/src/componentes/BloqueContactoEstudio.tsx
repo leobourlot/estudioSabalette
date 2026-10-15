@@ -1,4 +1,5 @@
 import { STUDIO_CONTACT, type StudioContact, whatsappUrl } from '../servicios/datos-estudio';
+import { NombreEstudio } from './NombreEstudio';
 
 interface BloqueContactoEstudioProps {
   /** Los tests pasan otros datos; la aplicación usa siempre los del estudio. */
@@ -17,7 +18,9 @@ export function BloqueContactoEstudio({ contact = STUDIO_CONTACT }: BloqueContac
       className="border-t border-slate-200 bg-white px-4 pt-6 pb-24 text-sm text-slate-600"
     >
       <div className="mx-auto max-w-5xl space-y-1">
-        <p className="font-medium text-slate-800">{contact.nombre}</p>
+        <p className="font-medium text-slate-800">
+          <NombreEstudio contact={contact} />
+        </p>
         {contact.direccion && <p className="break-words">{contact.direccion}</p>}
         <p>
           <a

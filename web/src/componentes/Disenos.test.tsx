@@ -33,10 +33,13 @@ describe('DisenoPanel (RF-16)', () => {
     expect(screen.getByText('Juan Pérez')).toBeTruthy();
   });
 
-  it('el encabezado muestra el nombre del estudio de sus datos de contacto', async () => {
+  it('el encabezado muestra el nombre del estudio en dos líneas (spec 007, RF-3)', async () => {
     await openAs('/panel', testUser('abogado'), 'Panel');
 
-    expect(within(screen.getByRole('banner')).getByText(STUDIO_CONTACT.nombre)).toBeTruthy();
+    const firstLine = within(screen.getByRole('banner')).getByText('Pertusatti | Sabalette');
+    expect(firstLine.className).toContain('whitespace-nowrap');
+    expect(firstLine.parentElement!.textContent).toBe(STUDIO_CONTACT.nombre);
+    expect(within(screen.getByRole('banner')).getByText('Abogadas')).toBeTruthy();
   });
 
   it('cerrar sesión llama al servicio y lleva a /ingresar', async () => {
@@ -109,7 +112,9 @@ describe('DisenoPortal (RF-16)', () => {
 
     const footer = screen.getByRole('contentinfo', { name: 'Contacto del estudio' });
     const contact = within(footer);
-    expect(contact.getByText(STUDIO_CONTACT.nombre)).toBeTruthy();
+    expect(contact.getByText('Pertusatti | Sabalette').parentElement!.textContent).toBe(
+      STUDIO_CONTACT.nombre,
+    );
     // Sin dirección informada, el bloque no la muestra ni deja un renglón vacío (spec 007, RF-24).
     expect(Array.from(footer.querySelectorAll('p')).map((p) => p.textContent)).toEqual([
       STUDIO_CONTACT.nombre,
