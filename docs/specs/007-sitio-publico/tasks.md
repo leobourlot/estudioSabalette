@@ -136,7 +136,7 @@ Reglas para todas las tareas:
 
 ## web — páginas
 
-- [ ] **T21 — Inicio** [RF-11, RF-12, RF-18]
+- [x] **T21 — Inicio** [RF-11, RF-12, RF-18]
   `SitioInicio`.
   Hecho cuando: los tests verifican un único `<h1>` con el nombre del estudio, T-1, la sección "Nuestros servicios" con T-2 y las cuatro tarjetas en orden, la sección "Abogadas" con sus dos tarjetas, el contacto al final, los `id` de las secciones y el mensaje de WhatsApp del inicio.
 
