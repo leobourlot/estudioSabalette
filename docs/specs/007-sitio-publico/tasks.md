@@ -43,7 +43,7 @@ Reglas para todas las tareas:
   - Que no queda ningún dato genérico (`Ejemplo`, `5491100000000`).
   - Que el bloque de contacto del portal no muestra dirección ni un renglón vacío.
 
-- [ ] **T5 — Textos del sitio** [RF-2, RF-12 a RF-20]
+- [x] **T5 — Textos del sitio** [RF-2, RF-12 a RF-20]
   `servicios/contenido-sitio.ts` con T-1 a T-14 como datos (`APERTURA`, `INTRO_SERVICIOS`, `SERVICIOS`, `PESTANAS_LABORAL`, `ABOGADAS`) y `hasOwnPage`. `contenido-sitio.test.ts` lee el anexo de `docs/specs/007-sitio-publico/spec.md` y compara.
   Hecho cuando: los tests verifican:
   - Que cada texto de T-1 a T-14 coincide carácter por carácter con el anexo, párrafo por párrafo y punto por punto.

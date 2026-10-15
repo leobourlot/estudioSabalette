@@ -1,0 +1,144 @@
+import { describe, expect, it } from 'vitest';
+import {
+  annexSection,
+  listItems,
+  quoteBlocks,
+  quoteParagraphs,
+  quotesByItem,
+  quoteText,
+} from '../pruebas/anexo-spec-007';
+import {
+  ABOGADAS,
+  APERTURA,
+  type Bloque,
+  hasOwnPage,
+  INTRO_SERVICIOS,
+  PESTANAS_LABORAL,
+  SERVICIOS,
+  type ClaveServicio,
+} from './contenido-sitio';
+
+const service = (clave: ClaveServicio) => SERVICIOS.find((s) => s.clave === clave)!;
+const lawyer = (slug: string) => ABOGADAS.find((a) => a.slug === slug)!;
+
+describe('textos del sitio contra el anexo de la spec 007 (RF-2)', () => {
+  it('T-1, apertura del inicio', () => {
+    expect(APERTURA).toBe(quoteText(annexSection('T-1')));
+  });
+
+  it('T-2, encabezado de la sección Servicios', () => {
+    expect(INTRO_SERVICIOS).toBe(quoteText(annexSection('T-2')));
+  });
+
+  it('T-3 a T-6, frases de las tarjetas', () => {
+    const phrases = quotesByItem(annexSection('T-3 a T-6'));
+
+    expect(service('derecho-laboral').frase).toBe(phrases.get('T-3, Derecho Laboral:'));
+    expect(service('accidentes').frase).toBe(
+      phrases.get('T-4, Accidentes y Enfermedades Laborales:'),
+    );
+    expect(service('danos').frase).toBe(phrases.get('T-5, Derecho de Daños:'));
+    expect(service('sucesiones').frase).toBe(phrases.get('T-6, Sucesiones:'));
+  });
+
+  it('T-7, destacados de la pestaña Empresas', () => {
+    expect(PESTANAS_LABORAL[0].destacados).toEqual(listItems(annexSection('T-7')));
+  });
+
+  it('T-8 y T-9, pestañas de Derecho Laboral', () => {
+    expect(PESTANAS_LABORAL[0].bloques).toEqual(quoteBlocks(annexSection('T-8')));
+    expect(PESTANAS_LABORAL[1].bloques).toEqual(quoteBlocks(annexSection('T-9')));
+  });
+
+  it('T-10 a T-12, páginas de servicio', () => {
+    expect(service('accidentes').bloques).toEqual(quoteBlocks(annexSection('T-10')));
+    expect(service('danos').bloques).toEqual(quoteBlocks(annexSection('T-11')));
+    expect(service('sucesiones').bloques).toEqual(quoteBlocks(annexSection('T-12')));
+  });
+
+  it('T-13 y T-14, resumen y texto completo de Vanesa Sabalette Rabello', () => {
+    const vanesa = lawyer('vanesa-sabalette-rabello');
+
+    expect(vanesa.resumen).toBe(quoteText(annexSection('T-13')));
+    expect(vanesa.texto).toEqual(quoteParagraphs(annexSection('T-14')));
+  });
+
+  it('la comparación detecta una letra cambiada (caso de control)', () => {
+    const altered: Bloque[] = structuredClone(service('sucesiones').bloques) as Bloque[];
+    const first = altered[0];
+    if (first.tipo === 'parrafo') altered[0] = { ...first, texto: first.texto.replace('A', 'a') };
+
+    expect(altered).not.toEqual(quoteBlocks(annexSection('T-12')));
+  });
+
+  it('el anexo tiene las listas completas: nueve puntos en las pestañas y siete en Sucesiones', () => {
+    const items = (blocks: readonly Bloque[]) =>
+      blocks.flatMap((block) => (block.tipo === 'lista' ? block.items : []));
+
+    expect(items(PESTANAS_LABORAL[0].bloques)).toHaveLength(9);
+    expect(items(PESTANAS_LABORAL[1].bloques)).toHaveLength(9);
+    expect(items(service('sucesiones').bloques)).toHaveLength(7);
+  });
+});
+
+describe('servicios (RF-12, RF-13)', () => {
+  it('van en el orden de las tarjetas', () => {
+    expect(SERVICIOS.map((s) => s.clave)).toEqual([
+      'derecho-laboral',
+      'accidentes',
+      'danos',
+      'sucesiones',
+    ]);
+  });
+
+  it('tienen el nombre de la tarjeta y el título de su página', () => {
+    expect(SERVICIOS.map((s) => [s.nombre, s.titulo])).toEqual([
+      ['Derecho Laboral', 'Derecho Laboral'],
+      ['Accidentes y Enfermedades Laborales', 'Accidentes de trabajo y enfermedades profesionales'],
+      ['Derecho de Daños', 'Derecho de Daños'],
+      ['Sucesiones', 'Sucesiones'],
+    ]);
+  });
+
+  it('tienen sus direcciones (RF-8)', () => {
+    expect(SERVICIOS.map((s) => s.ruta)).toEqual([
+      '/servicios/derecho-laboral/empresas',
+      '/servicios/accidentes-de-trabajo',
+      '/servicios/derecho-de-danos',
+      '/servicios/sucesiones',
+    ]);
+  });
+
+  it('las pestañas de Derecho Laboral van en orden, con su dirección', () => {
+    expect(PESTANAS_LABORAL.map((p) => [p.clave, p.etiqueta, p.ruta])).toEqual([
+      ['empresas', 'Empresas', '/servicios/derecho-laboral/empresas'],
+      ['trabajadores', 'Trabajadores', '/servicios/derecho-laboral/trabajadores'],
+    ]);
+    expect(PESTANAS_LABORAL[1].destacados).toEqual([]);
+  });
+});
+
+describe('abogadas (RF-18 a RF-20)', () => {
+  it('van en el orden del logo', () => {
+    expect(ABOGADAS.map((a) => a.nombre)).toEqual([
+      'Carolina Pertusatti',
+      'Vanesa Sabalette Rabello',
+    ]);
+  });
+
+  it('solo tiene página la que tiene resumen y texto completo', () => {
+    expect(hasOwnPage(lawyer('carolina-pertusatti'))).toBe(false);
+    expect(hasOwnPage(lawyer('vanesa-sabalette-rabello'))).toBe(true);
+  });
+
+  it('sin el resumen o sin el texto, no tiene página', () => {
+    const vanesa = lawyer('vanesa-sabalette-rabello');
+
+    expect(hasOwnPage({ ...vanesa, resumen: null })).toBe(false);
+    expect(hasOwnPage({ ...vanesa, texto: null })).toBe(false);
+  });
+
+  it('todavía no tienen foto (spec 007, dudas abiertas)', () => {
+    expect(ABOGADAS.map((a) => a.foto)).toEqual([null, null]);
+  });
+});
