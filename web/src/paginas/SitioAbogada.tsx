@@ -26,7 +26,7 @@ export function SitioAbogada({ abogada }: SitioAbogadaProps) {
           <div className="mt-6 flex flex-col items-center gap-4 text-center sm:flex-row sm:text-left">
             <FotoAbogada abogada={abogada} tamano="grande" />
             <div>
-              <h1 className="break-words text-3xl font-semibold text-estudio-oscuro">
+              <h1 className="break-words font-titulos text-4xl font-semibold text-estudio-oscuro">
                 {abogada.nombre}
               </h1>
               <p className="mt-1 font-medium uppercase tracking-wide text-estudio-azul">

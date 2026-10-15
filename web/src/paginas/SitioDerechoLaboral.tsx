@@ -42,7 +42,9 @@ export function SitioDerechoLaboral({ pestana }: SitioDerechoLaboralProps) {
       <article className="px-4 py-10">
         <div className="mx-auto max-w-3xl">
           <VolverA href="/#servicios">{TEXTOS.detalle.volverAServicios}</VolverA>
-          <h1 className="mt-4 text-3xl font-semibold text-estudio-oscuro">{LABORAL.titulo}</h1>
+          <h1 className="mt-4 font-titulos text-4xl font-semibold text-estudio-oscuro">
+            {LABORAL.titulo}
+          </h1>
           <p className="mt-3 text-lg text-slate-700">{LABORAL.frase}</p>
 
           <nav aria-label="Destinatarios" className="mt-8 border-b border-slate-200">

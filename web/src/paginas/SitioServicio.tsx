@@ -27,7 +27,7 @@ export function SitioServicio({ clave }: SitioServicioProps) {
       <article className="px-4 py-10">
         <div className="mx-auto max-w-3xl">
           <VolverA href="/#servicios">{TEXTOS.detalle.volverAServicios}</VolverA>
-          <h1 className="mt-4 break-words text-3xl font-semibold text-estudio-oscuro">
+          <h1 className="mt-4 break-words font-titulos text-4xl font-semibold text-estudio-oscuro">
             {servicio.titulo}
           </h1>
           <div className="mt-6">

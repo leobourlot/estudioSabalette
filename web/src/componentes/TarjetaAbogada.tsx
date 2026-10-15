@@ -15,7 +15,9 @@ export function TarjetaAbogada({ abogada }: TarjetaAbogadaProps) {
   return (
     <article className="flex flex-col items-center rounded-lg border border-slate-200 bg-white p-6 text-center shadow-sm">
       <FotoAbogada abogada={abogada} tamano="mediana" diferida />
-      <h3 className="mt-4 text-lg font-semibold text-estudio-oscuro">{abogada.nombre}</h3>
+      <h3 className="mt-4 font-titulos text-2xl font-semibold text-estudio-oscuro">
+        {abogada.nombre}
+      </h3>
       <p className="text-sm font-medium uppercase tracking-wide text-estudio-azul">
         {TEXTOS.inicio.abogada}
       </p>

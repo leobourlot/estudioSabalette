@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-de-prueba';
@@ -186,12 +186,14 @@ describe('títulos del documento (spec 007, RF-34)', () => {
   it('el panel pone su título', async () => {
     await openAs('/panel', testUser('abogado'), 'Panel');
 
-    expect(document.title).toBe('Panel · Pertusatti | Sabalette - Abogadas');
+    await waitFor(() => expect(document.title).toBe('Panel · Pertusatti | Sabalette - Abogadas'));
   });
 
   it('el portal pone su título', async () => {
     await openAs('/portal/mi-cuenta', testUser('cliente'), 'Mi cuenta');
 
-    expect(document.title).toBe('Portal de clientes · Pertusatti | Sabalette - Abogadas');
+    await waitFor(() =>
+      expect(document.title).toBe('Portal de clientes · Pertusatti | Sabalette - Abogadas'),
+    );
   });
 });

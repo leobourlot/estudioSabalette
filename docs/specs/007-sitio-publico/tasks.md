@@ -228,7 +228,7 @@ Pedidos por el estudio durante la demo manual (spec: RF-3, RF-4, RF-6, RF-23, RF
   `TEXTOS.contacto` con los textos nuevos de T-17, `TEXTOS.pie` con T-18, y `RedSocial` con `usuario`.
   Hecho cuando: los tests comparan T-17 y T-18 con el anexo, carácter por carácter, y verifican el año en la leyenda.
 
-- [ ] **T35 — Tipografía de los títulos** [RF-3, RF-40] **(modifica existente: `index.css`, `index.html`, `tailwind.config.js`)**
+- [x] **T35 — Tipografía de los títulos** [RF-3, RF-40] **(modifica existente: `index.css`, `index.html`, `tailwind.config.js`)**
   Cormorant Garamond en `public/fuentes/` con su licencia, `@font-face` con `font-display: swap`, precarga y `font-titulos`.
   Hecho cuando: un test verifica que los archivos de la tipografía y su licencia están en el sitio, y que `index.css` y `index.html` solo apuntan a archivos propios.
 

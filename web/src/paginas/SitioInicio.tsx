@@ -14,7 +14,8 @@ import { publicPageFor } from '../servicios/rutas-sitio';
 
 const PAGE = publicPageFor('/')!;
 
-const SECTION_TITLE = 'text-2xl font-semibold text-estudio-oscuro outline-none';
+const SECTION_TITLE =
+  'font-titulos text-3xl font-semibold text-estudio-oscuro outline-none sm:text-4xl';
 
 /**
  * Inicio del sitio público (spec 007, RF-11, RF-12 y RF-18): la apertura con el nombre del
@@ -31,7 +32,7 @@ export function SitioInicio() {
         className="bg-gradient-to-r from-estudio-oscuro to-estudio-azul px-4 py-16 text-estudio-blanco"
       >
         <div className="mx-auto max-w-5xl">
-          <h1 id="inicio-titulo" className="text-3xl font-semibold sm:text-4xl">
+          <h1 id="inicio-titulo" className="font-titulos text-4xl font-semibold sm:text-5xl">
             <NombreEstudio />
           </h1>
           <p className="mt-4 max-w-2xl text-lg">{APERTURA}</p>

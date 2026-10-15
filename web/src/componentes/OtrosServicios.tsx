@@ -11,7 +11,10 @@ export function OtrosServicios({ actual }: OtrosServiciosProps) {
   return (
     <nav aria-labelledby="otros-servicios" className="border-t border-slate-200 px-4 py-10">
       <div className="mx-auto max-w-3xl">
-        <h2 id="otros-servicios" className="text-xl font-semibold text-estudio-oscuro">
+        <h2
+          id="otros-servicios"
+          className="font-titulos text-2xl font-semibold text-estudio-oscuro"
+        >
           {TEXTOS.detalle.otrosServicios}
         </h2>
         <ul className="mt-4 flex flex-col gap-1 sm:flex-row sm:flex-wrap sm:gap-x-6">
