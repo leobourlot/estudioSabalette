@@ -103,7 +103,7 @@ Reglas para todas las tareas:
   `/panel/*` y `/portal/*` dentro de `RutaProtegida`, que llevan al inicio de su sección. "Rutas" del plan 001 las suma.
   Hecho cuando: los tests verifican que `/panel/no-existe` y `/portal/no-existe` llevan al ingreso sin sesión; al inicio de su sección con sesión; a la sección del otro rol si corresponde; y al cambio de contraseña si está pendiente. Las rutas existentes del panel y del portal siguen funcionando.
 
-- [ ] **T15 — Bloques de texto y tarjetas de servicio** [RF-12, RF-14]
+- [x] **T15 — Bloques de texto y tarjetas de servicio** [RF-12, RF-14]
   `BloquesTexto` (un `<p>` por párrafo, un `<ul>` por lista) y `TarjetaServicio` (`<h3>`, frase y "Conocer más" con el nombre del servicio como texto oculto).
   Hecho cuando: los tests verifican los párrafos y los puntos de una lista, que un texto con `<b>` se muestra literal, y que cada "Conocer más" lleva a su dirección y se anuncia con el nombre del servicio.
 
