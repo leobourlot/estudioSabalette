@@ -22,3 +22,15 @@ describe('NombreEstudio (spec 007, RF-3)', () => {
     expect(screen.getByText('-').className).toContain('sr-only');
   });
 });
+
+describe('NombreEstudio dentro de un enlace', () => {
+  it('el enlace se anuncia con el nombre completo, con sus espacios', () => {
+    render(
+      <a href="/">
+        <NombreEstudio />
+      </a>,
+    );
+
+    expect(screen.getByRole('link', { name: 'Pertusatti | Sabalette - Abogadas' })).toBeTruthy();
+  });
+});

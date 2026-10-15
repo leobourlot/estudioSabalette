@@ -91,3 +91,32 @@ describe('PaginaIngreso (RF-8 a RF-10)', () => {
     );
   });
 });
+
+describe('PaginaIngreso en el sitio (spec 007, RF-3, RF-26, RF-33 y RF-34)', () => {
+  it('el logo y el nombre del estudio llevan al sitio público', async () => {
+    await openLogin(async () => testUser('abogado'));
+
+    const home = screen.getByRole('link', { name: 'Pertusatti | Sabalette - Abogadas' });
+    expect(home.getAttribute('href')).toBe('/');
+    expect(home.querySelector('img')?.getAttribute('alt')).toBe('');
+  });
+
+  it('muestra el botón de WhatsApp, sin mensaje', async () => {
+    await openLogin(async () => testUser('abogado'));
+
+    const button = screen.getByRole('link', { name: 'Escribinos por WhatsApp' });
+    expect(button.getAttribute('href')).toBe('https://wa.me/5493455414147');
+  });
+
+  it('deja lugar abajo para que el botón no tape el formulario (RF-28)', async () => {
+    await openLogin(async () => testUser('abogado'));
+
+    expect(screen.getByRole('main').className).toContain('pb-24');
+  });
+
+  it('pone el título del documento', async () => {
+    await openLogin(async () => testUser('abogado'));
+
+    expect(document.title).toBe('Ingresar · Pertusatti | Sabalette - Abogadas');
+  });
+});

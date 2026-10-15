@@ -95,7 +95,7 @@ Reglas para todas las tareas:
   Propiedad opcional `mensaje`.
   Hecho cuando: los tests verifican el enlace sin mensaje (el portal y el cambio de contraseña siguen igual) y con mensaje, el nombre "Escribinos por WhatsApp", `target="_blank"` y `rel="noopener noreferrer"`.
 
-- [ ] **T13 — Pantalla de ingreso** [RF-3, RF-26, RF-28, RF-33, RF-34] **(modifica existente: `paginas/PaginaIngreso.tsx` y su test)**
+- [x] **T13 — Pantalla de ingreso** [RF-3, RF-26, RF-28, RF-33, RF-34] **(modifica existente: `paginas/PaginaIngreso.tsx` y su test)**
   Arriba del formulario, el logo provisorio de `public/marca/` y `NombreEstudio`, como enlace común a `/`. `BotonWhatsapp` sin mensaje, margen inferior mayor que el botón y el título "Ingresar · Pertusatti | Sabalette - Abogadas". Necesita la imagen del logo que entregó el estudio, para copiarla a `public/marca/`.
   Hecho cuando: los tests verifican el enlace a `/` con el nombre del estudio, el botón de WhatsApp sin mensaje, el título del documento y que el formulario sigue funcionando como en la spec 001.
 
