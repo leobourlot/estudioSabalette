@@ -140,7 +140,7 @@ Reglas para todas las tareas:
   `SitioInicio`.
   Hecho cuando: los tests verifican un único `<h1>` con el nombre del estudio, T-1, la sección "Nuestros servicios" con T-2 y las cuatro tarjetas en orden, la sección "Abogadas" con sus dos tarjetas, el contacto al final, los `id` de las secciones y el mensaje de WhatsApp del inicio.
 
-- [ ] **T22 — Páginas de servicio** [RF-7, RF-13, RF-14, RF-27, RF-34]
+- [x] **T22 — Páginas de servicio** [RF-7, RF-13, RF-14, RF-27, RF-34]
   `SitioServicio` para Accidentes, Derecho de Daños y Sucesiones.
   Hecho cuando: los tests verifican, en cada una, "Volver a servicios", el `<h1>` (en Accidentes, el título largo), el texto completo, "Otros servicios" con los otros tres (Derecho Laboral a Empresas), su mensaje de WhatsApp y su título del documento.
 
