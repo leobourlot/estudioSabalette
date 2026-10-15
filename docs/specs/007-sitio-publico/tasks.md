@@ -99,7 +99,7 @@ Reglas para todas las tareas:
   Arriba del formulario, el logo provisorio de `public/marca/` y `NombreEstudio`, como enlace común a `/`. `BotonWhatsapp` sin mensaje, margen inferior mayor que el botón y el título "Ingresar · Pertusatti | Sabalette - Abogadas". Necesita la imagen del logo que entregó el estudio, para copiarla a `public/marca/`.
   Hecho cuando: los tests verifican el enlace a `/` con el nombre del estudio, el botón de WhatsApp sin mensaje, el título del documento y que el formulario sigue funcionando como en la spec 001.
 
-- [ ] **T14 — Direcciones inexistentes del panel y del portal** [RF-10] **(modifica existente: `RutasAplicacion.tsx`, `componentes/RutaProtegida.test.tsx`, `docs/specs/001-autenticacion-y-roles/plan.md`)**
+- [x] **T14 — Direcciones inexistentes del panel y del portal** [RF-10] **(modifica existente: `RutasAplicacion.tsx`, `componentes/RutaProtegida.test.tsx`, `docs/specs/001-autenticacion-y-roles/plan.md`)**
   `/panel/*` y `/portal/*` dentro de `RutaProtegida`, que llevan al inicio de su sección. "Rutas" del plan 001 las suma.
   Hecho cuando: los tests verifican que `/panel/no-existe` y `/portal/no-existe` llevan al ingreso sin sesión; al inicio de su sección con sesión; a la sección del otro rol si corresponde; y al cambio de contraseña si está pendiente. Las rutas existentes del panel y del portal siguen funcionando.
 

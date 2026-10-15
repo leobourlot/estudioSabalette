@@ -283,6 +283,7 @@ Reglas de permisos en `usuarios/permisos-gestion.ts`, como funciones puras sin a
 | `/panel/usuarios/:id` | `PanelUsuarioDetalle` (datos, auditoría y acciones) | admin, abogado |
 | `/panel/mi-cuenta` y `/portal/mi-cuenta` | `MiCuenta` | El rol de la sección |
 | `/portal` | `PortalInicio` (por ahora vacío; su contenido es de la spec 004) | cliente |
+| `/panel/*` y `/portal/*` (direcciones que no existen) | Llevan al inicio de su sección (plan 007) | Las reglas de `RutaProtegida`: sin sesión, `/ingresar` |
 
 `RutaProtegida` envuelve todas las rutas que dependen de la sesión (incluida `/ingresar`) y decide con `canAccess(ruta, usuario)`, en este orden:
 1. Cargando: indicador de carga.

@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import { DisenoPanel } from './componentes/DisenoPanel';
 import { DisenoPortal } from './componentes/DisenoPortal';
 import { RutaProtegida } from './componentes/RutaProtegida';
@@ -39,6 +39,10 @@ export function RutasAplicacion() {
       <Route element={<RutaProtegida />}>
         <Route path="/ingresar" element={<PaginaIngreso />} />
         <Route path="/cambiar-contrasena" element={<PaginaCambiarContrasena />} />
+        {/* Direcciones inexistentes del panel y del portal: al inicio de su sección, después de
+            las reglas de RutaProtegida (spec 007, RF-10). */}
+        <Route path="/panel/*" element={<Navigate to="/panel" replace />} />
+        <Route path="/portal/*" element={<Navigate to="/portal" replace />} />
         <Route element={<DisenoPanel />}>
           <Route path="/panel" element={<PanelInicio />} />
           <Route path="/panel/causas" element={<PanelCausas />} />

@@ -66,6 +66,55 @@ describe('RutaProtegida — orden de decisiones (RF-17, RF-20)', () => {
     expect(await heading('Ingresar')).toBeTruthy();
   });
 
+  describe('direcciones inexistentes del panel y del portal (spec 007, RF-10)', () => {
+    it.each(['/panel/no-existe', '/portal/no-existe', '/panel/causas/5/otra/cosa'])(
+      'sin sesión, %s lleva a /ingresar',
+      async (path) => {
+        renderAt(path, async () => null);
+
+        expect(await heading('Ingresar')).toBeTruthy();
+      },
+    );
+
+    it('con sesión de integrante, /panel/no-existe lleva al inicio del panel', async () => {
+      renderAt('/panel/no-existe', async () => testUser('abogado'));
+
+      expect(await heading('Panel')).toBeTruthy();
+    });
+
+    it('con sesión de cliente, /portal/no-existe lleva al inicio del portal', async () => {
+      renderAt('/portal/no-existe', async () => testUser('cliente'));
+
+      expect(await heading('Mis causas')).toBeTruthy();
+    });
+
+    it('un cliente en /panel/no-existe va a su portal', async () => {
+      renderAt('/panel/no-existe', async () => testUser('cliente'));
+
+      expect(await heading('Mis causas')).toBeTruthy();
+    });
+
+    it('un integrante en /portal/no-existe va a su panel', async () => {
+      renderAt('/portal/no-existe', async () => testUser('admin'));
+
+      expect(await heading('Panel')).toBeTruthy();
+    });
+
+    it('con el cambio de contraseña pendiente, lleva a cambiarla', async () => {
+      renderAt('/portal/no-existe', async () =>
+        testUser('cliente', { debeCambiarContrasena: true }),
+      );
+
+      expect(await heading('Cambiar contraseña')).toBeTruthy();
+    });
+
+    it('las direcciones existentes siguen funcionando', async () => {
+      renderAt('/panel/usuarios', async () => testUser('admin'));
+
+      expect(await heading('Cuentas')).toBeTruthy();
+    });
+  });
+
   it('las páginas públicas se ven sin sesión', async () => {
     renderAt('/', async () => null);
 
