@@ -248,6 +248,6 @@ Pedidos por el estudio durante la demo manual (spec: RF-3, RF-4, RF-6, RF-23, RF
   `motion` con `LazyMotion`, `Aparecer`, el menú y las pestañas con `AnimatePresence`, el `<noscript>` de `index.html` y el `IntersectionObserver` de prueba.
   Hecho cuando: los tests verifican que con la reducción de movimiento las transiciones duran 0, que la apertura del inicio no se anima, que el HTML prerenderizado marca con `data-aparecer` lo que se anima y que `index.html` lo muestra sin código; la suite de la web y el build pasan.
 
-- [ ] **T40 — Revalidación** **(modifica existente: `validacion.md`)**
+- [x] **T40 — Revalidación** **(modifica existente: `validacion.md`)**
   Actualizar `validacion.md` con los RF nuevos y cambiados y la guía de la demo (pasos 12 y 13).
   Hecho cuando: `pnpm test` y `pnpm lint` pasan y la validación queda lista para retomar la demo manual.
