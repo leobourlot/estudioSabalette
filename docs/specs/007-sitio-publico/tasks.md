@@ -236,7 +236,7 @@ Pedidos por el estudio durante la demo manual (spec: RF-3, RF-4, RF-6, RF-23, RF
   Título, línea, texto y un renglón por dato con su ícono en un recuadro; íconos propios.
   Hecho cuando: los tests verifican el título y el texto, que con los datos de hoy solo está "Teléfono / WhatsApp", que con datos completos están los cinco renglones en orden, "Cómo llegar" y una red con dos cuentas, y que los enlaces se abren aparte.
 
-- [ ] **T37 — Encabezado en pantallas chicas** [RF-4, RF-6] **(modifica existente: `componentes/EncabezadoSitio.tsx`, `componentes/MenuSitio.tsx`, `componentes/AccesoIngreso.tsx` y sus tests)**
+- [x] **T37 — Encabezado en pantallas chicas** [RF-4, RF-6] **(modifica existente: `componentes/EncabezadoSitio.tsx`, `componentes/MenuSitio.tsx`, `componentes/AccesoIngreso.tsx` y sus tests)**
   Una sola consulta de sesión para el encabezado y el menú, el acceso dentro del menú debajo de 420 px y el menú desplegado a lo ancho.
   Hecho cuando: los tests verifican que el acceso está en el menú y en el encabezado con las clases de cada ancho, que la sesión se consulta una vez, que el panel del menú se ubica respecto del encabezado (`inset-x-0`), y que el acceso del menú cambia con la sesión.
 

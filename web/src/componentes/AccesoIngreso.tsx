@@ -6,19 +6,15 @@ import {
 } from '../servicios/estado-sesion';
 import { PRIMARY_BUTTON } from './estilos-sitio';
 
-interface AccesoIngresoProps {
-  /** Los tests pasan una consulta simulada; el sitio usa la de servicios/estado-sesion.ts. */
-  consultar?: () => Promise<SeccionSesion | null>;
-}
-
 /**
- * Acceso del encabezado del sitio público (spec 007, RF-29 a RF-32): "Ingresar" mientras no hay
- * sesión, mientras se consulta y si no se puede saber; "Ir a mi portal" o "Ir al panel" si se
- * confirma una sesión abierta. Es lo único que cambia en el sitio por tener sesión, y no muestra
- * ningún dato de la cuenta. Es un enlace común: al elegirlo carga la aplicación, que decide.
- * Consulta al montarse y al volver atrás con el navegador desde su caché (pageshow).
+ * La sección a la que lleva la sesión abierta, o null (spec 007, RF-29 a RF-31). Arranca en null
+ * (también en el HTML prerenderizado), consulta al montarse y vuelve a consultar al volver atrás
+ * con el navegador desde su caché (pageshow). El encabezado la consulta una sola vez y la pasa a
+ * los dos lugares donde puede estar el acceso.
  */
-export function AccesoIngreso({ consultar = fetchSessionSection }: AccesoIngresoProps) {
+export function useSeccionSesion(
+  consultar: () => Promise<SeccionSesion | null> = fetchSessionSection,
+): SeccionSesion | null {
   const [seccion, setSeccion] = useState<SeccionSesion | null>(null);
 
   useEffect(() => {
@@ -42,9 +38,25 @@ export function AccesoIngreso({ consultar = fetchSessionSection }: AccesoIngreso
     };
   }, [consultar]);
 
+  return seccion;
+}
+
+interface AccesoIngresoProps {
+  seccion: SeccionSesion | null;
+  /** Clases del lugar donde va: el encabezado o el menú plegado (RF-4). */
+  className?: string;
+}
+
+/**
+ * Acceso de ingreso del sitio público (spec 007, RF-29 a RF-32): "Ingresar" sin sesión o mientras
+ * no se sabe, "Ir a mi portal" o "Ir al panel" con una sesión abierta. Es lo único que cambia en
+ * el sitio por tener sesión, y no muestra ningún dato de la cuenta. Es un enlace común: al
+ * elegirlo carga la aplicación, que decide.
+ */
+export function AccesoIngreso({ seccion, className = '' }: AccesoIngresoProps) {
   const link = sessionAccessLink(seccion);
   return (
-    <a href={link.href} className={`whitespace-nowrap ${PRIMARY_BUTTON}`}>
+    <a href={link.href} className={`whitespace-nowrap ${PRIMARY_BUTTON} ${className}`}>
       {link.label}
     </a>
   );

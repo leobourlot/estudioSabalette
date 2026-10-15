@@ -1,6 +1,6 @@
 import type { SeccionSesion } from '../servicios/estado-sesion';
 import { LOGO_PATH } from '../servicios/marca';
-import { AccesoIngreso } from './AccesoIngreso';
+import { AccesoIngreso, useSeccionSesion } from './AccesoIngreso';
 import { FOCUS_RING } from './estilos-sitio';
 import { MenuSitio } from './MenuSitio';
 import { NombreEstudio } from './NombreEstudio';
@@ -11,25 +11,36 @@ interface EncabezadoSitioProps {
 }
 
 /**
- * Encabezado de las páginas públicas (spec 007, RF-3 y RF-4): el logo y el nombre del estudio,
- * que llevan al inicio, el menú y el acceso de ingreso. No queda fijo al desplazar, para no
- * ocupar la pantalla con el celular en horizontal. El logo no se anuncia: el enlace ya se llama
- * como el estudio.
+ * Encabezado de las páginas públicas (spec 007, RF-3, RF-4 y RF-6): el logo y el nombre del
+ * estudio, que llevan al inicio, el menú y el acceso de ingreso, en una sola línea. Debajo de
+ * 420 px el acceso pasa a ser la última opción del menú plegado, para que el logo, el nombre y
+ * "Menú" entren; desde 420 px va al lado del menú. La sesión se consulta una sola vez para los
+ * dos lugares. El encabezado es el elemento posicionado del menú desplegado. No queda fijo al
+ * desplazar, para no ocupar la pantalla con el celular en horizontal. El logo no se anuncia: el
+ * enlace ya se llama como el estudio.
  */
 export function EncabezadoSitio({ consultarSesion }: EncabezadoSitioProps) {
+  const seccion = useSeccionSesion(consultarSesion);
+
   return (
-    <header className="border-b border-slate-200 bg-white">
-      <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
+    <header className="relative border-b border-slate-200 bg-white">
+      <div className="mx-auto flex max-w-5xl items-center justify-between gap-3 px-4 py-3">
         <a
           href="/"
-          className={`flex items-center gap-3 rounded font-semibold text-estudio-oscuro ${FOCUS_RING}`}
+          className={`flex min-w-0 items-center gap-3 rounded font-semibold text-estudio-oscuro ${FOCUS_RING}`}
         >
-          <img src={LOGO_PATH} alt="" width={48} height={48} className="h-12 w-12 rounded" />
+          <img
+            src={LOGO_PATH}
+            alt=""
+            width={48}
+            height={48}
+            className="h-10 w-10 shrink-0 rounded min-[420px]:h-12 min-[420px]:w-12"
+          />
           <NombreEstudio />
         </a>
-        <div className="flex items-center gap-2">
-          <MenuSitio />
-          <AccesoIngreso consultar={consultarSesion} />
+        <div className="flex shrink-0 items-center gap-2">
+          <MenuSitio acceso={<AccesoIngreso seccion={seccion} className="w-full" />} />
+          <AccesoIngreso seccion={seccion} className="max-[419px]:hidden" />
         </div>
       </div>
     </header>

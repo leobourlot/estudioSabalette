@@ -1,7 +1,12 @@
 import { act, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import type { SeccionSesion } from '../servicios/estado-sesion';
-import { AccesoIngreso } from './AccesoIngreso';
+import { AccesoIngreso, useSeccionSesion } from './AccesoIngreso';
+
+/** El acceso con la consulta de sesión, como lo arma el encabezado. */
+function Acceso({ consultar }: { consultar: () => Promise<SeccionSesion | null> }) {
+  return <AccesoIngreso seccion={useSeccionSesion(consultar)} />;
+}
 
 const access = () => screen.getByRole('link');
 
@@ -13,7 +18,7 @@ function pageShow(persisted: boolean) {
 
 describe('AccesoIngreso (spec 007, RF-29 a RF-32)', () => {
   it('muestra "Ingresar" mientras se consulta', () => {
-    render(<AccesoIngreso consultar={() => new Promise(() => {})} />);
+    render(<Acceso consultar={() => new Promise(() => {})} />);
 
     expect(access().textContent).toBe('Ingresar');
     expect(access().getAttribute('href')).toBe('/ingresar');
@@ -21,7 +26,7 @@ describe('AccesoIngreso (spec 007, RF-29 a RF-32)', () => {
 
   it('sigue en "Ingresar" sin sesión', async () => {
     const consultar = vi.fn().mockResolvedValue(null);
-    render(<AccesoIngreso consultar={consultar} />);
+    render(<Acceso consultar={consultar} />);
 
     await act(async () => {});
 
@@ -30,7 +35,7 @@ describe('AccesoIngreso (spec 007, RF-29 a RF-32)', () => {
   });
 
   it('sigue en "Ingresar" si la consulta falla', async () => {
-    render(<AccesoIngreso consultar={vi.fn().mockRejectedValue(new Error('sin red'))} />);
+    render(<Acceso consultar={vi.fn().mockRejectedValue(new Error('sin red'))} />);
 
     await act(async () => {});
 
@@ -41,14 +46,14 @@ describe('AccesoIngreso (spec 007, RF-29 a RF-32)', () => {
     ['portal', 'Ir a mi portal', '/portal'],
     ['panel', 'Ir al panel', '/panel'],
   ] as const)('con sesión de %s muestra "%s"', async (seccion, label, href) => {
-    render(<AccesoIngreso consultar={vi.fn().mockResolvedValue(seccion)} />);
+    render(<Acceso consultar={vi.fn().mockResolvedValue(seccion)} />);
 
     expect(await screen.findByRole('link', { name: label })).toBeTruthy();
     expect(access().getAttribute('href')).toBe(href);
   });
 
   it('es un enlace común, sin ningún dato de la cuenta', async () => {
-    const { container } = render(<AccesoIngreso consultar={vi.fn().mockResolvedValue('portal')} />);
+    const { container } = render(<Acceso consultar={vi.fn().mockResolvedValue('portal')} />);
 
     await screen.findByRole('link', { name: 'Ir a mi portal' });
     expect(container.textContent).toBe('Ir a mi portal');
@@ -60,7 +65,7 @@ describe('AccesoIngreso (spec 007, RF-29 a RF-32)', () => {
       .fn<() => Promise<SeccionSesion | null>>()
       .mockResolvedValueOnce('portal')
       .mockResolvedValueOnce(null);
-    render(<AccesoIngreso consultar={consultar} />);
+    render(<Acceso consultar={consultar} />);
     await screen.findByRole('link', { name: 'Ir a mi portal' });
 
     pageShow(false);
@@ -70,5 +75,14 @@ describe('AccesoIngreso (spec 007, RF-29 a RF-32)', () => {
 
     expect(consultar).toHaveBeenCalledTimes(2);
     expect(access().textContent).toBe('Ingresar');
+  });
+});
+
+describe('AccesoIngreso en cada lugar (spec 007, RF-4)', () => {
+  it('suma las clases del lugar donde va', () => {
+    render(<AccesoIngreso seccion={null} className="max-[419px]:hidden" />);
+
+    expect(access().className).toContain('max-[419px]:hidden');
+    expect(access().className).toContain('min-h-11');
   });
 });

@@ -11,7 +11,7 @@ const details = () => document.querySelector('details')!;
 const summary = () => screen.getByText('Menú');
 const dropdown = () => within(details().querySelector('nav')!);
 
-describe('EncabezadoSitio (spec 007, RF-3 y RF-4)', () => {
+describe('EncabezadoSitio (spec 007, RF-3, RF-4 y RF-6)', () => {
   it('el logo y el nombre llevan al inicio; el logo no se anuncia', () => {
     render(<EncabezadoSitio consultarSesion={noSession()} />);
 
@@ -21,12 +21,50 @@ describe('EncabezadoSitio (spec 007, RF-3 y RF-4)', () => {
     expect(home.querySelector('img')!.getAttribute('src')).toBe('/marca/logo.jpg');
   });
 
-  it('tiene el menú y el acceso de ingreso', () => {
+  it('logo, nombre, menú y acceso van en una sola línea, sin partirse', () => {
+    render(<EncabezadoSitio consultarSesion={noSession()} />);
+
+    const row = screen.getByRole('banner').firstElementChild!;
+    expect(row.className).toContain('flex');
+    expect(row.className).not.toContain('flex-wrap');
+  });
+
+  it('el acceso está en el encabezado desde 420 px y en el menú plegado debajo de 420 px', () => {
     render(<EncabezadoSitio consultarSesion={() => new Promise(() => {})} />);
 
     const header = within(screen.getByRole('banner'));
-    expect(header.getByRole('link', { name: 'Ingresar' }).getAttribute('href')).toBe('/ingresar');
-    expect(header.getAllByRole('link', { name: 'Servicios' }).length).toBeGreaterThan(0);
+    const accesses = header.getAllByRole('link', { name: 'Ingresar' });
+    expect(accesses).toHaveLength(2);
+    const inMenu = dropdown().getByRole('link', { name: 'Ingresar' });
+    expect(inMenu.closest('li')!.className).toContain('min-[420px]:hidden');
+    const inHeader = accesses.find((a) => a !== inMenu)!;
+    expect(inHeader.className).toContain('max-[419px]:hidden');
+    expect(inHeader.closest('details')).toBeNull();
+  });
+
+  it('consulta la sesión una sola vez para los dos accesos', async () => {
+    const consultar = vi.fn().mockResolvedValue('portal');
+    render(<EncabezadoSitio consultarSesion={consultar} />);
+
+    expect(await screen.findAllByRole('link', { name: 'Ir a mi portal' })).toHaveLength(2);
+    expect(consultar).toHaveBeenCalledTimes(1);
+    expect(dropdown().getByRole('link', { name: 'Ir a mi portal' }).getAttribute('href')).toBe(
+      '/portal',
+    );
+  });
+
+  it('el menú desplegado se ubica respecto del encabezado, a lo ancho', () => {
+    render(<EncabezadoSitio consultarSesion={noSession()} />);
+
+    expect(screen.getByRole('banner').className).toContain('relative');
+    const panel = details().querySelector('nav')!;
+    expect(panel.className).toContain('absolute');
+    expect(panel.className).toContain('inset-x-0');
+    expect(panel.className).toContain('top-full');
+    // Ningún elemento entre el panel y el encabezado está posicionado.
+    for (let el = panel.parentElement; el && el.tagName !== 'HEADER'; el = el.parentElement) {
+      expect(el.className).not.toMatch(/\b(relative|absolute|fixed|sticky)\b/);
+    }
   });
 });
 
@@ -78,6 +116,12 @@ describe('MenuSitio (spec 007, RF-5 y RF-6)', () => {
 
     expect(details().open).toBe(false);
     expect(document.activeElement).toBe(summary());
+  });
+
+  it('sin acceso, el menú plegado solo tiene las tres opciones', () => {
+    render(<MenuSitio />);
+
+    expect(dropdown().getAllByRole('listitem')).toHaveLength(3);
   });
 
   it('sin el código de la página, los enlaces ya están en el HTML (RF-35)', () => {
