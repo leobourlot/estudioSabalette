@@ -144,7 +144,7 @@ Reglas para todas las tareas:
   `SitioServicio` para Accidentes, Derecho de Daños y Sucesiones.
   Hecho cuando: los tests verifican, en cada una, "Volver a servicios", el `<h1>` (en Accidentes, el título largo), el texto completo, "Otros servicios" con los otros tres (Derecho Laboral a Empresas), su mensaje de WhatsApp y su título del documento.
 
-- [ ] **T23 — Derecho Laboral** [RF-15 a RF-17, RF-27, RF-34]
+- [x] **T23 — Derecho Laboral** [RF-15 a RF-17, RF-27, RF-34]
   `SitioDerechoLaboral`.
   Hecho cuando: los tests verifican:
   - El `<h1>`, T-3 y las dos pestañas en orden, con `aria-current="page"` solo en la elegida.
