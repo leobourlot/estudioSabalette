@@ -175,7 +175,7 @@ Reglas para todas las tareas:
   - `sitemap.xml` solo con las páginas indexables y la dirección del sitio.
   - `robots.txt` con las rutas privadas y el `Sitemap`.
 
-- [ ] **T28 — Prerenderizado en el build** [RF-35] **(modifica existente: `web/index.html`, `web/package.json`, `web/tsconfig.node.json`, `web/.gitignore`, `web/.env.example`)**
+- [x] **T28 — Prerenderizado en el build** [RF-35] **(modifica existente: `web/index.html`, `web/package.json`, `web/tsconfig.node.json`, `web/.gitignore`, `web/.env.example`)**
   Marcas `<!--cabecera-->` y `<!--app-->` en `index.html`. `scripts/prerender.ts`. El script `build` suma el build SSR y el prerenderizado. `VITE_URL_SITIO` documentada en `.env.example`.
   Hecho cuando:
   - `VITE_URL_SITIO=https://ejemplo.test pnpm --filter web build` deja en `dist/` los archivos de la tabla del plan, sin `dist-ssr/`.

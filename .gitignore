@@ -3,6 +3,7 @@ node_modules/
 
 # Compilados y reportes
 dist/
+dist-ssr/
 coverage/
 *.tsbuildinfo
 
