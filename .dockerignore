@@ -1,0 +1,20 @@
+# Contexto de construcción de api/Dockerfile (se construye desde la raíz del monorepo).
+
+# Dependencias y compilados: se instalan y compilan dentro de la imagen.
+**/node_modules
+**/dist
+**/dist-ssr
+**/coverage
+**/*.tsbuildinfo
+
+# Variables de entorno y credenciales: nunca entran en la imagen.
+**/.env*
+
+# Del frontend solo hace falta el package.json, para el lockfile.
+web/*
+!web/package.json
+
+# Resto del repositorio que la API no usa.
+.git
+docs
+**/*.log
