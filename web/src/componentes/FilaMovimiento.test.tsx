@@ -89,3 +89,28 @@ describe('FilaMovimiento (RF-24, RF-36)', () => {
     );
   });
 });
+
+describe('FilaMovimiento con la identidad del estudio (spec 008, RF-23)', () => {
+  it('un movimiento visible va en su tarjeta con la barra azul, junto a la etiqueta "Visible"', () => {
+    const row = renderRow({ visible: true });
+
+    expect(row.className).toContain('border-l-4');
+    expect(row.className).toContain('border-l-estudio-azul');
+    expect(within(row).getByText('Visible')).toBeTruthy();
+  });
+
+  it('un movimiento oculto lleva la barra gris, junto a la etiqueta "Oculto"', () => {
+    const row = renderRow({ visible: false });
+
+    expect(row.className).toContain('border-l-slate-400');
+    expect(within(row).getByText('Oculto')).toBeTruthy();
+  });
+
+  it('oculto y anulado: barra gris y las dos etiquetas', () => {
+    const row = renderRow({ visible: false, anulado: true });
+
+    expect(row.className).toContain('border-l-slate-400');
+    expect(within(row).getByText('Oculto')).toBeTruthy();
+    expect(within(row).getByText('Anulado')).toBeTruthy();
+  });
+});

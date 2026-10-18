@@ -7,6 +7,7 @@ import { useMantenerSesion } from '../componentes/useMantenerSesion';
 import { ApiError, errorMessage } from '../servicios/cliente-http';
 import { buildCreateRulingData, EMPTY_RULING_FORM } from '../servicios/formulario-fallo';
 import { pendingQuestion, type PendingQuestion, type QuestionOption } from '../servicios/preguntas';
+import { CARD, PAGE, PAGE_TITLE } from '../componentes/estilos-aplicacion';
 
 /**
  * Carga de un fallo (RF-16). Si la API pregunta por un fallo repetido (RF-18), muestra con
@@ -53,12 +54,12 @@ export function PanelFalloNuevo() {
   }
 
   return (
-    <main className="mx-auto max-w-3xl space-y-6 p-8">
-      <h1 className="text-2xl font-semibold text-slate-800">Nuevo fallo</h1>
+    <main className={PAGE}>
+      <h1 className={PAGE_TITLE}>Nuevo fallo</h1>
 
       {question && <PreguntaFalloRepetido question={question} onAnswer={answer} />}
 
-      <div className="rounded-lg bg-white p-6 shadow">
+      <div className={`p-6 ${CARD}`}>
         <FormularioFallo
           value={form}
           onChange={setForm}

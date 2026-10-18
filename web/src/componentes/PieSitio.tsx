@@ -1,5 +1,6 @@
 import { copyrightNotice, TEXTOS } from '../servicios/contenido-sitio';
 import {
+  mapsUrl,
   networksToShow,
   type RedSocial,
   STUDIO_CONTACT,
@@ -7,7 +8,8 @@ import {
   whatsappUrl,
 } from '../servicios/datos-estudio';
 import { LOGO_PATH } from '../servicios/marca';
-import { IconoRed } from './IconosRedes';
+import { IconoEmail, IconoUbicacionColor } from './IconosContacto';
+import { IconoRedColor } from './IconosRedes';
 import { NombreEstudio } from './NombreEstudio';
 
 interface PieSitioProps {
@@ -24,6 +26,9 @@ const BOURDER_WEB_LOGO = '/marca/bourder-web.svg';
 /** Enlace sobre el azul oscuro: claro, con foco blanco y al menos 44 px de alto. */
 const LINK =
   'inline-flex min-h-11 items-center gap-2 hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-estudio-blanco';
+
+/** Lugar del ícono del email y de la dirección: el ancho de los de las redes, para alinear el texto. */
+const ICON_BOX = 'flex w-7 shrink-0 justify-center';
 
 /** Los enlaces que llevan fuera del sitio se abren aparte, sin control sobre esta página (RF-25). */
 const EXTERNAL = { target: '_blank', rel: 'noopener noreferrer' } as const;
@@ -45,7 +50,7 @@ const MENU = [
 /**
  * Pie de todas las páginas públicas, después del bloque de contacto (spec 007, RF-44): el logo y
  * el nombre, los accesos del menú, el WhatsApp y el email, el WhatsApp y cada cuenta de las redes
- * con su ícono y el nombre de la red, la leyenda de derechos y "Diseñado por Bourder Web". Lo que
+ * con su ícono a color (el mismo del contacto) y el nombre de la red, la leyenda de derechos y "Diseñado por Bourder Web". Lo que
  * el estudio no informó no se muestra (RF-24), salvo las redes de muestra en desarrollo. Termina
  * con un margen mayor que el botón de WhatsApp, así al final de la página todo se puede ver y usar
  * (RF-28).
@@ -59,12 +64,16 @@ export function PieSitio({
   const repeated = repeatedNetworks(redes);
 
   return (
-    <footer className="bg-estudio-oscuro px-4 pt-12 pb-28 text-sm text-slate-200">
+    <footer className="bg-estudio-oscuro px-4 pt-12 pb-10 text-sm text-slate-200">
       <div className="mx-auto max-w-5xl">
         <div className="flex flex-col gap-8 md:flex-row md:items-start md:justify-between">
           <a href="/" className={`${LINK} gap-3 text-estudio-blanco`}>
-            <img src={LOGO_PATH} alt="" width={48} height={48} className="h-12 w-12 rounded" />
-            <NombreEstudio className="font-titulos text-xl font-semibold" contact={contact} />
+            <img src={LOGO_PATH} alt="" width={48} height={48} className="h-36 w-36 rounded-xl" />
+            <NombreEstudio
+              centrado
+              className="font-titulos text-xl font-semibold"
+              contact={contact}
+            />
           </a>
 
           <nav aria-label="Pie de página">
@@ -79,7 +88,7 @@ export function PieSitio({
             </ul>
           </nav>
 
-          <div className="flex flex-col">
+          {/* <div className="flex flex-col">
             <a href={whatsappUrl(mensaje, contact)} className={LINK} {...EXTERNAL}>
               {contact.whatsappVisible}
             </a>
@@ -88,24 +97,59 @@ export function PieSitio({
                 {contact.email}
               </a>
             )}
-          </div>
+          </div> */}
 
-          <ul aria-label="Redes" className="flex flex-col">
-            <li>
-              <a href={whatsappUrl(mensaje, contact)} className={LINK} {...EXTERNAL}>
-                <IconoRed red="WhatsApp" />
-                WhatsApp
-              </a>
-            </li>
-            {redes.map((red) => (
-              <li key={`${red.url} ${red.usuario}`}>
-                <a href={red.url} className={LINK} {...EXTERNAL}>
-                  <IconoRed red={red.red} />
-                  {repeated.has(red.red) ? `${red.red} ${red.usuario}` : red.red}
+          <div className="flex flex-col">
+            <ul aria-label="Redes" className="flex flex-col">
+              <li>
+                <a href={whatsappUrl(mensaje, contact)} className={LINK} {...EXTERNAL}>
+                  <IconoRedColor red="WhatsApp" />
+                  {contact.whatsappVisible}
                 </a>
               </li>
-            ))}
-          </ul>
+              {redes.map((red) => (
+                <li key={`${red.url} ${red.usuario}`}>
+                  <a href={red.url} className={LINK} {...EXTERNAL}>
+                    <IconoRedColor red={red.red} />
+                    {repeated.has(red.red) ? `${red.red} ${red.usuario}` : red.red}
+                  </a>
+                </li>
+              ))}
+            </ul>
+
+            {(contact.email || contact.direccion) && (
+              <ul aria-label="Email y dirección" className="flex flex-col">
+                {contact.email && (
+                  <li>
+                    <a
+                      href={`mailto:${contact.email}`}
+                      className={`${LINK} break-all`}
+                      {...EXTERNAL}
+                    >
+                      <span className={ICON_BOX}>
+                        <IconoEmail />
+                      </span>
+                      {contact.email}
+                    </a>
+                  </li>
+                )}
+                {contact.direccion && (
+                  <li>
+                    <a
+                      href={mapsUrl(contact.direccion)}
+                      className={`${LINK} break-words`}
+                      {...EXTERNAL}
+                    >
+                      <span className={ICON_BOX}>
+                        <IconoUbicacionColor />
+                      </span>
+                      {contact.direccion}
+                    </a>
+                  </li>
+                )}
+              </ul>
+            )}
+          </div>
         </div>
 
         <div className="mt-10 flex flex-col gap-3 border-t border-estudio-blanco/15 pt-6 sm:flex-row sm:items-center sm:justify-between">

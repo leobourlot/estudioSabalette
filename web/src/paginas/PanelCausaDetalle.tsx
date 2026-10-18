@@ -27,6 +27,15 @@ import {
   needsResponsableWarning,
   RESPONSABLE_WARNING,
 } from '../servicios/presentacion-causas';
+import {
+  CARD,
+  ERROR_ALERT,
+  PAGE,
+  PAGE_TITLE,
+  PRIMARY_BUTTON_SMALL,
+  SECONDARY_BUTTON_SMALL,
+  SECTION_TITLE,
+} from '../componentes/estilos-aplicacion';
 
 const apiMessages = (caught: unknown) =>
   caught instanceof ApiError && caught.messages.length > 0
@@ -80,10 +89,10 @@ export function PanelCausaDetalle() {
 
   if (!causa) {
     return (
-      <main className="mx-auto max-w-5xl space-y-4 p-8">
-        <h1 className="text-2xl font-semibold text-slate-800">Causa</h1>
+      <main className={PAGE}>
+        <h1 className={PAGE_TITLE}>Causa</h1>
         {loadError && (
-          <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p role="alert" className={ERROR_ALERT}>
             {loadError}
           </p>
         )}
@@ -126,14 +135,14 @@ export function PanelCausaDetalle() {
   const incident = incidentLabel(causa);
 
   return (
-    <main className="mx-auto max-w-5xl space-y-6 p-8">
+    <main className={PAGE}>
       <div className="flex flex-wrap items-start justify-between gap-4">
-        <h1 className="text-2xl font-semibold text-slate-800">{causa.caratula}</h1>
+        <h1 className={PAGE_TITLE}>{causa.caratula}</h1>
         {/* Un modelo solo se completa en una causa activa, cualquiera sea su estado (spec 006, RF-29, RF-41). */}
         {causa.activa && (
           <Link
             to={`/panel/causas/${causa.id}/modelos`}
-            className="shrink-0 rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+            className={`shrink-0 ${PRIMARY_BUTTON_SMALL}`}
           >
             Completar un modelo
           </Link>
@@ -142,25 +151,21 @@ export function PanelCausaDetalle() {
       {avisos && <AvisosResultado {...avisos} />}
       {actionAvisos && <AvisosResultado {...actionAvisos} />}
 
-      {!causa.activa && (
-        <p className="rounded bg-slate-200 px-3 py-2 text-sm text-slate-800">
-          Esta causa está desactivada
-        </p>
-      )}
+      {!causa.activa && <p className={SECONDARY_BUTTON_SMALL}>Esta causa está desactivada</p>}
       {needsResponsableWarning(causa) && (
         <p role="status" className="rounded bg-amber-50 px-3 py-2 text-sm text-amber-900">
           {RESPONSABLE_WARNING}
         </p>
       )}
 
-      <section aria-label="Datos de la causa" className="space-y-4 rounded-lg bg-white p-6 shadow">
+      <section aria-label="Datos de la causa" className={`space-y-4 p-6 ${CARD}`}>
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-800">Datos</h2>
+          <h2 className={SECTION_TITLE}>Datos</h2>
           {causa.activa && !editing && (
             <button
               type="button"
               onClick={() => startEditing(causa)}
-              className="rounded border border-slate-300 px-3 py-1.5 text-sm"
+              className={SECONDARY_BUTTON_SMALL}
             >
               Editar datos
             </button>
@@ -189,7 +194,7 @@ export function PanelCausaDetalle() {
       </section>
 
       {editing && (
-        <section aria-label="Editar datos" className="space-y-4 rounded-lg bg-white p-6 shadow">
+        <section aria-label="Editar datos" className={`space-y-4 p-6 ${CARD}`}>
           <FormularioCausa
             value={form}
             onChange={setForm}
@@ -201,7 +206,7 @@ export function PanelCausaDetalle() {
             <button
               type="button"
               onClick={() => setEditing(false)}
-              className="rounded border border-slate-300 px-3 py-1.5 text-sm"
+              className={SECONDARY_BUTTON_SMALL}
             >
               Cancelar
             </button>

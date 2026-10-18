@@ -5,6 +5,7 @@ import { fueroLabel } from '../servicios/presentacion-causas';
 import { formatMovementDate } from '../servicios/presentacion-movimientos';
 import { truncateClientText } from '../servicios/presentacion-portal';
 import { TextoLiteral } from './TextoLiteral';
+import { CARD, TEXT_LINK } from './estilos-aplicacion';
 
 const badgeClass = 'rounded px-2 py-0.5 text-xs font-medium';
 
@@ -22,7 +23,7 @@ export function FilaFallo({ fallo }: { fallo: FalloResumen }) {
   return (
     <li
       aria-label={`${fecha} ${fallo.caratula}`}
-      className={`space-y-2 rounded-lg border border-slate-200 bg-white p-4 ${fallo.activo ? '' : 'opacity-75'}`}
+      className={`space-y-2 p-5 transition-shadow motion-safe:hover:shadow-md motion-reduce:transition-none ${CARD} ${fallo.activo ? '' : 'opacity-75'}`}
     >
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <span className="font-medium text-slate-800">{fecha}</span>
@@ -61,7 +62,7 @@ export function FilaFallo({ fallo }: { fallo: FalloResumen }) {
         <button
           type="button"
           onClick={() => setExpanded((current) => !current)}
-          className="text-sm text-slate-600 underline"
+          className={`text-sm ${TEXT_LINK}`}
         >
           {expanded ? 'Ver menos' : 'Ver más'}
         </button>

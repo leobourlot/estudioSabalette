@@ -52,11 +52,13 @@ describe('rutas de modelos de escritos', () => {
     });
   });
 
-  it('el panel tiene el enlace "Modelos", que lleva a la sección', async () => {
+  it('el panel tiene el enlace "Modelos de escritos", que lleva a la sección (spec 008, RF-6)', async () => {
     renderModelsApp('/panel/modelos', { session: sessionFor(testUser('abogado')) });
     await screen.findByRole('heading', { name: 'Modelos', level: 1 });
 
-    const link = within(screen.getByRole('navigation')).getByRole('link', { name: 'Modelos' });
+    const link = within(screen.getByRole('navigation')).getByRole('link', {
+      name: 'Modelos de escritos',
+    });
 
     expect(link.getAttribute('href')).toBe('/panel/modelos');
   });

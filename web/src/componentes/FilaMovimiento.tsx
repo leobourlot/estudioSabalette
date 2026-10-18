@@ -8,13 +8,15 @@ import {
   truncateDescription,
 } from '../servicios/presentacion-movimientos';
 import { TextoLiteral } from './TextoLiteral';
+import { CARD, TEXT_LINK } from './estilos-aplicacion';
 
 const badgeClass = 'rounded px-2 py-0.5 text-xs font-medium';
 
 /**
  * Un movimiento del historial (RF-24): fecha, tipo, descripción recortada con "Ver completa",
  * si es visible u oculto para el cliente, si tiene texto para el cliente, su autor y las
- * etiquetas "Anulado" y "Fecha futura".
+ * etiquetas "Anulado" y "Fecha futura". Va en su propia tarjeta, con una barra a la izquierda azul
+ * si es visible para el cliente y gris si está oculto, junto a su etiqueta (spec 008, RF-23).
  */
 export function FilaMovimiento({
   movimiento,
@@ -31,7 +33,7 @@ export function FilaMovimiento({
   return (
     <li
       aria-label={`${fecha} ${tipo}`}
-      className={`space-y-2 rounded-lg border border-slate-200 bg-white p-4 ${movimiento.anulado ? 'opacity-75' : ''}`}
+      className={`space-y-2 border-l-4 p-5 ${CARD} ${movimiento.visible ? 'border-l-estudio-azul' : 'border-l-slate-400'} ${movimiento.anulado ? 'opacity-75' : ''}`}
     >
       <div className="flex flex-wrap items-center gap-2">
         <span className="font-medium text-slate-800">{fecha}</span>
@@ -62,7 +64,7 @@ export function FilaMovimiento({
         <button
           type="button"
           onClick={() => setExpanded((current) => !current)}
-          className="text-sm text-slate-600 underline"
+          className={`text-sm ${TEXT_LINK}`}
         >
           {expanded ? 'Ver menos' : 'Ver completa'}
         </button>
@@ -72,7 +74,7 @@ export function FilaMovimiento({
         <span>Cargado por {authorName(movimiento.creadoPor)}</span>
         <Link
           to={`/panel/causas/${causaId}/movimientos/${movimiento.id}`}
-          className="text-sm text-slate-700 underline"
+          className={`text-sm ${TEXT_LINK}`}
         >
           Ver detalle
         </Link>

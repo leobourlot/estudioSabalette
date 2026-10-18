@@ -4,6 +4,7 @@ import { listName } from '../servicios/presentacion';
 import { partyDocument } from '../servicios/presentacion-causas';
 import type { UsuarioDetalle } from '../servicios/usuarios';
 import { useUsersService } from './ProveedorServicios';
+import { INPUT, LABEL, SECONDARY_BUTTON_SMALL } from './estilos-aplicacion';
 
 /** "Gómez, Ana · DNI 30.123.456": nombre y documento, para distinguir homónimos. */
 function clientLabel(cliente: UsuarioDetalle): string {
@@ -50,7 +51,7 @@ export function SelectorCliente({
     <div className="space-y-2">
       <div className="flex items-end gap-2">
         <div className="flex-1 space-y-1">
-          <label htmlFor="buscarCliente" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="buscarCliente" className={LABEL}>
             Buscar cliente
           </label>
           <input
@@ -60,14 +61,10 @@ export function SelectorCliente({
             value={searchText}
             onChange={(event) => setSearchText(event.target.value)}
             onKeyDown={handleKeyDown}
-            className="w-full rounded border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none"
+            className={INPUT}
           />
         </div>
-        <button
-          type="button"
-          onClick={() => void search()}
-          className="rounded border border-slate-300 px-3 py-2 text-sm"
-        >
+        <button type="button" onClick={() => void search()} className={SECONDARY_BUTTON_SMALL}>
           Buscar
         </button>
       </div>

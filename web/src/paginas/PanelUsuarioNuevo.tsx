@@ -12,6 +12,15 @@ import {
   validateNewAccount,
 } from '../servicios/formulario-cuenta';
 import type { Rol, TipoPersona } from '../servicios/sesion';
+import {
+  CARD,
+  INPUT,
+  LABEL,
+  PAGE,
+  PAGE_TITLE,
+  PRIMARY_BUTTON_SMALL,
+  TEXT_LINK,
+} from '../componentes/estilos-aplicacion';
 
 const ROLES: [Rol, string][] = [
   ['cliente', 'Cliente'],
@@ -19,8 +28,7 @@ const ROLES: [Rol, string][] = [
   ['admin', 'Administrador'],
 ];
 
-const selectClass =
-  'w-full rounded border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none';
+const selectClass = INPUT;
 
 /**
  * Alta de una cuenta (RF-21, RF-22). Los campos dependen del rol y del tipo de persona
@@ -62,19 +70,15 @@ export function PanelUsuarioNuevo() {
   }
 
   return (
-    <main className="mx-auto max-w-xl p-8">
-      <h1 className="text-2xl font-semibold text-slate-800">Nueva cuenta</h1>
+    <main className={PAGE}>
+      <h1 className={PAGE_TITLE}>Nueva cuenta</h1>
 
-      <form
-        onSubmit={handleSubmit}
-        noValidate
-        className="mt-6 space-y-4 rounded-lg bg-white p-6 shadow"
-      >
+      <form onSubmit={handleSubmit} noValidate className={`space-y-4 p-6 ${CARD}`}>
         <ListaDeErrores messages={problems} />
 
         {usuario?.rol === 'admin' && (
           <div className="space-y-1">
-            <label htmlFor="rol" className="block text-sm font-medium text-slate-700">
+            <label htmlFor="rol" className={LABEL}>
               Rol
             </label>
             <select
@@ -94,7 +98,7 @@ export function PanelUsuarioNuevo() {
 
         {isClient && (
           <div className="space-y-1">
-            <label htmlFor="tipoPersona" className="block text-sm font-medium text-slate-700">
+            <label htmlFor="tipoPersona" className={LABEL}>
               Tipo de persona
             </label>
             <select
@@ -176,14 +180,10 @@ export function PanelUsuarioNuevo() {
         </p>
 
         <div className="flex items-center justify-between pt-2">
-          <Link to="/panel/usuarios" className="text-sm text-slate-600 underline">
+          <Link to="/panel/usuarios" className={`text-sm ${TEXT_LINK}`}>
             Cancelar
           </Link>
-          <button
-            type="submit"
-            disabled={enviando}
-            className="rounded bg-slate-800 px-4 py-2 font-medium text-white hover:bg-slate-700 disabled:opacity-60"
-          >
+          <button type="submit" disabled={enviando} className={PRIMARY_BUTTON_SMALL}>
             {enviando ? 'Creando…' : 'Crear cuenta'}
           </button>
         </div>

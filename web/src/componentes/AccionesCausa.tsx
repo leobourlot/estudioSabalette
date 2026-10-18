@@ -4,13 +4,14 @@ import { errorMessage } from '../servicios/cliente-http';
 import { pendingQuestion, type PendingQuestion } from '../servicios/preguntas';
 import { PreguntaConfirmacion } from './PreguntaConfirmacion';
 import { useCausasService } from './ProveedorServicios';
+import { ERROR_ALERT, SECONDARY_BUTTON_SMALL } from './estilos-aplicacion';
 
 interface AccionesCausaProps {
   causa: CausaDetalle;
   onChanged: (causa: CausaDetalle) => void;
 }
 
-const secondaryButton = 'rounded border border-slate-300 bg-white px-3 py-1.5 text-sm';
+const secondaryButton = SECONDARY_BUTTON_SMALL;
 const dangerButton =
   'rounded bg-red-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-600';
 
@@ -53,7 +54,7 @@ export function AccionesCausa({ causa, onChanged }: AccionesCausaProps) {
   return (
     <section aria-label="Acciones de la causa" className="space-y-3">
       {error && (
-        <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p role="alert" className={ERROR_ALERT}>
           {error}
         </p>
       )}

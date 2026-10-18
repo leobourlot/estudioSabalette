@@ -17,6 +17,7 @@ import { EMPTY_VALUE } from '../servicios/presentacion';
 import { MOVEMENT_TYPE_OPTIONS } from '../servicios/presentacion-movimientos';
 import { ListaDeErrores } from './ListaDeErrores';
 import { TextoLiteral } from './TextoLiteral';
+import { INPUT, LABEL, PRIMARY_BUTTON_SMALL, SECONDARY_BUTTON_SMALL } from './estilos-aplicacion';
 
 interface FormularioMovimientoProps {
   value: MovementForm;
@@ -32,9 +33,8 @@ interface FormularioMovimientoProps {
   enviando?: boolean;
 }
 
-const fieldClass =
-  'w-full rounded border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none';
-const labelClass = 'block text-sm font-medium text-slate-700';
+const fieldClass = INPUT;
+const labelClass = LABEL;
 
 /** Caracteres usados sobre el máximo, contados como la API (RF-1, RF-4). */
 const usedCharacters = (text: string) =>
@@ -175,19 +175,11 @@ export function FormularioMovimiento({
       )}
 
       <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={enviando}
-          className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
-        >
+        <button type="submit" disabled={enviando} className={PRIMARY_BUTTON_SMALL}>
           {submitLabel}
         </button>
         {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded border border-slate-300 px-4 py-2 text-sm"
-          >
+          <button type="button" onClick={onCancel} className={SECONDARY_BUTTON_SMALL}>
             Cancelar
           </button>
         )}

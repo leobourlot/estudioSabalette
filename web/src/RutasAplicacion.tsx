@@ -1,3 +1,4 @@
+import { domAnimation, LazyMotion } from 'motion/react';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { DisenoPanel } from './componentes/DisenoPanel';
 import { DisenoPortal } from './componentes/DisenoPortal';
@@ -31,49 +32,52 @@ import { PortalMovimientoDetalle } from './paginas/PortalMovimientoDetalle';
  * dependen de la sesión, incluida /ingresar (que con sesión lleva al inicio de la sección).
  * El sitio público y su página de dirección inexistente son otro árbol (RutasSitio, spec 007):
  * main.tsx solo carga la aplicación en el ingreso, el cambio de contraseña, el panel y el portal.
+ * LazyMotion carga una sola vez las funciones de animación de estas pantallas (spec 008, RF-26).
  */
 export function RutasAplicacion() {
   return (
-    <Routes>
-      <Route element={<RutaProtegida />}>
-        <Route path="/ingresar" element={<PaginaIngreso />} />
-        <Route path="/cambiar-contrasena" element={<PaginaCambiarContrasena />} />
-        {/* Direcciones inexistentes del panel y del portal: al inicio de su sección, después de
+    <LazyMotion features={domAnimation} strict>
+      <Routes>
+        <Route element={<RutaProtegida />}>
+          <Route path="/ingresar" element={<PaginaIngreso />} />
+          <Route path="/cambiar-contrasena" element={<PaginaCambiarContrasena />} />
+          {/* Direcciones inexistentes del panel y del portal: al inicio de su sección, después de
             las reglas de RutaProtegida (spec 007, RF-10). */}
-        <Route path="/panel/*" element={<Navigate to="/panel" replace />} />
-        <Route path="/portal/*" element={<Navigate to="/portal" replace />} />
-        <Route element={<DisenoPanel />}>
-          <Route path="/panel" element={<PanelInicio />} />
-          <Route path="/panel/causas" element={<PanelCausas />} />
-          <Route path="/panel/causas/nueva" element={<PanelCausaNueva />} />
-          <Route path="/panel/causas/:id" element={<PanelCausaDetalle />} />
-          <Route
-            path="/panel/causas/:id/movimientos/:movimientoId"
-            element={<PanelMovimientoDetalle />}
-          />
-          <Route path="/panel/jurisprudencia" element={<PanelJurisprudencia />} />
-          <Route path="/panel/jurisprudencia/nuevo" element={<PanelFalloNuevo />} />
-          <Route path="/panel/jurisprudencia/:id" element={<PanelFalloDetalle />} />
-          <Route path="/panel/modelos" element={<PanelModelos />} />
-          <Route path="/panel/modelos/nuevo" element={<PanelModeloNuevo />} />
-          <Route path="/panel/modelos/:id" element={<PanelModeloDetalle />} />
-          <Route path="/panel/causas/:id/modelos" element={<PanelCausaModelos />} />
-          <Route path="/panel/causas/:id/modelos/:modeloId" element={<PanelEscrito />} />
-          <Route path="/panel/usuarios" element={<PanelUsuarios />} />
-          <Route path="/panel/usuarios/nuevo" element={<PanelUsuarioNuevo />} />
-          <Route path="/panel/usuarios/:id" element={<PanelUsuarioDetalle />} />
-          <Route path="/panel/mi-cuenta" element={<MiCuenta />} />
+          <Route path="/panel/*" element={<Navigate to="/panel" replace />} />
+          <Route path="/portal/*" element={<Navigate to="/portal" replace />} />
+          <Route element={<DisenoPanel />}>
+            <Route path="/panel" element={<PanelInicio />} />
+            <Route path="/panel/causas" element={<PanelCausas />} />
+            <Route path="/panel/causas/nueva" element={<PanelCausaNueva />} />
+            <Route path="/panel/causas/:id" element={<PanelCausaDetalle />} />
+            <Route
+              path="/panel/causas/:id/movimientos/:movimientoId"
+              element={<PanelMovimientoDetalle />}
+            />
+            <Route path="/panel/jurisprudencia" element={<PanelJurisprudencia />} />
+            <Route path="/panel/jurisprudencia/nuevo" element={<PanelFalloNuevo />} />
+            <Route path="/panel/jurisprudencia/:id" element={<PanelFalloDetalle />} />
+            <Route path="/panel/modelos" element={<PanelModelos />} />
+            <Route path="/panel/modelos/nuevo" element={<PanelModeloNuevo />} />
+            <Route path="/panel/modelos/:id" element={<PanelModeloDetalle />} />
+            <Route path="/panel/causas/:id/modelos" element={<PanelCausaModelos />} />
+            <Route path="/panel/causas/:id/modelos/:modeloId" element={<PanelEscrito />} />
+            <Route path="/panel/usuarios" element={<PanelUsuarios />} />
+            <Route path="/panel/usuarios/nuevo" element={<PanelUsuarioNuevo />} />
+            <Route path="/panel/usuarios/:id" element={<PanelUsuarioDetalle />} />
+            <Route path="/panel/mi-cuenta" element={<MiCuenta />} />
+          </Route>
+          <Route element={<DisenoPortal />}>
+            <Route path="/portal" element={<PortalInicio />} />
+            <Route path="/portal/causas/:id" element={<PortalCausaDetalle />} />
+            <Route
+              path="/portal/causas/:id/movimientos/:movimientoId"
+              element={<PortalMovimientoDetalle />}
+            />
+            <Route path="/portal/mi-cuenta" element={<MiCuenta />} />
+          </Route>
         </Route>
-        <Route element={<DisenoPortal />}>
-          <Route path="/portal" element={<PortalInicio />} />
-          <Route path="/portal/causas/:id" element={<PortalCausaDetalle />} />
-          <Route
-            path="/portal/causas/:id/movimientos/:movimientoId"
-            element={<PortalMovimientoDetalle />}
-          />
-          <Route path="/portal/mi-cuenta" element={<MiCuenta />} />
-        </Route>
-      </Route>
-    </Routes>
+      </Routes>
+    </LazyMotion>
   );
 }

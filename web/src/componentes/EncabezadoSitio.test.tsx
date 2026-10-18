@@ -18,7 +18,7 @@ describe('EncabezadoSitio (spec 007, RF-3, RF-4 y RF-6)', () => {
     const home = screen.getByRole('link', { name: 'Pertusatti | Sabalette - Abogadas' });
     expect(home.getAttribute('href')).toBe('/');
     expect(home.querySelector('img')!.getAttribute('alt')).toBe('');
-    expect(home.querySelector('img')!.getAttribute('src')).toBe('/marca/logo.jpg');
+    expect(home.querySelector('img')!.getAttribute('src')).toBe('/marca/logo.svg');
   });
 
   it('logo, nombre, menú y acceso van en una sola línea, sin partirse', () => {

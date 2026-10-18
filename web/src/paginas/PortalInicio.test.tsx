@@ -35,15 +35,33 @@ describe('PortalInicio: lista de causas (spec 004, RF-7 a RF-12, RF-24, RF-25)',
 
     const enCurso = await screen.findByRole('region', { name: 'En curso' });
     const archivadas = screen.getByRole('region', { name: 'Archivadas y finalizadas' });
-    const first = within(enCurso).getByRole('link', { name: /Pérez c\/ Gómez/ });
-    expect(first.getAttribute('href')).toBe('/portal/causas/1');
-    expect(within(first).getByText('Expediente: 1234/2024')).toBeTruthy();
-    expect(within(first).getByText('Paralizada')).toBeTruthy();
-    expect(within(first).getByText('Último movimiento: 30/09/2026')).toBeTruthy();
-    const second = within(archivadas).getByRole('link', { name: /Ruiz c\/ Díaz/ });
-    expect(within(second).getByText('Expediente: Sin asignar')).toBeTruthy();
-    expect(within(second).queryByText(/Último movimiento/)).toBeNull();
+    // Cada causa en su tarjeta (spec 008, RF-15), con "Ver detalle" que suma la carátula.
+    const firstLink = within(enCurso).getByRole('link', { name: 'Ver detalle de Pérez c/ Gómez' });
+    expect(firstLink.getAttribute('href')).toBe('/portal/causas/1');
+    const first = within(firstLink.closest('article')!);
+    expect(first.getByRole('heading', { name: 'Pérez c/ Gómez', level: 3 })).toBeTruthy();
+    expect(first.getByText('Expte. 1234/2024')).toBeTruthy();
+    expect(first.getByText('Paralizada')).toBeTruthy();
+    expect(first.getByText('Último movimiento')).toBeTruthy();
+    expect(first.getByText('30/09/2026')).toBeTruthy();
+    const secondLink = within(archivadas).getByRole('link', {
+      name: 'Ver detalle de Ruiz c/ Díaz',
+    });
+    const second = within(secondLink.closest('article')!);
+    expect(second.getByText('Expte. Sin asignar')).toBeTruthy();
+    expect(second.queryByText(/Último movimiento/)).toBeNull();
     expect(portal.listCausas).toHaveBeenCalledWith(1);
+  });
+
+  it('separa cada grupo con una línea bajo su título y cada causa en su tarjeta con borde (spec 008, RF-15, RF-16)', async () => {
+    await openPortal('/portal', listWith([testCausaPortal({ id: 1 }), testCausaPortal({ id: 2 })]));
+
+    const enCurso = await screen.findByRole('region', { name: 'En curso' });
+    const title = within(enCurso).getByRole('heading', { level: 2 });
+    expect(title.className).toContain('border-b');
+    const cards = within(enCurso).getAllByRole('article');
+    expect(cards).toHaveLength(2);
+    for (const card of cards) expect(card.className).toContain('border');
   });
 
   it('corta la carátula en dos líneas', async () => {

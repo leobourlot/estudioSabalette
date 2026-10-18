@@ -2,6 +2,8 @@ import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import { STUDIO_CONTACT, type StudioContact } from '../servicios/datos-estudio';
 import { ContactoSitio } from './ContactoSitio';
+import { COLORES_MAPS } from './IconosContacto';
+import { COLORES_REDES, CONTORNO } from './IconosRedes';
 
 const MESSAGE = 'Hola, me contacto desde el sitio web por una consulta sobre sucesiones.';
 
@@ -36,12 +38,19 @@ describe('ContactoSitio (spec 007, RF-23 a RF-25)', () => {
     ).toBeTruthy();
   });
 
-  it('con los datos de hoy solo muestra "Teléfono / WhatsApp" (RF-24)', () => {
+  it('con los datos de hoy muestra todo salvo "Disponibilidad", que el estudio no informó (RF-24)', () => {
     render(<ContactoSitio mensaje={MESSAGE} />);
 
-    expect(labels()).toEqual(['Teléfono / WhatsApp']);
+    expect(labels()).toEqual(['Ubicación', 'Teléfono / WhatsApp', 'Email', 'Instagram']);
     const whatsapp = within(block()).getByRole('link', { name: '+54 9 3455 41-4147' });
     expect(new URL(whatsapp.getAttribute('href')!).searchParams.get('text')).toBe(MESSAGE);
+    expect(within(block()).getByText('Pueyrredón Nº 47, Concordia')).toBeTruthy();
+  });
+
+  it('sin dirección no muestra "Ubicación" ni "Cómo llegar" (RF-24)', () => {
+    render(<ContactoSitio mensaje={MESSAGE} contact={{ ...STUDIO_CONTACT, direccion: null }} />);
+
+    expect(labels()).not.toContain('Ubicación');
     expect(within(block()).queryByRole('link', { name: 'Cómo llegar' })).toBeNull();
   });
 
@@ -119,8 +128,69 @@ describe('ContactoSitio: WhatsApp (spec 007, RF-23)', () => {
   });
 
   it('en los tests no aparecen las redes de muestra, que son solo de desarrollo', () => {
-    render(<ContactoSitio mensaje={MESSAGE} />);
+    render(<ContactoSitio mensaje={MESSAGE} contact={{ ...STUDIO_CONTACT, redes: [] }} />);
 
-    expect(labels()).toEqual(['Teléfono / WhatsApp']);
+    expect(labels()).not.toContain('Facebook');
+    expect(within(block()).queryByText('@cuenta-de-muestra')).toBeNull();
+  });
+});
+
+describe('ContactoSitio: íconos con sus colores y un contorno blanco (spec 007, RF-23)', () => {
+  const row = (label: string) => within(block()).getByText(label).closest('li')!;
+  const fills = (element: Element) =>
+    Array.from(element.querySelectorAll('[fill]')).map((e) => e.getAttribute('fill'));
+
+  it('los íconos no llevan fondo, y los que no tienen colores propios van en blanco', () => {
+    render(<ContactoSitio mensaje={MESSAGE} contact={complete} />);
+
+    const boxes = Array.from(block().querySelectorAll('li > [aria-hidden="true"]'));
+    expect(boxes).toHaveLength(6);
+    for (const box of boxes) {
+      expect(box.className).not.toMatch(/bg-/);
+      expect(box.className).not.toMatch(/border/);
+      expect(box.className).toContain('text-estudio-blanco');
+    }
+  });
+
+  it('cada ícono a color tiene detrás su contorno blanco, del mismo dibujo', () => {
+    render(<ContactoSitio mensaje={MESSAGE} contact={complete} />);
+
+    for (const label of ['Ubicación', 'Teléfono / WhatsApp', 'Instagram', 'LinkedIn']) {
+      const outline = row(label).querySelector('svg > [stroke]')!;
+      expect(outline.getAttribute('stroke')).toBe(CONTORNO.stroke);
+      expect(outline.getAttribute('fill')).toBe('none');
+      // El pin pinta sus colores dentro de un grupo recortado por su propio dibujo.
+      const next = outline.nextElementSibling!;
+      const shape = next.tagName === 'g' ? next.firstElementChild! : next;
+      expect(shape.getAttribute('d') ?? shape.getAttribute('width')).toBe(
+        outline.getAttribute('d') ?? outline.getAttribute('width'),
+      );
+    }
+  });
+
+  it('WhatsApp lleva su verde, y la ubicación, el pin con los cuatro colores de Maps', () => {
+    render(<ContactoSitio mensaje={MESSAGE} contact={complete} />);
+
+    expect(fills(row('Teléfono / WhatsApp'))).toContain(COLORES_REDES.whatsapp);
+    expect(fills(row('Ubicación'))).toEqual(expect.arrayContaining(Object.values(COLORES_MAPS)));
+  });
+
+  it('Instagram lleva su degradado y LinkedIn su azul', () => {
+    render(<ContactoSitio mensaje={MESSAGE} contact={complete} />);
+
+    const instagram = row('Instagram');
+    const gradient = instagram.querySelector('radialGradient')!;
+    expect(fills(instagram)).toContain(`url(#${gradient.id})`);
+    expect(fills(row('LinkedIn'))).toContain(COLORES_REDES.linkedin);
+  });
+
+  it('los ids de los degradados y los recortes no se repiten ni llevan signos que rompan url(#id)', () => {
+    render(<ContactoSitio mensaje={MESSAGE} contact={complete} />);
+    render(<ContactoSitio mensaje={MESSAGE} contact={complete} />);
+
+    const ids = Array.from(document.querySelectorAll('svg [id]')).map((e) => e.id);
+    expect(ids.length).toBeGreaterThan(0);
+    expect(new Set(ids).size).toBe(ids.length);
+    for (const id of ids) expect(id).toMatch(/^[A-Za-z0-9_-]+$/);
   });
 });

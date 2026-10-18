@@ -1,5 +1,24 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AparecerAlCargar } from '../componentes/AparecerAlCargar';
+import {
+  CARD,
+  ERROR_ALERT,
+  FOCUS_RING,
+  INPUT,
+  LABEL,
+  PAGE,
+  PAGE_TITLE,
+  PRIMARY_BUTTON_SMALL,
+  SECONDARY_BUTTON_SMALL,
+  STATUS_BADGE,
+  TABLE,
+  TABLE_CARD,
+  TABLE_CELL,
+  TABLE_HEAD,
+  TABLE_HEADER_CELL,
+  TABLE_ROW,
+} from '../componentes/estilos-aplicacion';
 import { useCausasService } from '../componentes/ProveedorServicios';
 import type {
   CausaPage,
@@ -19,8 +38,6 @@ import {
 } from '../servicios/presentacion-causas';
 import { EMPTY_VALUE } from '../servicios/presentacion';
 
-const selectClass = 'rounded border border-slate-300 px-2 py-1.5 text-sm';
-
 const CHECKBOX_FILTERS: [keyof ListCausasQuery, string][] = [
   ['mias', 'Solo mis causas'],
   ['responsableDesactivado', 'Con responsable desactivado'],
@@ -31,7 +48,8 @@ const CHECKBOX_FILTERS: [keyof ListCausasQuery, string][] = [
  * Listado de causas (RF-36 a RF-39): buscador, filtros por fuero, estado y responsable,
  * casillas "Solo mis causas", "Con responsable desactivado" y "Mostrar desactivadas", y
  * paginado de a 20. Los filtros viven en el estado del componente, no en el navegador
- * (principio 5).
+ * (principio 5). Los filtros y la tabla van en tarjetas, con las filas separadas por una línea
+ * visible, que aparecen escalonadas (spec 008, RF-21 y RF-26).
  */
 export function PanelCausas() {
   const causas = useCausasService();
@@ -94,21 +112,18 @@ export function PanelCausas() {
   const currentPage = query.pagina ?? 1;
 
   return (
-    <main className="mx-auto max-w-6xl p-8">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-slate-800">Causas</h1>
-        <Link
-          to="/panel/causas/nueva"
-          className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
-        >
-          Nueva causa
+    <main className={PAGE}>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <h1 className={PAGE_TITLE}>Causas</h1>
+        <Link to="/panel/causas/nueva" className={PRIMARY_BUTTON_SMALL}>
+          <span aria-hidden="true">+</span> Nueva causa
         </Link>
       </div>
 
-      <div className="mt-6 flex flex-wrap items-end gap-4">
-        <form onSubmit={handleSearch} className="flex items-end gap-2">
-          <div>
-            <label htmlFor="buscar" className="block text-sm text-slate-600">
+      <div className={`grid gap-4 p-5 sm:grid-cols-2 lg:grid-cols-4 ${CARD}`}>
+        <form onSubmit={handleSearch} className="flex items-end gap-2 sm:col-span-2 lg:col-span-4">
+          <div className="min-w-0 flex-1">
+            <label htmlFor="buscar" className={LABEL}>
               Buscar
             </label>
             <input
@@ -117,23 +132,23 @@ export function PanelCausas() {
               placeholder="Carátula, expediente, parte, DNI o CUIT"
               value={searchText}
               onChange={(event) => setSearchText(event.target.value)}
-              className="w-80 rounded border border-slate-300 px-3 py-1.5 text-sm"
+              className={INPUT}
             />
           </div>
-          <button type="submit" className="rounded border border-slate-300 px-3 py-1.5 text-sm">
+          <button type="submit" className={`${SECONDARY_BUTTON_SMALL} min-h-[42px]`}>
             Buscar
           </button>
         </form>
 
         <div>
-          <label htmlFor="fuero" className="block text-sm text-slate-600">
+          <label htmlFor="fuero" className={LABEL}>
             Fuero
           </label>
           <select
             id="fuero"
             value={query.fuero ?? ''}
             onChange={(event) => filterBy({ fuero: (event.target.value as Fuero) || undefined })}
-            className={selectClass}
+            className={INPUT}
           >
             <option value="">Todos</option>
             {JURISDICTION_OPTIONS.map(([value, label]) => (
@@ -145,7 +160,7 @@ export function PanelCausas() {
         </div>
 
         <div>
-          <label htmlFor="estado" className="block text-sm text-slate-600">
+          <label htmlFor="estado" className={LABEL}>
             Estado
           </label>
           <select
@@ -154,7 +169,7 @@ export function PanelCausas() {
             onChange={(event) =>
               filterBy({ estado: (event.target.value as EstadoCausa) || undefined })
             }
-            className={selectClass}
+            className={INPUT}
           >
             <option value="">Todos</option>
             {CASE_STATUS_OPTIONS.map(([value, label]) => (
@@ -166,7 +181,7 @@ export function PanelCausas() {
         </div>
 
         <div>
-          <label htmlFor="responsable" className="block text-sm text-slate-600">
+          <label htmlFor="responsable" className={LABEL}>
             Responsable
           </label>
           <select
@@ -177,7 +192,7 @@ export function PanelCausas() {
                 responsableId: event.target.value === '' ? undefined : Number(event.target.value),
               })
             }
-            className={selectClass}
+            className={INPUT}
           >
             <option value="">Todos</option>
             {activeMembers.map((member) => (
@@ -188,13 +203,14 @@ export function PanelCausas() {
           </select>
         </div>
 
-        <div className="flex flex-col gap-1 text-sm text-slate-700">
+        <div className="flex flex-col justify-end gap-1 text-sm text-slate-700">
           {CHECKBOX_FILTERS.map(([field, label]) => (
             <label key={field} className="flex items-center gap-2">
               <input
                 type="checkbox"
                 checked={query[field] === true}
                 onChange={(event) => filterBy({ [field]: event.target.checked })}
+                className="h-4 w-4 accent-estudio-oscuro"
               />
               {label}
             </label>
@@ -203,56 +219,68 @@ export function PanelCausas() {
       </div>
 
       {error && (
-        <p role="alert" className="mt-6 rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p role="alert" className={ERROR_ALERT}>
           {error}
         </p>
       )}
 
       {result && result.items.length === 0 && (
-        <p className="mt-6 text-slate-600">No hay causas que coincidan.</p>
+        <p className={`p-5 text-slate-600 ${CARD}`}>No hay causas que coincidan.</p>
       )}
 
       {result && result.items.length > 0 && (
         <>
-          <table className="mt-6 w-full overflow-hidden rounded-lg bg-white text-left text-sm shadow">
-            <thead className="bg-slate-100 text-slate-600">
-              <tr>
-                <th className="px-4 py-2 font-medium">Carátula</th>
-                <th className="px-4 py-2 font-medium">Expediente</th>
-                <th className="px-4 py-2 font-medium">Juzgado</th>
-                <th className="px-4 py-2 font-medium">Fuero</th>
-                <th className="px-4 py-2 font-medium">Estado</th>
-                <th className="px-4 py-2 font-medium">Responsable</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200">
-              {result.items.map((causa) => {
-                const incident = incidentLabel(causa);
-                return (
-                  <tr key={causa.id} className={causa.activa ? undefined : 'bg-slate-50'}>
-                    <td className="px-4 py-2">
-                      <Link to={`/panel/causas/${causa.id}`} className="text-slate-800 underline">
-                        {causa.caratula}
-                      </Link>
-                      {incident && <p className="text-xs text-slate-500">{incident}</p>}
-                      {!causa.activa && (
-                        <span className="mt-1 inline-block rounded bg-slate-200 px-2 py-0.5 text-xs text-slate-700">
-                          Desactivada
-                        </span>
-                      )}
-                    </td>
-                    <td className="px-4 py-2">{causa.numeroExpediente ?? EMPTY_VALUE}</td>
-                    <td className="px-4 py-2">{causa.juzgado ?? EMPTY_VALUE}</td>
-                    <td className="px-4 py-2">{fueroLabel(causa.fuero)}</td>
-                    <td className="px-4 py-2">{estadoLabel(causa.estado)}</td>
-                    <td className="px-4 py-2">{memberName(causa.responsable)}</td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+          <div className={TABLE_CARD}>
+            <table className={TABLE}>
+              <thead className={TABLE_HEAD}>
+                <tr>
+                  <th className={TABLE_HEADER_CELL}>Carátula</th>
+                  <th className={TABLE_HEADER_CELL}>Expediente</th>
+                  <th className={TABLE_HEADER_CELL}>Juzgado</th>
+                  <th className={TABLE_HEADER_CELL}>Fuero</th>
+                  <th className={TABLE_HEADER_CELL}>Estado</th>
+                  <th className={TABLE_HEADER_CELL}>Responsable</th>
+                </tr>
+              </thead>
+              <tbody>
+                {result.items.map((causa, index) => {
+                  const incident = incidentLabel(causa);
+                  return (
+                    <AparecerAlCargar
+                      key={causa.id}
+                      como="tr"
+                      indice={index}
+                      className={`${TABLE_ROW} ${causa.activa ? '' : 'bg-slate-50'}`}
+                    >
+                      <td className={TABLE_CELL}>
+                        <Link
+                          to={`/panel/causas/${causa.id}`}
+                          className={`rounded font-semibold text-estudio-oscuro underline underline-offset-4 ${FOCUS_RING}`}
+                        >
+                          {causa.caratula}
+                        </Link>
+                        {incident && <p className="text-xs text-slate-600">{incident}</p>}
+                        {!causa.activa && (
+                          <span className="mt-1 inline-block rounded bg-slate-200 px-2 py-0.5 text-xs text-slate-700">
+                            Desactivada
+                          </span>
+                        )}
+                      </td>
+                      <td className={TABLE_CELL}>{causa.numeroExpediente ?? EMPTY_VALUE}</td>
+                      <td className={TABLE_CELL}>{causa.juzgado ?? EMPTY_VALUE}</td>
+                      <td className={TABLE_CELL}>{fueroLabel(causa.fuero)}</td>
+                      <td className={TABLE_CELL}>
+                        <span className={STATUS_BADGE}>{estadoLabel(causa.estado)}</span>
+                      </td>
+                      <td className={TABLE_CELL}>{memberName(causa.responsable)}</td>
+                    </AparecerAlCargar>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
 
-          <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
+          <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-slate-600">
             <span>
               Página {currentPage} de {totalPages} · {result.total}{' '}
               {result.total === 1 ? 'causa' : 'causas'}
@@ -262,7 +290,7 @@ export function PanelCausas() {
                 type="button"
                 disabled={currentPage <= 1}
                 onClick={() => setQuery((current) => ({ ...current, pagina: currentPage - 1 }))}
-                className="rounded border border-slate-300 px-3 py-1 disabled:opacity-50"
+                className={SECONDARY_BUTTON_SMALL}
               >
                 Anterior
               </button>
@@ -270,7 +298,7 @@ export function PanelCausas() {
                 type="button"
                 disabled={currentPage >= totalPages}
                 onClick={() => setQuery((current) => ({ ...current, pagina: currentPage + 1 }))}
-                className="rounded border border-slate-300 px-3 py-1 disabled:opacity-50"
+                className={SECONDARY_BUTTON_SMALL}
               >
                 Siguiente
               </button>

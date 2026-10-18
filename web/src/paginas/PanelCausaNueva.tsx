@@ -23,6 +23,14 @@ import {
   type QuestionOption,
 } from '../servicios/preguntas';
 import { rejectionMessages, rolProcesalLabel } from '../servicios/presentacion-causas';
+import {
+  CARD,
+  PAGE,
+  PAGE_TITLE,
+  PRIMARY_BUTTON_SMALL,
+  SECTION_TITLE,
+  TEXT_LINK,
+} from '../componentes/estilos-aplicacion';
 
 const FORM_ID = 'formulario-causa';
 
@@ -142,8 +150,8 @@ export function PanelCausaNueva() {
     question?.indiceParte !== undefined ? parties[question.indiceParte]?.name : undefined;
 
   return (
-    <main className="mx-auto max-w-3xl space-y-8 p-8">
-      <h1 className="text-2xl font-semibold text-slate-800">Nueva causa</h1>
+    <main className={PAGE}>
+      <h1 className={PAGE_TITLE}>Nueva causa</h1>
 
       <FormularioCausa
         id={FORM_ID}
@@ -160,18 +168,15 @@ export function PanelCausaNueva() {
         enviando={enviando}
       >
         <section className="space-y-2">
-          <h2 className="text-lg font-semibold text-slate-800">Abogados</h2>
+          <h2 className={SECTION_TITLE}>Abogados</h2>
           <SelectorIntegrantes members={members} value={lawyers} onChange={setLawyers} />
         </section>
       </FormularioCausa>
 
       <section className="space-y-4">
-        <h2 className="text-lg font-semibold text-slate-800">Partes</h2>
+        <h2 className={SECTION_TITLE}>Partes</h2>
         {parties.length > 0 && (
-          <ul
-            aria-label="Partes cargadas"
-            className="divide-y divide-slate-200 rounded bg-white shadow"
-          >
+          <ul aria-label="Partes cargadas" className={`divide-y divide-slate-200 ${CARD}`}>
             {parties.map((party, index) => (
               <li
                 key={`${index}-${party.name}`}
@@ -185,7 +190,7 @@ export function PanelCausaNueva() {
                   onClick={() =>
                     setParties((current) => current.filter((_, position) => position !== index))
                   }
-                  className="text-slate-600 underline"
+                  className={TEXT_LINK}
                 >
                   Quitar
                 </button>
@@ -206,12 +211,7 @@ export function PanelCausaNueva() {
         <PreguntaConfirmacion question={question} partyName={questionParty} onAnswer={answer} />
       )}
 
-      <button
-        type="submit"
-        form={FORM_ID}
-        disabled={enviando}
-        className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
-      >
+      <button type="submit" form={FORM_ID} disabled={enviando} className={PRIMARY_BUTTON_SMALL}>
         Crear causa
       </button>
     </main>

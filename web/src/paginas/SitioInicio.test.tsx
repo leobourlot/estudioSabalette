@@ -36,6 +36,18 @@ describe('SitioInicio (spec 007, RF-11, RF-12 y RF-18)', () => {
     expect(screen.getByText(APERTURA)).toBeTruthy();
   });
 
+  it('la apertura lleva de fondo la balanza, decorativa y detrás del texto', () => {
+    renderAt('/', <SitioInicio />);
+
+    const opening = screen.getByRole('heading', { level: 1 }).closest('section')!;
+    const scale = opening.querySelector('[data-balanza]')!;
+    expect(scale.getAttribute('aria-hidden')).toBe('true');
+    expect(scale.getAttribute('class')).toContain('absolute');
+    expect(scale.getAttribute('class')).toContain('pointer-events-none');
+    expect(scale.nextElementSibling!.className).toContain('relative');
+    expect(opening.className).toContain('overflow-hidden');
+  });
+
   it('la sección Servicios muestra T-2 y las cuatro tarjetas, en orden', () => {
     renderAt('/', <SitioInicio />);
 

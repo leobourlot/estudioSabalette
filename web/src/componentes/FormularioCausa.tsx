@@ -4,6 +4,7 @@ import { type CausaForm, validateCausaForm } from '../servicios/formulario-causa
 import { CASE_STATUS_OPTIONS, JURISDICTION_OPTIONS } from '../servicios/presentacion-causas';
 import { CampoTexto } from './CampoTexto';
 import { ListaDeErrores } from './ListaDeErrores';
+import { INPUT, LABEL, PRIMARY_BUTTON_SMALL } from './estilos-aplicacion';
 
 interface FormularioCausaProps {
   /** Para asociar un botón ubicado fuera del formulario (atributo form). */
@@ -24,8 +25,7 @@ interface FormularioCausaProps {
   children?: ReactNode;
 }
 
-const selectClass =
-  'w-full rounded border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none';
+const selectClass = INPUT;
 
 /**
  * Datos de una causa (RF-1): carátula, número de expediente, juzgado, fuero, estado y la
@@ -81,7 +81,7 @@ export function FormularioCausa({
 
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1">
-          <label htmlFor="fuero" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="fuero" className={LABEL}>
             Fuero
           </label>
           <select
@@ -99,7 +99,7 @@ export function FormularioCausa({
           </select>
         </div>
         <div className="space-y-1">
-          <label htmlFor="estado" className="block text-sm font-medium text-slate-700">
+          <label htmlFor="estado" className={LABEL}>
             Estado
           </label>
           <select
@@ -137,11 +137,7 @@ export function FormularioCausa({
       {children}
 
       {renderSubmit && (
-        <button
-          type="submit"
-          disabled={enviando}
-          className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
-        >
+        <button type="submit" disabled={enviando} className={PRIMARY_BUTTON_SMALL}>
           {submitLabel}
         </button>
       )}

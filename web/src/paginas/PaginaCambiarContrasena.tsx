@@ -1,7 +1,14 @@
 import { type FormEvent, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { BotonWhatsapp } from '../componentes/BotonWhatsapp';
-import { NombreEstudio } from '../componentes/NombreEstudio';
+import { DisenoMarca } from '../componentes/DisenoMarca';
+import {
+  ERROR_ALERT,
+  INPUT,
+  LABEL,
+  PRIMARY_BUTTON,
+  TEXT_LINK,
+} from '../componentes/estilos-aplicacion';
 import { useSession } from '../componentes/ProveedorSesion';
 import { useTituloDocumento } from '../componentes/useTituloDocumento';
 import { ApiError, errorMessage } from '../servicios/cliente-http';
@@ -23,7 +30,7 @@ interface PasswordFieldProps {
 function PasswordField({ id, label, autoComplete, value, onChange }: PasswordFieldProps) {
   return (
     <div className="space-y-1">
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700">
+      <label htmlFor={id} className={LABEL}>
         {label}
       </label>
       <input
@@ -32,7 +39,7 @@ function PasswordField({ id, label, autoComplete, value, onChange }: PasswordFie
         autoComplete={autoComplete}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none"
+        className={INPUT}
       />
     </div>
   );
@@ -42,7 +49,8 @@ function PasswordField({ id, label, autoComplete, value, onChange }: PasswordFie
  * Cambio de la contraseña propia (RF-36 a RF-39). Es obligatorio con el cambio pendiente
  * (RF-11) y voluntario desde Mi cuenta. Las reglas se avisan antes de enviar con los mismos
  * mensajes que la API; si la API cierra la sesión por errores repetidos (RF-38), lleva a
- * /ingresar con el aviso.
+ * /ingresar con el aviso. Va en el diseño de dos mitades, con el logo y el nombre del estudio y
+ * sin el menú, porque puede ser obligatoria antes de entrar (spec 008, RF-14).
  */
 export function PaginaCambiarContrasena() {
   const { usuario, changePassword, logout, endSession } = useSession();
@@ -94,76 +102,71 @@ export function PaginaCambiarContrasena() {
   }
 
   return (
-    <main
-      className={`flex min-h-screen items-center justify-center bg-slate-50 p-4 ${esCliente ? 'pb-24' : ''}`}
-    >
-      <form
-        onSubmit={handleSubmit}
-        noValidate
-        className="w-full max-w-sm space-y-5 rounded-lg bg-white p-8 shadow"
-      >
-        <p className="text-sm font-semibold text-estudio-oscuro">
-          <NombreEstudio />
-        </p>
-        <h1 className="text-2xl font-semibold text-slate-800">Cambiar contraseña</h1>
+    <>
+      <DisenoMarca>
+        <form onSubmit={handleSubmit} noValidate className="space-y-5">
+          <h1 className="font-titulos text-3xl font-semibold text-estudio-oscuro">
+            Cambiar contraseña
+          </h1>
 
-        {pendiente && (
-          <p className="text-sm text-slate-600">
-            Antes de continuar, elegí una contraseña nueva. Tiene que tener entre 10 y 64
-            caracteres, sin tildes, ñ ni emojis.
-          </p>
-        )}
-
-        {error && (
-          <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
-            {error}
-          </p>
-        )}
-
-        <PasswordField
-          id="actual"
-          label="Contraseña actual"
-          autoComplete="current-password"
-          value={actual}
-          onChange={setActual}
-        />
-        <PasswordField
-          id="nueva"
-          label="Contraseña nueva"
-          autoComplete="new-password"
-          value={nueva}
-          onChange={setNueva}
-        />
-        <PasswordField
-          id="repetida"
-          label="Repetí la contraseña nueva"
-          autoComplete="new-password"
-          value={repetida}
-          onChange={setRepetida}
-        />
-
-        <button
-          type="submit"
-          disabled={enviando}
-          className="w-full rounded bg-slate-800 px-4 py-2 font-medium text-white hover:bg-slate-700 disabled:opacity-60"
-        >
-          {enviando ? 'Guardando…' : 'Cambiar contraseña'}
-        </button>
-
-        <div className="flex justify-between text-sm">
-          {!pendiente && usuario ? (
-            <Link to={resolveLandingRoute(usuario)} className="text-slate-600 underline">
-              Volver
-            </Link>
-          ) : (
-            <span />
+          {pendiente && (
+            <p className="text-sm text-slate-600">
+              Antes de continuar, elegí una contraseña nueva. Tiene que tener entre 10 y 64
+              caracteres, sin tildes, ñ ni emojis.
+            </p>
           )}
-          <button type="button" onClick={handleLogout} className="text-slate-600 underline">
-            Cerrar sesión
+
+          {error && (
+            <p role="alert" className={ERROR_ALERT}>
+              {error}
+            </p>
+          )}
+
+          <PasswordField
+            id="actual"
+            label="Contraseña actual"
+            autoComplete="current-password"
+            value={actual}
+            onChange={setActual}
+          />
+          <PasswordField
+            id="nueva"
+            label="Contraseña nueva"
+            autoComplete="new-password"
+            value={nueva}
+            onChange={setNueva}
+          />
+          <PasswordField
+            id="repetida"
+            label="Repetí la contraseña nueva"
+            autoComplete="new-password"
+            value={repetida}
+            onChange={setRepetida}
+          />
+
+          <button
+            type="submit"
+            disabled={enviando}
+            className={`${PRIMARY_BUTTON} w-full disabled:opacity-60`}
+          >
+            {enviando ? 'Guardando…' : 'Cambiar contraseña'}
           </button>
-        </div>
-      </form>
+
+          <div className="flex justify-between text-sm">
+            {!pendiente && usuario ? (
+              <Link to={resolveLandingRoute(usuario)} className={TEXT_LINK}>
+                Volver
+              </Link>
+            ) : (
+              <span />
+            )}
+            <button type="button" onClick={handleLogout} className={TEXT_LINK}>
+              Cerrar sesión
+            </button>
+          </div>
+        </form>
+      </DisenoMarca>
       {esCliente && <BotonWhatsapp />}
-    </main>
+    </>
   );
 }

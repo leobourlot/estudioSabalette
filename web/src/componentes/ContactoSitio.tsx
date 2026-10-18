@@ -9,8 +9,8 @@ import {
   whatsappUrl,
 } from '../servicios/datos-estudio';
 import { Aparecer } from './Aparecer';
-import { IconoEmail, IconoReloj, IconoUbicacion } from './IconosContacto';
-import { IconoRed } from './IconosRedes';
+import { IconoEmail, IconoReloj, IconoUbicacionColor } from './IconosContacto';
+import { IconoRedColor } from './IconosRedes';
 
 interface ContactoSitioProps {
   /** Mensaje de WhatsApp de la página (spec 007, RF-27). */
@@ -32,13 +32,16 @@ interface RenglonProps {
   children: ReactNode;
 }
 
-/** Un dato: el ícono en su recuadro, la etiqueta en mayúsculas y el dato debajo. */
+/**
+ * Un dato: el ícono, la etiqueta en mayúsculas y el dato debajo. Ubicación, WhatsApp y las redes
+ * llevan sus colores con un contorno blanco; los demás íconos van en blanco.
+ */
 function Renglon({ icono, etiqueta, children }: RenglonProps) {
   return (
     <li className="flex gap-4">
       <span
         aria-hidden="true"
-        className="flex h-11 w-11 shrink-0 items-center justify-center rounded border border-estudio-blanco/40 text-estudio-blanco"
+        className="flex h-11 w-11 shrink-0 items-center justify-center text-estudio-blanco"
       >
         {icono}
       </span>
@@ -89,14 +92,14 @@ export function ContactoSitio({ mensaje, contact = STUDIO_CONTACT }: ContactoSit
         <Aparecer className="mt-10">
           <ul className="space-y-6">
             {contact.direccion && (
-              <Renglon icono={<IconoUbicacion />} etiqueta={TEXTOS.contacto.ubicacion}>
+              <Renglon icono={<IconoUbicacionColor />} etiqueta={TEXTOS.contacto.ubicacion}>
                 <p className="break-words">{contact.direccion}</p>
                 <a href={mapsUrl(contact.direccion)} className={`${LINK} underline`} {...EXTERNAL}>
                   {TEXTOS.contacto.comoLlegar}
                 </a>
               </Renglon>
             )}
-            <Renglon icono={<IconoRed red="WhatsApp" />} etiqueta={TEXTOS.contacto.telefono}>
+            <Renglon icono={<IconoRedColor red="WhatsApp" />} etiqueta={TEXTOS.contacto.telefono}>
               <a href={whatsappUrl(mensaje, contact)} className={LINK} {...EXTERNAL}>
                 {contact.whatsappVisible}
               </a>
@@ -118,7 +121,7 @@ export function ContactoSitio({ mensaje, contact = STUDIO_CONTACT }: ContactoSit
               </Renglon>
             )}
             {groupByNetwork(networksToShow(contact)).map(([red, cuentas]) => (
-              <Renglon key={red} icono={<IconoRed red={red} />} etiqueta={red}>
+              <Renglon key={red} icono={<IconoRedColor red={red} />} etiqueta={red}>
                 {cuentas.map((cuenta) => (
                   <a key={cuenta.url} href={cuenta.url} className={`${LINK} mr-4`} {...EXTERNAL}>
                     {cuenta.usuario}

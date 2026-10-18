@@ -1,7 +1,45 @@
+import { CONTORNO } from './IconosRedes';
+import { useIdSvg } from './useIdSvg';
+
 /**
  * Íconos propios de los renglones del bloque de contacto (spec 007, RF-23), en SVG, sin
  * bibliotecas (principio 1). Son decorativos: cada renglón tiene su etiqueta escrita.
  */
+
+/** Colores de Google Maps para el pin de "Ubicación", que lleva a Maps con "Cómo llegar". */
+export const COLORES_MAPS = {
+  rojo: '#EA4335',
+  azul: '#4285F4',
+  amarillo: '#FBBC04',
+  verde: '#34A853',
+} as const;
+
+const PIN = 'M12 2a7 7 0 0 0-7 7c0 5.2 7 13 7 13s7-7.8 7-13a7 7 0 0 0-7-7Z';
+
+/**
+ * El pin de Maps: rojo arriba a la derecha, azul arriba a la izquierda, y amarillo y verde abajo,
+ * con el contorno blanco de los íconos a color.
+ */
+export function IconoUbicacionColor() {
+  const clipId = useIdSvg('pin');
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-6 w-6 shrink-0">
+      <defs>
+        <clipPath id={clipId}>
+          <path d={PIN} />
+        </clipPath>
+      </defs>
+      <path d={PIN} {...CONTORNO} />
+      <g clipPath={`url(#${clipId})`}>
+        <path d={PIN} fill={COLORES_MAPS.rojo} />
+        <polygon points="12,9 3,0 0,0 0,21" fill={COLORES_MAPS.azul} />
+        <polygon points="12,9 0,21 0,24 1,24 14,11" fill={COLORES_MAPS.amarillo} />
+        <polygon points="24,1 24,24 1,24" fill={COLORES_MAPS.verde} />
+      </g>
+      <circle cx="12" cy="9" r="2.6" fill="#FFFFFF" />
+    </svg>
+  );
+}
 
 const SVG_PROPS = {
   viewBox: '0 0 24 24',

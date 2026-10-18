@@ -1,5 +1,5 @@
 import { STUDIO_CONTACT, type StudioContact } from './datos-estudio';
-import { LOGO_PATH, SHARE_IMAGE_PATH } from './marca';
+import { FULL_LOGO_PATH, SHARE_IMAGE_PATH } from './marca';
 
 /**
  * Cabecera de cada página que genera el prerenderizado (spec 007, RF-34 y RF-36 a RF-38): título,
@@ -43,8 +43,8 @@ export function legalServiceData(
     name: contact.nombre,
     url: `${urlSitio}/`,
     telephone: `+${contact.whatsapp}`,
-    logo: urlSitio + LOGO_PATH,
-    image: urlSitio + LOGO_PATH,
+    logo: urlSitio + FULL_LOGO_PATH,
+    image: urlSitio + FULL_LOGO_PATH,
   };
   if (contact.direccion) {
     data.address = { '@type': 'PostalAddress', streetAddress: contact.direccion };

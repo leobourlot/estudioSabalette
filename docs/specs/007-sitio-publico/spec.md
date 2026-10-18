@@ -32,7 +32,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Una página por cada abogada que tenga su resumen y su texto completo (RF-19, RF-20).
   - La página de dirección inexistente (RF-9).
 - RF-2: EL SISTEMA muestra los textos del anexo "Textos aprobados" palabra por palabra, con sus párrafos y sus listas. Todo el contenido del sitio público es fijo y no se edita desde el panel. Cambiar un texto, un dato de contacto o una integrante exige actualizar primero esta spec.
-- RF-3: EL SISTEMA muestra el nombre del estudio, "Pertusatti | Sabalette - Abogadas", en todo el sistema: el sitio público, la pantalla de ingreso, la de cambio de contraseña, el portal y el panel. En pantalla (encabezados, apertura del inicio y bloque de contacto) lo muestra en dos líneas: "Pertusatti | Sabalette" en la primera, sin cortarse, y "Abogadas" debajo. En los títulos de T-16 va en una sola línea. En el sitio público y en la pantalla de ingreso usa además el logo que entregó el estudio y sus colores:
+- RF-3: EL SISTEMA muestra el nombre del estudio, "Pertusatti | Sabalette - Abogadas", en todo el sistema: el sitio público, la pantalla de ingreso, la de cambio de contraseña, el portal y el panel. En pantalla (encabezados, apertura del inicio y bloque de contacto) lo muestra en dos líneas: "Pertusatti | Sabalette" en la primera, sin cortarse, y "Abogadas" debajo. En los títulos de T-16 va en una sola línea. En el sitio público y en la pantalla de ingreso usa además el logo que entregó el estudio y sus colores. Es el logo completo en todos los lugares, con la "P" y la "S" enlazadas y el texto, también en la vista previa al compartir (RF-36) y en los datos para buscadores (RF-37):
   - Azul oscuro #2C3256 y azul #415789, en degradado hacia la derecha, como en el logo.
   - Blanco #FCFFFF.
 
@@ -65,7 +65,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 
 ### Inicio
 - RF-11: EL SISTEMA muestra el inicio con estas secciones, en este orden:
-  - Apertura: el nombre del estudio y el texto T-1.
+  - Apertura: el nombre del estudio y el texto T-1, con una balanza de la justicia de fondo, decorativa, integrada con el degradado del logo.
   - Servicios (RF-12).
   - Abogadas (RF-18).
   - Contacto: es el bloque de contacto del final de la página (RF-23).
@@ -97,8 +97,11 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 - RF-22: EL SISTEMA toma los datos de contacto del estudio de una única fuente, la misma que usa el portal (spec 004, RF-18). Son públicos y fijos, y no se editan desde el panel:
   - Nombre: "Pertusatti | Sabalette - Abogadas".
   - WhatsApp: +54 9 3455 41-4147.
-  - Dirección, días y horarios de atención, email y redes sociales: los que informe el estudio (ver Dudas abiertas).
-- RF-23: EL SISTEMA muestra al final de todas las páginas públicas, antes del pie de página (RF-44), un bloque de contacto sobre el degradado del logo, con el título "Contactate con nosotros", una línea corta debajo del título y el texto "Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal." (T-17). Debajo, cada dato en su renglón, con un ícono dentro de un recuadro, una etiqueta corta en mayúsculas y el dato:
+  - Dirección: "Pueyrredón Nº 47, Concordia".
+  - Email: estudiojuridicovsr@gmail.com.
+  - Redes sociales: Instagram, con la cuenta "@pertusattisabaletteabogadas" (https://www.instagram.com/pertusattisabaletteabogadas/).
+  - Días y horarios de atención: los que informe el estudio (ver Dudas abiertas).
+- RF-23: EL SISTEMA muestra al final de todas las páginas públicas, antes del pie de página (RF-44), un bloque de contacto sobre el degradado del logo, con el título "Contactate con nosotros", una línea corta debajo del título y el texto "Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal." (T-17). Debajo, cada dato en su renglón, con un ícono, una etiqueta corta en mayúsculas y el dato. Los íconos de Ubicación (el pin de Google Maps), de WhatsApp y de cada red llevan los colores de su marca, sin fondo, con un borde blanco que sigue el dibujo; los demás van en blanco:
   - "Ubicación": la dirección, como texto, y el enlace "Cómo llegar", que abre esa dirección en Google Maps.
   - "Teléfono / WhatsApp": con el ícono de WhatsApp, el número escrito, como enlace que abre una conversación con el estudio (RF-27).
   - "Disponibilidad": los días y horarios de atención.
@@ -144,7 +147,8 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - El logo y el nombre del estudio, que llevan al inicio.
   - Los accesos "Servicios", "Abogadas" y "Contacto", como en el menú (RF-5).
   - El WhatsApp, escrito, como enlace con el mensaje de la página (RF-27), y el email, cuando el estudio lo informe (RF-24).
-  - Las redes: el WhatsApp del estudio y cada cuenta de las redes informadas, cada una con el ícono y el nombre de la red (por ejemplo, "WhatsApp" o "Instagram"), como enlace a su perfil. Si una red tiene más de una cuenta, cada enlace suma la cuenta al nombre. Sin redes informadas, solo se muestra el WhatsApp (RF-24).
+  - Las redes: el WhatsApp del estudio y cada cuenta de las redes informadas, cada una con el mismo ícono del bloque de contacto, a color y con borde blanco (RF-23), y el nombre de la red (por ejemplo, "WhatsApp" o "Instagram"), como enlace a su perfil. Si una red tiene más de una cuenta, cada enlace suma la cuenta al nombre. Sin redes informadas, solo se muestra el WhatsApp (RF-24).
+  - Debajo de las redes, el email, como enlace para escribirle al estudio, y la dirección, como enlace que la abre en Google Maps, cada uno con el mismo ícono del bloque de contacto (RF-23). Cada uno se muestra solo si el estudio lo informó (RF-24).
   - La leyenda "© <año> Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.", con el año en que se publicó el sitio (T-18).
   - La leyenda "Diseñado por" con el logo y el nombre "Bourder Web", que llevan a https://bourderweb.com.ar (T-18). Como todo enlace externo, se abre aparte (RF-25).
 
@@ -167,7 +171,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Cada página empieza con el acceso "Saltar al contenido" y tiene un único título principal, con los subtítulos en orden, sin saltear niveles.
   - Al pasar a otra página, el lector de pantalla anuncia su título y el foco queda al principio de su contenido. Al ir a una sección del inicio desde el menú, el foco queda en el título de esa sección.
   - Las pestañas de Derecho Laboral se recorren con Tab, se eligen con Enter y anuncian cuál es la página actual (RF-15).
-  - El texto contrasta con su fondo al menos 4,5 a 1 (3 a 1 en títulos grandes, íconos y bordes de controles). El blanco #FCFFFF sobre cualquiera de los dos azules del logo cumple ese contraste.
+  - El texto contrasta con su fondo al menos 4,5 a 1 (3 a 1 en títulos grandes, íconos y bordes de controles). El blanco #FCFFFF sobre cualquiera de los dos azules del logo cumple ese contraste. En los íconos con los colores de su marca del bloque de contacto (RF-23), lo cumple el borde blanco que rodea el dibujo; los colores de adentro quedan exceptuados, porque son decorativos (no se anuncian y la etiqueta va escrita al lado) y no pueden cumplirlo todos sobre ningún fondo.
   - Ninguna información depende solo del color.
   - El texto se puede agrandar hasta el 200 % sin que se corte ni se superponga. Agrandado, las pestañas pueden pasar una debajo de la otra.
   - El logo y las fotos tienen texto alternativo. Las iniciales que reemplazan a una foto no se anuncian, porque el nombre está al lado.
@@ -209,7 +213,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Tarjeta de Carolina Pertusatti sin resumen al lado de la de Vanesa Sabalette Rabello con resumen: las dos se ven ordenadas aunque tengan distinta cantidad de texto (RF-20).
   - El estudio entrega solo el resumen o solo el texto de Carolina Pertusatti: su tarjeta sigue sin resumen ni página hasta tener los dos (RF-20).
 - **Contacto:**
-  - Hoy solo están informados el nombre y el WhatsApp: el bloque de contacto muestra el título, el texto y solo el renglón "Teléfono / WhatsApp", y el pie de página no muestra íconos de redes ni email (RF-24, RF-44).
+  - Hoy faltan solo los días y horarios de atención: el bloque de contacto muestra los renglones "Ubicación", "Teléfono / WhatsApp", "Email" e "Instagram", sin "Disponibilidad" (RF-24, RF-44).
   - Una red con dos cuentas (por ejemplo, la del estudio y la de una abogada): las dos van en el mismo renglón, bajo el nombre de la red (RF-23).
   - Hay dirección pero no horarios, o al revés: se muestra solo lo informado (RF-24).
   - El estudio informa una sola red social: se muestra solo esa (RF-23, RF-24).
@@ -316,14 +320,12 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   3. Medir desde un celular con conexión 4G que el texto de cada página se lee en menos de 3 segundos (requisitos no funcionales).
 
 ## Dudas abiertas
-Ninguna impide planificar: cada dato pendiente tiene definido qué se muestra mientras falta (RF-20, RF-21, RF-24). El logo en buena calidad hace falta antes de publicar. Al recibir cada dato se actualiza esta spec (RF-2).
-- [NECESITA ACLARACIÓN] Dirección del estudio, tal como debe leerse (calle, número, piso u oficina, ciudad y provincia).
+Ninguna impide planificar: cada dato pendiente tiene definido qué se muestra mientras falta (RF-20, RF-21, RF-24). Al recibir cada dato se actualiza esta spec (RF-2).
 - [NECESITA ACLARACIÓN] Días y horarios de atención.
-- [NECESITA ACLARACIÓN] Email de contacto del estudio.
-- [NECESITA ACLARACIÓN] Redes sociales: cuáles son, sus cuentas y la dirección de cada perfil.
 - [NECESITA ACLARACIÓN] Foto de Vanesa Sabalette Rabello.
 - [NECESITA ACLARACIÓN] Carolina Pertusatti: su resumen para la tarjeta, su texto completo y su foto.
-- [NECESITA ACLARACIÓN] Logo del estudio en buena calidad, para el encabezado y para la vista previa al compartir. El que se entregó es una imagen pequeña.
+- Resuelta el 16/10/2026: el estudio entregó el logo vectorizado en buena calidad (fondo azul).
+- Resuelta el 17/10/2026: el estudio informó su dirección ("Pueyrredón Nº 47, Concordia"), su email (estudiojuridicovsr@gmail.com) y su red social (Instagram, "@pertusattisabaletteabogadas") (RF-22).
 
 ## Anexo — Textos aprobados
 Los textos de los servicios y de la abogada son los de la clienta. Las frases de las tarjetas y el resumen son recortes de esos textos, aprobados el 12/10/2026. Los mensajes de WhatsApp, los títulos, las descripciones y los textos de la interfaz se redactaron para esta spec. Los textos del bloque de contacto (T-17) y del pie de página (T-18) se tomaron del modelo que eligió el estudio y se aprobaron el 15/10/2026.

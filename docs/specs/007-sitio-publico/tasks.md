@@ -255,3 +255,19 @@ Pedidos por el estudio durante la demo manual (spec: RF-3, RF-4, RF-6, RF-23, RF
 - [x] **T41 — Redes con ícono y nombre, y redes de muestra en desarrollo** [RF-23, RF-24, RF-44] **(modifica existente: `servicios/datos-estudio.ts`, `componentes/ContactoSitio.tsx`, `componentes/PieSitio.tsx`, `componentes/IconosRedes.tsx` y sus tests, `validacion.md`)**
   Las redes de muestra solo en desarrollo, el ícono de WhatsApp en el contacto y las redes del pie con ícono y nombre.
   Hecho cuando: los tests verifican que `pickNetworks` usa las de muestra solo si se piden y no hay reales; que en los tests no aparecen; que el contacto lleva el ícono de WhatsApp; que el pie muestra "WhatsApp" y cada red con su nombre, sumando la cuenta cuando una red tiene varias; y que el build para publicar no contiene "cuenta-de-muestra".
+
+- [x] **T42 — Íconos a color en el contacto** [RF-23] **(modifica existente: `componentes/ContactoSitio.tsx`, `componentes/IconosRedes.tsx`, `componentes/IconosContacto.tsx`, `componentes/PieSitio.tsx`, los tests del contacto y del pie, y `aislamiento-sitio.test.ts`)**
+  `IconoRedColor`, `IconoUbicacionColor`, `useIdSvg` y `CONTORNO`; el recuadro sin borde ni fondo.
+  Hecho cuando: los tests verifican que los íconos no llevan fondo ni borde y los que no tienen colores propios van en blanco, que cada ícono a color tiene detrás su contorno blanco con el mismo dibujo, que WhatsApp lleva su verde, la ubicación los cuatro colores de Maps, Instagram su degradado y LinkedIn su azul, que el pie usa los mismos íconos, con sus colores y el contorno, y que los ids de los SVG no se repiten entre dos bloques y solo llevan letras, números, "-" y "_".
+
+- [x] **T43 — Balanza de fondo en la apertura** [RF-11] **(modifica existente: `paginas/SitioInicio.tsx` y su test, `aislamiento-sitio.test.ts`)**
+  `BalanzaDecorativa`, de fondo en la apertura del inicio.
+  Hecho cuando: los tests verifican que la apertura lleva la balanza, que no se anuncia ni recibe el puntero, y que va detrás del texto.
+
+- [x] **T44 — Logo en buena calidad** [RF-3, RF-36, RF-37] **(modifica existente: `servicios/marca.ts`, `servicios/cabecera-pagina.ts`, `index.html`, `public/marca/` y los tests de la cabecera, el encabezado y las fotos)**
+  `logo.svg` con la máscara corregida, `logo.png` y `compartir.png`; el favicon y el `apple-touch-icon` con el logo; se quita `logo.jpg`.
+  Hecho cuando: los tests verifican que el encabezado usa `logo.svg`, que la vista previa usa `compartir.png` y `LegalService` el `logo.png`, y que los PNG nuevos no tienen datos de cámara.
+
+- [x] **T45 — Email y dirección en el pie** [RF-24, RF-25, RF-44] **(modifica existente: `componentes/PieSitio.tsx` y su test)**
+  La lista "Email y dirección" debajo de las redes, con sus íconos y sus enlaces.
+  Hecho cuando: los tests verifican el email con `mailto:` y la dirección con el enlace a Google Maps, los dos aparte; que la lista va debajo de las redes; que sin los dos datos no está, y que con uno solo muestra ese.

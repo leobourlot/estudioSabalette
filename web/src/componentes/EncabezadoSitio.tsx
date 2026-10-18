@@ -1,5 +1,5 @@
 import type { SeccionSesion } from '../servicios/estado-sesion';
-import { LOGO_PATH } from '../servicios/marca';
+import { LOGO_PATH, LOGO_PATH2, LOGO_PATH3 } from '../servicios/marca';
 import { AccesoIngreso, useSeccionSesion } from './AccesoIngreso';
 import { FOCUS_RING } from './estilos-sitio';
 import { MenuSitio } from './MenuSitio';
@@ -30,17 +30,17 @@ export function EncabezadoSitio({ consultarSesion }: EncabezadoSitioProps) {
           className={`flex min-w-0 items-center gap-3 rounded font-semibold text-estudio-oscuro ${FOCUS_RING}`}
         >
           <img
-            src={LOGO_PATH}
+            src={LOGO_PATH2}
             alt=""
-            width={48}
-            height={48}
-            className="h-10 w-10 shrink-0 rounded min-[420px]:h-12 min-[420px]:w-12"
+            width={756}
+            height={420}
+            className="h-12 w-auto shrink-0 rounded-xl min-[420px]:h-24"
           />
-          <NombreEstudio />
+          <NombreEstudio centrado />
         </a>
         <div className="flex shrink-0 items-center gap-2">
           <MenuSitio acceso={<AccesoIngreso seccion={seccion} className="w-full" />} />
-          <AccesoIngreso seccion={seccion} className="max-[419px]:hidden" />
+          <AccesoIngreso seccion={seccion} className="max-[767px]:hidden" />
         </div>
       </div>
     </header>

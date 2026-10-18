@@ -26,7 +26,7 @@ describe('DisenoPanel (RF-16)', () => {
       'Inicio',
       'Causas',
       'Jurisprudencia',
-      'Modelos',
+      'Modelos de escritos',
       'Cuentas',
       'Mi cuenta',
     ]);
@@ -89,7 +89,9 @@ describe('DisenoPanel (RF-16)', () => {
   it('la navegación lleva a las páginas del panel', async () => {
     await openAs('/panel', testUser('admin'), 'Panel');
 
-    await userEvent.setup().click(screen.getByRole('link', { name: 'Mi cuenta' }));
+    await userEvent
+      .setup()
+      .click(within(screen.getByRole('navigation')).getByRole('link', { name: 'Mi cuenta' }));
 
     expect(await screen.findByRole('heading', { name: 'Mi cuenta' })).toBeTruthy();
   });
@@ -115,11 +117,14 @@ describe('DisenoPortal (RF-16)', () => {
     expect(contact.getByText('Pertusatti | Sabalette').parentElement!.textContent).toBe(
       STUDIO_CONTACT.nombre,
     );
-    // Sin dirección informada, el bloque no la muestra ni deja un renglón vacío (spec 007, RF-24).
     expect(Array.from(footer.querySelectorAll('p')).map((p) => p.textContent)).toEqual([
       STUDIO_CONTACT.nombre,
+      'Pueyrredón Nº 47, Concordia',
       'WhatsApp',
     ]);
+    // Una tarjeta al final, con un margen debajo mayor que el botón de WhatsApp (spec 008, RF-4).
+    expect(footer.className).toContain('pb-24');
+    expect(footer.firstElementChild!.className).toContain('border');
     const link = contact.getByRole('link', { name: 'WhatsApp' });
     expect(link.getAttribute('href')).toBe(whatsappUrl());
     expect(link.getAttribute('target')).toBe('_blank');
@@ -179,6 +184,16 @@ describe('BloqueContactoEstudio (spec 004, RF-18)', () => {
     );
 
     expect(screen.getByText('San Martín 123, Villaguay')).toBeTruthy();
+  });
+
+  it('sin dirección no la muestra ni deja un renglón vacío (spec 007, RF-24)', () => {
+    render(<BloqueContactoEstudio contact={{ ...STUDIO_CONTACT, direccion: null }} />);
+
+    const footer = screen.getByRole('contentinfo', { name: 'Contacto del estudio' });
+    expect(Array.from(footer.querySelectorAll('p')).map((p) => p.textContent)).toEqual([
+      STUDIO_CONTACT.nombre,
+      'WhatsApp',
+    ]);
   });
 });
 

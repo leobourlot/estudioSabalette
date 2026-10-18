@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { DatosCausaPortal } from '../componentes/DatosCausaPortal';
+import { CARD, ERROR_ALERT, PAGE, PAGE_TITLE, TEXT_LINK } from '../componentes/estilos-aplicacion';
 import { MovimientosPortal } from '../componentes/MovimientosPortal';
 import { PartesPortal } from '../componentes/PartesPortal';
 import { usePortalService } from '../componentes/ProveedorServicios';
@@ -26,7 +27,8 @@ interface LoadedMovements {
  * El id va tal como está en la dirección: ante una causa ajena, desactivada, inexistente o mal
  * formada, la API responde el mismo 404 y la página muestra solo ese mensaje (RF-28). Cada
  * resultado se guarda con lo que se pidió: mientras no coincide con la dirección, se está
- * cargando lo nuevo.
+ * cargando lo nuevo. Va en tres tarjetas: la carátula y los datos, las partes y el responsable, y
+ * los movimientos (spec 008, RF-17).
  */
 export function PortalCausaDetalle() {
   const portal = usePortalService();
@@ -74,8 +76,8 @@ export function PortalCausaDetalle() {
 
   if (!current) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-6">
-        <p role="status" className="text-slate-500">
+      <main className={PAGE}>
+        <p role="status" className="text-slate-600">
           Cargando…
         </p>
       </main>
@@ -85,11 +87,11 @@ export function PortalCausaDetalle() {
   const { causa } = current;
   if (!causa) {
     return (
-      <main className="mx-auto max-w-5xl space-y-4 px-4 py-6">
-        <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+      <main className={PAGE}>
+        <p role="alert" className={ERROR_ALERT}>
           {current.error}
         </p>
-        <Link to="/portal" className="text-sm text-slate-700 underline">
+        <Link to="/portal" className={`text-sm ${TEXT_LINK}`}>
           Volver a mis causas
         </Link>
       </main>
@@ -97,24 +99,30 @@ export function PortalCausaDetalle() {
   }
 
   return (
-    <main className="mx-auto max-w-5xl space-y-6 px-4 py-6">
-      <Link to="/portal" className="text-sm text-slate-700 underline">
+    <main className={PAGE}>
+      <Link to="/portal" className={`text-sm ${TEXT_LINK}`}>
         Volver a mis causas
       </Link>
-      <h1 className="break-words text-2xl font-semibold text-slate-800">{causa.caratula}</h1>
-      <DatosCausaPortal causa={causa} />
-      <PartesPortal partes={causa.partes} />
-      {causa.responsable && (
-        <p className="text-sm text-slate-700">
-          Responsable de la causa: {causa.responsable.nombre} {causa.responsable.apellido}
-        </p>
-      )}
-      <MovimientosPortal
-        causaId={causaId}
-        pagina={pagina}
-        page={currentMovements?.page ?? null}
-        error={currentMovements?.error ?? null}
-      />
+      <div className={`space-y-4 p-6 ${CARD}`}>
+        <h1 className={`break-words ${PAGE_TITLE}`}>{causa.caratula}</h1>
+        <DatosCausaPortal causa={causa} />
+      </div>
+      <div className={`space-y-3 p-6 ${CARD}`}>
+        <PartesPortal partes={causa.partes} />
+        {causa.responsable && (
+          <p className="border-t border-slate-200 pt-3 text-sm text-slate-700">
+            Responsable de la causa: {causa.responsable.nombre} {causa.responsable.apellido}
+          </p>
+        )}
+      </div>
+      <div className={`p-6 ${CARD}`}>
+        <MovimientosPortal
+          causaId={causaId}
+          pagina={pagina}
+          page={currentMovements?.page ?? null}
+          error={currentMovements?.error ?? null}
+        />
+      </div>
     </main>
   );
 }

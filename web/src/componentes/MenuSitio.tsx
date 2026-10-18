@@ -101,7 +101,7 @@ export function MenuSitio({ acceso }: MenuSitioProps) {
         >
           <Links
             onChoose={close}
-            extra={acceso && <li className="mt-2 min-[420px]:hidden">{acceso}</li>}
+            extra={acceso && <li className="mt-2 min-[769px]:hidden">{acceso}</li>}
           />
         </m.nav>
       </details>

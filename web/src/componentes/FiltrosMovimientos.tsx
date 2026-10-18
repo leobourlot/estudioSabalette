@@ -6,9 +6,10 @@ import {
   VISIBILITY_FILTER_OPTIONS,
 } from '../servicios/presentacion-movimientos';
 import { ListaDeErrores } from './ListaDeErrores';
+import { FIELD_SMALL, LABEL, SECONDARY_BUTTON_SMALL } from './estilos-aplicacion';
 
-const fieldClass = 'rounded border border-slate-300 px-2 py-1.5 text-sm';
-const labelClass = 'block text-sm text-slate-600';
+const fieldClass = FIELD_SMALL;
+const labelClass = LABEL;
 
 /**
  * Filtros del historial de movimientos (RF-25, RF-27): buscador, tipo, visibilidad, rango de
@@ -57,7 +58,7 @@ export function FiltrosMovimientos({
               className={`w-72 ${fieldClass}`}
             />
           </div>
-          <button type="submit" className="rounded border border-slate-300 px-3 py-1.5 text-sm">
+          <button type="submit" className={SECONDARY_BUTTON_SMALL}>
             Buscar
           </button>
         </form>

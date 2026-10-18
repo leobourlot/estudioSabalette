@@ -14,8 +14,16 @@ import {
   COPY_FAILED_MESSAGE,
 } from '../servicios/presentacion-modelos';
 import { modelListStateFrom, toModelListLocationState } from '../servicios/sesion-escrito';
+import {
+  CARD,
+  ERROR_ALERT,
+  PAGE,
+  PAGE_TITLE,
+  PRIMARY_BUTTON_SMALL,
+  TEXT_LINK,
+} from '../componentes/estilos-aplicacion';
 
-const linkClass = 'text-sm text-slate-600 underline';
+const linkClass = `text-sm ${TEXT_LINK}`;
 
 /**
  * Escrito completado (RF-32): el texto de un modelo con los datos de una causa, que el servidor
@@ -94,10 +102,10 @@ export function PanelEscrito() {
 
   if (!escrito) {
     return (
-      <main className="mx-auto max-w-5xl space-y-6 p-8">
-        <h1 className="text-2xl font-semibold text-slate-800">Escrito</h1>
+      <main className={PAGE}>
+        <h1 className={PAGE_TITLE}>Escrito</h1>
         {loadError ? (
-          <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p role="alert" className={ERROR_ALERT}>
             {loadError}
           </p>
         ) : (
@@ -109,11 +117,11 @@ export function PanelEscrito() {
   }
 
   return (
-    <main className="mx-auto max-w-5xl space-y-6 p-8">
+    <main className={PAGE}>
       {backLinks}
 
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold text-slate-800">Escrito</h1>
+        <h1 className={PAGE_TITLE}>Escrito</h1>
         <dl className="text-sm text-slate-700">
           <div className="flex flex-wrap gap-1">
             <dt className="text-slate-500">Causa:</dt>
@@ -133,7 +141,7 @@ export function PanelEscrito() {
           <button
             type="button"
             onClick={() => void copy(escrito.texto)}
-            className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
+            className={PRIMARY_BUTTON_SMALL}
           >
             Copiar
           </button>
@@ -145,13 +153,13 @@ export function PanelEscrito() {
           </p>
         )}
         {copyResult === 'failed' && (
-          <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p role="alert" className={ERROR_ALERT}>
             {COPY_FAILED_MESSAGE}
           </p>
         )}
       </div>
 
-      <section aria-label="Escrito completado" className="rounded-lg bg-white p-6 shadow">
+      <section aria-label="Escrito completado" className={`p-6 ${CARD}`}>
         <TextoLiteral texto={escrito.texto} className="font-mono text-sm text-slate-800" />
       </section>
     </main>

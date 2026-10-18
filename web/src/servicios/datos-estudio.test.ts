@@ -20,11 +20,20 @@ describe('datos del estudio (spec 007, RF-3 y RF-22; spec 004, RF-18)', () => {
     expect(STUDIO_CONTACT.whatsappVisible).toBe('+54 9 3455 41-4147');
   });
 
+  it('tienen la dirección, el email y la red que informó el estudio (RF-22)', () => {
+    expect(STUDIO_CONTACT.direccion).toBe('Pueyrredón Nº 47, Concordia');
+    expect(STUDIO_CONTACT.email).toBe('estudiojuridicovsr@gmail.com');
+    expect(STUDIO_CONTACT.redes).toEqual([
+      {
+        red: 'Instagram',
+        usuario: '@pertusattisabaletteabogadas',
+        url: 'https://www.instagram.com/pertusattisabaletteabogadas/',
+      },
+    ]);
+  });
+
   it('no tienen ningún dato inventado: lo que el estudio no informó queda vacío (RF-24)', () => {
-    expect(STUDIO_CONTACT.direccion).toBeNull();
     expect(STUDIO_CONTACT.horarios).toEqual([]);
-    expect(STUDIO_CONTACT.email).toBeNull();
-    expect(STUDIO_CONTACT.redes).toEqual([]);
     const all = JSON.stringify(STUDIO_CONTACT);
     expect(all).not.toContain('Ejemplo');
     expect(all).not.toContain('5491100000000');
@@ -88,6 +97,7 @@ describe('redes de muestra (spec 007, RF-24)', () => {
 
   it('fuera de la versión de desarrollo (acá, los tests) no se muestran', () => {
     expect(import.meta.env.MODE).not.toBe('development');
-    expect(networksToShow()).toEqual([]);
+    expect(networksToShow()).toEqual(STUDIO_CONTACT.redes);
+    expect(networksToShow({ ...STUDIO_CONTACT, redes: [] })).toEqual([]);
   });
 });

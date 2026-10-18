@@ -11,8 +11,15 @@ import {
 } from '../servicios/formulario-fallo';
 import type { FalloPage } from '../servicios/jurisprudencia';
 import { emptyListMessage } from '../servicios/presentacion-jurisprudencia';
+import {
+  ERROR_ALERT,
+  PAGE,
+  PAGE_TITLE,
+  PRIMARY_BUTTON_SMALL,
+  SECONDARY_BUTTON_SMALL,
+} from '../componentes/estilos-aplicacion';
 
-const pageButtonClass = 'rounded border border-slate-300 px-3 py-1 disabled:opacity-50';
+const pageButtonClass = SECONDARY_BUTTON_SMALL;
 
 /**
  * Listado de jurisprudencia (RF-21 a RF-28): buscador, filtros, "Mostrar desactivados" y
@@ -56,13 +63,10 @@ export function PanelJurisprudencia() {
       : null;
 
   return (
-    <main className="mx-auto max-w-6xl p-8">
+    <main className={PAGE}>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-slate-800">Jurisprudencia</h1>
-        <Link
-          to="/panel/jurisprudencia/nuevo"
-          className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
-        >
+        <h1 className={PAGE_TITLE}>Jurisprudencia</h1>
+        <Link to="/panel/jurisprudencia/nuevo" className={PRIMARY_BUTTON_SMALL}>
           Nuevo fallo
         </Link>
       </div>
@@ -72,7 +76,7 @@ export function PanelJurisprudencia() {
       </div>
 
       {error && (
-        <p role="alert" className="mt-6 rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p role="alert" className={ERROR_ALERT}>
           {error}
         </p>
       )}
@@ -90,7 +94,7 @@ export function PanelJurisprudencia() {
 
       {result && result.items.length > 0 && (
         <>
-          <ul aria-label="Lista de fallos" className="mt-6 space-y-3">
+          <ul aria-label="Lista de fallos" className="space-y-4">
             {result.items.map((fallo) => (
               <FilaFallo key={fallo.id} fallo={fallo} />
             ))}

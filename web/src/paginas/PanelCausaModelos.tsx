@@ -5,8 +5,15 @@ import { useCausasService } from '../componentes/ProveedorServicios';
 import type { CausaDetalle } from '../servicios/causas';
 import { errorMessage } from '../servicios/cliente-http';
 import { modelListStateFrom, toModelListLocationState } from '../servicios/sesion-escrito';
+import {
+  ERROR_ALERT,
+  PAGE,
+  PAGE_TITLE,
+  SECONDARY_BUTTON_SMALL,
+  TEXT_LINK,
+} from '../componentes/estilos-aplicacion';
 
-const linkClass = 'text-sm text-slate-600 underline';
+const linkClass = `text-sm ${TEXT_LINK}`;
 
 /**
  * Lista de modelos para completar desde una causa (RF-29): todos los modelos activos, sea cual
@@ -43,7 +50,7 @@ export function PanelCausaModelos() {
   }, [causas, causaId]);
 
   return (
-    <main className="mx-auto max-w-6xl space-y-6 p-8">
+    <main className={PAGE}>
       {causa ? (
         <Link to={`/panel/causas/${causa.id}`} className={linkClass}>
           Volver a la causa
@@ -55,21 +62,19 @@ export function PanelCausaModelos() {
       )}
 
       <div className="space-y-1">
-        <h1 className="text-2xl font-semibold text-slate-800">Completar un modelo</h1>
+        <h1 className={PAGE_TITLE}>Completar un modelo</h1>
         {causa && <p className="break-words text-slate-700">{causa.caratula}</p>}
       </div>
 
       {loadError && (
-        <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p role="alert" className={ERROR_ALERT}>
           {loadError}
         </p>
       )}
       {!causa && !loadError && <p className="text-slate-600">Cargando…</p>}
 
       {causa && !causa.activa && (
-        <p className="rounded bg-slate-200 px-3 py-2 text-sm text-slate-800">
-          La causa está desactivada
-        </p>
+        <p className={SECONDARY_BUTTON_SMALL}>La causa está desactivada</p>
       )}
 
       {causa?.activa && (

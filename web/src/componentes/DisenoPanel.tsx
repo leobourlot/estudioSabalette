@@ -4,21 +4,9 @@ import { useTituloDocumento } from './useTituloDocumento';
 
 /**
  * Diseño del panel del estudio: administradores y abogados (causas, jurisprudencia, modelos de
- * escritos y cuentas son para ambos).
+ * escritos y cuentas son para ambos), con el menú lateral del panel (spec 008, RF-5 y RF-6).
  */
 export function DisenoPanel() {
   useTituloDocumento(APP_TITLES.panel);
-  return (
-    <DisenoSeccion
-      title="Panel"
-      links={[
-        { to: '/panel', label: 'Inicio', end: true },
-        { to: '/panel/causas', label: 'Causas' },
-        { to: '/panel/jurisprudencia', label: 'Jurisprudencia' },
-        { to: '/panel/modelos', label: 'Modelos' },
-        { to: '/panel/usuarios', label: 'Cuentas' },
-        { to: '/panel/mi-cuenta', label: 'Mi cuenta' },
-      ]}
-    />
-  );
+  return <DisenoSeccion section="panel" />;
 }

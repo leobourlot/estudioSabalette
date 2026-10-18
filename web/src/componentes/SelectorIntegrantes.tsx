@@ -1,6 +1,7 @@
 import type { IntegranteResumen, LawyersData } from '../servicios/causas';
 import type { LawyersForm } from '../servicios/formulario-causa';
 import { memberName } from '../servicios/presentacion-causas';
+import { INPUT, LABEL } from './estilos-aplicacion';
 
 interface SelectorIntegrantesProps {
   /** Administradores y abogados, activos y desactivados, en el orden de la API. */
@@ -11,8 +12,7 @@ interface SelectorIntegrantesProps {
   onChange: (value: LawyersForm) => void;
 }
 
-const selectClass =
-  'w-full rounded border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none';
+const selectClass = INPUT;
 
 /**
  * Responsable y colaboradores de una causa (RF-29 a RF-32). Ofrece solo integrantes activos;
@@ -54,7 +54,7 @@ export function SelectorIntegrantes({
   return (
     <div className="space-y-4">
       <div className="space-y-1">
-        <label htmlFor="responsable" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="responsable" className={LABEL}>
           Responsable
         </label>
         <select

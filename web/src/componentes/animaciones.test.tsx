@@ -10,10 +10,15 @@ import {
   APPEAR_SHOWN,
   appearTransition,
   MAX_DURATION_S,
+  PAGE_ENTER,
+  PAGE_SHOWN,
+  pageTransition,
   STAGGER_S,
+  staggerDelay,
   switchTransition,
 } from './animaciones';
 import { Aparecer } from './Aparecer';
+import { AparecerAlCargar } from './AparecerAlCargar';
 import { MenuSitio } from './MenuSitio';
 
 const total = (t: { duration?: number; delay?: number }) => (t.duration ?? 0) + (t.delay ?? 0);
@@ -88,5 +93,54 @@ describe('sin el código de la página (RF-35, RF-45)', () => {
     const menu = renderToString(<MenuSitio />);
 
     expect(menu).not.toContain('opacity:0');
+  });
+});
+
+describe('transiciones del ingreso, el portal y el panel (spec 008, RF-26 y RF-27)', () => {
+  it('con la reducción de movimiento, todo aparece directamente', () => {
+    expect(pageTransition(true)).toEqual({ duration: 0 });
+    expect(pageTransition(true, 5)).toEqual({ duration: 0 });
+  });
+
+  it('las listas se escalonan y ninguna aparición termina después de 0,6 segundos', () => {
+    expect(staggerDelay(0)).toBe(0);
+    expect(staggerDelay(1)).toBeCloseTo(STAGGER_S);
+    for (const index of [0, 1, 2, 3, 10, 50]) {
+      expect(total(pageTransition(false, index) as never)).toBeLessThanOrEqual(MAX_DURATION_S);
+    }
+  });
+
+  it('lo que aparece sube un poco y se hace visible', () => {
+    expect(PAGE_ENTER).toEqual({ opacity: 0, y: 8 });
+    expect(PAGE_SHOWN).toEqual({ opacity: 1, y: 0 });
+  });
+});
+
+describe('AparecerAlCargar (spec 008, RF-26 y RF-27)', () => {
+  it('el contenido está en el documento desde el primer momento y termina visible', async () => {
+    render(
+      <LazyMotion features={domAnimation}>
+        <AparecerAlCargar>
+          <p role="alert">Aviso</p>
+        </AparecerAlCargar>
+      </LazyMotion>,
+    );
+
+    const wrapper = screen.getByRole('alert').parentElement!;
+    await expect.poll(() => wrapper.style.opacity).toBe('1');
+  });
+
+  it('dentro de una lista es un elemento de la lista', () => {
+    render(
+      <LazyMotion features={domAnimation}>
+        <ul>
+          <AparecerAlCargar como="li" indice={2}>
+            Causa
+          </AparecerAlCargar>
+        </ul>
+      </LazyMotion>,
+    );
+
+    expect(screen.getByRole('listitem').textContent).toBe('Causa');
   });
 });

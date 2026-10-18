@@ -217,3 +217,17 @@ describe('PortalCausaDetalle: movimientos (spec 004, RF-20, RF-21, RF-23, RF-24)
     expect(screen.queryByText('Todavía no hay movimientos para mostrar')).toBeNull();
   });
 });
+
+describe('PortalCausaDetalle en tarjetas (spec 008, RF-17)', () => {
+  it('va en tres tarjetas: la carátula y los datos, las partes, y los movimientos', async () => {
+    openCausa('/portal/causas/7', withCausa());
+
+    const datos = await screen.findByRole('region', { name: 'Datos de la causa' });
+    const partes = screen.getByRole('region', { name: 'Partes' });
+    const movimientos = await screen.findByRole('region', { name: 'Movimientos' });
+    const cards = [datos, partes, movimientos].map((region) => region.parentElement!);
+    expect(new Set(cards).size).toBe(3);
+    for (const card of cards) expect(card.className).toContain('border');
+    expect(cards[0].querySelector('h1')!.textContent).toBe('Gómez c/ López s/ daños');
+  });
+});

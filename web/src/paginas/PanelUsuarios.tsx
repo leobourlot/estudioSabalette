@@ -1,11 +1,29 @@
 import { type FormEvent, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AparecerAlCargar } from '../componentes/AparecerAlCargar';
 import { useSession } from '../componentes/ProveedorSesion';
 import { useUsersService } from '../componentes/ProveedorServicios';
 import { errorMessage } from '../servicios/cliente-http';
 import { documentLabel, listName, roleLabel } from '../servicios/presentacion';
 import type { Rol } from '../servicios/sesion';
 import type { ListUsersQuery, UserPage } from '../servicios/usuarios';
+import {
+  CARD,
+  ERROR_ALERT,
+  FIELD_SMALL,
+  LABEL,
+  PAGE,
+  PAGE_TITLE,
+  PRIMARY_BUTTON_SMALL,
+  SECONDARY_BUTTON_SMALL,
+  TABLE,
+  TABLE_CARD,
+  TABLE_CELL,
+  TABLE_HEAD,
+  TABLE_HEADER_CELL,
+  TABLE_ROW,
+  TEXT_LINK,
+} from '../componentes/estilos-aplicacion';
 
 const ROLE_FILTERS: [Rol | '', string][] = [
   ['', 'Todos'],
@@ -20,7 +38,7 @@ const STATE_FILTERS: [string, string][] = [
   ['false', 'Desactivadas'],
 ];
 
-const selectClass = 'rounded border border-slate-300 px-2 py-1.5 text-sm';
+const selectClass = FIELD_SMALL;
 
 /**
  * Listado de cuentas (RF-26): buscador, filtros por rol y estado, de a 20 por página. Un
@@ -64,13 +82,10 @@ export function PanelUsuarios() {
   const currentPage = query.pagina ?? 1;
 
   return (
-    <main className="mx-auto max-w-5xl p-8">
+    <main className={PAGE}>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-slate-800">Cuentas</h1>
-        <Link
-          to="/panel/usuarios/nuevo"
-          className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
-        >
+        <h1 className={PAGE_TITLE}>Cuentas</h1>
+        <Link to="/panel/usuarios/nuevo" className={PRIMARY_BUTTON_SMALL}>
           Nueva cuenta
         </Link>
       </div>
@@ -78,7 +93,7 @@ export function PanelUsuarios() {
       <div className="mt-6 flex flex-wrap items-end gap-4">
         <form onSubmit={handleSearch} className="flex items-end gap-2">
           <div>
-            <label htmlFor="buscar" className="block text-sm text-slate-600">
+            <label htmlFor="buscar" className={LABEL}>
               Buscar
             </label>
             <input
@@ -87,17 +102,17 @@ export function PanelUsuarios() {
               placeholder="Apellido, nombre, razón social, DNI o CUIT"
               value={searchText}
               onChange={(event) => setSearchText(event.target.value)}
-              className="w-72 rounded border border-slate-300 px-3 py-1.5 text-sm"
+              className={`w-72 ${FIELD_SMALL}`}
             />
           </div>
-          <button type="submit" className="rounded border border-slate-300 px-3 py-1.5 text-sm">
+          <button type="submit" className={SECONDARY_BUTTON_SMALL}>
             Buscar
           </button>
         </form>
 
         {usuario?.rol === 'admin' && (
           <div>
-            <label htmlFor="rol" className="block text-sm text-slate-600">
+            <label htmlFor="rol" className={LABEL}>
               Rol
             </label>
             <select
@@ -116,7 +131,7 @@ export function PanelUsuarios() {
         )}
 
         <div>
-          <label htmlFor="estado" className="block text-sm text-slate-600">
+          <label htmlFor="estado" className={LABEL}>
             Estado
           </label>
           <select
@@ -139,43 +154,48 @@ export function PanelUsuarios() {
       </div>
 
       {error && (
-        <p role="alert" className="mt-6 rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p role="alert" className={ERROR_ALERT}>
           {error}
         </p>
       )}
 
       {result && result.items.length === 0 && (
-        <p className="mt-6 text-slate-600">No hay cuentas que coincidan.</p>
+        <p className={`p-5 text-slate-600 ${CARD}`}>No hay cuentas que coincidan.</p>
       )}
 
       {result && result.items.length > 0 && (
         <>
-          <table className="mt-6 w-full overflow-hidden rounded-lg bg-white text-left text-sm shadow">
-            <thead className="bg-slate-100 text-slate-600">
-              <tr>
-                <th className="px-4 py-2 font-medium">Nombre</th>
-                <th className="px-4 py-2 font-medium">Rol</th>
-                <th className="px-4 py-2 font-medium">Email</th>
-                <th className="px-4 py-2 font-medium">DNI / CUIT</th>
-                <th className="px-4 py-2 font-medium">Estado</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200">
-              {result.items.map((cuenta) => (
-                <tr key={cuenta.id}>
-                  <td className="px-4 py-2">
-                    <Link to={`/panel/usuarios/${cuenta.id}`} className="text-slate-800 underline">
-                      {listName(cuenta)}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-2">{roleLabel(cuenta.rol)}</td>
-                  <td className="px-4 py-2">{cuenta.email ?? '—'}</td>
-                  <td className="px-4 py-2">{documentLabel(cuenta)}</td>
-                  <td className="px-4 py-2">{cuenta.activo ? 'Activa' : 'Desactivada'}</td>
+          <div className={TABLE_CARD}>
+            <table className={TABLE}>
+              <thead className={TABLE_HEAD}>
+                <tr>
+                  <th className={TABLE_HEADER_CELL}>Nombre</th>
+                  <th className={TABLE_HEADER_CELL}>Rol</th>
+                  <th className={TABLE_HEADER_CELL}>Email</th>
+                  <th className={TABLE_HEADER_CELL}>DNI / CUIT</th>
+                  <th className={TABLE_HEADER_CELL}>Estado</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {result.items.map((cuenta, index) => (
+                  <AparecerAlCargar key={cuenta.id} como="tr" indice={index} className={TABLE_ROW}>
+                    <td className={TABLE_CELL}>
+                      <Link
+                        to={`/panel/usuarios/${cuenta.id}`}
+                        className={`font-semibold ${TEXT_LINK}`}
+                      >
+                        {listName(cuenta)}
+                      </Link>
+                    </td>
+                    <td className={TABLE_CELL}>{roleLabel(cuenta.rol)}</td>
+                    <td className={TABLE_CELL}>{cuenta.email ?? '—'}</td>
+                    <td className={TABLE_CELL}>{documentLabel(cuenta)}</td>
+                    <td className={TABLE_CELL}>{cuenta.activo ? 'Activa' : 'Desactivada'}</td>
+                  </AparecerAlCargar>
+                ))}
+              </tbody>
+            </table>
+          </div>
 
           <div className="mt-4 flex items-center justify-between text-sm text-slate-600">
             <span>
@@ -187,7 +207,7 @@ export function PanelUsuarios() {
                 type="button"
                 disabled={currentPage <= 1}
                 onClick={() => setQuery((current) => ({ ...current, pagina: currentPage - 1 }))}
-                className="rounded border border-slate-300 px-3 py-1 disabled:opacity-50"
+                className={SECONDARY_BUTTON_SMALL}
               >
                 Anterior
               </button>
@@ -195,7 +215,7 @@ export function PanelUsuarios() {
                 type="button"
                 disabled={currentPage >= totalPages}
                 onClick={() => setQuery((current) => ({ ...current, pagina: currentPage + 1 }))}
-                className="rounded border border-slate-300 px-3 py-1 disabled:opacity-50"
+                className={SECONDARY_BUTTON_SMALL}
               >
                 Siguiente
               </button>

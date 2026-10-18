@@ -30,17 +30,24 @@ export interface StudioContact {
   redes: readonly RedSocial[];
 }
 
-// PENDIENTE (spec 007, dudas abiertas): dirección, horarios, email y redes. Hasta que el
-// estudio los informe no se muestran, y nunca se reemplazan por datos de ejemplo (RF-24).
+// Informados por el estudio el 17/10/2026 (spec 007, RF-22). PENDIENTE (dudas abiertas): los
+// horarios. Hasta que el estudio los informe no se muestran, y nunca se reemplazan por datos de
+// ejemplo (RF-24).
 export const STUDIO_CONTACT: StudioContact = {
   nombre: 'Pertusatti | Sabalette - Abogadas',
   nombreLineas: ['Pertusatti | Sabalette', 'Abogadas'],
   whatsapp: '5493455414147',
   whatsappVisible: '+54 9 3455 41-4147',
-  direccion: null,
+  direccion: 'Pueyrredón Nº 47, Concordia',
   horarios: [],
-  email: null,
-  redes: [],
+  email: 'estudiojuridicovsr@gmail.com',
+  redes: [
+    {
+      red: 'Instagram',
+      usuario: '@pertusattisabaletteabogadas',
+      url: 'https://www.instagram.com/pertusattisabaletteabogadas/',
+    },
+  ],
 };
 
 /**

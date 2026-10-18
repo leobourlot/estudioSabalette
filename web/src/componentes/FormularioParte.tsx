@@ -6,6 +6,7 @@ import type { TipoPersona } from '../servicios/sesion';
 import { CampoTexto } from './CampoTexto';
 import { ListaDeErrores } from './ListaDeErrores';
 import { SelectorCliente } from './SelectorCliente';
+import { INPUT, LABEL, PRIMARY_BUTTON_SMALL, SECONDARY_BUTTON_SMALL } from './estilos-aplicacion';
 
 interface FormularioParteProps {
   value: PartyForm;
@@ -33,8 +34,7 @@ function displayName(form: PartyForm, clientName: string | null): string {
     : `${form.nombre.trim()} ${form.apellido.trim()}`;
 }
 
-const fieldClass =
-  'w-full rounded border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none';
+const fieldClass = INPUT;
 
 /**
  * Parte de una causa (RF-13 a RF-15): cliente del estudio, elegido con el buscador, o parte
@@ -99,7 +99,7 @@ export function FormularioParte({
       )}
 
       <div className="space-y-1">
-        <label htmlFor="rolProcesal" className="block text-sm font-medium text-slate-700">
+        <label htmlFor="rolProcesal" className={LABEL}>
           Rol procesal
         </label>
         <select
@@ -194,19 +194,11 @@ export function FormularioParte({
       )}
 
       <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={enviando}
-          className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
-        >
+        <button type="submit" disabled={enviando} className={PRIMARY_BUTTON_SMALL}>
           {submitLabel}
         </button>
         {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded border border-slate-300 px-4 py-2 text-sm"
-          >
+          <button type="button" onClick={onCancel} className={SECONDARY_BUTTON_SMALL}>
             Cancelar
           </button>
         )}

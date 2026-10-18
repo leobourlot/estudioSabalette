@@ -19,8 +19,17 @@ import {
   movementAuditLines,
   tipoMovimientoLabel,
 } from '../servicios/presentacion-movimientos';
+import {
+  CARD,
+  ERROR_ALERT,
+  PAGE,
+  PAGE_TITLE,
+  SECONDARY_BUTTON_SMALL,
+  SECTION_TITLE,
+  TEXT_LINK,
+} from '../componentes/estilos-aplicacion';
 
-const secondaryButton = 'rounded border border-slate-300 bg-white px-3 py-1.5 text-sm';
+const secondaryButton = SECONDARY_BUTTON_SMALL;
 const badgeClass = 'rounded px-2 py-0.5 text-xs font-medium';
 
 function Dato({ label, children }: { label: string; children: ReactNode }) {
@@ -103,17 +112,17 @@ export function PanelMovimientoDetalle() {
   const restore = () => run(() => movimientos.restoreMovement(causaId, movimientoId));
 
   const backLink = (
-    <Link to={`/panel/causas/${causaId}`} className="text-sm text-slate-600 underline">
+    <Link to={`/panel/causas/${causaId}`} className={`text-sm ${TEXT_LINK}`}>
       Volver a la causa
     </Link>
   );
 
   if (!movimiento) {
     return (
-      <main className="mx-auto max-w-5xl space-y-6 p-8">
-        <h1 className="text-2xl font-semibold text-slate-800">Movimiento</h1>
+      <main className={PAGE}>
+        <h1 className={PAGE_TITLE}>Movimiento</h1>
         {loadError ? (
-          <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p role="alert" className={ERROR_ALERT}>
             {loadError}
           </p>
         ) : (
@@ -127,10 +136,10 @@ export function PanelMovimientoDetalle() {
   const canChange = movimiento.causaActiva;
 
   return (
-    <main className="mx-auto max-w-5xl space-y-6 p-8">
+    <main className={PAGE}>
       {backLink}
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold text-slate-800">Movimiento</h1>
+        <h1 className={PAGE_TITLE}>Movimiento</h1>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-slate-700">
             {formatMovementDate(movimiento.fecha)} · {tipoMovimientoLabel(movimiento.tipo)}
@@ -150,19 +159,16 @@ export function PanelMovimientoDetalle() {
       </div>
 
       {!canChange && (
-        <p className="rounded bg-slate-200 px-3 py-2 text-sm text-slate-800">
+        <p className={SECONDARY_BUTTON_SMALL}>
           La causa está desactivada: sus movimientos solo se pueden consultar.
         </p>
       )}
 
       <ListaDeErrores messages={editing ? [] : problems} />
 
-      <section
-        aria-label="Datos del movimiento"
-        className="space-y-4 rounded-lg bg-white p-6 shadow"
-      >
+      <section aria-label="Datos del movimiento" className={`space-y-4 p-6 ${CARD}`}>
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-800">Datos</h2>
+          <h2 className={SECTION_TITLE}>Datos</h2>
           {canChange && !editing && (
             <div className="flex gap-2">
               {movimiento.anulado ? (
@@ -259,11 +265,8 @@ export function PanelMovimientoDetalle() {
         )}
       </section>
 
-      <section
-        aria-label="Lo que ve el cliente"
-        className="space-y-2 rounded-lg bg-white p-6 shadow"
-      >
-        <h2 className="text-lg font-semibold text-slate-800">Lo que ve el cliente</h2>
+      <section aria-label="Lo que ve el cliente" className={`space-y-2 p-6 ${CARD}`}>
+        <h2 className={SECTION_TITLE}>Lo que ve el cliente</h2>
         <p className="text-sm text-slate-600">
           {movimiento.visible
             ? `El cliente ve este movimiento${movimiento.anulado ? ', marcado como anulado,' : ''} con ${VISIBLE_TEXT_ORIGIN_LABELS[movimiento.origenTextoVisible]}:`
@@ -273,7 +276,7 @@ export function PanelMovimientoDetalle() {
       </section>
 
       <section aria-label="Historial de cambios del movimiento" className="space-y-3">
-        <h2 className="text-lg font-semibold text-slate-800">Historial de cambios</h2>
+        <h2 className={SECTION_TITLE}>Historial de cambios</h2>
         <HistorialCambios cambios={movimiento.cambios} />
       </section>
 

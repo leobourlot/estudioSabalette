@@ -25,7 +25,7 @@ describe('buildHead (RF-34, RF-36, RF-37)', () => {
       expect(metaContent(doc, 'meta[property="og:title"]')).toBe(pagina.titulo);
       expect(metaContent(doc, 'meta[property="og:description"]')).toBe(pagina.descripcion);
       expect(metaContent(doc, 'meta[property="og:url"]')).toBe(SITE + ruta);
-      expect(metaContent(doc, 'meta[property="og:image"]')).toBe(`${SITE}/marca/logo.jpg`);
+      expect(metaContent(doc, 'meta[property="og:image"]')).toBe(`${SITE}/marca/compartir.png`);
       expect(metaContent(doc, 'meta[property="og:image:alt"]')).toBe(STUDIO_CONTACT.nombre);
       expect(metaContent(doc, 'meta[property="og:site_name"]')).toBe(STUDIO_CONTACT.nombre);
       expect(metaContent(doc, 'meta[property="og:locale"]')).toBe('es_AR');
@@ -88,15 +88,18 @@ describe('buildHead (RF-34, RF-36, RF-37)', () => {
 });
 
 describe('legalServiceData (RF-37)', () => {
-  it('con los datos de hoy lleva nombre, dirección del sitio, teléfono y logo, y nada más', () => {
+  it('con los datos de hoy lleva nombre, dirección del sitio, teléfono, logo, dirección, email y redes, sin horarios', () => {
     expect(legalServiceData(SITE)).toEqual({
       '@context': 'https://schema.org',
       '@type': 'LegalService',
       name: 'Pertusatti | Sabalette - Abogadas',
       url: `${SITE}/`,
       telephone: '+5493455414147',
-      logo: `${SITE}/marca/logo.jpg`,
-      image: `${SITE}/marca/logo.jpg`,
+      logo: `${SITE}/marca/logo.png`,
+      image: `${SITE}/marca/logo.png`,
+      address: { '@type': 'PostalAddress', streetAddress: 'Pueyrredón Nº 47, Concordia' },
+      email: 'estudiojuridicovsr@gmail.com',
+      sameAs: ['https://www.instagram.com/pertusattisabaletteabogadas/'],
     });
   });
 

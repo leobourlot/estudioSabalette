@@ -14,6 +14,13 @@ import type { Avisos } from './AvisosResultado';
 import { FormularioParte } from './FormularioParte';
 import { PreguntaConfirmacion } from './PreguntaConfirmacion';
 import { useCausasService } from './ProveedorServicios';
+import {
+  CARD,
+  ERROR_ALERT,
+  SECONDARY_BUTTON_SMALL,
+  SECTION_TITLE,
+  TEXT_LINK,
+} from './estilos-aplicacion';
 
 interface TablaPartesProps {
   causa: CausaDetalle;
@@ -33,7 +40,7 @@ function clientMark(parte: ParteDetalle): string {
   return parte.clienteActivo === false ? 'Cliente (desactivado)' : 'Cliente';
 }
 
-const buttonClass = 'text-sm text-slate-700 underline';
+const buttonClass = `text-sm ${TEXT_LINK}`;
 
 /**
  * Partes de una causa (RF-12 a RF-25): vigentes y desvinculadas. Permite agregar, modificar,
@@ -130,14 +137,14 @@ export function TablaPartes({ causa, onChanged }: TablaPartesProps) {
   const canEdit = causa.activa;
 
   return (
-    <section aria-label="Partes" className="space-y-4 rounded-lg bg-white p-6 shadow">
+    <section aria-label="Partes" className={`space-y-4 p-6 ${CARD}`}>
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-800">Partes</h2>
+        <h2 className={SECTION_TITLE}>Partes</h2>
         {canEdit && !editing && (
           <button
             type="button"
             onClick={() => open({ kind: 'add' })}
-            className="rounded border border-slate-300 px-3 py-1.5 text-sm"
+            className={SECONDARY_BUTTON_SMALL}
           >
             Agregar parte
           </button>
@@ -145,7 +152,7 @@ export function TablaPartes({ causa, onChanged }: TablaPartesProps) {
       </div>
 
       {actionError && (
-        <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p role="alert" className={ERROR_ALERT}>
           {actionError}
         </p>
       )}

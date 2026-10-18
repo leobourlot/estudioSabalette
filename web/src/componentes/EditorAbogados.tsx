@@ -9,6 +9,7 @@ import {
 import { ListaDeErrores } from './ListaDeErrores';
 import { useCausasService } from './ProveedorServicios';
 import { SelectorIntegrantes } from './SelectorIntegrantes';
+import { PRIMARY_BUTTON_SMALL, SECONDARY_BUTTON_SMALL } from './estilos-aplicacion';
 
 interface EditorAbogadosProps {
   causa: CausaDetalle;
@@ -68,11 +69,7 @@ export function EditorAbogados({ causa, onSaved }: EditorAbogadosProps) {
 
   if (!editing) {
     return (
-      <button
-        type="button"
-        onClick={() => void open()}
-        className="rounded border border-slate-300 px-3 py-1.5 text-sm"
-      >
+      <button type="button" onClick={() => void open()} className={SECONDARY_BUTTON_SMALL}>
         Editar abogados
       </button>
     );
@@ -88,18 +85,10 @@ export function EditorAbogados({ causa, onSaved }: EditorAbogadosProps) {
         onChange={setValue}
       />
       <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={enviando}
-          className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
-        >
+        <button type="submit" disabled={enviando} className={PRIMARY_BUTTON_SMALL}>
           Guardar abogados
         </button>
-        <button
-          type="button"
-          onClick={() => setEditing(false)}
-          className="rounded border border-slate-300 px-4 py-2 text-sm"
-        >
+        <button type="button" onClick={() => setEditing(false)} className={SECONDARY_BUTTON_SMALL}>
           Cancelar
         </button>
       </div>

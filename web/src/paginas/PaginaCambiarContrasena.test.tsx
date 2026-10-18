@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from 'vitest';
 import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-de-prueba';
 import { ApiError } from '../servicios/cliente-http';
 import type { Rol } from '../servicios/sesion';
+import { TEXTOS_INGRESO } from '../servicios/textos-aplicacion';
 
 const CURRENT = 'clave del estudio 2026';
 const NEW = 'otra clave segura 2026';
@@ -149,5 +150,17 @@ describe('PaginaCambiarContrasena: nombre y título (spec 007, RF-3 y RF-34)', (
       'Pertusatti | Sabalette - Abogadas',
     );
     expect(document.title).toBe('Cambiar contraseña · Pertusatti | Sabalette - Abogadas');
+  });
+});
+
+describe('PaginaCambiarContrasena con la identidad del estudio (spec 008, RF-14)', () => {
+  it('muestra la marca con el logo, sin el título del ingreso, sin contacto y sin menú', async () => {
+    await openPage({ rol: 'cliente', pending: false });
+
+    const home = screen.getByRole('link', { name: 'Pertusatti | Sabalette - Abogadas' });
+    expect(home.querySelector('img')!.getAttribute('alt')).toBe('');
+    expect(screen.queryByText(TEXTOS_INGRESO.titulo)).toBeNull();
+    expect(screen.queryByText(/Pueyrredón/)).toBeNull();
+    expect(screen.queryByRole('navigation')).toBeNull();
   });
 });

@@ -1,5 +1,6 @@
 import { Aparecer } from '../componentes/Aparecer';
 import { STAGGER_S } from '../componentes/animaciones';
+import { BalanzaDecorativa } from '../componentes/BalanzaDecorativa';
 import { DisenoSitio } from '../componentes/DisenoSitio';
 import { NombreEstudio } from '../componentes/NombreEstudio';
 import { TarjetaAbogada } from '../componentes/TarjetaAbogada';
@@ -31,9 +32,10 @@ export function SitioInicio() {
     <DisenoSitio mensaje={PAGE.mensaje}>
       <section
         aria-labelledby="inicio-titulo"
-        className="bg-gradient-to-r from-estudio-oscuro to-estudio-azul px-4 py-16 text-estudio-blanco"
+        className="relative overflow-hidden bg-gradient-to-r from-estudio-oscuro to-estudio-azul px-4 py-16 text-estudio-blanco"
       >
-        <div className="mx-auto max-w-5xl">
+        <BalanzaDecorativa className="absolute top-1/2 -right-12 aspect-square h-[96%] -translate-y-1/2 opacity-[0.50] sm:right-4 sm:opacity-[0.50] lg:right-[18%] lg:opacity-[0.50]" />
+        <div className="relative mx-auto max-w-5xl">
           <h1 id="inicio-titulo" className="font-titulos text-4xl font-semibold sm:text-5xl">
             <NombreEstudio />
           </h1>

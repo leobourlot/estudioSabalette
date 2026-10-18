@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import type { PendingQuestion, QuestionOption } from '../servicios/preguntas';
+import { PRIMARY_BUTTON_SMALL, SECONDARY_BUTTON_SMALL } from './estilos-aplicacion';
 
 interface PreguntaConfirmacionProps {
   question: PendingQuestion;
@@ -35,11 +36,7 @@ export function PreguntaConfirmacion({ question, partyName, onAnswer }: Pregunta
             key={option.kind === 'linkClient' ? `cliente-${option.clienteId}` : option.label}
             type="button"
             onClick={() => onAnswer(option)}
-            className={
-              option.kind === 'cancel'
-                ? 'rounded border border-slate-300 bg-white px-3 py-1.5 text-sm'
-                : 'rounded bg-slate-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-700'
-            }
+            className={option.kind === 'cancel' ? SECONDARY_BUTTON_SMALL : PRIMARY_BUTTON_SMALL}
           >
             {option.label}
           </button>

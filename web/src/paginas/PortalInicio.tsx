@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { ListaCausasPortal } from '../componentes/ListaCausasPortal';
 import { Paginacion } from '../componentes/Paginacion';
+import { ERROR_ALERT, PAGE, PAGE_TITLE } from '../componentes/estilos-aplicacion';
 import { usePortalService } from '../componentes/ProveedorServicios';
 import { errorMessage } from '../servicios/cliente-http';
 import type { CausaPortalResumen, PortalPage } from '../servicios/portal';
@@ -48,7 +49,7 @@ export function PortalInicio() {
     if (pagina === null) return null;
     if (current?.error) {
       return (
-        <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p role="alert" className={ERROR_ALERT}>
           {current.error}
         </p>
       );
@@ -79,8 +80,8 @@ export function PortalInicio() {
   }
 
   return (
-    <main className="mx-auto max-w-5xl space-y-4 px-4 py-6">
-      <h1 className="text-2xl font-semibold text-slate-800">Mis causas</h1>
+    <main className={PAGE}>
+      <h1 className={PAGE_TITLE}>Mis causas</h1>
       {content()}
     </main>
   );

@@ -21,6 +21,16 @@ import {
 } from '../servicios/presentacion';
 import type { Rol } from '../servicios/sesion';
 import type { UsuarioDetalle } from '../servicios/usuarios';
+import {
+  CARD,
+  ERROR_ALERT,
+  INPUT,
+  LABEL,
+  PAGE,
+  PRIMARY_BUTTON_SMALL,
+  SECTION_TITLE,
+  TEXT_LINK,
+} from '../componentes/estilos-aplicacion';
 
 const NO_CHANGES_MESSAGE = 'No hay cambios para guardar';
 
@@ -114,16 +124,16 @@ export function PanelUsuarioDetalle() {
   const canChangeRole = usuario?.rol === 'admin' && account !== null && account.rol !== 'cliente';
 
   return (
-    <main className="mx-auto max-w-3xl p-8">
+    <main className={PAGE}>
       <p className="text-sm">
-        <Link to="/panel/usuarios" className="text-slate-600 underline">
+        <Link to="/panel/usuarios" className={TEXT_LINK}>
           ← Cuentas
         </Link>
       </p>
       <h1 className="mt-2 text-2xl font-semibold text-slate-800">Detalle de la cuenta</h1>
 
       {loadError && (
-        <p role="alert" className="mt-6 rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p role="alert" className={ERROR_ALERT}>
           {loadError}
         </p>
       )}
@@ -133,10 +143,7 @@ export function PanelUsuarioDetalle() {
         <>
           <p className="mt-1 text-lg text-slate-700">{listName(account)}</p>
 
-          <dl
-            aria-label="Datos de la cuenta"
-            className="mt-6 divide-y divide-slate-200 rounded-lg bg-white shadow"
-          >
+          <dl aria-label="Datos de la cuenta" className={`divide-y divide-slate-200 ${CARD}`}>
             {[...accountRows(account), ...auditRows(account)].map(([label, value]) => (
               <div key={label} className="grid grid-cols-3 gap-4 px-4 py-3">
                 <dt className="text-sm text-slate-500">{label}</dt>
@@ -149,9 +156,9 @@ export function PanelUsuarioDetalle() {
             aria-label="Editar datos"
             onSubmit={handleSubmit}
             noValidate
-            className="mt-8 space-y-4 rounded-lg bg-white p-6 shadow"
+            className={`space-y-4 p-6 ${CARD}`}
           >
-            <h2 className="text-lg font-semibold text-slate-800">Editar datos</h2>
+            <h2 className={SECTION_TITLE}>Editar datos</h2>
             <ListaDeErrores messages={problems} />
             {saved && (
               <p role="status" className="rounded bg-green-50 px-3 py-2 text-sm text-green-700">
@@ -189,14 +196,14 @@ export function PanelUsuarioDetalle() {
 
             {canChangeRole && (
               <div className="space-y-1">
-                <label htmlFor="editar-rol" className="block text-sm font-medium text-slate-700">
+                <label htmlFor="editar-rol" className={LABEL}>
                   Rol
                 </label>
                 <select
                   id="editar-rol"
                   value={form.rol}
                   onChange={(event) => set('rol')(event.target.value)}
-                  className="w-full rounded border border-slate-300 px-3 py-2"
+                  className={INPUT}
                 >
                   {STAFF_ROLES.map(([value, label]) => (
                     <option key={value} value={value}>
@@ -226,11 +233,7 @@ export function PanelUsuarioDetalle() {
             )}
 
             <div className="flex justify-end pt-2">
-              <button
-                type="submit"
-                disabled={guardando}
-                className="rounded bg-slate-800 px-4 py-2 font-medium text-white hover:bg-slate-700 disabled:opacity-60"
-              >
+              <button type="submit" disabled={guardando} className={PRIMARY_BUTTON_SMALL}>
                 {guardando ? 'Guardando…' : 'Guardar cambios'}
               </button>
             </div>

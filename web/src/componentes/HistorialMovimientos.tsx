@@ -12,6 +12,13 @@ import { FilaMovimiento } from './FilaMovimiento';
 import { FiltrosMovimientos } from './FiltrosMovimientos';
 import { FormularioMovimiento } from './FormularioMovimiento';
 import { useMovimientosService } from './ProveedorServicios';
+import {
+  CARD,
+  ERROR_ALERT,
+  PRIMARY_BUTTON_SMALL,
+  SECONDARY_BUTTON_SMALL,
+  SECTION_TITLE,
+} from './estilos-aplicacion';
 
 /**
  * Historial de movimientos de una causa (RF-23 a RF-27), con el alta (RF-8). Los filtros y la
@@ -85,15 +92,11 @@ export function HistorialMovimientos({
   const filtered = JSON.stringify(filters) !== JSON.stringify(EMPTY_MOVEMENT_FILTERS);
 
   return (
-    <section aria-label="Movimientos" className="space-y-4 rounded-lg bg-white p-6 shadow">
+    <section aria-label="Movimientos" className={`space-y-4 p-6 ${CARD}`}>
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-slate-800">Movimientos</h2>
+        <h2 className={SECTION_TITLE}>Movimientos</h2>
         {causaActiva && !creating && (
-          <button
-            type="button"
-            onClick={startCreating}
-            className="rounded bg-slate-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-700"
-          >
+          <button type="button" onClick={startCreating} className={PRIMARY_BUTTON_SMALL}>
             Nuevo movimiento
           </button>
         )}
@@ -117,7 +120,7 @@ export function HistorialMovimientos({
       <FiltrosMovimientos value={filters} onChange={filterBy} />
 
       {error && (
-        <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p role="alert" className={ERROR_ALERT}>
           {error}
         </p>
       )}
@@ -130,7 +133,7 @@ export function HistorialMovimientos({
 
       {result && result.items.length > 0 && (
         <>
-          <ul aria-label="Lista de movimientos" className="space-y-3">
+          <ul aria-label="Lista de movimientos" className="space-y-4">
             {result.items.map((movimiento) => (
               <FilaMovimiento key={movimiento.id} movimiento={movimiento} causaId={causaId} />
             ))}
@@ -146,7 +149,7 @@ export function HistorialMovimientos({
                 type="button"
                 disabled={pagina <= 1}
                 onClick={() => setPagina(pagina - 1)}
-                className="rounded border border-slate-300 px-3 py-1 disabled:opacity-50"
+                className={SECONDARY_BUTTON_SMALL}
               >
                 Anterior
               </button>
@@ -154,7 +157,7 @@ export function HistorialMovimientos({
                 type="button"
                 disabled={pagina >= totalPages}
                 onClick={() => setPagina(pagina + 1)}
-                className="rounded border border-slate-300 px-3 py-1 disabled:opacity-50"
+                className={SECONDARY_BUTTON_SMALL}
               >
                 Siguiente
               </button>

@@ -1,4 +1,5 @@
 import type { HTMLInputTypeAttribute } from 'react';
+import { INPUT, LABEL } from './estilos-aplicacion';
 
 interface CampoTextoProps {
   id: string;
@@ -20,7 +21,7 @@ export function CampoTexto({
 }: CampoTextoProps) {
   return (
     <div className="space-y-1">
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700">
+      <label htmlFor={id} className={LABEL}>
         {label}
       </label>
       <input
@@ -29,7 +30,7 @@ export function CampoTexto({
         autoComplete={autoComplete}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none"
+        className={INPUT}
       />
     </div>
   );

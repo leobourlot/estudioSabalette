@@ -17,7 +17,7 @@ export function DatosCausaPortal({ causa }: { causa: CausaPortalDetalle }) {
     ['Estado', estadoLabel(causa.estado)],
   ];
   return (
-    <section aria-labelledby={titleId} className="rounded-lg bg-white p-4 shadow-sm">
+    <section aria-labelledby={titleId}>
       <h2 id={titleId} className="sr-only">
         Datos de la causa
       </h2>

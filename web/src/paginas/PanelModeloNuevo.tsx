@@ -7,6 +7,7 @@ import { useUsoDeSesion } from '../componentes/useUsoDeSesion';
 import { ApiError, errorMessage } from '../servicios/cliente-http';
 import { buildCreateModelData, EMPTY_MODEL_FORM } from '../servicios/formulario-modelo';
 import { pendingQuestion, type PendingQuestion, type QuestionOption } from '../servicios/preguntas';
+import { CARD, PAGE, PAGE_TITLE } from '../componentes/estilos-aplicacion';
 
 /**
  * Carga de un modelo de escrito (RF-13). Si la API pregunta por un título repetido (RF-15),
@@ -53,12 +54,12 @@ export function PanelModeloNuevo() {
   }
 
   return (
-    <main className="mx-auto max-w-4xl space-y-6 p-8">
-      <h1 className="text-2xl font-semibold text-slate-800">Nuevo modelo</h1>
+    <main className={PAGE}>
+      <h1 className={PAGE_TITLE}>Nuevo modelo</h1>
 
       {question && <PreguntaModeloRepetido question={question} onAnswer={answer} />}
 
-      <div className="rounded-lg bg-white p-6 shadow">
+      <div className={`p-6 ${CARD}`}>
         <FormularioModelo
           value={form}
           onChange={setForm}

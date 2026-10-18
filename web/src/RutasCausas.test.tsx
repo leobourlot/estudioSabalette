@@ -1,4 +1,4 @@
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { fakeSessionService, renderApp, testUser } from './pruebas/aplicacion-de-prueba';
@@ -38,7 +38,9 @@ describe('rutas de causas', () => {
     renderApp('/panel', sessionFor(testUser('admin')));
     await screen.findByRole('heading', { name: 'Panel' });
 
-    await userEvent.setup().click(screen.getByRole('link', { name: 'Causas' }));
+    await userEvent
+      .setup()
+      .click(within(screen.getByRole('navigation')).getByRole('link', { name: 'Causas' }));
 
     expect(await screen.findByRole('heading', { name: 'Causas', level: 1 })).toBeTruthy();
   });

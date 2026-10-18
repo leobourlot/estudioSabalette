@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { SECONDARY_BUTTON } from './estilos-aplicacion';
 
 interface PaginacionProps {
   pagina: number;
@@ -16,14 +17,14 @@ export function Paginacion({ pagina, haySiguiente, hrefFor }: PaginacionProps) {
   return (
     <nav aria-label="Paginación" className="mt-6 flex justify-between text-sm">
       {pagina > 1 ? (
-        <Link to={hrefFor(pagina - 1)} className="text-slate-700 underline">
+        <Link to={hrefFor(pagina - 1)} className={SECONDARY_BUTTON}>
           Anterior
         </Link>
       ) : (
         <span />
       )}
       {haySiguiente && (
-        <Link to={hrefFor(pagina + 1)} className="text-slate-700 underline">
+        <Link to={hrefFor(pagina + 1)} className={SECONDARY_BUTTON}>
           Siguiente
         </Link>
       )}

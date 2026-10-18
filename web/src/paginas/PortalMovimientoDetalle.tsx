@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { CARD, ERROR_ALERT, PAGE, TEXT_LINK } from '../componentes/estilos-aplicacion';
 import { usePortalService } from '../componentes/ProveedorServicios';
 import { TextoLiteral } from '../componentes/TextoLiteral';
 import { errorMessage } from '../servicios/cliente-http';
@@ -17,7 +18,8 @@ interface Loaded {
  * Un movimiento abierto por el cliente (spec 004, RF-22): fecha, tipo, leyenda, el texto
  * completo y la carátula de su causa, con "Volver a la causa" a la misma página de movimientos.
  * Ante un movimiento oculto, inexistente, de otra causa o mal formado, la API responde el mismo
- * 404 y la página muestra solo ese mensaje (RF-29).
+ * 404 y la página muestra solo ese mensaje (RF-29). El movimiento va en una tarjeta, con la misma
+ * presentación de la fecha, el tipo y la leyenda que en la línea de tiempo (spec 008, RF-20).
  */
 export function PortalMovimientoDetalle() {
   const portal = usePortalService();
@@ -46,7 +48,7 @@ export function PortalMovimientoDetalle() {
   const back = (
     <Link
       to={`/portal/causas/${encodeURIComponent(causaId)}?pagina=${pagina}`}
-      className="text-sm text-slate-700 underline"
+      className={`text-sm ${TEXT_LINK}`}
     >
       Volver a la causa
     </Link>
@@ -54,8 +56,8 @@ export function PortalMovimientoDetalle() {
 
   if (!current) {
     return (
-      <main className="mx-auto max-w-5xl px-4 py-6">
-        <p role="status" className="text-slate-500">
+      <main className={PAGE}>
+        <p role="status" className="text-slate-600">
           Cargando…
         </p>
       </main>
@@ -65,8 +67,8 @@ export function PortalMovimientoDetalle() {
   const { movimiento } = current;
   if (!movimiento) {
     return (
-      <main className="mx-auto max-w-5xl space-y-4 px-4 py-6">
-        <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+      <main className={PAGE}>
+        <p role="alert" className={ERROR_ALERT}>
           {current.error}
         </p>
         {back}
@@ -76,12 +78,14 @@ export function PortalMovimientoDetalle() {
 
   const legend = movementLegend(movimiento);
   return (
-    <main className="mx-auto max-w-5xl space-y-4 px-4 py-6">
+    <main className={PAGE}>
       {back}
-      <p className="break-words text-sm text-slate-600">{movimiento.causa.caratula}</p>
-      <article className="space-y-3 rounded-lg bg-white p-4 shadow-sm">
+      <p className="break-words font-titulos text-lg font-semibold text-estudio-oscuro">
+        {movimiento.causa.caratula}
+      </p>
+      <article className={`space-y-3 p-6 ${CARD}`}>
         <h1 className="flex flex-wrap items-center gap-2 text-lg">
-          <span className="font-semibold text-slate-800">
+          <span className="font-semibold text-estudio-oscuro">
             {formatMovementDate(movimiento.fecha)}
           </span>
           <span className="text-slate-600">{tipoMovimientoLabel(movimiento.tipo)}</span>

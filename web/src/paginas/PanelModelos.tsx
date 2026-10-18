@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ListaModelos } from '../componentes/ListaModelos';
+import { PAGE, PAGE_TITLE, PRIMARY_BUTTON_SMALL } from '../componentes/estilos-aplicacion';
 
 /**
  * Sección de modelos de escritos (RF-18 a RF-24): la lista con su buscador, sus filtros y
@@ -8,13 +9,10 @@ import { ListaModelos } from '../componentes/ListaModelos';
  */
 export function PanelModelos() {
   return (
-    <main className="mx-auto max-w-6xl p-8">
+    <main className={PAGE}>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-semibold text-slate-800">Modelos</h1>
-        <Link
-          to="/panel/modelos/nuevo"
-          className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700"
-        >
+        <h1 className={PAGE_TITLE}>Modelos</h1>
+        <Link to="/panel/modelos/nuevo" className={PRIMARY_BUTTON_SMALL}>
           Nuevo modelo
         </Link>
       </div>

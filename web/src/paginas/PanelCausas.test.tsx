@@ -165,12 +165,24 @@ describe('PanelCausas (RF-36 a RF-39)', () => {
     );
   });
 
-  it('tiene el enlace para dar de alta una causa', async () => {
+  it('tiene el enlace para dar de alta una causa, con el "+" sin anunciar (spec 008, RF-21)', async () => {
     await openList();
 
-    expect(screen.getByRole('link', { name: 'Nueva causa' }).getAttribute('href')).toBe(
-      '/panel/causas/nueva',
-    );
+    const link = screen.getByRole('link', { name: 'Nueva causa' });
+    expect(link.getAttribute('href')).toBe('/panel/causas/nueva');
+    expect(link.querySelector('[aria-hidden="true"]')!.textContent).toBe('+');
+  });
+
+  it('separa cada fila con una línea visible y muestra el estado en una etiqueta (spec 008, RF-21)', async () => {
+    await openList();
+
+    const rows = await screen.findAllByRole('row');
+    for (const row of rows.slice(1)) expect(row.className).toContain('border-t');
+    expect(within(rows[1]).getByText('En trámite').className).toContain('rounded-full');
+    // La causa desactivada conserva su fondo, distinto del resaltado al pasar el puntero.
+    expect(rows[3].className).toContain('bg-slate-50');
+    // La tabla va en una tarjeta que se desplaza a lo ancho por dentro.
+    expect(screen.getByRole('table').parentElement!.className).toContain('overflow-x-auto');
   });
 
   it('no guarda nada en el almacenamiento del navegador (principio 5)', async () => {

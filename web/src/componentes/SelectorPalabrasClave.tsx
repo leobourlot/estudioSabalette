@@ -10,6 +10,7 @@ import {
 import type { PalabraClave, PalabraClaveSugerencia } from '../servicios/jurisprudencia';
 import { suggestionLabel } from '../servicios/presentacion-jurisprudencia';
 import { useJurisprudenciaService } from './ProveedorServicios';
+import { INPUT, LABEL } from './estilos-aplicacion';
 
 interface CommonProps {
   /** Id del campo de texto, para su etiqueta. */
@@ -113,7 +114,7 @@ export function SelectorPalabrasClave(props: SelectorPalabrasClaveProps) {
 
   return (
     <div className="space-y-2">
-      <label htmlFor={id} className="block text-sm font-medium text-slate-700">
+      <label htmlFor={id} className={LABEL}>
         {label}
       </label>
 
@@ -153,7 +154,7 @@ export function SelectorPalabrasClave(props: SelectorPalabrasClaveProps) {
           onTyping?.();
         }}
         onKeyDown={handleKeyDown}
-        className="w-full rounded border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none"
+        className={INPUT}
       />
 
       {error && (

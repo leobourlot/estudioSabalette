@@ -1,6 +1,7 @@
 import { render, screen, within } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { STUDIO_CONTACT, type StudioContact } from '../servicios/datos-estudio';
+import { mapsUrl, STUDIO_CONTACT, type StudioContact } from '../servicios/datos-estudio';
+import { COLORES_REDES, CONTORNO } from './IconosRedes';
 import { PieSitio } from './PieSitio';
 
 const MESSAGE = 'Hola, me contacto desde el sitio web del estudio.';
@@ -129,5 +130,70 @@ describe('PieSitio: redes de una sola cuenta (RF-44)', () => {
 
     const redes = within(screen.getByRole('list', { name: 'Redes' }));
     expect(redes.getAllByRole('link').map((a) => a.textContent)).toEqual(['WhatsApp', 'LinkedIn']);
+  });
+});
+
+describe('PieSitio: íconos a color, los mismos del contacto (spec 007, RF-23 y RF-44)', () => {
+  it('WhatsApp e Instagram llevan sus colores y el contorno blanco', () => {
+    render(<PieSitio mensaje={MESSAGE} contact={withNetworks} anio={2026} />);
+
+    const icons = Array.from(screen.getByRole('list', { name: 'Redes' }).querySelectorAll('svg'));
+    expect(icons).toHaveLength(3);
+    for (const icon of icons) {
+      expect(icon.querySelector(':scope > [stroke]')!.getAttribute('stroke')).toBe(CONTORNO.stroke);
+    }
+    const fills = icons.map((icon) =>
+      Array.from(icon.querySelectorAll('[fill]')).map((e) => e.getAttribute('fill')),
+    );
+    expect(fills[0]).toContain(COLORES_REDES.whatsapp);
+    expect(fills[1]).toContain(`url(#${icons[1].querySelector('radialGradient')!.id})`);
+  });
+});
+
+describe('PieSitio: email y dirección debajo de las redes (spec 007, RF-24, RF-25 y RF-44)', () => {
+  const ADDRESS = 'San Martín 123, Villaguay';
+  const complete: StudioContact = { ...withNetworks, direccion: ADDRESS };
+
+  it('muestra el email, que escribe al estudio, y la dirección, que la abre en Google Maps', () => {
+    render(<PieSitio mensaje={MESSAGE} contact={complete} anio={2026} />);
+
+    const list = screen.getByRole('list', { name: 'Email y dirección' });
+    expect(
+      within(list)
+        .getAllByRole('link')
+        .map((a) => [a.textContent, a.getAttribute('href'), a.getAttribute('target')]),
+    ).toEqual([
+      ['estudio@ejemplo.test', 'mailto:estudio@ejemplo.test', '_blank'],
+      [ADDRESS, mapsUrl(ADDRESS), '_blank'],
+    ]);
+    for (const svg of list.querySelectorAll('svg')) {
+      expect(svg.getAttribute('aria-hidden')).toBe('true');
+    }
+  });
+
+  it('va debajo de las redes', () => {
+    render(<PieSitio mensaje={MESSAGE} contact={complete} anio={2026} />);
+
+    const redes = screen.getByRole('list', { name: 'Redes' });
+    expect(redes.nextElementSibling).toBe(screen.getByRole('list', { name: 'Email y dirección' }));
+  });
+
+  it('sin email ni dirección informados, no muestra la lista (RF-24)', () => {
+    const contact: StudioContact = { ...STUDIO_CONTACT, email: null, direccion: null };
+    render(<PieSitio mensaje={MESSAGE} contact={contact} anio={2026} />);
+
+    expect(screen.queryByRole('list', { name: 'Email y dirección' })).toBeNull();
+  });
+
+  it('con solo la dirección, muestra la dirección sin el email', () => {
+    const contact: StudioContact = { ...STUDIO_CONTACT, email: null, direccion: ADDRESS };
+    render(<PieSitio mensaje={MESSAGE} contact={contact} anio={2026} />);
+
+    const list = screen.getByRole('list', { name: 'Email y dirección' });
+    expect(
+      within(list)
+        .getAllByRole('link')
+        .map((a) => a.textContent),
+    ).toEqual([ADDRESS]);
   });
 });

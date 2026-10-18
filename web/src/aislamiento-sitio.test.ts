@@ -32,6 +32,7 @@ const SITE_MODULES = new Set([
   // Componentes.
   'AccesoIngreso',
   'Aparecer',
+  'BalanzaDecorativa',
   'animaciones',
   'BloquesTexto',
   'BotonWhatsapp',
@@ -50,6 +51,7 @@ const SITE_MODULES = new Set([
   'VolverA',
   'estilos-sitio',
   'useFocoEnAncla',
+  'useIdSvg',
   'useTituloDocumento',
   // Servicios.
   'archivos-sitio',

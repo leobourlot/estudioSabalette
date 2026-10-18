@@ -23,6 +23,24 @@ describe('NombreEstudio (spec 007, RF-3)', () => {
   });
 });
 
+describe('NombreEstudio junto al logo', () => {
+  it('con "centrado", "Abogadas" va centrado debajo de "Pertusatti | Sabalette"', () => {
+    render(<NombreEstudio centrado />);
+
+    const name = screen.getByText('Pertusatti | Sabalette').parentElement!;
+    expect(name.className).toContain('items-center');
+    expect(name.className).toContain('text-center');
+  });
+
+  it('sin "centrado", las dos líneas van alineadas a la izquierda', () => {
+    render(<NombreEstudio />);
+
+    expect(screen.getByText('Pertusatti | Sabalette').parentElement!.className).not.toContain(
+      'items-center',
+    );
+  });
+});
+
 describe('NombreEstudio dentro de un enlace', () => {
   it('el enlace se anuncia con el nombre completo, con sus espacios', () => {
     render(

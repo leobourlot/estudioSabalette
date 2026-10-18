@@ -18,8 +18,17 @@ import { pendingQuestion, type PendingQuestion, type QuestionOption } from '../s
 import { EMPTY_VALUE } from '../servicios/presentacion';
 import { fueroLabel } from '../servicios/presentacion-causas';
 import { formatMovementDate, movementAuditLines } from '../servicios/presentacion-movimientos';
+import {
+  CARD,
+  ERROR_ALERT,
+  PAGE,
+  PAGE_TITLE,
+  SECONDARY_BUTTON_SMALL,
+  SECTION_TITLE,
+  TEXT_LINK,
+} from '../componentes/estilos-aplicacion';
 
-const secondaryButton = 'rounded border border-slate-300 bg-white px-3 py-1.5 text-sm';
+const secondaryButton = SECONDARY_BUTTON_SMALL;
 const badgeClass = 'rounded px-2 py-0.5 text-xs font-medium';
 
 function Dato({ label, children }: { label: string; children: ReactNode }) {
@@ -132,17 +141,17 @@ export function PanelFalloDetalle() {
   }
 
   const backLink = (
-    <Link to="/panel/jurisprudencia" className="text-sm text-slate-600 underline">
+    <Link to="/panel/jurisprudencia" className={`text-sm ${TEXT_LINK}`}>
       Volver a la jurisprudencia
     </Link>
   );
 
   if (!fallo) {
     return (
-      <main className="mx-auto max-w-5xl space-y-6 p-8">
-        <h1 className="text-2xl font-semibold text-slate-800">Fallo</h1>
+      <main className={PAGE}>
+        <h1 className={PAGE_TITLE}>Fallo</h1>
         {loadError ? (
-          <p role="alert" className="rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+          <p role="alert" className={ERROR_ALERT}>
             {loadError}
           </p>
         ) : (
@@ -154,10 +163,10 @@ export function PanelFalloDetalle() {
   }
 
   return (
-    <main className="mx-auto max-w-5xl space-y-6 p-8">
+    <main className={PAGE}>
       {backLink}
       <div className="space-y-2">
-        <h1 className="text-2xl font-semibold text-slate-800">Fallo</h1>
+        <h1 className={PAGE_TITLE}>Fallo</h1>
         <div className="flex flex-wrap items-center gap-2">
           <span className="break-words text-slate-700">{fallo.caratula}</span>
           {!fallo.activo && (
@@ -167,7 +176,7 @@ export function PanelFalloDetalle() {
       </div>
 
       {!fallo.activo && (
-        <p className="rounded bg-slate-200 px-3 py-2 text-sm text-slate-800">
+        <p className={SECONDARY_BUTTON_SMALL}>
           Este fallo está desactivado: solo se puede consultar y reactivar.
         </p>
       )}
@@ -181,9 +190,9 @@ export function PanelFalloDetalle() {
 
       <ListaDeErrores messages={editing ? [] : problems} />
 
-      <section aria-label="Datos del fallo" className="space-y-4 rounded-lg bg-white p-6 shadow">
+      <section aria-label="Datos del fallo" className={`space-y-4 p-6 ${CARD}`}>
         <div className="flex items-center justify-between">
-          <h2 className="text-lg font-semibold text-slate-800">Datos</h2>
+          <h2 className={SECTION_TITLE}>Datos</h2>
           {!editing && (
             <div className="flex gap-2">
               {fallo.activo ? (

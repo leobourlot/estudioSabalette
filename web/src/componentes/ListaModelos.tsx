@@ -7,8 +7,9 @@ import { INITIAL_MODEL_LIST_STATE, type ModelListState } from '../servicios/sesi
 import { FilaModelo, type ModelRowLink } from './FilaModelo';
 import { FiltrosModelos } from './FiltrosModelos';
 import { useModelosService } from './ProveedorServicios';
+import { ERROR_ALERT, SECONDARY_BUTTON_SMALL } from './estilos-aplicacion';
 
-const pageButtonClass = 'rounded border border-slate-300 px-3 py-1 disabled:opacity-50';
+const pageButtonClass = SECONDARY_BUTTON_SMALL;
 
 interface ListaModelosProps {
   /** Si ofrece "Mostrar desactivados": en la sección sí, en una causa nunca (RF-29). */
@@ -72,7 +73,7 @@ export function ListaModelos({
       <FiltrosModelos value={filters} onChange={filterBy} showDeactivated={showDeactivated} />
 
       {error && (
-        <p role="alert" className="mt-6 rounded bg-red-50 px-3 py-2 text-sm text-red-700">
+        <p role="alert" className={ERROR_ALERT}>
           {error}
         </p>
       )}
@@ -90,7 +91,7 @@ export function ListaModelos({
 
       {result && result.items.length > 0 && (
         <>
-          <ul aria-label="Lista de modelos" className="mt-6 space-y-3">
+          <ul aria-label="Lista de modelos" className="space-y-4">
             {result.items.map((modelo) => (
               <FilaModelo
                 key={modelo.id}

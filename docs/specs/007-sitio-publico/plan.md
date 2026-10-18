@@ -66,7 +66,11 @@ Nada en `src/servicios/` importa React (principio 3). Los componentes solo muest
 - `tsconfig.node.json`: incluye `scripts/`.
 - `tailwind.config.js`: colores del estudio (ver "Identidad visual").
 - `public/.htaccess`: ver ".htaccess".
-- `public/marca/`: logo, `compartir.png` (1200 × 630, para las vistas previas) y favicon, cuando el estudio entregue el logo en buena calidad.
+- `public/marca/`, armado con el logo vectorizado que entregó el estudio (16/10/2026):
+  - `logo.svg`: el logo completo, `LOGO_PATH`: va en el encabezado, el pie y el ingreso, y es el favicon. La conversión del PDF dejaba la máscara del fondo con un área de 1 × 1 y el degradado no se veía: la máscara se amplía para que cubra todo el logo, y se quitan los metadatos del editor. Se probó un recorte solo con el monograma "PS" para los tamaños chicos, y el estudio lo descartó: el logo va siempre completo.
+  - `logo.png` (512 × 512): el logo completo para `logo` e `image` de `LegalService` [RF-37] y para `apple-touch-icon`.
+  - `compartir.png` (1200 × 630): el logo completo sobre su degradado, para `og:image` [RF-36].
+  - Los PNG se generan con Chrome sin interfaz a partir de los SVG, sin datos de cámara (`fotos.test.ts`).
 - `public/fotos/`: una foto cuadrada por abogada, cuando las entreguen.
 - `.env.example`: documenta `VITE_URL_SITIO`.
 
@@ -344,7 +348,7 @@ Entre páginas públicas, los enlaces son enlaces comunes (`<a href>`): cada pá
   - Con el código cargado: al elegir una opción, o con Escape, se cierra el `<details>` y el foco vuelve a "Menú".
 - **Secciones** (`useFocoEnAncla`) [RF-5, accesibilidad]: al cargar con `#servicios`, `#abogadas` o `#contacto`, o al cambiar el `#`, lleva el foco al título de esa sección (`tabIndex={-1}`).
 - **Inicio** (`SitioInicio`) [RF-11, RF-12, RF-18]:
-  - Apertura: `<h1>` con `NombreEstudio` y el texto T-1, sobre el degradado del logo.
+  - Apertura: `<h1>` con `NombreEstudio` y el texto T-1, sobre el degradado del logo. De fondo, `BalanzaDecorativa`: una balanza de la justicia, la imagen `public/decoracion/balanza.svg` (un archivo provisto por el estudio, no dibujado por nosotros), con sus propios colores, en un `<img>` con `alt` vacío; va a la derecha, con poca opacidad y un `mask-image` que la desvanece hacia el texto hasta el 30 %. Va `absolute` detrás del contenido (`relative`), con `aria-hidden` y `pointer-events-none`, y sin animación, como el resto de la apertura. El texto sigue contrastando al menos 4,5 a 1 donde queda sobre la balanza: el blanco al 18 % sobre el azul claro da 4,56, y desde 1024 px, al 20 %, el texto solo puede quedar sobre la mitad izquierda del degradado, más oscura: da 4,8 o más.
   - Servicios (`id="servicios"`): `<h2>` "Nuestros servicios", T-2 y cuatro `TarjetaServicio`, en una columna en el celular y en dos o cuatro columnas en pantallas más anchas. Cada tarjeta: `<h3>` con el nombre, la frase y el enlace "Conocer más", con un texto oculto para el lector de pantalla ("sobre Derecho Laboral") para que los cuatro enlaces no se lean iguales.
   - Abogadas (`id="abogadas"`): `<h2>` "Abogadas" y una `TarjetaAbogada` por integrante.
   - Contacto: el `ContactoSitio` del diseño.
@@ -395,7 +399,7 @@ Es la única fuente del nombre y del contacto para el sitio, el ingreso, el port
 - `tailwind.config.js` suma `colors.estudio = { oscuro: '#2C3256', azul: '#415789', blanco: '#FCFFFF' }`. El degradado del logo es `bg-gradient-to-r from-estudio-oscuro to-estudio-azul`.
 - El blanco sobre los dos azules contrasta 12,3 a 1 (oscuro) y 7,1 a 1 (azul): cumple el mínimo de 4,5 a 1 en cualquier punto del degradado.
 - Tipografía del sistema (la `sans` por defecto de Tailwind), sin tipografías de terceros [RF-40].
-- El logo va en `public/marca/`. Mientras el estudio no entregue la versión en buena calidad, se usa como provisoria la imagen que ya entregó. Junto al nombre escrito, el logo lleva `alt=""`: el enlace ya se llama como el estudio y el lector de pantalla no lo lee dos veces. Esto interpreta el RNF de accesibilidad ("el logo tiene texto alternativo"), que se cumple con el texto del enlace. Donde el logo va solo (la vista previa al compartir), su texto alternativo es el nombre del estudio.
+- El logo va en `public/marca/` (ver "Otros archivos de web/"). Junto al nombre escrito, el logo lleva `alt=""`: el enlace ya se llama como el estudio y el lector de pantalla no lo lee dos veces. Esto interpreta el RNF de accesibilidad ("el logo tiene texto alternativo"), que se cumple con el texto del enlace. Donde el logo va solo (la vista previa al compartir), su texto alternativo es el nombre del estudio.
 
 ### Accesibilidad [RNF de accesibilidad]
 - Cada página tiene un único `<h1>` y los títulos en orden, también dentro de las pestañas.
@@ -598,3 +602,13 @@ Pedido por el estudio después de la demo, para ver cómo quedan las redes antes
 - `servicios/datos-estudio.ts`: `pickNetworks(redes, usarMuestra)` es la regla pura (las de muestra solo si se pide y no hay redes reales) y `networksToShow(contact)` la aplica con `import.meta.env.MODE === 'development'`. Vite reemplaza esa condición al construir: en el build para publicar es `false`, la rama se elimina y las redes de muestra no quedan ni en el código publicado. En los tests el modo es `test`: se ven solo las redes que el test pasa.
 - `ContactoSitio` y `PieSitio` usan `networksToShow`. El renglón "Teléfono / WhatsApp" pasa a llevar el ícono de WhatsApp, y el pie muestra el WhatsApp y cada cuenta con su ícono y el nombre de la red escrito.
 - `IconosRedes` suma WhatsApp y X.
+
+### Íconos a color en el contacto [RF-23]
+Pedido por el estudio después de las redes de muestra: en el bloque de contacto, los íconos con los colores de cada marca.
+- El recuadro de cada renglón deja de verse: sin borde ni fondo, solo el ícono, con `text-estudio-blanco` para los que no tienen colores propios (reloj, email y redes desconocidas). Se probó primero un recuadro blanco y el estudio lo descartó.
+- Sobre el degradado, los colores de las marcas solos no se distinguen: el violeta y el azul de Instagram y el azul de Maps quedan por debajo de 2,5 a 1 sobre #415789. Por eso cada ícono a color lleva un contorno blanco que sigue su dibujo: `CONTORNO`, un trazo blanco de 2,4 detrás de la figura, con el mismo dibujo; la figura tapa la mitad de adentro y queda a la vista la de afuera. El blanco sobre los dos azules cumple el 3 a 1.
+- `IconosRedes` suma `IconoRedColor`: WhatsApp (globo verde con el teléfono blanco), Instagram (degradado), Facebook, X y LinkedIn con sus colores; otra red usa el ícono de enlace de `IconoRed`. `IconosContacto` suma `IconoUbicacionColor`, el pin con los cuatro colores de Maps. Los colores están en `COLORES_REDES` y `COLORES_MAPS`.
+- Los degradados y recortes usan ids de `useIdSvg` (sobre `useId`, sin signos que rompan `url(#id)`), iguales en el prerenderizado y en la hidratación.
+- `PieSitio` también usa `IconoRedColor`, pedido después: los mismos íconos que el contacto. `IconoRed` queda para las redes sin colores propios.
+- Debajo de la lista "Redes", el pie suma la lista "Email y dirección": el email con `mailto:` e `IconoEmail`, y la dirección con `mapsUrl` e `IconoUbicacionColor`, los dos con `EXTERNAL`. Los íconos van en un lugar de `w-7`, el ancho de los de las redes, para que el texto quede alineado. Sin email ni dirección, la lista no está.
+- Contraste: ningún fondo cumple 3 a 1 con todos los colores de las marcas (por ejemplo, el verde de WhatsApp da 2,0 sobre blanco y el amarillo de Maps, 1,7). Lo cumple el contorno; la spec exceptúa los colores de adentro por ser decorativos.

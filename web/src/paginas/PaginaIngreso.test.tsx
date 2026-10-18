@@ -1,9 +1,10 @@
-import { screen } from '@testing-library/react';
+import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-de-prueba';
 import { ApiError, NETWORK_ERROR_MESSAGE } from '../servicios/cliente-http';
 import type { UsuarioPropio } from '../servicios/sesion';
+import { TEXTOS_INGRESO } from '../servicios/textos-aplicacion';
 
 async function openLogin(login: (email: string, contrasena: string) => Promise<UsuarioPropio>) {
   const service = fakeSessionService({ login: vi.fn(login) });
@@ -118,5 +119,47 @@ describe('PaginaIngreso en el sitio (spec 007, RF-3, RF-26, RF-33 y RF-34)', () 
     await openLogin(async () => testUser('abogado'));
 
     expect(document.title).toBe('Ingresar · Pertusatti | Sabalette - Abogadas');
+  });
+});
+
+describe('PaginaIngreso con la identidad del estudio (spec 008, RF-11 a RF-13)', () => {
+  it('muestra T-1 en la marca y T-2 y T-3 en la tarjeta', async () => {
+    await openLogin(async () => testUser('abogado'));
+
+    expect(screen.getByText(TEXTOS_INGRESO.titulo)).toBeTruthy();
+    const main = within(screen.getByRole('main'));
+    expect(main.getByText(TEXTOS_INGRESO.indicacion)).toBeTruthy();
+    expect(main.getByText(TEXTOS_INGRESO.olvido)).toBeTruthy();
+    // T-1 no es un título: el único título principal sigue siendo "Ingresar".
+    expect(screen.getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual([
+      'Ingresar',
+    ]);
+  });
+
+  it('no muestra el texto que el estudio pidió quitar', async () => {
+    await openLogin(async () => testUser('abogado'));
+
+    expect(screen.queryByText(/Clientes e integrantes del estudio ingresan/)).toBeNull();
+  });
+
+  it('muestra la dirección y el WhatsApp del estudio, sin mensaje', async () => {
+    await openLogin(async () => testUser('abogado'));
+
+    const whatsapp = screen.getByRole('link', { name: '+54 9 3455 41-4147' });
+    expect(whatsapp.getAttribute('href')).toBe('https://wa.me/5493455414147');
+    expect(whatsapp.parentElement!.textContent).toContain('Pueyrredón Nº 47, Concordia · ');
+  });
+
+  it('el aviso de error va dentro de la tarjeta, arriba de los campos', async () => {
+    await openLogin(async () => testUser('admin'));
+
+    await submit('juan@estudio.com', '');
+
+    const alert = await screen.findByRole('alert');
+    expect(within(screen.getByRole('main')).getByRole('alert')).toBe(alert);
+    expect(
+      alert.compareDocumentPosition(screen.getByLabelText('Email')) &
+        Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 });

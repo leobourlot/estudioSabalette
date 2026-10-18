@@ -31,7 +31,9 @@ describe('fotos sin datos de cámara (spec 007, RF-21)', () => {
   });
 
   it('revisa las imágenes de la marca', () => {
-    expect(Object.keys(published)).toContain('../public/marca/logo.jpg');
+    expect(Object.keys(published)).toEqual(
+      expect.arrayContaining(['../public/marca/logo.png', '../public/marca/compartir.png']),
+    );
   });
 
   it('detecta una imagen con datos de cámara (caso de control)', () => {

@@ -7,6 +7,12 @@ import { CampoTexto } from './CampoTexto';
 import { ListaDeErrores } from './ListaDeErrores';
 import { useSession } from './ProveedorSesion';
 import { useUsersService } from './ProveedorServicios';
+import {
+  CARD,
+  PRIMARY_BUTTON_SMALL,
+  SECONDARY_BUTTON_SMALL,
+  SECTION_TITLE,
+} from './estilos-aplicacion';
 
 function runAction(
   users: UsersService,
@@ -93,8 +99,8 @@ export function AccionesCuenta({ account, onChanged }: AccionesCuentaProps) {
   }
 
   return (
-    <section aria-label="Acciones" className="mt-8 rounded-lg bg-white p-6 shadow">
-      <h2 className="text-lg font-semibold text-slate-800">Acciones</h2>
+    <section aria-label="Acciones" className={`p-6 ${CARD}`}>
+      <h2 className={SECTION_TITLE}>Acciones</h2>
 
       {done && (
         <p role="status" className="mt-4 rounded bg-green-50 px-3 py-2 text-sm text-green-700">
@@ -109,7 +115,7 @@ export function AccionesCuenta({ account, onChanged }: AccionesCuentaProps) {
             type="button"
             onClick={() => select(action)}
             disabled={running}
-            className="rounded border border-slate-300 px-3 py-1.5 text-sm hover:bg-slate-50"
+            className={SECONDARY_BUTTON_SMALL}
           >
             {ACTION_TEXTS[action].label}
           </button>
@@ -134,7 +140,7 @@ export function AccionesCuenta({ account, onChanged }: AccionesCuentaProps) {
               type="button"
               onClick={confirm}
               disabled={running}
-              className="rounded bg-slate-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-60"
+              className={PRIMARY_BUTTON_SMALL}
             >
               Confirmar
             </button>
@@ -142,7 +148,7 @@ export function AccionesCuenta({ account, onChanged }: AccionesCuentaProps) {
               type="button"
               onClick={() => select(null)}
               disabled={running}
-              className="rounded border border-slate-300 px-3 py-1.5 text-sm"
+              className={SECONDARY_BUTTON_SMALL}
             >
               Cancelar
             </button>

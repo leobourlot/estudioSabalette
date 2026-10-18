@@ -5,9 +5,10 @@ import type { TipoEscrito } from '../servicios/modelos-escritos';
 import { JURISDICTION_OPTIONS } from '../servicios/presentacion-causas';
 import { TEMPLATE_TYPE_OPTIONS } from '../servicios/presentacion-modelos';
 import { ListaDeErrores } from './ListaDeErrores';
+import { FIELD_SMALL, LABEL, SECONDARY_BUTTON_SMALL } from './estilos-aplicacion';
 
-const fieldClass = 'rounded border border-slate-300 px-2 py-1.5 text-sm';
-const labelClass = 'block text-sm text-slate-600';
+const fieldClass = FIELD_SMALL;
+const labelClass = LABEL;
 
 /**
  * Filtros del listado de modelos (RF-20 a RF-22): buscador, tipo de escrito, fuero y, si
@@ -59,7 +60,7 @@ export function FiltrosModelos({
               className={`w-80 ${fieldClass}`}
             />
           </div>
-          <button type="submit" className="rounded border border-slate-300 px-3 py-1.5 text-sm">
+          <button type="submit" className={SECONDARY_BUTTON_SMALL}>
             Buscar
           </button>
         </form>

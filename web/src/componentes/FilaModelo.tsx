@@ -3,6 +3,7 @@ import type { ModeloResumen } from '../servicios/modelos-escritos';
 import { fueroLabel } from '../servicios/presentacion-causas';
 import { tipoEscritoLabel } from '../servicios/presentacion-modelos';
 import { TextoLiteral } from './TextoLiteral';
+import { CARD } from './estilos-aplicacion';
 
 const badgeClass = 'rounded px-2 py-0.5 text-xs font-medium';
 
@@ -21,7 +22,7 @@ export function FilaModelo({ modelo, link }: { modelo: ModeloResumen; link: Mode
   return (
     <li
       aria-label={modelo.titulo}
-      className={`space-y-2 rounded-lg border border-slate-200 bg-white p-4 ${modelo.activo ? '' : 'opacity-75'}`}
+      className={`space-y-2 p-5 transition-shadow motion-safe:hover:shadow-md motion-reduce:transition-none ${CARD} ${modelo.activo ? '' : 'opacity-75'}`}
     >
       <div className="flex flex-wrap items-center gap-2 text-sm">
         <span className={`${badgeClass} bg-sky-100 text-sky-900`}>

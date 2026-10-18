@@ -9,9 +9,10 @@ import {
 import { JURISDICTION_OPTIONS } from '../servicios/presentacion-causas';
 import { ListaDeErrores } from './ListaDeErrores';
 import { SelectorPalabrasClave } from './SelectorPalabrasClave';
+import { FIELD_SMALL, LABEL, SECONDARY_BUTTON_SMALL } from './estilos-aplicacion';
 
-const fieldClass = 'rounded border border-slate-300 px-2 py-1.5 text-sm';
-const labelClass = 'block text-sm text-slate-600';
+const fieldClass = FIELD_SMALL;
+const labelClass = LABEL;
 
 /**
  * Filtros del listado de jurisprudencia (RF-23 a RF-26): buscador, palabras clave del
@@ -62,7 +63,7 @@ export function FiltrosJurisprudencia({
               className={`w-80 ${fieldClass}`}
             />
           </div>
-          <button type="submit" className="rounded border border-slate-300 px-3 py-1.5 text-sm">
+          <button type="submit" className={SECONDARY_BUTTON_SMALL}>
             Buscar
           </button>
         </form>

@@ -12,6 +12,7 @@ import { TEMPLATE_TYPE_OPTIONS } from '../servicios/presentacion-modelos';
 import { insertVariable, MAX_TEXTO_LENGTH, type VariableName } from '../servicios/texto-modelo';
 import { CatalogoVariables } from './CatalogoVariables';
 import { ListaDeErrores } from './ListaDeErrores';
+import { INPUT, LABEL, PRIMARY_BUTTON_SMALL, SECONDARY_BUTTON_SMALL } from './estilos-aplicacion';
 
 interface FormularioModeloProps {
   value: ModelForm;
@@ -27,9 +28,8 @@ interface FormularioModeloProps {
   onTyping?: () => void;
 }
 
-const fieldClass =
-  'w-full rounded border border-slate-300 px-3 py-2 focus:border-slate-500 focus:outline-none';
-const labelClass = 'block text-sm font-medium text-slate-700';
+const fieldClass = INPUT;
+const labelClass = LABEL;
 
 // "50.000", con el punto de miles, como en los mensajes.
 const formatCount = (count: number) => new Intl.NumberFormat('es-AR').format(count);
@@ -194,19 +194,11 @@ export function FormularioModelo({
       <CatalogoVariables onInsert={insert} />
 
       <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={enviando}
-          className="rounded bg-slate-800 px-4 py-2 text-sm font-medium text-white hover:bg-slate-700 disabled:opacity-50"
-        >
+        <button type="submit" disabled={enviando} className={PRIMARY_BUTTON_SMALL}>
           {submitLabel}
         </button>
         {onCancel && (
-          <button
-            type="button"
-            onClick={onCancel}
-            className="rounded border border-slate-300 px-4 py-2 text-sm"
-          >
+          <button type="button" onClick={onCancel} className={SECONDARY_BUTTON_SMALL}>
             Cancelar
           </button>
         )}
