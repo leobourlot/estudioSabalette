@@ -12,8 +12,8 @@ interface SitioAbogadaProps {
 }
 
 /**
- * Página de una abogada (spec 007, RF-7 y RF-19): "Volver a abogadas", su foto, su nombre,
- * "Abogada" y su texto completo, un párrafo por renglón del texto de la clienta.
+ * Página de una abogada (spec 007, RF-7 y RF-19): "Volver a abogadas", su foto, su nombre, su
+ * título profesional y su texto completo, un párrafo por renglón del texto de la clienta.
  */
 export function SitioAbogada({ abogada }: SitioAbogadaProps) {
   const page = publicPageFor(lawyerPath(abogada))!;
@@ -30,9 +30,7 @@ export function SitioAbogada({ abogada }: SitioAbogadaProps) {
               <h1 className="break-words font-titulos text-4xl font-semibold text-estudio-oscuro">
                 {abogada.nombre}
               </h1>
-              <p className="mt-1 font-medium uppercase tracking-wide text-estudio-azul">
-                {TEXTOS.inicio.abogada}
-              </p>
+              <p className="mt-1 font-medium text-estudio-azul">{abogada.titulo}</p>
             </div>
           </div>
           <Aparecer className="mt-8 space-y-4 text-slate-700">

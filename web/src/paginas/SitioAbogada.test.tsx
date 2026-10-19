@@ -1,11 +1,17 @@
 import { screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { headingOutline, renderAt, stubSessionStatus } from '../pruebas/sitio-de-prueba';
-import { ABOGADAS, MENSAJES_WHATSAPP, SERVICIOS } from '../servicios/contenido-sitio';
+import {
+  ABOGADAS,
+  MENSAJES_WHATSAPP,
+  SERVICIOS,
+  TITULO_PROFESIONAL,
+} from '../servicios/contenido-sitio';
 import { SitioAbogada } from './SitioAbogada';
 import { SitioNoEncontrada } from './SitioNoEncontrada';
 
 const vanesa = ABOGADAS.find((a) => a.slug === 'vanesa-sabalette-rabello')!;
+const carolina = ABOGADAS.find((a) => a.slug === 'carolina-pertusatti')!;
 
 const whatsappText = () =>
   new URL(
@@ -32,11 +38,11 @@ describe('SitioAbogada (spec 007, RF-7 y RF-19)', () => {
     );
     expect(screen.getByText('VSR')).toBeTruthy();
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Vanesa Sabalette Rabello');
-    expect(within(screen.getByRole('main')).getByText('Abogada')).toBeTruthy();
+    expect(within(screen.getByRole('main')).getByText(TITULO_PROFESIONAL)).toBeTruthy();
     const paragraphs = Array.from(screen.getByRole('main').querySelectorAll('p')).map(
       (p) => p.textContent,
     );
-    expect(paragraphs).toEqual(['Abogada', ...vanesa.texto!]);
+    expect(paragraphs).toEqual([TITULO_PROFESIONAL, ...vanesa.texto!]);
     expect(headingOutline(container)).toEqual([
       'h1 Vanesa Sabalette Rabello',
       'h2 Contactate con nosotros',
@@ -48,6 +54,22 @@ describe('SitioAbogada (spec 007, RF-7 y RF-19)', () => {
 
     expect(whatsappText()).toBe(MENSAJES_WHATSAPP.general);
     expect(document.title).toBe('Vanesa Sabalette Rabello · Pertusatti | Sabalette - Abogadas');
+  });
+});
+
+describe('SitioAbogada: Carolina Marisa Pertusatti (spec 007, RF-19)', () => {
+  it('muestra su foto, su nombre, su título profesional y su texto completo', () => {
+    renderAt('/abogadas/carolina-pertusatti', <SitioAbogada abogada={carolina} />);
+
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(
+      'Carolina Marisa Pertusatti',
+    );
+    expect(screen.getByRole('img', { name: 'Foto de Carolina Marisa Pertusatti' })).toBeTruthy();
+    const paragraphs = Array.from(screen.getByRole('main').querySelectorAll('p')).map(
+      (p) => p.textContent,
+    );
+    expect(paragraphs).toEqual([TITULO_PROFESIONAL, ...carolina.texto!]);
+    expect(document.title).toBe('Carolina Marisa Pertusatti · Pertusatti | Sabalette - Abogadas');
   });
 });
 

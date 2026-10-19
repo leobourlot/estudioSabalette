@@ -19,6 +19,7 @@ import {
   PESTANAS_LABORAL,
   SERVICIOS,
   TEXTOS,
+  TITULO_PROFESIONAL,
   type ClaveServicio,
 } from './contenido-sitio';
 
@@ -58,6 +59,13 @@ describe('textos del sitio contra el anexo de la spec 007 (RF-2)', () => {
     expect(service('accidentes').bloques).toEqual(quoteBlocks(annexSection('T-10')));
     expect(service('danos').bloques).toEqual(quoteBlocks(annexSection('T-11')));
     expect(service('sucesiones').bloques).toEqual(quoteBlocks(annexSection('T-12')));
+  });
+
+  it('T-19 y T-20, resumen y texto completo de Carolina Marisa Pertusatti', () => {
+    const carolina = lawyer('carolina-pertusatti');
+
+    expect(carolina.resumen).toBe(quoteText(annexSection('T-19')));
+    expect(carolina.texto).toEqual(quoteParagraphs(annexSection('T-20')));
   });
 
   it('T-13 y T-14, resumen y texto completo de Vanesa Sabalette Rabello', () => {
@@ -125,13 +133,13 @@ describe('servicios (RF-12, RF-13)', () => {
 describe('abogadas (RF-18 a RF-20)', () => {
   it('van en el orden del logo', () => {
     expect(ABOGADAS.map((a) => a.nombre)).toEqual([
-      'Carolina Pertusatti',
+      'Carolina Marisa Pertusatti',
       'Vanesa Sabalette Rabello',
     ]);
   });
 
-  it('solo tiene página la que tiene resumen y texto completo', () => {
-    expect(hasOwnPage(lawyer('carolina-pertusatti'))).toBe(false);
+  it('las dos tienen su resumen y su texto, y por eso su página', () => {
+    expect(hasOwnPage(lawyer('carolina-pertusatti'))).toBe(true);
     expect(hasOwnPage(lawyer('vanesa-sabalette-rabello'))).toBe(true);
   });
 
@@ -142,8 +150,16 @@ describe('abogadas (RF-18 a RF-20)', () => {
     expect(hasOwnPage({ ...vanesa, texto: null })).toBe(false);
   });
 
-  it('todavía no tienen foto (spec 007, dudas abiertas)', () => {
-    expect(ABOGADAS.map((a) => a.foto)).toEqual([null, null]);
+  it('tienen su foto en public/fotos (RF-21)', () => {
+    expect(ABOGADAS.map((a) => a.foto)).toEqual([
+      '/fotos/carolina-pertusatti.jpg',
+      '/fotos/vanesa-sabalette-rabello.jpg',
+    ]);
+  });
+
+  it('las dos llevan el título profesional de T-21', () => {
+    expect(TITULO_PROFESIONAL).toBe(quoteText(annexSection('T-21')));
+    expect(ABOGADAS.map((a) => a.titulo)).toEqual([TITULO_PROFESIONAL, TITULO_PROFESIONAL]);
   });
 });
 

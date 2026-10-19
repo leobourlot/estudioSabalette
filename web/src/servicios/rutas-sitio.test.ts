@@ -50,6 +50,7 @@ describe('títulos y descripciones contra el anexo (T-16, RF-34)', () => {
     ['Accidentes', '/servicios/accidentes-de-trabajo'],
     ['Derecho de Daños', '/servicios/derecho-de-danos'],
     ['Sucesiones', '/servicios/sucesiones'],
+    ['Página de Carolina Marisa Pertusatti', '/abogadas/carolina-pertusatti'],
     ['Página de Vanesa Sabalette Rabello', '/abogadas/vanesa-sabalette-rabello'],
   ])('%s', (label, ruta) => {
     const expected = titles.get(label)!;
@@ -86,6 +87,7 @@ describe('páginas públicas (RF-1, RF-8)', () => {
       '/servicios/accidentes-de-trabajo',
       '/servicios/derecho-de-danos',
       '/servicios/sucesiones',
+      '/abogadas/carolina-pertusatti',
       '/abogadas/vanesa-sabalette-rabello',
     ]);
   });
@@ -98,6 +100,7 @@ describe('páginas públicas (RF-1, RF-8)', () => {
       'servicios/accidentes-de-trabajo.html',
       'servicios/derecho-de-danos.html',
       'servicios/sucesiones.html',
+      'abogadas/carolina-pertusatti.html',
       'abogadas/vanesa-sabalette-rabello.html',
     ]);
     expect(PUBLIC_PAGES.every((p) => p.indexable)).toBe(true);
@@ -112,6 +115,7 @@ describe('páginas públicas (RF-1, RF-8)', () => {
       MENSAJES_WHATSAPP.accidentes,
       MENSAJES_WHATSAPP.danos,
       MENSAJES_WHATSAPP.sucesiones,
+      MENSAJES_WHATSAPP.general,
       MENSAJES_WHATSAPP.general,
     ]);
     expect(NOT_FOUND_PAGE.mensaje).toBe(MENSAJES_WHATSAPP.general);
@@ -140,7 +144,7 @@ describe('normalizePublicPath (RF-8)', () => {
     '/no-existe',
     '/servicios/otro',
     '/servicios/derecho-laboral/otra',
-    '/abogadas/carolina-pertusatti',
+    '/abogadas/otra-persona',
     '/ingresar/x',
     '/index.html',
   ])('%s no existe', (ruta) => {

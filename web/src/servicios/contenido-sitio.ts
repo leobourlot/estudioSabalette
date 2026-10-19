@@ -173,9 +173,14 @@ export const SERVICIOS: readonly Servicio[] = [
   },
 ];
 
+/** T-21: el título profesional de las abogadas, debajo del nombre (RF-18 y RF-19). */
+export const TITULO_PROFESIONAL = 'Abogada | Mediadora | Diplomada en Derecho Laboral';
+
 export interface Abogada {
   slug: string;
   nombre: string;
+  /** Título profesional, debajo del nombre (T-21). */
+  titulo: string;
   /** Ruta de la foto en public/fotos/, o null mientras no la entreguen (RF-21). */
   foto: string | null;
   /** Resumen de la tarjeta, o null mientras falte (RF-20). */
@@ -186,19 +191,28 @@ export interface Abogada {
 
 /** Las integrantes, en el orden del logo (RF-18). */
 export const ABOGADAS: readonly Abogada[] = [
-  // PENDIENTE (spec 007, dudas abiertas): resumen, texto completo y foto.
   {
     slug: 'carolina-pertusatti',
-    nombre: 'Carolina Pertusatti',
-    foto: null,
-    resumen: null,
-    texto: null,
+    nombre: 'Carolina Marisa Pertusatti',
+    titulo: TITULO_PROFESIONAL,
+    foto: '/fotos/carolina-pertusatti.jpg',
+    // T-19.
+    resumen:
+      'Elegí estudiar Abogacía impulsada por un profundo sentido de justicia y una vocación genuina de ayudar a los demás. Estoy convencida de que la excelencia profesional y la calidad humana deben ir siempre de la mano.',
+    // T-20.
+    texto: [
+      'Elegí estudiar Abogacía impulsada por un profundo sentido de justicia y una vocación genuina de ayudar a los demás. Encontré en el Derecho la posibilidad de transformar esas convicciones en una profesión.',
+      'Me gradué el 21 de diciembre de 2011 en la Universidad Nacional del Litoral. Posteriormente, continué mi formación como mediadora y diplomada en Derecho Laboral, disciplina a la que dedico gran parte de mi actividad profesional.',
+      'Me considero una persona empática, perseverante y de convicciones firmes. Ejerzo mi profesión con pasión, honestidad y compromiso, convencida de que cada caso merece una defensa responsable, dedicada y jurídicamente sólida.',
+      'Entiendo que detrás de cada conflicto hay derechos que proteger y personas que depositan su confianza en nuestro trabajo.',
+      'Estoy convencida de que la excelencia profesional y la calidad humana deben ir siempre de la mano.',
+    ],
   },
-  // PENDIENTE (spec 007, dudas abiertas): foto.
   {
     slug: 'vanesa-sabalette-rabello',
     nombre: 'Vanesa Sabalette Rabello',
-    foto: null,
+    titulo: TITULO_PROFESIONAL,
+    foto: '/fotos/vanesa-sabalette-rabello.jpg',
     resumen:
       'Me especialicé en Derecho Procesal Civil, me formé como mediadora y me diplomé en Derecho Laboral. Entiendo el ejercicio de la abogacía como la búsqueda de soluciones.',
     texto: [
@@ -251,7 +265,6 @@ export const TEXTOS = {
     nuestrosServicios: 'Nuestros servicios',
     conocerMas: 'Conocer más',
     abogadas: 'Abogadas',
-    abogada: 'Abogada',
     masInformacion: 'Más información',
   },
   detalle: {

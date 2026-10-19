@@ -64,7 +64,7 @@ describe('buildHead (RF-34, RF-36, RF-37)', () => {
         parseHead(buildHead(p, SITE)).querySelectorAll('script[type="application/ld+json"]').length,
     );
 
-    expect(scripts).toEqual([1, 0, 0, 0, 0, 0, 0]);
+    expect(scripts).toEqual([1, 0, 0, 0, 0, 0, 0, 0]);
     const doc = parseHead(buildHead(publicPageFor('/')!, SITE));
     const data = JSON.parse(doc.querySelector('script')!.textContent!);
     expect(data).toEqual(legalServiceData(SITE));

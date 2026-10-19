@@ -40,17 +40,14 @@ describe('rutas del sitio público (spec 007, RF-1, RF-8 y RF-9)', () => {
     },
   );
 
-  it.each([
-    '/abogadas/carolina-pertusatti',
-    '/abogadas/otra',
-    '/servicios/derecho-laboral/otra',
-    '/servicios/otro',
-    '/no-existe',
-  ])('%s muestra la página inexistente', (path) => {
-    openAt(path);
+  it.each(['/abogadas/otra', '/servicios/derecho-laboral/otra', '/servicios/otro', '/no-existe'])(
+    '%s muestra la página inexistente',
+    (path) => {
+      openAt(path);
 
-    expect(h1()).toBe('No encontramos esa página');
-  });
+      expect(h1()).toBe('No encontramos esa página');
+    },
+  );
 
   it.each([
     ['/servicios', '/#servicios'],

@@ -6,7 +6,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 ## Usuarios / actores
 - **Visitante** (spec 001): cualquier persona sin sesión. Puede ser un trabajador, un empleador o un familiar que busca asesoramiento, muchas veces desde el celular y sin conocer al estudio.
 - **Cliente e integrante con la sesión abierta** (spec 001): ven el mismo sitio que un visitante, con un acceso para ir a su portal o a su panel.
-- **El estudio**: sus dos integrantes, Carolina Pertusatti y Vanesa Sabalette Rabello, ambas abogadas, aportan los textos, las fotos y los datos de contacto. No los cargan ni los editan desde el panel: son contenido fijo del sitio.
+- **El estudio**: sus dos integrantes, Carolina Marisa Pertusatti y Vanesa Sabalette Rabello, ambas abogadas, aportan los textos, las fotos y los datos de contacto. No los cargan ni los editan desde el panel: son contenido fijo del sitio.
 
 ## Historias de usuario
 - H1: Como visitante quiero entender en la primera pantalla quiénes son y a qué se dedican, para saber si me pueden ayudar.
@@ -53,7 +53,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Accidentes: `/servicios/accidentes-de-trabajo`
   - Derecho de Daños: `/servicios/derecho-de-danos`
   - Sucesiones: `/servicios/sucesiones`
-  - Abogadas: `/abogadas/vanesa-sabalette-rabello` y, cuando tenga su texto (RF-20), `/abogadas/carolina-pertusatti`.
+  - Abogadas: `/abogadas/carolina-pertusatti` y `/abogadas/vanesa-sabalette-rabello`.
 
   CUANDO alguien abre una de esas direcciones directamente, la vuelve a cargar o la recibe compartida, EL SISTEMA muestra esa misma página, pestaña o sección. La misma dirección escrita con mayúsculas o con una barra al final muestra la misma página. Los botones de atrás y adelante del navegador recorren las páginas y las pestañas visitadas, en orden, y al volver atrás la página aparece en la posición en la que se dejó.
 - RF-9: SI un visitante abre una dirección del sitio público que no existe, ENTONCES EL SISTEMA muestra la página "No encontramos esa página", con el encabezado, el bloque de contacto, el botón de WhatsApp y accesos al inicio y a los cuatro servicios. Esa página nunca muestra la dirección pedida.
@@ -83,15 +83,15 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 - RF-17: EL SISTEMA muestra en la pestaña "Empresas" los tres destacados de T-7, como texto, antes del texto T-8 completo. En la pestaña "Trabajadores" muestra el texto T-9 completo.
 
 ### Abogadas
-- RF-18: EL SISTEMA muestra en la sección Abogadas el título "Abogadas" y una tarjeta por cada integrante, en el orden del logo: Carolina Pertusatti y Vanesa Sabalette Rabello. Cada tarjeta muestra:
+- RF-18: EL SISTEMA muestra en la sección Abogadas el título "Abogadas" y una tarjeta por cada integrante, en el orden del logo: Carolina Marisa Pertusatti y Vanesa Sabalette Rabello. Cada tarjeta muestra:
   - La foto (RF-21).
   - El nombre.
-  - "Abogada".
-  - El resumen (T-13 para Vanesa Sabalette Rabello).
+  - Su título profesional, "Abogada | Mediadora | Diplomada en Derecho Laboral" (T-21).
+  - El resumen (T-19 para Carolina Marisa Pertusatti y T-13 para Vanesa Sabalette Rabello).
   - El acceso "Más información", que lleva a la página de esa abogada.
-- RF-19: CUANDO un visitante abre la página de una abogada, EL SISTEMA muestra su foto (RF-21), su nombre, "Abogada" y su texto completo (T-14 para Vanesa Sabalette Rabello).
-- RF-20: MIENTRAS falte el resumen o el texto completo de una abogada, EL SISTEMA muestra su tarjeta solo con la foto (RF-21), el nombre y "Abogada", sin resumen y sin "Más información", y esa abogada no tiene página propia. Es el caso de Carolina Pertusatti hasta que el estudio entregue sus textos.
-- RF-21: EL SISTEMA muestra la foto de cada abogada en un círculo, la misma en la tarjeta y en su página, con distinto tamaño. MIENTRAS la foto no exista, no haya terminado de cargar o no se pueda cargar, EL SISTEMA muestra en su lugar las iniciales de todas las palabras de su nombre (CP, VSR), en blanco sobre el azul del logo, con la misma forma y el mismo tamaño que la foto, sin ícono de imagen rota y sin que el resto de la página se mueva al aparecer la foto. Las fotos se publican sin los datos que guarda la cámara (ubicación, dispositivo, fecha). Su texto alternativo es "Foto de" seguido del nombre de la abogada.
+- RF-19: CUANDO un visitante abre la página de una abogada, EL SISTEMA muestra su foto (RF-21), su nombre, su título profesional (T-21) y su texto completo (T-20 para Carolina Marisa Pertusatti y T-14 para Vanesa Sabalette Rabello).
+- RF-20: MIENTRAS falte el resumen o el texto completo de una abogada, EL SISTEMA muestra su tarjeta solo con la foto (RF-21), el nombre y su título profesional, sin resumen y sin "Más información", y esa abogada no tiene página propia. Hoy las dos integrantes tienen sus textos; la regla vale para una integrante que se sume sin ellos.
+- RF-21: EL SISTEMA muestra la foto de cada abogada en un círculo, la misma en la tarjeta y en su página, con distinto tamaño. MIENTRAS la foto no exista, no haya terminado de cargar o no se pueda cargar, EL SISTEMA muestra en su lugar las iniciales de todas las palabras de su nombre (CMP, VSR), en blanco sobre el azul del logo, con la misma forma y el mismo tamaño que la foto, sin ícono de imagen rota y sin que el resto de la página se mueva al aparecer la foto. Las fotos se publican sin los datos que guarda la cámara (ubicación, dispositivo, fecha). Su texto alternativo es "Foto de" seguido del nombre de la abogada.
 
 ### Contacto
 - RF-22: EL SISTEMA toma los datos de contacto del estudio de una única fuente, la misma que usa el portal (spec 004, RF-18). Son públicos y fijos, y no se editan desde el panel:
@@ -194,7 +194,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Menú abierto en el celular y el visitante elige una opción: el menú se cierra y se ve el destino (RF-6).
   - Dirección pública que no existe o está mal escrita: "No encontramos esa página" (RF-9).
   - Dirección pública con mayúsculas o con barra final: muestra la misma página, y los buscadores reciben la dirección principal (RF-8, RF-37).
-  - Dirección de la página de Carolina Pertusatti mientras no tenga sus textos: "No encontramos esa página" (RF-9, RF-20).
+  - Dirección de la página de una abogada sin sus textos: "No encontramos esa página" (RF-9, RF-20).
   - Dirección de Derecho Laboral con una pestaña que no existe: "No encontramos esa página" (RF-9).
   - Dirección de una página que se quitó o cambió de nombre, compartida antes: "No encontramos esa página". Se acepta (RF-9).
   - Dirección con datos agregados, por ejemplo los que suman las redes al compartir: se muestra la página normal y los datos se ignoran (RF-42).
@@ -210,8 +210,8 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Ninguna abogada con foto: las dos tarjetas muestran iniciales y la sección se ve terminada, no a medio cargar (RF-21).
   - Una abogada con foto y la otra sin: las dos tarjetas conservan el mismo tamaño y la misma alineación (RF-21).
   - Foto que tarda o no carga, por ejemplo por mala conexión: se ven las iniciales hasta que carga, o en su lugar si no carga, sin ícono de imagen rota (RF-21).
-  - Tarjeta de Carolina Pertusatti sin resumen al lado de la de Vanesa Sabalette Rabello con resumen: las dos se ven ordenadas aunque tengan distinta cantidad de texto (RF-20).
-  - El estudio entrega solo el resumen o solo el texto de Carolina Pertusatti: su tarjeta sigue sin resumen ni página hasta tener los dos (RF-20).
+  - Resúmenes de distinto largo: las dos tarjetas se ven ordenadas aunque tengan distinta cantidad de texto (RF-18).
+  - Una integrante nueva con solo el resumen o solo el texto: su tarjeta sigue sin resumen ni página hasta tener los dos (RF-20).
 - **Contacto:**
   - Hoy faltan solo los días y horarios de atención: el bloque de contacto muestra los renglones "Ubicación", "Teléfono / WhatsApp", "Email" e "Instagram", sin "Disponibilidad" (RF-24, RF-44).
   - Una red con dos cuentas (por ejemplo, la del estudio y la de una abogada): las dos van en el mismo renglón, bajo el nombre de la red (RF-23).
@@ -301,7 +301,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Que con la reducción de movimiento no hay animaciones, y que sin el código de la página todo el contenido se ve (RF-35, RF-45).
 - `pnpm test` y `pnpm lint` sin errores.
 - Demo manual:
-  1. Sin sesión, abrir el inicio desde un celular y verificar la apertura, las cuatro tarjetas con su frase, las dos tarjetas de las abogadas (iniciales en lugar de foto, Carolina Pertusatti sin resumen ni "Más información") y el bloque de contacto solo con los datos informados.
+  1. Sin sesión, abrir el inicio desde un celular y verificar la apertura, las cuatro tarjetas con su frase, las dos tarjetas de las abogadas, con su foto, su título profesional, su resumen y "Más información" y el bloque de contacto solo con los datos informados.
   2. Entrar con "Conocer más" a cada servicio y verificar el título, el texto contra el anexo, "Volver a servicios" y los otros servicios.
   3. En Derecho Laboral, verificar que se ve "Empresas" con los tres destacados antes del texto, pasar a "Trabajadores", volver atrás con el navegador, y abrir en otra pestaña del navegador la dirección de "Trabajadores".
   4. Entrar con "Más información" a la página de Vanesa Sabalette Rabello y verificar su texto completo y "Volver a abogadas".
@@ -322,8 +322,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 ## Dudas abiertas
 Ninguna impide planificar: cada dato pendiente tiene definido qué se muestra mientras falta (RF-20, RF-21, RF-24). Al recibir cada dato se actualiza esta spec (RF-2).
 - [NECESITA ACLARACIÓN] Días y horarios de atención.
-- [NECESITA ACLARACIÓN] Foto de Vanesa Sabalette Rabello.
-- [NECESITA ACLARACIÓN] Carolina Pertusatti: su resumen para la tarjeta, su texto completo y su foto.
+- Resuelta el 19/10/2026: el estudio entregó las fotos de las dos abogadas y los textos de Carolina Marisa Pertusatti (T-19 y T-20), y se aprobó el título profesional de las dos (T-21).
 - Resuelta el 16/10/2026: el estudio entregó el logo vectorizado en buena calidad (fondo azul).
 - Resuelta el 17/10/2026: el estudio informó su dirección ("Pueyrredón Nº 47, Concordia"), su email (estudiojuridicovsr@gmail.com) y su red social (Instagram, "@pertusattisabaletteabogadas") (RF-22).
 
@@ -459,6 +458,9 @@ El título del inicio es el nombre del estudio. El de las demás páginas y pant
 - Sucesiones
   - Título: Sucesiones · Pertusatti | Sabalette - Abogadas
   - Descripción: el texto T-6.
+- Página de Carolina Marisa Pertusatti
+  - Título: Carolina Marisa Pertusatti · Pertusatti | Sabalette - Abogadas
+  - Descripción: el texto T-19.
 - Página de Vanesa Sabalette Rabello
   - Título: Vanesa Sabalette Rabello · Pertusatti | Sabalette - Abogadas
   - Descripción: el texto T-13.
@@ -473,7 +475,7 @@ El título del inicio es el nombre del estudio. El de las demás páginas y pant
 
 ### T-17 — Textos de la interfaz
 - Menú y encabezado: "Servicios", "Abogadas", "Contacto", "Menú", "Ingresar", "Ir a mi portal", "Ir al panel", "Saltar al contenido".
-- Inicio: "Nuestros servicios", "Conocer más", "Abogadas", "Abogada", "Más información".
+- Inicio: "Nuestros servicios", "Conocer más", "Abogadas", "Más información".
 - Páginas de detalle: "Volver a servicios", "Otros servicios", "Volver a abogadas", "Empresas", "Trabajadores".
 - Contacto: "Contactate con nosotros", "Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal.", "Ubicación", "Cómo llegar", "Teléfono / WhatsApp", "Disponibilidad", "Email".
 - Botón de WhatsApp: "Escribinos por WhatsApp".
@@ -482,3 +484,22 @@ El título del inicio es el nombre del estudio. El de las demás páginas y pant
 ### T-18 — Pie de página
 - Derechos: "© <año> Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.", donde <año> es el año en que se publicó el sitio.
 - Diseño: "Diseñado por", seguido del logo y el nombre "Bourder Web", que llevan a https://bourderweb.com.ar.
+
+### T-19 — Resumen de Carolina Marisa Pertusatti (tarjeta)
+Su primera y su última oración, aprobadas el 19/10/2026.
+> Elegí estudiar Abogacía impulsada por un profundo sentido de justicia y una vocación genuina de ayudar a los demás. Estoy convencida de que la excelencia profesional y la calidad humana deben ir siempre de la mano.
+
+### T-20 — Texto completo de Carolina Marisa Pertusatti (su página)
+> Elegí estudiar Abogacía impulsada por un profundo sentido de justicia y una vocación genuina de ayudar a los demás. Encontré en el Derecho la posibilidad de transformar esas convicciones en una profesión.
+>
+> Me gradué el 21 de diciembre de 2011 en la Universidad Nacional del Litoral. Posteriormente, continué mi formación como mediadora y diplomada en Derecho Laboral, disciplina a la que dedico gran parte de mi actividad profesional.
+>
+> Me considero una persona empática, perseverante y de convicciones firmes. Ejerzo mi profesión con pasión, honestidad y compromiso, convencida de que cada caso merece una defensa responsable, dedicada y jurídicamente sólida.
+>
+> Entiendo que detrás de cada conflicto hay derechos que proteger y personas que depositan su confianza en nuestro trabajo.
+>
+> Estoy convencida de que la excelencia profesional y la calidad humana deben ir siempre de la mano.
+
+### T-21 — Título profesional de las abogadas
+El de Carolina Marisa Pertusatti es el de su texto; el de Vanesa Sabalette Rabello se armó con su texto (T-14: "me formé como mediadora y me diplomé en Derecho Laboral") y se aprobó el 19/10/2026. Va debajo del nombre, en la tarjeta y en la página.
+> Abogada | Mediadora | Diplomada en Derecho Laboral

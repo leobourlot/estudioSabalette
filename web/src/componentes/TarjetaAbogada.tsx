@@ -7,9 +7,9 @@ interface TarjetaAbogadaProps {
 }
 
 /**
- * Tarjeta de una abogada en el inicio (spec 007, RF-18 y RF-20): foto, nombre y "Abogada" y, si
- * ya tiene sus textos, el resumen y "Más información", que lleva a su página. El contenido va
- * arriba, para que las tarjetas se vean ordenadas aunque tengan distinta cantidad de texto.
+ * Tarjeta de una abogada en el inicio (spec 007, RF-18 y RF-20): foto, nombre, título profesional
+ * y, si ya tiene sus textos, el resumen y "Más información", que lleva a su página. El contenido
+ * va arriba, para que las tarjetas se vean ordenadas aunque tengan distinta cantidad de texto.
  */
 export function TarjetaAbogada({ abogada }: TarjetaAbogadaProps) {
   return (
@@ -18,9 +18,7 @@ export function TarjetaAbogada({ abogada }: TarjetaAbogadaProps) {
       <h3 className="mt-4 font-titulos text-2xl font-semibold text-estudio-oscuro">
         {abogada.nombre}
       </h3>
-      <p className="text-sm font-medium uppercase tracking-wide text-estudio-azul">
-        {TEXTOS.inicio.abogada}
-      </p>
+      <p className="text-sm font-medium text-estudio-azul">{abogada.titulo}</p>
       {hasOwnPage(abogada) && (
         <>
           <p className="mt-3 break-words text-slate-700">{abogada.resumen}</p>

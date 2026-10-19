@@ -10,6 +10,7 @@ describe('pageTitle (spec 007, RF-34)', () => {
 describe('initialsOf (spec 007, RF-21)', () => {
   it.each([
     ['Carolina Pertusatti', 'CP'],
+    ['Carolina Marisa Pertusatti', 'CMP'],
     ['Vanesa Sabalette Rabello', 'VSR'],
     ['  ana   maría  ', 'AM'],
     ['Ñandú Álvarez', 'ÑÁ'],

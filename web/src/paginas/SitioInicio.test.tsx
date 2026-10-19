@@ -24,7 +24,7 @@ describe('SitioInicio (spec 007, RF-11, RF-12 y RF-18)', () => {
       'h3 Derecho de Daños',
       'h3 Sucesiones',
       'h2 Abogadas',
-      'h3 Carolina Pertusatti',
+      'h3 Carolina Marisa Pertusatti',
       'h3 Vanesa Sabalette Rabello',
       'h2 Contactate con nosotros',
     ]);
@@ -63,9 +63,9 @@ describe('SitioInicio (spec 007, RF-11, RF-12 y RF-18)', () => {
     renderAt('/', <SitioInicio />);
 
     const section = document.getElementById('abogadas')!;
-    expect(within(section).getByText('CP')).toBeTruthy();
+    expect(within(section).getByText('CMP')).toBeTruthy();
     expect(within(section).getByText('VSR')).toBeTruthy();
-    expect(within(section).getAllByRole('link')).toHaveLength(1);
+    expect(within(section).getAllByRole('link')).toHaveLength(2);
   });
 
   it('las secciones tienen su "#" y su título recibe el foco', () => {

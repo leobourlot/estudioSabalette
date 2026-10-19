@@ -271,3 +271,7 @@ Pedidos por el estudio durante la demo manual (spec: RF-3, RF-4, RF-6, RF-23, RF
 - [x] **T45 — Email y dirección en el pie** [RF-24, RF-25, RF-44] **(modifica existente: `componentes/PieSitio.tsx` y su test)**
   La lista "Email y dirección" debajo de las redes, con sus íconos y sus enlaces.
   Hecho cuando: los tests verifican el email con `mailto:` y la dirección con el enlace a Google Maps, los dos aparte; que la lista va debajo de las redes; que sin los dos datos no está, y que con uno solo muestra ese.
+
+- [x] **T42 — Textos de Carolina Marisa Pertusatti y fotos de las abogadas** [RF-2, RF-8, RF-18 a RF-21, RF-34] **(modifica existente: `servicios/contenido-sitio.ts`, `componentes/TarjetaAbogada.tsx`, `paginas/SitioAbogada.tsx` y sus tests)**
+  Los textos T-19 a T-21, el nombre completo de Carolina, el título profesional de las dos y sus fotos en `public/fotos/`, recortadas cuadradas, sin datos de cámara.
+  Hecho cuando: los tests comparan T-19, T-20 y T-21 con el anexo; las dos tarjetas muestran foto, título profesional, resumen y "Más información"; la página de Carolina existe con su título y su descripción; las iniciales son CMP y VSR; y la regla de RF-20 se sigue probando con una integrante de prueba sin textos.
