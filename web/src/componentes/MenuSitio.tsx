@@ -36,8 +36,8 @@ function Links({ onChoose, extra }: LinksProps) {
 
 interface MenuSitioProps {
   /**
-   * El acceso de ingreso, que va como última opción del menú plegado solo en pantallas de menos de
-   * 420 px (RF-4). En las demás, el encabezado lo muestra al lado del menú.
+   * El acceso de ingreso, que va como última opción del menú plegado, en pantallas de menos de
+   * 768 px (RF-4). En las demás, el encabezado lo muestra al lado del menú.
    */
   acceso?: ReactNode;
 }

@@ -148,8 +148,10 @@ describe('PaginaIngreso con la identidad del estudio (spec 008, RF-11 a RF-13)',
   it('muestra la dirección y el WhatsApp de cada abogada, sin mensaje', async () => {
     await openLogin(async () => testUser('abogado'));
 
-    const carolina = screen.getByRole('link', { name: 'Carolina Pertusatti: +54 9 3454 01-8174' });
-    const vanesa = screen.getByRole('link', { name: 'Vanesa Sabalette: +54 9 3455 41-4147' });
+    const carolina = screen.getByRole('link', {
+      name: 'Dra. Carolina Pertusatti: +54 9 3454 01-8174',
+    });
+    const vanesa = screen.getByRole('link', { name: 'Dra. Vanesa Sabalette: +54 9 3455 41-4147' });
     expect(carolina.getAttribute('href')).toBe('https://wa.me/5493454018174');
     expect(vanesa.getAttribute('href')).toBe('https://wa.me/5493455414147');
     expect(carolina.closest('p')!.textContent).toContain('Pueyrredón Nº 47, Concordia · ');

@@ -16,8 +16,12 @@ describe('datos del estudio (spec 007, RF-3 y RF-22; spec 004, RF-18)', () => {
 
   it('tienen el WhatsApp de cada abogada, en el orden del logo, para el enlace y para mostrar', () => {
     expect(STUDIO_CONTACT.whatsapps).toEqual([
-      { nombre: 'Carolina Pertusatti', numero: '5493454018174', visible: '+54 9 3454 01-8174' },
-      { nombre: 'Vanesa Sabalette', numero: '5493455414147', visible: '+54 9 3455 41-4147' },
+      {
+        nombre: 'Dra. Carolina Pertusatti',
+        numero: '5493454018174',
+        visible: '+54 9 3454 01-8174',
+      },
+      { nombre: 'Dra. Vanesa Sabalette', numero: '5493455414147', visible: '+54 9 3455 41-4147' },
     ]);
   });
 
@@ -33,8 +37,8 @@ describe('datos del estudio (spec 007, RF-3 y RF-22; spec 004, RF-18)', () => {
     expect(STUDIO_CONTACT.redes).toEqual([
       {
         red: 'Instagram',
-        usuario: '@pertusattisabaletteabogadas',
-        url: 'https://www.instagram.com/pertusattisabaletteabogadas/',
+        usuario: '@persaestudiojuridico',
+        url: 'https://www.instagram.com/persaestudiojuridico/',
       },
     ]);
   });

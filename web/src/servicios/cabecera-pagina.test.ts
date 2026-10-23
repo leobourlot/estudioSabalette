@@ -99,7 +99,7 @@ describe('legalServiceData (RF-37)', () => {
       image: `${SITE}/marca/logo.png`,
       address: { '@type': 'PostalAddress', streetAddress: 'Pueyrredón Nº 47, Concordia' },
       email: 'estudiojuridicovsr@gmail.com',
-      sameAs: ['https://www.instagram.com/pertusattisabaletteabogadas/'],
+      sameAs: ['https://www.instagram.com/persaestudiojuridico/'],
     });
   });
 

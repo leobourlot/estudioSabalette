@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import type { Abogada } from '../servicios/contenido-sitio';
+import { type Abogada, lawyerName } from '../servicios/contenido-sitio';
 import { initialsOf } from '../servicios/presentacion-sitio';
 
 type Tamano = 'mediana' | 'grande';
@@ -45,7 +45,7 @@ export function FotoAbogada({ abogada, tamano, diferida = false }: FotoAbogadaPr
         <img
           ref={checkLoaded}
           src={abogada.foto}
-          alt={`Foto de ${abogada.nombre}`}
+          alt={`Foto de la ${lawyerName(abogada)}`}
           width={size.px}
           height={size.px}
           loading={diferida ? 'lazy' : undefined}

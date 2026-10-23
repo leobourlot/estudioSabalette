@@ -3,7 +3,7 @@ import { DisenoSitio } from '../componentes/DisenoSitio';
 import { FotoAbogada } from '../componentes/FotoAbogada';
 import { useTituloDocumento } from '../componentes/useTituloDocumento';
 import { VolverA } from '../componentes/VolverA';
-import { type Abogada, lawyerPath, TEXTOS } from '../servicios/contenido-sitio';
+import { type Abogada, lawyerName, lawyerPath, TEXTOS } from '../servicios/contenido-sitio';
 import { publicPageFor } from '../servicios/rutas-sitio';
 
 interface SitioAbogadaProps {
@@ -28,7 +28,7 @@ export function SitioAbogada({ abogada }: SitioAbogadaProps) {
             <FotoAbogada abogada={abogada} tamano="grande" />
             <div>
               <h1 className="break-words font-titulos text-4xl font-semibold text-estudio-oscuro">
-                {abogada.nombre}
+                {lawyerName(abogada)}
               </h1>
               <p className="mt-1 font-medium text-estudio-azul">{abogada.titulo}</p>
             </div>

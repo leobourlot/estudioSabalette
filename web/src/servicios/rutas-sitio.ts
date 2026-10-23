@@ -2,6 +2,7 @@ import {
   ABOGADAS,
   APERTURA,
   hasOwnPage,
+  lawyerName,
   lawyerPath,
   MENSAJES_WHATSAPP,
   PESTANAS_LABORAL,
@@ -75,7 +76,7 @@ export const PUBLIC_PAGES: readonly PaginaPublica[] = [
   ...ABOGADAS.filter(hasOwnPage).map((abogada) =>
     page(
       lawyerPath(abogada),
-      pageTitle(abogada.nombre),
+      pageTitle(lawyerName(abogada)),
       abogada.resumen!,
       MENSAJES_WHATSAPP.general,
     ),

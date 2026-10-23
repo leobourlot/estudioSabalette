@@ -67,7 +67,8 @@ Nada en `src/servicios/` importa React (principio 3). Los componentes solo muest
 - `tailwind.config.js`: colores del estudio (ver "Identidad visual").
 - `public/.htaccess`: ver ".htaccess".
 - `public/marca/`, armado con el logo vectorizado que entregó el estudio (16/10/2026):
-  - `logo.svg`: el logo completo, `LOGO_PATH`: va en el encabezado, el pie y el ingreso, y es el favicon. La conversión del PDF dejaba la máscara del fondo con un área de 1 × 1 y el degradado no se veía: la máscara se amplía para que cubra todo el logo, y se quitan los metadatos del editor. Se probó un recorte solo con el monograma "PS" para los tamaños chicos, y el estudio lo descartó: el logo va siempre completo.
+  - `logo2.svg` (756 × 420), `LOGO_PATH2`: la versión apaisada del logo, que va en el encabezado del sitio público.
+  - `logo.svg`: el logo completo, `LOGO_PATH`: va en el pie y el ingreso, y es el favicon. La conversión del PDF dejaba la máscara del fondo con un área de 1 × 1 y el degradado no se veía: la máscara se amplía para que cubra todo el logo, y se quitan los metadatos del editor. Se probó un recorte solo con el monograma "PS" para los tamaños chicos, y el estudio lo descartó: el logo va siempre completo.
   - `logo.png` (512 × 512): el logo completo para `logo` e `image` de `LegalService` [RF-37] y para `apple-touch-icon`.
   - `compartir.png` (1200 × 630): el logo completo sobre su degradado, para `og:image` [RF-36].
   - Los PNG se generan con Chrome sin interfaz a partir de los SVG, sin datos de cámara (`fotos.test.ts`).
@@ -569,11 +570,11 @@ Deja de ser `<footer>`: el pie de página es otro elemento. Sigue al final de to
 
 ### Encabezado en pantallas chicas [RF-4, RF-6]
 - El encabezado pasa a ser `relative` y su fila no se parte: logo (40 px en pantallas chicas), nombre y "Menú" entran en 360 px.
-- Debajo de 420 px (`max-[419px]:`), `AccesoIngreso` se oculta en el encabezado y aparece como última opción del menú plegado; desde 420 px, al revés. Los dos son el mismo componente con la misma consulta: el encabezado consulta una sola vez y pasa la sección a los dos lugares.
+- Debajo de 768 px (`max-[767px]:`), mientras el menú está plegado, `AccesoIngreso` se oculta en el encabezado y aparece como última opción del menú; desde 768 px, al revés (en el menú lleva `min-[769px]:hidden`, y a 768 px el menú plegado ya no se muestra). Los dos son el mismo componente con la misma consulta: el encabezado consulta una sola vez y pasa la sección a los dos lugares.
 - El menú plegado deja de posicionarse respecto de "Menú": se despliega como panel `absolute inset-x-0 top-full` del encabezado, a lo ancho de la pantalla, así nunca queda cortado. Este era el error de la demo: el panel de 224 px se alineaba a la derecha de "Menú", que en 360 px quedaba a la izquierda, y salía de la pantalla.
 
 ### Pie de página [RF-44]
-`PieSitio` (`<footer>`) después de `ContactoSitio` en `DisenoSitio`: logo y nombre al inicio, accesos del menú, WhatsApp con el mensaje de la página y email, íconos de las redes (`IconoRed` con `aria-label` del nombre de la red), "© <año> Pertusatti | Sabalette - Abogadas. Todos los derechos reservados." y "Diseñado por" con el logo y el nombre de Bourder Web enlazados a https://bourderweb.com.ar (`target="_blank"`, `rel="noopener noreferrer"`).
+`PieSitio` (`<footer>`) después de `ContactoSitio` en `DisenoSitio`: logo y nombre al inicio, accesos del menú, WhatsApp con el mensaje de la página y email, íconos de las redes (`IconoRed` con `aria-label` del nombre de la red), "© <año> - Pertusatti | Sabalette - Abogadas. Todos los derechos reservados." y "Diseñado por" con el logo y el nombre de Bourder Web enlazados a https://bourderweb.com.ar (`target="_blank"`, `rel="noopener noreferrer"`). El pie termina con `pb-10`; para que el botón de WhatsApp no tape "Bourder Web" al final de la página (RF-28), desde 640 px, donde la última fila pone "Diseñado por" a la derecha, esa fila lleva `sm:pr-20`, más que el ancho del botón y su separación del borde (72 px). En pantallas más chicas "Diseñado por" va a la izquierda, lejos del botón.
 - El año sale de `__ANIO_PUBLICACION__`, una constante que Vite define al construir (`define` en `vite.config.ts`), igual en el build del navegador y en el de Node: el HTML prerenderizado y la hidratación coinciden. En los tests vale el año actual.
 - El logo de Bourder Web va en `public/marca/bourder-web.svg`, con `alt=""`: el enlace se anuncia con su nombre.
 

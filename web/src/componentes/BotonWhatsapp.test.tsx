@@ -24,12 +24,12 @@ describe('BotonWhatsapp (spec 007, RF-22, RF-26 y RF-27; spec 004, RF-19)', () =
 
     expect(whatsappMenu()).toEqual([
       {
-        texto: 'Carolina Pertusatti+54 9 3454 01-8174',
+        texto: 'Dra. Carolina Pertusatti+54 9 3454 01-8174',
         numero: '5493454018174',
         mensaje: null,
       },
       {
-        texto: 'Vanesa Sabalette+54 9 3455 41-4147',
+        texto: 'Dra. Vanesa Sabalette+54 9 3455 41-4147',
         numero: '5493455414147',
         mensaje: null,
       },

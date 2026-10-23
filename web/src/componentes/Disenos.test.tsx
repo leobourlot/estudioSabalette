@@ -121,8 +121,8 @@ describe('DisenoPortal (RF-16)', () => {
     expect(Array.from(footer.querySelectorAll('p')).map((p) => p.textContent)).toEqual([
       STUDIO_CONTACT.nombre,
       'Pueyrredón Nº 47, Concordia',
-      'WhatsApp Carolina Pertusatti: +54 9 3454 01-8174',
-      'WhatsApp Vanesa Sabalette: +54 9 3455 41-4147',
+      'WhatsApp Dra. Carolina Pertusatti: +54 9 3454 01-8174',
+      'WhatsApp Dra. Vanesa Sabalette: +54 9 3455 41-4147',
     ]);
     // Una tarjeta al final, con un margen debajo mayor que el botón de WhatsApp (spec 008, RF-4).
     expect(footer.className).toContain('pb-24');
@@ -201,8 +201,8 @@ describe('BloqueContactoEstudio (spec 004, RF-18)', () => {
     const footer = screen.getByRole('contentinfo', { name: 'Contacto del estudio' });
     expect(Array.from(footer.querySelectorAll('p')).map((p) => p.textContent)).toEqual([
       STUDIO_CONTACT.nombre,
-      'WhatsApp Carolina Pertusatti: +54 9 3454 01-8174',
-      'WhatsApp Vanesa Sabalette: +54 9 3455 41-4147',
+      'WhatsApp Dra. Carolina Pertusatti: +54 9 3454 01-8174',
+      'WhatsApp Dra. Vanesa Sabalette: +54 9 3455 41-4147',
     ]);
   });
 });

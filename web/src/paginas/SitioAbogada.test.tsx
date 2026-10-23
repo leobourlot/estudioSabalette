@@ -35,14 +35,16 @@ describe('SitioAbogada (spec 007, RF-7 y RF-19)', () => {
       '/#abogadas',
     );
     expect(screen.getByText('VSR')).toBeTruthy();
-    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe('Vanesa Sabalette Rabello');
+    expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(
+      'Dra. Vanesa Sabalette Rabello',
+    );
     expect(within(screen.getByRole('main')).getByText(TITULO_PROFESIONAL)).toBeTruthy();
     const paragraphs = Array.from(screen.getByRole('main').querySelectorAll('p')).map(
       (p) => p.textContent,
     );
     expect(paragraphs).toEqual([TITULO_PROFESIONAL, ...vanesa.texto!]);
     expect(headingOutline(container)).toEqual([
-      'h1 Vanesa Sabalette Rabello',
+      'h1 Dra. Vanesa Sabalette Rabello',
       'h2 Contactate con nosotros',
     ]);
   });
@@ -51,7 +53,9 @@ describe('SitioAbogada (spec 007, RF-7 y RF-19)', () => {
     renderAt('/abogadas/vanesa-sabalette-rabello', <SitioAbogada abogada={vanesa} />);
 
     expect(whatsappText()).toBe(MENSAJES_WHATSAPP.general);
-    expect(document.title).toBe('Vanesa Sabalette Rabello · Pertusatti | Sabalette - Abogadas');
+    expect(document.title).toBe(
+      'Dra. Vanesa Sabalette Rabello · Pertusatti | Sabalette - Abogadas',
+    );
   });
 });
 
@@ -60,14 +64,18 @@ describe('SitioAbogada: Carolina Marisa Pertusatti (spec 007, RF-19)', () => {
     renderAt('/abogadas/carolina-pertusatti', <SitioAbogada abogada={carolina} />);
 
     expect(screen.getByRole('heading', { level: 1 }).textContent).toBe(
-      'Carolina Marisa Pertusatti',
+      'Dra. Carolina Marisa Pertusatti',
     );
-    expect(screen.getByRole('img', { name: 'Foto de Carolina Marisa Pertusatti' })).toBeTruthy();
+    expect(
+      screen.getByRole('img', { name: 'Foto de la Dra. Carolina Marisa Pertusatti' }),
+    ).toBeTruthy();
     const paragraphs = Array.from(screen.getByRole('main').querySelectorAll('p')).map(
       (p) => p.textContent,
     );
     expect(paragraphs).toEqual([TITULO_PROFESIONAL, ...carolina.texto!]);
-    expect(document.title).toBe('Carolina Marisa Pertusatti · Pertusatti | Sabalette - Abogadas');
+    expect(document.title).toBe(
+      'Dra. Carolina Marisa Pertusatti · Pertusatti | Sabalette - Abogadas',
+    );
   });
 });
 

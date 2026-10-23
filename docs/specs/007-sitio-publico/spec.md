@@ -42,7 +42,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 - RF-4: EL SISTEMA muestra en todas las páginas públicas un encabezado con:
   - El logo del estudio, que lleva al inicio.
   - Un menú con "Servicios", "Abogadas" y "Contacto".
-  - El acceso de ingreso (RF-29, RF-30). MIENTRAS la pantalla mide menos de 420 px de ancho, el acceso va dentro del menú plegado, como su última opción, para que el logo, el nombre y "Menú" entren en una sola línea.
+  - El acceso de ingreso (RF-29, RF-30). MIENTRAS el menú está plegado (pantallas de menos de 768 px de ancho, RF-6), el acceso va dentro del menú, como su última opción, para que el logo, el nombre y "Menú" entren en una sola línea. Desde 768 px va al lado del menú.
 - RF-5: CUANDO un visitante elige "Servicios" o "Abogadas" en el menú, desde cualquier página, EL SISTEMA lo lleva a esa sección del inicio. CUANDO elige "Contacto", lo lleva al bloque de contacto del final de la página en la que está (RF-23).
 - RF-6: MIENTRAS la pantalla mide menos de 768 px de ancho, EL SISTEMA muestra el menú plegado detrás de un botón "Menú", que lo abre y lo cierra e indica si está abierto. Al elegir una opción, el menú se cierra. El logo, el nombre y el botón "Menú" quedan siempre a la vista, en una misma línea. Abierto, el menú se despliega debajo del encabezado a lo ancho de la pantalla, con todas sus opciones a la vista: nunca queda cortado ni fuera de la pantalla.
 - RF-7: EL SISTEMA muestra en cada página de servicio el acceso "Volver a servicios", que lleva a la sección Servicios del inicio, y bajo el título "Otros servicios" los accesos a los otros tres servicios. En cada página de abogada muestra el acceso "Volver a abogadas", que lleva a la sección Abogadas del inicio.
@@ -85,21 +85,22 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 ### Abogadas
 - RF-18: EL SISTEMA muestra en la sección Abogadas el título "Abogadas" y una tarjeta por cada integrante, en el orden del logo: Carolina Marisa Pertusatti y Vanesa Sabalette Rabello. Cada tarjeta muestra:
   - La foto (RF-21).
-  - El nombre.
+  - El nombre, con "Dra." adelante (por ejemplo, "Dra. Vanesa Sabalette Rabello").
   - Su título profesional, "Abogada | Mediadora | Diplomada en Derecho Laboral" (T-21).
   - El resumen (T-19 para Carolina Marisa Pertusatti y T-13 para Vanesa Sabalette Rabello).
   - El acceso "Más información", que lleva a la página de esa abogada.
-- RF-19: CUANDO un visitante abre la página de una abogada, EL SISTEMA muestra su foto (RF-21), su nombre, su título profesional (T-21) y su texto completo (T-20 para Carolina Marisa Pertusatti y T-14 para Vanesa Sabalette Rabello).
+- RF-19: CUANDO un visitante abre la página de una abogada, EL SISTEMA muestra su foto (RF-21), su nombre con "Dra." adelante, su título profesional (T-21) y su texto completo (T-20 para Carolina Marisa Pertusatti y T-14 para Vanesa Sabalette Rabello).
 - RF-20: MIENTRAS falte el resumen o el texto completo de una abogada, EL SISTEMA muestra su tarjeta solo con la foto (RF-21), el nombre y su título profesional, sin resumen y sin "Más información", y esa abogada no tiene página propia. Hoy las dos integrantes tienen sus textos; la regla vale para una integrante que se sume sin ellos.
-- RF-21: EL SISTEMA muestra la foto de cada abogada en un círculo, la misma en la tarjeta y en su página, con distinto tamaño. MIENTRAS la foto no exista, no haya terminado de cargar o no se pueda cargar, EL SISTEMA muestra en su lugar las iniciales de todas las palabras de su nombre (CMP, VSR), en blanco sobre el azul del logo, con la misma forma y el mismo tamaño que la foto, sin ícono de imagen rota y sin que el resto de la página se mueva al aparecer la foto. Las fotos se publican sin los datos que guarda la cámara (ubicación, dispositivo, fecha). Su texto alternativo es "Foto de" seguido del nombre de la abogada.
+- RF-21: EL SISTEMA muestra la foto de cada abogada en un círculo, la misma en la tarjeta y en su página, con distinto tamaño. MIENTRAS la foto no exista, no haya terminado de cargar o no se pueda cargar, EL SISTEMA muestra en su lugar las iniciales de todas las palabras de su nombre (CMP, VSR), en blanco sobre el azul del logo, con la misma forma y el mismo tamaño que la foto, sin ícono de imagen rota y sin que el resto de la página se mueva al aparecer la foto. Las fotos se publican sin los datos que guarda la cámara (ubicación, dispositivo, fecha). Su texto alternativo es "Foto de la" seguido del nombre de la abogada con "Dra." adelante ("Foto de la Dra. Vanesa Sabalette Rabello").
+- RF-46: EL SISTEMA muestra o anuncia el nombre de una abogada siempre con "Dra." adelante: en su tarjeta y en su página, en el título de su página (T-16), en el texto alternativo de su foto, en "Más información" para quien usa lector de pantalla ("Más información sobre la Dra. …") y en cada WhatsApp (RF-22). Las iniciales (RF-21) y la dirección de su página (RF-8) se arman con el nombre sin "Dra.".
 
 ### Contacto
 - RF-22: EL SISTEMA toma los datos de contacto del estudio de una única fuente, la misma que usa el portal (spec 004, RF-18). Son públicos y fijos, y no se editan desde el panel:
   - Nombre: "Pertusatti | Sabalette - Abogadas".
-  - WhatsApp de cada abogada, en el orden del nombre del estudio: "Carolina Pertusatti", +54 9 3454 01-8174, y "Vanesa Sabalette", +54 9 3455 41-4147. Donde se muestra un número, va con el nombre de su abogada ("Carolina Pertusatti: +54 9 3454 01-8174").
+  - WhatsApp de cada abogada, en el orden del nombre del estudio: "Dra. Carolina Pertusatti", +54 9 3454 01-8174, y "Dra. Vanesa Sabalette", +54 9 3455 41-4147. Donde se muestra un número, va con el nombre de su abogada ("Dra. Carolina Pertusatti: +54 9 3454 01-8174").
   - Dirección: "Pueyrredón Nº 47, Concordia".
   - Email: estudiojuridicovsr@gmail.com.
-  - Redes sociales: Instagram, con la cuenta "@pertusattisabaletteabogadas" (https://www.instagram.com/pertusattisabaletteabogadas/).
+  - Redes sociales: Instagram, con la cuenta "@persaestudiojuridico" (https://www.instagram.com/persaestudiojuridico/).
   - Días y horarios de atención: los que informe el estudio (ver Dudas abiertas).
 - RF-23: EL SISTEMA muestra al final de todas las páginas públicas, antes del pie de página (RF-44), un bloque de contacto sobre el degradado del logo, con el título "Contactate con nosotros", una línea corta debajo del título y el texto "Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal." (T-17). Debajo, cada dato en su renglón, con un ícono, una etiqueta corta en mayúsculas y el dato. Los íconos de Ubicación (el pin de Google Maps), de WhatsApp y de cada red llevan los colores de su marca, sin fondo, con un borde blanco que sigue el dibujo; los demás van en blanco:
   - "Ubicación": la dirección, como texto, y el enlace "Cómo llegar", que abre esa dirección en Google Maps.
@@ -148,7 +149,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Los accesos "Servicios", "Abogadas" y "Contacto", como en el menú (RF-5).
   - Las redes: el WhatsApp de cada abogada, con su nombre y su número, como enlace con el mensaje de la página (RF-27), y cada cuenta de las redes informadas, cada una con el mismo ícono del bloque de contacto, a color y con borde blanco (RF-23), y el nombre de la red (por ejemplo, "Instagram"), como enlace a su perfil. Si una red tiene más de una cuenta, cada enlace suma la cuenta al nombre. Sin redes informadas, solo se muestran los WhatsApp (RF-24).
   - Debajo de las redes, el email, como enlace para escribirle al estudio, y la dirección, como enlace que la abre en Google Maps, cada uno con el mismo ícono del bloque de contacto (RF-23). Cada uno se muestra solo si el estudio lo informó (RF-24).
-  - La leyenda "© <año> Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.", con el año en que se publicó el sitio (T-18).
+  - La leyenda "© <año> - Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.", con el año en que se publicó el sitio (T-18).
   - La leyenda "Diseñado por" con el logo y el nombre "Bourder Web", que llevan a https://bourderweb.com.ar (T-18). Como todo enlace externo, se abre aparte (RF-25).
 
 ### Animaciones
@@ -187,7 +188,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 - **Navegación:**
   - Visitante que llega desde un buscador directamente a la página de un servicio, sin pasar por el inicio: tiene el encabezado, "Volver a servicios", los otros servicios, el bloque de contacto y el pie de página (RF-4, RF-7, RF-23, RF-44).
   - Pantalla de 360 px: el logo, el nombre y "Menú" van en una línea; el acceso de ingreso ("Ingresar", "Ir a mi portal" o "Ir al panel") es la última opción del menú plegado, y el menú abierto se ve completo, a lo ancho de la pantalla (RF-4, RF-6).
-  - Pantalla de entre 420 y 767 px: el acceso de ingreso vuelve al encabezado, al lado de "Menú" (RF-4).
+  - Pantalla de 768 px o más: el menú es una fila y el acceso de ingreso va a su lado, en el encabezado (RF-4).
   - "Servicios" o "Abogadas" elegidos desde una página de detalle: llevan al inicio, ya ubicado en esa sección (RF-5).
   - "Contacto" elegido en la página de dirección inexistente: lleva a su propio bloque de contacto (RF-5, RF-9).
   - Menú abierto en el celular y el visitante elige una opción: el menú se cierra y se ve el destino (RF-6).
@@ -323,7 +324,7 @@ Ninguna impide planificar: cada dato pendiente tiene definido qué se muestra mi
 - [NECESITA ACLARACIÓN] Días y horarios de atención.
 - Resuelta el 19/10/2026: el estudio entregó las fotos de las dos abogadas y los textos de Carolina Marisa Pertusatti (T-19 y T-20), y se aprobó el título profesional de las dos (T-21).
 - Resuelta el 16/10/2026: el estudio entregó el logo vectorizado en buena calidad (fondo azul).
-- Resuelta el 17/10/2026: el estudio informó su dirección ("Pueyrredón Nº 47, Concordia"), su email (estudiojuridicovsr@gmail.com) y su red social (Instagram, "@pertusattisabaletteabogadas") (RF-22).
+- Resuelta el 17/10/2026: el estudio informó su dirección ("Pueyrredón Nº 47, Concordia"), su email (estudiojuridicovsr@gmail.com) y su red social (Instagram, "@pertusattisabaletteabogadas") (RF-22). El 23/10/2026 la cuenta de Instagram pasó a ser "@persaestudiojuridico".
 
 ## Anexo — Textos aprobados
 Los textos de los servicios y de la abogada son los de la clienta. Las frases de las tarjetas y el resumen son recortes de esos textos, aprobados el 12/10/2026. Los mensajes de WhatsApp, los títulos, las descripciones y los textos de la interfaz se redactaron para esta spec. Los textos del bloque de contacto (T-17) y del pie de página (T-18) se tomaron del modelo que eligió el estudio y se aprobaron el 15/10/2026.
@@ -458,10 +459,10 @@ El título del inicio es el nombre del estudio. El de las demás páginas y pant
   - Título: Sucesiones · Pertusatti | Sabalette - Abogadas
   - Descripción: el texto T-6.
 - Página de Carolina Marisa Pertusatti
-  - Título: Carolina Marisa Pertusatti · Pertusatti | Sabalette - Abogadas
+  - Título: Dra. Carolina Marisa Pertusatti · Pertusatti | Sabalette - Abogadas
   - Descripción: el texto T-19.
 - Página de Vanesa Sabalette Rabello
-  - Título: Vanesa Sabalette Rabello · Pertusatti | Sabalette - Abogadas
+  - Título: Dra. Vanesa Sabalette Rabello · Pertusatti | Sabalette - Abogadas
   - Descripción: el texto T-13.
 - Página de dirección inexistente
   - Título: Página no encontrada · Pertusatti | Sabalette - Abogadas
@@ -481,7 +482,7 @@ El título del inicio es el nombre del estudio. El de las demás páginas y pant
 - Dirección inexistente: "No encontramos esa página", "Puede que la dirección esté mal escrita o que la página ya no exista.", "Ir al inicio".
 
 ### T-18 — Pie de página
-- Derechos: "© <año> Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.", donde <año> es el año en que se publicó el sitio.
+- Derechos: "© <año> - Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.", donde <año> es el año en que se publicó el sitio.
 - Diseño: "Diseñado por", seguido del logo y el nombre "Bourder Web", que llevan a https://bourderweb.com.ar.
 
 ### T-19 — Resumen de Carolina Marisa Pertusatti (tarjeta)

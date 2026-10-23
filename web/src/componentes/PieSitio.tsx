@@ -51,9 +51,9 @@ const MENU = [
  * Pie de todas las páginas públicas, después del bloque de contacto (spec 007, RF-44): el logo y
  * el nombre, los accesos del menú, el WhatsApp de cada abogada y cada cuenta de las redes
  * con su ícono a color (el mismo del contacto) y el nombre de la red, la leyenda de derechos y "Diseñado por Bourder Web". Lo que
- * el estudio no informó no se muestra (RF-24), salvo las redes de muestra en desarrollo. Termina
- * con un margen mayor que el botón de WhatsApp, así al final de la página todo se puede ver y usar
- * (RF-28).
+ * el estudio no informó no se muestra (RF-24), salvo las redes de muestra en desarrollo. La
+ * última fila deja lugar a la derecha para el botón de WhatsApp, así al final de la página todo
+ * se puede ver y usar (RF-28).
  */
 export function PieSitio({
   mensaje,
@@ -154,7 +154,8 @@ export function PieSitio({
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col gap-3 border-t border-estudio-blanco/15 pt-6 sm:flex-row sm:items-center sm:justify-between">
+        {/* Desde 640 px "Diseñado por" va a la derecha: el margen lo deja fuera del botón de WhatsApp (RF-28). */}
+        <div className="mt-10 flex flex-col gap-3 border-t border-estudio-blanco/15 pt-6 sm:flex-row sm:items-center sm:justify-between sm:pr-20">
           <p>{copyrightNotice(anio)}</p>
           <p className="flex flex-wrap items-center gap-x-2">
             {TEXTOS.pie.disenadoPor}{' '}

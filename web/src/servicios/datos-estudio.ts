@@ -16,7 +16,7 @@ export interface RedSocial {
 
 /** El WhatsApp de una abogada (spec 007, RF-22). */
 export interface WhatsappAbogada {
-  /** Con qué nombre se muestra (por ejemplo, "Carolina Pertusatti"). */
+  /** Con qué nombre se muestra, con "Dra." adelante (por ejemplo, "Dra. Carolina Pertusatti"). */
   nombre: string;
   /** Número con código de país y de área, solo dígitos, como lo pide wa.me. */
   numero: string;
@@ -45,8 +45,8 @@ export const STUDIO_CONTACT: StudioContact = {
   nombre: 'Pertusatti | Sabalette - Abogadas',
   nombreLineas: ['Pertusatti | Sabalette', 'Abogadas'],
   whatsapps: [
-    { nombre: 'Carolina Pertusatti', numero: '5493454018174', visible: '+54 9 3454 01-8174' },
-    { nombre: 'Vanesa Sabalette', numero: '5493455414147', visible: '+54 9 3455 41-4147' },
+    { nombre: 'Dra. Carolina Pertusatti', numero: '5493454018174', visible: '+54 9 3454 01-8174' },
+    { nombre: 'Dra. Vanesa Sabalette', numero: '5493455414147', visible: '+54 9 3455 41-4147' },
   ],
   direccion: 'Pueyrredón Nº 47, Concordia',
   horarios: [],
@@ -54,8 +54,8 @@ export const STUDIO_CONTACT: StudioContact = {
   redes: [
     {
       red: 'Instagram',
-      usuario: '@pertusattisabaletteabogadas',
-      url: 'https://www.instagram.com/pertusattisabaletteabogadas/',
+      usuario: '@persaestudiojuridico',
+      url: 'https://www.instagram.com/persaestudiojuridico/',
     },
   ],
 };

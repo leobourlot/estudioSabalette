@@ -44,7 +44,7 @@ describe('DisenoSitio (spec 007, RF-4, RF-23, RF-26 y RF-28)', () => {
     expect(whatsappMessage()).toBe(MESSAGE);
     // El contacto y el pie: un enlace por abogada en cada uno.
     const links = screen.getAllByRole('link', {
-      name: /^(Carolina Pertusatti|Vanesa Sabalette): /,
+      name: /^Dra\. (Carolina Pertusatti|Vanesa Sabalette): /,
     });
     expect(links).toHaveLength(4);
     for (const link of links) {
@@ -52,10 +52,15 @@ describe('DisenoSitio (spec 007, RF-4, RF-23, RF-26 y RF-28)', () => {
     }
   });
 
-  it('el pie de página deja lugar abajo para el botón (RF-28)', () => {
+  it('el pie de página deja lugar a la derecha de su última fila para el botón (RF-28)', () => {
     renderLayout();
 
-    expect(screen.getByRole('contentinfo').className).toContain('pb-28');
+    const footer = screen.getByRole('contentinfo');
+    expect(footer.className).toContain('pb-10');
+    // Desde 640 px "Diseñado por" va a la derecha: queda fuera de los 72 px del botón.
+    const lastRow = footer.firstElementChild!.lastElementChild!;
+    expect(lastRow.textContent).toContain('Diseñado por');
+    expect(lastRow.className).toContain('sm:pr-20');
   });
 });
 

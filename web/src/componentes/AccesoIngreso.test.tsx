@@ -80,9 +80,9 @@ describe('AccesoIngreso (spec 007, RF-29 a RF-32)', () => {
 
 describe('AccesoIngreso en cada lugar (spec 007, RF-4)', () => {
   it('suma las clases del lugar donde va', () => {
-    render(<AccesoIngreso seccion={null} className="max-[419px]:hidden" />);
+    render(<AccesoIngreso seccion={null} className="max-[767px]:hidden" />);
 
-    expect(access().className).toContain('max-[419px]:hidden');
+    expect(access().className).toContain('max-[767px]:hidden');
     expect(access().className).toContain('min-h-11');
   });
 });

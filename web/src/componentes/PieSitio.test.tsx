@@ -58,7 +58,10 @@ describe('PieSitio (spec 007, RF-44)', () => {
         .getAllByRole('link')
         .slice(0, 2)
         .map((a) => a.textContent),
-    ).toEqual(['Carolina Pertusatti: +54 9 3454 01-8174', 'Vanesa Sabalette: +54 9 3455 41-4147']);
+    ).toEqual([
+      'Dra. Carolina Pertusatti: +54 9 3454 01-8174',
+      'Dra. Vanesa Sabalette: +54 9 3455 41-4147',
+    ]);
   });
 
   it('en los tests no aparecen las redes de muestra, que son solo de desarrollo', () => {
@@ -88,7 +91,7 @@ describe('PieSitio (spec 007, RF-44)', () => {
 
     expect(
       footer().getByText(
-        '© 2027 Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.',
+        '© 2027 - Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.',
       ),
     ).toBeTruthy();
   });
@@ -98,7 +101,7 @@ describe('PieSitio (spec 007, RF-44)', () => {
 
     expect(
       footer().getByText(
-        `© ${new Date().getFullYear()} Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.`,
+        `© ${new Date().getFullYear()} - Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.`,
       ),
     ).toBeTruthy();
   });
@@ -136,8 +139,8 @@ describe('PieSitio: redes de una sola cuenta (RF-44)', () => {
 
     const redes = within(screen.getByRole('list', { name: 'Redes' }));
     expect(redes.getAllByRole('link').map((a) => a.textContent)).toEqual([
-      'Carolina Pertusatti: +54 9 3454 01-8174',
-      'Vanesa Sabalette: +54 9 3455 41-4147',
+      'Dra. Carolina Pertusatti: +54 9 3454 01-8174',
+      'Dra. Vanesa Sabalette: +54 9 3455 41-4147',
       'LinkedIn',
     ]);
   });

@@ -230,6 +230,14 @@ export function hasOwnPage(abogada: Abogada): boolean {
   return abogada.resumen !== null && abogada.texto !== null;
 }
 
+/**
+ * El nombre de una abogada como se muestra: siempre con "Dra." adelante (RF-18, RF-19 y RF-21).
+ * Las iniciales y la dirección de su página salen del nombre sin el tratamiento.
+ */
+export function lawyerName(abogada: Abogada): string {
+  return `Dra. ${abogada.nombre}`;
+}
+
 /** Dirección de la página de una abogada (RF-8). */
 export function lawyerPath(abogada: Abogada): string {
   return `/abogadas/${abogada.slug}`;
@@ -291,7 +299,7 @@ export const TEXTOS = {
     irAlInicio: 'Ir al inicio',
   },
   pie: {
-    derechos: '© <año> Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.',
+    derechos: '© <año> - Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.',
     disenadoPor: 'Diseñado por',
     bourderWeb: 'Bourder Web',
     bourderWebUrl: 'https://bourderweb.com.ar',

@@ -10,6 +10,7 @@ import {
 } from '../pruebas/anexo-spec-007';
 import {
   ABOGADAS,
+  lawyerName,
   APERTURA,
   type Bloque,
   copyrightNotice,
@@ -138,6 +139,13 @@ describe('abogadas (RF-18 a RF-20)', () => {
     ]);
   });
 
+  it('se muestran con "Dra." adelante', () => {
+    expect(ABOGADAS.map(lawyerName)).toEqual([
+      'Dra. Carolina Marisa Pertusatti',
+      'Dra. Vanesa Sabalette Rabello',
+    ]);
+  });
+
   it('las dos tienen su resumen y su texto, y por eso su página', () => {
     expect(hasOwnPage(lawyer('carolina-pertusatti'))).toBe(true);
     expect(hasOwnPage(lawyer('vanesa-sabalette-rabello'))).toBe(true);
@@ -229,7 +237,7 @@ describe('pie de página contra el anexo (T-18, RF-44)', () => {
   it('la leyenda de derechos, con el año', () => {
     expect([TEXTOS.pie.derechos]).toEqual(quotedStrings(line('Derechos')));
     expect(copyrightNotice(2026)).toBe(
-      '© 2026 Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.',
+      '© 2026 - Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.',
     );
   });
 

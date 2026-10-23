@@ -1,4 +1,10 @@
-import { type Abogada, hasOwnPage, lawyerPath, TEXTOS } from '../servicios/contenido-sitio';
+import {
+  type Abogada,
+  hasOwnPage,
+  lawyerName,
+  lawyerPath,
+  TEXTOS,
+} from '../servicios/contenido-sitio';
 import { TEXT_LINK } from './estilos-sitio';
 import { FotoAbogada } from './FotoAbogada';
 
@@ -16,14 +22,15 @@ export function TarjetaAbogada({ abogada }: TarjetaAbogadaProps) {
     <article className="flex flex-col items-center rounded-lg border border-slate-200 bg-white p-6 text-center shadow-sm transition hover:shadow-md focus-within:shadow-md motion-safe:hover:-translate-y-1 motion-safe:focus-within:-translate-y-1 motion-reduce:transition-none">
       <FotoAbogada abogada={abogada} tamano="mediana" diferida />
       <h3 className="mt-4 font-titulos text-2xl font-semibold text-estudio-oscuro">
-        {abogada.nombre}
+        {lawyerName(abogada)}
       </h3>
       <p className="text-sm font-medium text-estudio-azul">{abogada.titulo}</p>
       {hasOwnPage(abogada) && (
         <>
           <p className="mt-3 break-words text-slate-700">{abogada.resumen}</p>
           <a href={lawyerPath(abogada)} className={`mt-3 ${TEXT_LINK}`}>
-            {TEXTOS.inicio.masInformacion} <span className="sr-only">sobre {abogada.nombre}</span>
+            {TEXTOS.inicio.masInformacion}{' '}
+            <span className="sr-only">sobre la {lawyerName(abogada)}</span>
           </a>
         </>
       )}

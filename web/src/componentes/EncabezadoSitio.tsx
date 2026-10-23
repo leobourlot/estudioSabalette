@@ -1,5 +1,5 @@
 import type { SeccionSesion } from '../servicios/estado-sesion';
-import { LOGO_PATH, LOGO_PATH2, LOGO_PATH3 } from '../servicios/marca';
+import { LOGO_PATH2 } from '../servicios/marca';
 import { AccesoIngreso, useSeccionSesion } from './AccesoIngreso';
 import { FOCUS_RING } from './estilos-sitio';
 import { MenuSitio } from './MenuSitio';
@@ -12,9 +12,9 @@ interface EncabezadoSitioProps {
 
 /**
  * Encabezado de las páginas públicas (spec 007, RF-3, RF-4 y RF-6): el logo y el nombre del
- * estudio, que llevan al inicio, el menú y el acceso de ingreso, en una sola línea. Debajo de
- * 420 px el acceso pasa a ser la última opción del menú plegado, para que el logo, el nombre y
- * "Menú" entren; desde 420 px va al lado del menú. La sesión se consulta una sola vez para los
+ * estudio, que llevan al inicio, el menú y el acceso de ingreso, en una sola línea. Mientras el
+ * menú está plegado (debajo de 768 px), el acceso es su última opción, para que el logo, el
+ * nombre y "Menú" entren; desde 768 px va al lado del menú. La sesión se consulta una sola vez para los
  * dos lugares. El encabezado es el elemento posicionado del menú desplegado. No queda fijo al
  * desplazar, para no ocupar la pantalla con el celular en horizontal. El logo no se anuncia: el
  * enlace ya se llama como el estudio.

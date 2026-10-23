@@ -25,8 +25,8 @@ describe('SitioInicio (spec 007, RF-11, RF-12 y RF-18)', () => {
       'h3 Derecho de Daños',
       'h3 Sucesiones',
       'h2 Abogadas',
-      'h3 Carolina Marisa Pertusatti',
-      'h3 Vanesa Sabalette Rabello',
+      'h3 Dra. Carolina Marisa Pertusatti',
+      'h3 Dra. Vanesa Sabalette Rabello',
       'h2 Contactate con nosotros',
     ]);
   });

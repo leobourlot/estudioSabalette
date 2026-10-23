@@ -19,7 +19,7 @@ const withoutTexts: Abogada = {
 };
 
 const initials = (text: string) => screen.getByText(text);
-const photo = () => screen.queryByRole('img', { name: 'Foto de Vanesa Sabalette Rabello' });
+const photo = () => screen.queryByRole('img', { name: 'Foto de la Dra. Vanesa Sabalette Rabello' });
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -90,13 +90,15 @@ describe('TarjetaAbogada (spec 007, RF-18 y RF-20)', () => {
     render(<TarjetaAbogada abogada={vanesa} />);
 
     expect(
-      screen.getByRole('heading', { level: 3, name: 'Vanesa Sabalette Rabello' }),
+      screen.getByRole('heading', { level: 3, name: 'Dra. Vanesa Sabalette Rabello' }),
     ).toBeTruthy();
     expect(screen.getByText(TITULO_PROFESIONAL)).toBeTruthy();
-    expect(screen.getByRole('img', { name: 'Foto de Vanesa Sabalette Rabello' })).toBeTruthy();
+    expect(
+      screen.getByRole('img', { name: 'Foto de la Dra. Vanesa Sabalette Rabello' }),
+    ).toBeTruthy();
     expect(screen.getByText(vanesa.resumen!)).toBeTruthy();
     const link = screen.getByRole('link', {
-      name: 'Más información sobre Vanesa Sabalette Rabello',
+      name: 'Más información sobre la Dra. Vanesa Sabalette Rabello',
     });
     expect(link.getAttribute('href')).toBe('/abogadas/vanesa-sabalette-rabello');
     expect(initials('VSR')).toBeTruthy();
@@ -106,13 +108,15 @@ describe('TarjetaAbogada (spec 007, RF-18 y RF-20)', () => {
     render(<TarjetaAbogada abogada={carolina} />);
 
     expect(
-      screen.getByRole('heading', { level: 3, name: 'Carolina Marisa Pertusatti' }),
+      screen.getByRole('heading', { level: 3, name: 'Dra. Carolina Marisa Pertusatti' }),
     ).toBeTruthy();
-    expect(screen.getByRole('img', { name: 'Foto de Carolina Marisa Pertusatti' })).toBeTruthy();
+    expect(
+      screen.getByRole('img', { name: 'Foto de la Dra. Carolina Marisa Pertusatti' }),
+    ).toBeTruthy();
     expect(screen.getByText(carolina.resumen!)).toBeTruthy();
     expect(
       screen
-        .getByRole('link', { name: 'Más información sobre Carolina Marisa Pertusatti' })
+        .getByRole('link', { name: 'Más información sobre la Dra. Carolina Marisa Pertusatti' })
         .getAttribute('href'),
     ).toBe('/abogadas/carolina-pertusatti');
     expect(initials('CMP')).toBeTruthy();
@@ -121,7 +125,7 @@ describe('TarjetaAbogada (spec 007, RF-18 y RF-20)', () => {
   it('sin sus textos: solo foto, nombre y título profesional', () => {
     const { container } = render(<TarjetaAbogada abogada={withoutTexts} />);
 
-    expect(screen.getByRole('heading', { level: 3, name: 'Nueva Integrante' })).toBeTruthy();
+    expect(screen.getByRole('heading', { level: 3, name: 'Dra. Nueva Integrante' })).toBeTruthy();
     expect(initials('NI')).toBeTruthy();
     expect(screen.queryByRole('link')).toBeNull();
     expect(Array.from(container.querySelectorAll('p')).map((p) => p.textContent)).toEqual([

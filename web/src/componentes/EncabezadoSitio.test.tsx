@@ -18,7 +18,7 @@ describe('EncabezadoSitio (spec 007, RF-3, RF-4 y RF-6)', () => {
     const home = screen.getByRole('link', { name: 'Pertusatti | Sabalette - Abogadas' });
     expect(home.getAttribute('href')).toBe('/');
     expect(home.querySelector('img')!.getAttribute('alt')).toBe('');
-    expect(home.querySelector('img')!.getAttribute('src')).toBe('/marca/logo.svg');
+    expect(home.querySelector('img')!.getAttribute('src')).toBe('/marca/logo2.svg');
   });
 
   it('logo, nombre, menú y acceso van en una sola línea, sin partirse', () => {
@@ -29,16 +29,16 @@ describe('EncabezadoSitio (spec 007, RF-3, RF-4 y RF-6)', () => {
     expect(row.className).not.toContain('flex-wrap');
   });
 
-  it('el acceso está en el encabezado desde 420 px y en el menú plegado debajo de 420 px', () => {
+  it('el acceso está en el encabezado desde 768 px y en el menú plegado debajo de 768 px', () => {
     render(<EncabezadoSitio consultarSesion={() => new Promise(() => {})} />);
 
     const header = within(screen.getByRole('banner'));
     const accesses = header.getAllByRole('link', { name: 'Ingresar' });
     expect(accesses).toHaveLength(2);
     const inMenu = dropdown().getByRole('link', { name: 'Ingresar' });
-    expect(inMenu.closest('li')!.className).toContain('min-[420px]:hidden');
+    expect(inMenu.closest('li')!.className).toContain('min-[769px]:hidden');
     const inHeader = accesses.find((a) => a !== inMenu)!;
-    expect(inHeader.className).toContain('max-[419px]:hidden');
+    expect(inHeader.className).toContain('max-[767px]:hidden');
     expect(inHeader.closest('details')).toBeNull();
   });
 
