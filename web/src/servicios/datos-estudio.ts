@@ -14,14 +14,22 @@ export interface RedSocial {
   url: string;
 }
 
+/** El WhatsApp de una abogada (spec 007, RF-22). */
+export interface WhatsappAbogada {
+  /** Con qué nombre se muestra (por ejemplo, "Carolina Pertusatti"). */
+  nombre: string;
+  /** Número con código de país y de área, solo dígitos, como lo pide wa.me. */
+  numero: string;
+  /** El mismo número, como se muestra. */
+  visible: string;
+}
+
 export interface StudioContact {
   nombre: string;
   /** El nombre como se muestra en pantalla: la primera línea no se corta (RF-3). */
   nombreLineas: readonly [string, string];
-  /** Número con código de país y de área, solo dígitos, como lo pide wa.me. */
-  whatsapp: string;
-  /** El mismo número, como se muestra. */
-  whatsappVisible: string;
+  /** Los WhatsApp del estudio, uno por abogada, en el orden del logo (RF-22). */
+  whatsapps: readonly WhatsappAbogada[];
   /** Se muestra como texto. null mientras el estudio no la informe (RF-24). */
   direccion: string | null;
   /** Días y horarios de atención, un renglón por elemento. Vacío mientras no se informen. */
@@ -36,8 +44,10 @@ export interface StudioContact {
 export const STUDIO_CONTACT: StudioContact = {
   nombre: 'Pertusatti | Sabalette - Abogadas',
   nombreLineas: ['Pertusatti | Sabalette', 'Abogadas'],
-  whatsapp: '5493455414147',
-  whatsappVisible: '+54 9 3455 41-4147',
+  whatsapps: [
+    { nombre: 'Carolina Pertusatti', numero: '5493454018174', visible: '+54 9 3454 01-8174' },
+    { nombre: 'Vanesa Sabalette', numero: '5493455414147', visible: '+54 9 3455 41-4147' },
+  ],
   direccion: 'Pueyrredón Nº 47, Concordia',
   horarios: [],
   email: 'estudiojuridicovsr@gmail.com',
@@ -51,12 +61,12 @@ export const STUDIO_CONTACT: StudioContact = {
 };
 
 /**
- * Enlace que abre una conversación de WhatsApp con el estudio. Con un mensaje, lo deja escrito
+ * Enlace que abre una conversación de WhatsApp con una abogada. Con un mensaje, lo deja escrito
  * para que el visitante lo cambie o lo envíe (spec 007, RF-27); sin mensaje, la abre vacía, como
  * en el ingreso y el portal (spec 004, RF-19).
  */
-export function whatsappUrl(mensaje?: string, contact: StudioContact = STUDIO_CONTACT): string {
-  const base = `https://wa.me/${contact.whatsapp}`;
+export function whatsappUrl(whatsapp: WhatsappAbogada, mensaje?: string): string {
+  const base = `https://wa.me/${whatsapp.numero}`;
   return mensaje ? `${base}?text=${encodeURIComponent(mensaje)}` : base;
 }
 

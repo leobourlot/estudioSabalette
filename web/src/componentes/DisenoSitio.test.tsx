@@ -1,5 +1,6 @@
 import { act, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import { whatsappMessage } from '../pruebas/whatsapp-de-prueba';
 import { DisenoSitio } from './DisenoSitio';
 
 const MESSAGE = 'Hola, me contacto desde el sitio web del estudio.';
@@ -25,7 +26,7 @@ describe('DisenoSitio (spec 007, RF-4, RF-23, RF-26 y RF-28)', () => {
     const parts = Array.from(container.firstElementChild!.children).map(
       (el) => el.id || el.tagName.toLowerCase(),
     );
-    expect(parts).toEqual(['a', 'header', 'contenido', 'contacto', 'footer', 'a']);
+    expect(parts).toEqual(['a', 'header', 'contenido', 'contacto', 'footer', 'details']);
   });
 
   it('"Saltar al contenido" lleva al contenido, que puede recibir el foco', () => {
@@ -40,12 +41,15 @@ describe('DisenoSitio (spec 007, RF-4, RF-23, RF-26 y RF-28)', () => {
   it('el botón, el bloque de contacto y el pie usan el mensaje de la página (RF-27)', () => {
     renderLayout();
 
-    const texts = (name: string) =>
-      screen
-        .getAllByRole('link', { name })
-        .map((a) => new URL(a.getAttribute('href')!).searchParams.get('text'));
-    expect(texts('Escribinos por WhatsApp')).toEqual([MESSAGE]);
-    expect(texts('+54 9 3455 41-4147')).toEqual([MESSAGE, MESSAGE]);
+    expect(whatsappMessage()).toBe(MESSAGE);
+    // El contacto y el pie: un enlace por abogada en cada uno.
+    const links = screen.getAllByRole('link', {
+      name: /^(Carolina Pertusatti|Vanesa Sabalette): /,
+    });
+    expect(links).toHaveLength(4);
+    for (const link of links) {
+      expect(new URL(link.getAttribute('href')!).searchParams.get('text')).toBe(MESSAGE);
+    }
   });
 
   it('el pie de página deja lugar abajo para el botón (RF-28)', () => {

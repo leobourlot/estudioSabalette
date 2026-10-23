@@ -1,10 +1,13 @@
 import { render, screen, within } from '@testing-library/react';
 import { domAnimation, LazyMotion } from 'motion/react';
 import { describe, expect, it } from 'vitest';
-import { STUDIO_CONTACT, whatsappUrl } from '../servicios/datos-estudio';
+import { STUDIO_CONTACT, type WhatsappAbogada, whatsappUrl } from '../servicios/datos-estudio';
 import { LOGO_PATH } from '../servicios/marca';
 import { DisenoMarca } from './DisenoMarca';
 import { COLORES_REDES } from './IconosRedes';
+
+const WHATSAPPS = STUDIO_CONTACT.whatsapps;
+const label = (whatsapp: WhatsappAbogada) => `${whatsapp.nombre}: ${whatsapp.visible}`;
 
 function renderBrand(props: Partial<Parameters<typeof DisenoMarca>[0]> = {}) {
   return render(
@@ -35,41 +38,45 @@ describe('DisenoMarca (spec 008, RF-11, RF-12 y RF-14)', () => {
     expect(main.className).toContain('pb-24');
   });
 
-  it('con contacto, muestra la dirección y el WhatsApp sin mensaje, separados por " · "', () => {
+  it('con contacto, muestra la dirección y el WhatsApp de cada abogada sin mensaje, separados por " · "', () => {
     renderBrand({ conContacto: true });
 
-    const whatsapp = screen.getByRole('link', { name: STUDIO_CONTACT.whatsappVisible });
-    expect(whatsapp.getAttribute('href')).toBe(whatsappUrl());
-    expect(whatsapp.getAttribute('target')).toBe('_blank');
-    expect(whatsapp.getAttribute('rel')).toBe('noopener noreferrer');
-    expect(whatsapp.parentElement!.textContent).toBe(
-      `Pueyrredón Nº 47, Concordia · ${STUDIO_CONTACT.whatsappVisible}`,
+    const links = WHATSAPPS.map((whatsapp) => screen.getByRole('link', { name: label(whatsapp) }));
+    links.forEach((link, index) => {
+      expect(link.getAttribute('href')).toBe(whatsappUrl(WHATSAPPS[index]));
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+    });
+    expect(links[0].closest('p')!.textContent).toBe(
+      `Pueyrredón Nº 47, Concordia · ${label(WHATSAPPS[0])} · ${label(WHATSAPPS[1])}`,
     );
   });
 
-  it('antes del número va el ícono de WhatsApp en verde, con su contorno, sin anunciarse', () => {
+  it('antes de cada número va el ícono de WhatsApp en verde, con su contorno, sin anunciarse', () => {
     renderBrand({ conContacto: true });
 
-    const whatsapp = screen.getByRole('link', { name: STUDIO_CONTACT.whatsappVisible });
-    const icon = whatsapp.querySelector('svg')!;
-    expect(icon.getAttribute('aria-hidden')).toBe('true');
-    expect(whatsapp.firstElementChild).toBe(icon);
-    const fills = Array.from(icon.querySelectorAll('[fill]')).map((e) => e.getAttribute('fill'));
-    expect(fills).toContain(COLORES_REDES.whatsapp);
-    expect(icon.querySelector('[stroke="#FCFFFF"]')).toBeTruthy();
+    for (const whatsapp of WHATSAPPS) {
+      const link = screen.getByRole('link', { name: label(whatsapp) });
+      const icon = link.querySelector('svg')!;
+      expect(icon.getAttribute('aria-hidden')).toBe('true');
+      expect(link.firstElementChild).toBe(icon);
+      const fills = Array.from(icon.querySelectorAll('[fill]')).map((e) => e.getAttribute('fill'));
+      expect(fills).toContain(COLORES_REDES.whatsapp);
+      expect(icon.querySelector('[stroke="#FCFFFF"]')).toBeTruthy();
+    }
   });
 
-  it('sin dirección informada, solo el WhatsApp, sin " · " (spec 007, RF-24)', () => {
+  it('sin dirección informada, solo los WhatsApp, sin " · " adelante (spec 007, RF-24)', () => {
     renderBrand({ conContacto: true, contact: { ...STUDIO_CONTACT, direccion: null } });
 
-    const whatsapp = screen.getByRole('link', { name: STUDIO_CONTACT.whatsappVisible });
-    expect(whatsapp.parentElement!.textContent).toBe(STUDIO_CONTACT.whatsappVisible);
+    const link = screen.getByRole('link', { name: label(WHATSAPPS[0]) });
+    expect(link.closest('p')!.textContent).toBe(`${label(WHATSAPPS[0])} · ${label(WHATSAPPS[1])}`);
   });
 
   it('sin contacto, no muestra la dirección ni el WhatsApp (RF-14)', () => {
     renderBrand();
 
-    expect(screen.queryByRole('link', { name: STUDIO_CONTACT.whatsappVisible })).toBeNull();
+    expect(screen.queryByRole('link', { name: label(WHATSAPPS[0]) })).toBeNull();
     expect(screen.queryByText(/Pueyrredón/)).toBeNull();
   });
 });

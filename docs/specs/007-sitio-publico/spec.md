@@ -96,14 +96,14 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 ### Contacto
 - RF-22: EL SISTEMA toma los datos de contacto del estudio de una única fuente, la misma que usa el portal (spec 004, RF-18). Son públicos y fijos, y no se editan desde el panel:
   - Nombre: "Pertusatti | Sabalette - Abogadas".
-  - WhatsApp: +54 9 3455 41-4147.
+  - WhatsApp de cada abogada, en el orden del nombre del estudio: "Carolina Pertusatti", +54 9 3454 01-8174, y "Vanesa Sabalette", +54 9 3455 41-4147. Donde se muestra un número, va con el nombre de su abogada ("Carolina Pertusatti: +54 9 3454 01-8174").
   - Dirección: "Pueyrredón Nº 47, Concordia".
   - Email: estudiojuridicovsr@gmail.com.
   - Redes sociales: Instagram, con la cuenta "@pertusattisabaletteabogadas" (https://www.instagram.com/pertusattisabaletteabogadas/).
   - Días y horarios de atención: los que informe el estudio (ver Dudas abiertas).
 - RF-23: EL SISTEMA muestra al final de todas las páginas públicas, antes del pie de página (RF-44), un bloque de contacto sobre el degradado del logo, con el título "Contactate con nosotros", una línea corta debajo del título y el texto "Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal." (T-17). Debajo, cada dato en su renglón, con un ícono, una etiqueta corta en mayúsculas y el dato. Los íconos de Ubicación (el pin de Google Maps), de WhatsApp y de cada red llevan los colores de su marca, sin fondo, con un borde blanco que sigue el dibujo; los demás van en blanco:
   - "Ubicación": la dirección, como texto, y el enlace "Cómo llegar", que abre esa dirección en Google Maps.
-  - "Teléfono / WhatsApp": con el ícono de WhatsApp, el número escrito, como enlace que abre una conversación con el estudio (RF-27).
+  - "Teléfono / WhatsApp": con el ícono de WhatsApp, el número de cada abogada, escrito con su nombre, cada uno en su renglón y como enlace que abre una conversación con esa abogada (RF-27).
   - "Disponibilidad": los días y horarios de atención.
   - "Email": el email, escrito, como enlace para escribirle al estudio.
   - Cada red social, con el nombre de la red como etiqueta (por ejemplo, "Instagram") y sus cuentas (por ejemplo, "@estudio"), cada una como enlace a su perfil.
@@ -111,8 +111,8 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 - RF-25: CUANDO un visitante elige un enlace que lo lleva fuera del sitio (WhatsApp, "Cómo llegar", el email o una red social), EL SISTEMA lo abre aparte, sin reemplazar la página que estaba viendo. El sitio abierto no recibe ningún control sobre la página de origen ni la dirección desde la que se llegó.
 
 ### WhatsApp
-- RF-26: EL SISTEMA muestra en todas las páginas públicas y en la pantalla de ingreso un botón de WhatsApp siempre visible abajo a la derecha, con la misma ubicación y el mismo aspecto que en el portal (spec 004, RF-19), y con el nombre "Escribinos por WhatsApp" para quien usa lector de pantalla.
-- RF-27: CUANDO un visitante elige el botón de WhatsApp o el enlace de WhatsApp del bloque de contacto en una página pública, EL SISTEMA abre una conversación con el estudio con el mensaje de esa página ya escrito (T-15), que el visitante puede cambiar o borrar antes de enviarlo. En Derecho Laboral, el mensaje es el de la pestaña elegida. En la pantalla de ingreso y en el portal, la conversación se abre sin mensaje (spec 004, RF-18 y RF-19). El sitio nunca envía un mensaje por su cuenta.
+- RF-26: EL SISTEMA muestra en todas las páginas públicas y en la pantalla de ingreso un botón de WhatsApp siempre visible abajo a la derecha, con la misma ubicación y el mismo aspecto que en el portal (spec 004, RF-19), y con el nombre "Escribinos por WhatsApp" para quien usa lector de pantalla. Al elegirlo, abre arriba del botón un menú con una opción por abogada, con su nombre y su número (RF-22). El menú se cierra al elegir una opción, al volver a elegir el botón, al tocar fuera de él o con Escape, y sin el código de la página sigue abriéndose y sus enlaces funcionan (RF-35).
+- RF-27: CUANDO un visitante elige una opción del botón de WhatsApp o un enlace de WhatsApp del bloque de contacto o del pie de página en una página pública, EL SISTEMA abre una conversación con la abogada elegida con el mensaje de esa página ya escrito (T-15), que el visitante puede cambiar o borrar antes de enviarlo. En Derecho Laboral, el mensaje es el de la pestaña elegida. En la pantalla de ingreso y en el portal, la conversación se abre sin mensaje (spec 004, RF-18 y RF-19). El sitio nunca envía un mensaje por su cuenta.
 - RF-28: EL SISTEMA nunca deja que el botón de WhatsApp tape contenido ni controles, con el celular en vertical o en horizontal:
   - Al llegar al final de cada página, todo lo que queda debajo del botón se puede ver y usar.
   - No tapa el menú abierto, las pestañas ni los botones "Conocer más" y "Más información".
@@ -132,7 +132,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 - RF-37: EL SISTEMA ofrece a los buscadores:
   - La lista de las direcciones de las páginas públicas.
   - La dirección principal de cada página, la de RF-8, aunque se haya llegado por una variante con mayúsculas o barra final.
-  - Los datos del estudio como estudio jurídico: nombre, WhatsApp y, cuando el estudio los informe, dirección, horarios, email y redes.
+  - Los datos del estudio como estudio jurídico: nombre, los WhatsApp de las abogadas y, cuando el estudio los informe, dirección, horarios, email y redes.
 - RF-38: EL SISTEMA indica a los buscadores que no listen la pantalla de ingreso, la de cambio de contraseña, el panel, el portal ni la página de dirección inexistente, y les informa que una dirección inexistente no existe.
 
 ### Privacidad, seguridad y aislamiento
@@ -146,8 +146,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 - RF-44: EL SISTEMA muestra al final de todas las páginas públicas, después del bloque de contacto, un pie de página con:
   - El logo y el nombre del estudio, que llevan al inicio.
   - Los accesos "Servicios", "Abogadas" y "Contacto", como en el menú (RF-5).
-  - El WhatsApp, escrito, como enlace con el mensaje de la página (RF-27), y el email, cuando el estudio lo informe (RF-24).
-  - Las redes: el WhatsApp del estudio y cada cuenta de las redes informadas, cada una con el mismo ícono del bloque de contacto, a color y con borde blanco (RF-23), y el nombre de la red (por ejemplo, "WhatsApp" o "Instagram"), como enlace a su perfil. Si una red tiene más de una cuenta, cada enlace suma la cuenta al nombre. Sin redes informadas, solo se muestra el WhatsApp (RF-24).
+  - Las redes: el WhatsApp de cada abogada, con su nombre y su número, como enlace con el mensaje de la página (RF-27), y cada cuenta de las redes informadas, cada una con el mismo ícono del bloque de contacto, a color y con borde blanco (RF-23), y el nombre de la red (por ejemplo, "Instagram"), como enlace a su perfil. Si una red tiene más de una cuenta, cada enlace suma la cuenta al nombre. Sin redes informadas, solo se muestran los WhatsApp (RF-24).
   - Debajo de las redes, el email, como enlace para escribirle al estudio, y la dirección, como enlace que la abre en Google Maps, cada uno con el mismo ícono del bloque de contacto (RF-23). Cada uno se muestra solo si el estudio lo informó (RF-24).
   - La leyenda "© <año> Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.", con el año en que se publicó el sitio (T-18).
   - La leyenda "Diseñado por" con el logo y el nombre "Bourder Web", que llevan a https://bourderweb.com.ar (T-18). Como todo enlace externo, se abre aparte (RF-25).
@@ -220,14 +219,14 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - La dirección genérica y el número genérico que tenía el portal dejan de existir: ni el sitio ni el portal los muestran (RF-22, RF-24; spec 004, RF-18).
   - Email largo o dirección larga en 360 px: pasan a la línea siguiente (requisitos no funcionales).
   - Feria judicial, vacaciones o un cambio de número: se publican cambiando esta spec y el sitio. No hay avisos temporales (RF-2, Fuera de alcance).
-  - Alguien se hace pasar por el estudio desde otro número o email (por ejemplo, con el logo y el nombre en su perfil de WhatsApp) y le escribe a un cliente: el sistema no puede impedirlo. El sistema solo muestra el WhatsApp y el email del estudio, nunca otros números ni casillas, para que los clientes puedan comprobar cuáles son los oficiales. Se acepta.
+  - Alguien se hace pasar por el estudio desde otro número o email (por ejemplo, con el logo y el nombre en su perfil de WhatsApp) y le escribe a un cliente: el sistema no puede impedirlo. El sistema solo muestra los WhatsApp de las abogadas y el email del estudio, nunca otros números ni casillas, para que los clientes puedan comprobar cuáles son los oficiales. Se acepta.
 - **WhatsApp:**
   - Visitante sin WhatsApp instalado: el enlace abre la página de WhatsApp, que le ofrece instalarlo o usarlo desde el navegador. El sitio no interviene.
   - El visitante borra o cambia el mensaje antes de enviarlo: es su decisión (RF-27).
   - Cliente con sesión que elige el botón desde una página pública: el mensaje es el de esa página, sin ningún dato suyo ni de sus causas (RF-27, RF-41).
   - Página larga en el celular: al llegar al final, el bloque de contacto y sus enlaces quedan a la vista y se pueden usar, sin que el botón los tape (RF-28).
   - Pantalla de ingreso en el celular con el teclado abierto: el botón no tapa los campos ni "Ingresar" (RF-28).
-  - El WhatsApp es el celular de una de las abogadas: es una decisión del estudio.
+  - Cada WhatsApp es el celular de su abogada: es una decisión del estudio. El visitante elige a quién escribirle; el sitio no reparte las consultas por tema (RF-26).
 - **Ingreso y sesión:**
   - Mientras se consulta si hay sesión, el encabezado muestra "Ingresar"; si se confirma que la hay, cambia a "Ir a mi portal" o "Ir al panel" (RF-29, RF-30).
   - El servidor no responde: el sitio se ve completo, con "Ingresar" (RF-29).
@@ -305,11 +304,11 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   2. Entrar con "Conocer más" a cada servicio y verificar el título, el texto contra el anexo, "Volver a servicios" y los otros servicios.
   3. En Derecho Laboral, verificar que se ve "Empresas" con los tres destacados antes del texto, pasar a "Trabajadores", volver atrás con el navegador, y abrir en otra pestaña del navegador la dirección de "Trabajadores".
   4. Entrar con "Más información" a la página de Vanesa Sabalette Rabello y verificar su texto completo y "Volver a abogadas".
-  5. En el inicio, en cada servicio y en cada pestaña, elegir el botón de WhatsApp y verificar que abre la conversación con el número del estudio y el mensaje de esa página. Llegar al final de cada página, en vertical y en horizontal, y verificar que el botón no tapa nada.
+  5. En el inicio, en cada servicio y en cada pestaña, elegir el botón de WhatsApp, verificar que abre el menú con las dos abogadas y que cada opción abre la conversación con su número y el mensaje de esa página. Llegar al final de cada página, en vertical y en horizontal, y verificar que el botón no tapa nada.
   6. Abrir una dirección inexistente del sitio y verificar "No encontramos esa página", sin la dirección pedida y con sus accesos. Sin sesión, abrir una dirección inexistente del portal y verificar que lleva al ingreso.
   7. Elegir "Ingresar", verificar el botón de WhatsApp sin mensaje, que no tapa el formulario con el teclado abierto, y volver al sitio con el logo. Ingresar como cliente, volver al inicio y verificar "Ir a mi portal". Repetir como abogado y verificar "Ir al panel".
   8. Con la sesión de cliente abierta, cerrar sesión desde otra pestaña, volver al sitio público, verificar que no hay ningún aviso, elegir "Ir a mi portal" y verificar que lleva al ingreso.
-  9. En el portal y en el panel, desde un celular, verificar el nombre en dos líneas ("Pertusatti | Sabalette" y debajo "Abogadas") y, en el portal, el WhatsApp nuevo sin ninguna dirección de ejemplo.
+  9. En el portal y en el panel, desde un celular, verificar el nombre en dos líneas ("Pertusatti | Sabalette" y debajo "Abogadas") y, en el portal, el WhatsApp de cada abogada sin ninguna dirección de ejemplo.
   10. Recorrer el inicio y la página de Derecho Laboral solo con el teclado, incluidos el menú y las pestañas, y verificar que el foco siempre se ve. Repetir con un lector de pantalla y verificar que anuncia cada página nueva.
   11. Repetir los pasos 1 a 6 desde una computadora.
   12. En una pantalla de 360 px, verificar que el logo, el nombre y "Menú" van en una línea, que el menú abierto se ve completo con el acceso de ingreso como última opción, y que el pie de página muestra sus datos, la leyenda y "Diseñado por Bourder Web" con su enlace.

@@ -1,6 +1,7 @@
 import { screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { headingOutline, renderAt, stubSessionStatus } from '../pruebas/sitio-de-prueba';
+import { whatsappMessage } from '../pruebas/whatsapp-de-prueba';
 import { APERTURA, INTRO_SERVICIOS, SERVICIOS } from '../servicios/contenido-sitio';
 import { SitioInicio } from './SitioInicio';
 
@@ -80,12 +81,7 @@ describe('SitioInicio (spec 007, RF-11, RF-12 y RF-18)', () => {
   it('usa el mensaje de WhatsApp del inicio y pone su título', () => {
     renderAt('/', <SitioInicio />);
 
-    const href = screen
-      .getByRole('link', { name: 'Escribinos por WhatsApp' })
-      .getAttribute('href')!;
-    expect(new URL(href).searchParams.get('text')).toBe(
-      'Hola, me contacto desde el sitio web del estudio.',
-    );
+    expect(whatsappMessage()).toBe('Hola, me contacto desde el sitio web del estudio.');
     expect(document.title).toBe('Pertusatti | Sabalette - Abogadas');
   });
 });

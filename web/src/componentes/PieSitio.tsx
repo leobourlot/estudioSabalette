@@ -49,7 +49,7 @@ const MENU = [
 
 /**
  * Pie de todas las páginas públicas, después del bloque de contacto (spec 007, RF-44): el logo y
- * el nombre, los accesos del menú, el WhatsApp y el email, el WhatsApp y cada cuenta de las redes
+ * el nombre, los accesos del menú, el WhatsApp de cada abogada y cada cuenta de las redes
  * con su ícono a color (el mismo del contacto) y el nombre de la red, la leyenda de derechos y "Diseñado por Bourder Web". Lo que
  * el estudio no informó no se muestra (RF-24), salvo las redes de muestra en desarrollo. Termina
  * con un margen mayor que el botón de WhatsApp, así al final de la página todo se puede ver y usar
@@ -101,12 +101,14 @@ export function PieSitio({
 
           <div className="flex flex-col">
             <ul aria-label="Redes" className="flex flex-col">
-              <li>
-                <a href={whatsappUrl(mensaje, contact)} className={LINK} {...EXTERNAL}>
-                  <IconoRedColor red="WhatsApp" />
-                  {contact.whatsappVisible}
-                </a>
-              </li>
+              {contact.whatsapps.map((whatsapp) => (
+                <li key={whatsapp.numero}>
+                  <a href={whatsappUrl(whatsapp, mensaje)} className={LINK} {...EXTERNAL}>
+                    <IconoRedColor red="WhatsApp" />
+                    {whatsapp.nombre}: {whatsapp.visible}
+                  </a>
+                </li>
+              ))}
               {redes.map((red) => (
                 <li key={`${red.url} ${red.usuario}`}>
                   <a href={red.url} className={LINK} {...EXTERNAL}>

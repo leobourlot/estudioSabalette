@@ -3,6 +3,7 @@ import userEvent from '@testing-library/user-event';
 import { Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { headingOutline, renderAt, stubSessionStatus } from '../pruebas/sitio-de-prueba';
+import { whatsappMessage } from '../pruebas/whatsapp-de-prueba';
 import {
   type ClavePestana,
   MENSAJES_WHATSAPP,
@@ -36,10 +37,7 @@ const openAt = (path: string) =>
 const tabs = () => within(screen.getByRole('navigation', { name: 'Destinatarios' }));
 const tab = (name: string) => tabs().getByRole('link', { name });
 const address = () => screen.getByTestId('direccion').textContent;
-const whatsappText = () =>
-  new URL(
-    screen.getByRole('link', { name: 'Escribinos por WhatsApp' }).getAttribute('href')!,
-  ).searchParams.get('text');
+const whatsappText = whatsappMessage;
 
 beforeEach(() => {
   stubSessionStatus(null);

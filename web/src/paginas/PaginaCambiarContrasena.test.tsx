@@ -40,14 +40,14 @@ describe('PaginaCambiarContrasena: WhatsApp (spec 004, RF-18, RF-19)', () => {
   it('a un cliente le muestra el botón de WhatsApp, sin el bloque de contacto', async () => {
     await openPage({ rol: 'cliente', pending: false });
 
-    expect(screen.getByRole('link', { name: 'Escribinos por WhatsApp' })).toBeTruthy();
+    expect(screen.getByLabelText('Escribinos por WhatsApp', { selector: 'summary' })).toBeTruthy();
     expect(screen.queryByRole('contentinfo', { name: 'Contacto del estudio' })).toBeNull();
   });
 
   it('a un integrante no le muestra nada de eso', async () => {
     await openPage({ rol: 'abogado', pending: false });
 
-    expect(screen.queryByRole('link', { name: 'Escribinos por WhatsApp' })).toBeNull();
+    expect(screen.queryByLabelText('Escribinos por WhatsApp', { selector: 'summary' })).toBeNull();
     expect(screen.queryByRole('contentinfo', { name: 'Contacto del estudio' })).toBeNull();
   });
 });

@@ -48,7 +48,7 @@ El sitio público ya tiene la identidad del estudio: el logo, el degradado de su
 
 ### Pantalla de ingreso
 - RF-11: EL SISTEMA muestra la pantalla de ingreso dividida en dos mitades:
-  - A la izquierda, el panel de la marca, sobre el degradado del estudio: arriba, el logo y el nombre del estudio, que llevan al inicio del sitio público (spec 007, RF-33); en el medio, el título T-1; abajo, la dirección del estudio, como texto, y el WhatsApp, escrito, con el ícono de WhatsApp en verde y con borde blanco antes del número (spec 007, RF-23), como enlace que abre una conversación sin mensaje (spec 007, RF-27), separados por " · ". La dirección solo aparece si el estudio la informó (spec 007, RF-24), y nunca una de ejemplo.
+  - A la izquierda, el panel de la marca, sobre el degradado del estudio: arriba, el logo y el nombre del estudio, que llevan al inicio del sitio público (spec 007, RF-33); en el medio, el título T-1; abajo, la dirección del estudio, como texto, y el WhatsApp de cada abogada, escrito con su nombre ("Carolina Pertusatti: +54 9 3454 01-8174"), con el ícono de WhatsApp en verde y con borde blanco antes de cada número (spec 007, RF-23), cada uno como enlace que abre una conversación con esa abogada sin mensaje (spec 007, RF-27), todos separados por " · ". La dirección solo aparece si el estudio la informó (spec 007, RF-24), y nunca una de ejemplo.
   - A la derecha, sobre el fondo claro, una tarjeta con el título "Ingresar", el texto T-2, los campos "Email" y "Contraseña", el botón "Ingresar" y, debajo, el texto T-3.
 - RF-12: MIENTRAS la pantalla mide menos de 1024 px de ancho, EL SISTEMA muestra el panel de la marca arriba, más bajo, con el logo, el nombre y el título T-1, y la tarjeta debajo. La dirección y el WhatsApp pasan al final, debajo de la tarjeta. El formulario se ve sin desplazarse en un celular de 360 × 640 px con el teclado cerrado, y el botón de WhatsApp no tapa los campos ni "Ingresar", tampoco con el teclado abierto (spec 007, RF-28).
 - RF-13: EL SISTEMA conserva en la pantalla de ingreso los mensajes, las validaciones y el comportamiento de la spec 001 (RF-8 a RF-10) y de la spec 007 (RF-26 y RF-33): el aviso de error va dentro de la tarjeta, arriba de los campos.
@@ -123,7 +123,7 @@ El sitio público ya tiene la identidad del estudio: el logo, el degradado de su
   - Cliente en "Cambiar contraseña" desde el portal: es la pantalla aparte de RF-14, sin el menú.
   - Cierre de sesión con el menú plegado abierto (por vencimiento o desde otra pestaña): se aplica la spec 001 y el menú desaparece con la pantalla.
 - **Ingreso:**
-  - El estudio todavía no informó la dirección: abajo del panel de la marca solo va el WhatsApp, sin " · " (RF-11).
+  - El estudio todavía no informó la dirección: abajo del panel de la marca solo van los WhatsApp, separados por " · " y sin " · " adelante (RF-11).
   - Error de credenciales o demasiados intentos: el aviso va dentro de la tarjeta, como hoy (RF-13).
   - Celular con el teclado abierto: los campos y "Ingresar" quedan a la vista y el botón de WhatsApp no los tapa (RF-12).
   - Cambio de contraseña pendiente al ingresar: la pantalla de cambio de contraseña tiene el mismo diseño, sin el menú (RF-14).

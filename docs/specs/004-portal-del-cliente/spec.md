@@ -66,10 +66,10 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
 - RF-18: EL SISTEMA muestra en todas las pantallas del portal, salvo la de cambio de contraseña, los datos de contacto del estudio:
   - Nombre del estudio: "Pertusatti | Sabalette - Abogadas".
   - Dirección, como texto.
-  - WhatsApp (+54 9 3455 41-4147), como enlace que abre una conversación con el estudio, sin mensaje precargado.
+  - El WhatsApp de cada abogada, con su nombre ("WhatsApp Carolina Pertusatti: +54 9 3454 01-8174" y "WhatsApp Vanesa Sabalette: +54 9 3455 41-4147"), cada uno como enlace que abre una conversación con esa abogada, sin mensaje precargado.
 
   Son los mismos datos del sitio público (spec 007, RF-22), fijos en el sistema, y no se editan desde el panel. La dirección se muestra recién cuando el estudio la informe: hasta entonces el portal no muestra ninguna, ni un espacio vacío en su lugar, y nunca una de ejemplo. Los demás datos de contacto del sitio público (horarios, email, redes sociales y "Cómo llegar") no se muestran en el portal.
-- RF-19: EL SISTEMA muestra en todas las pantallas que ve el cliente, incluida la de cambio de contraseña, un botón de WhatsApp siempre visible abajo a la derecha, que abre una conversación con el estudio sin mensaje precargado. El botón nunca tapa contenido ni controles: al llegar al final de la pantalla, todo lo que queda debajo se puede ver y usar.
+- RF-19: EL SISTEMA muestra en todas las pantallas que ve el cliente, incluida la de cambio de contraseña, un botón de WhatsApp siempre visible abajo a la derecha, que abre un menú con el nombre y el número de cada abogada; cada opción abre una conversación con esa abogada sin mensaje precargado (spec 007, RF-26). El botón nunca tapa contenido ni controles: al llegar al final de la pantalla, todo lo que queda debajo se puede ver y usar.
 
 ### Movimientos
 - RF-20: CUANDO un cliente consulta una causa a la que está vinculado, EL SISTEMA muestra además los movimientos de esa causa que el cliente puede ver (spec 003, RF-30), anulados incluidos (spec 003, RF-17), de a 20 por página, en el mismo orden que el historial del panel (spec 003, RF-23):

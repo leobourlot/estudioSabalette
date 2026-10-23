@@ -1,6 +1,7 @@
 import { screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { headingOutline, renderAt, stubSessionStatus } from '../pruebas/sitio-de-prueba';
+import { whatsappMessage } from '../pruebas/whatsapp-de-prueba';
 import {
   ABOGADAS,
   MENSAJES_WHATSAPP,
@@ -13,10 +14,7 @@ import { SitioNoEncontrada } from './SitioNoEncontrada';
 const vanesa = ABOGADAS.find((a) => a.slug === 'vanesa-sabalette-rabello')!;
 const carolina = ABOGADAS.find((a) => a.slug === 'carolina-pertusatti')!;
 
-const whatsappText = () =>
-  new URL(
-    screen.getByRole('link', { name: 'Escribinos por WhatsApp' }).getAttribute('href')!,
-  ).searchParams.get('text');
+const whatsappText = whatsappMessage;
 
 beforeEach(() => {
   stubSessionStatus(null);

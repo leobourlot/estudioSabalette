@@ -1,6 +1,7 @@
 import { screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { headingOutline, renderAt, stubSessionStatus } from '../pruebas/sitio-de-prueba';
+import { whatsappMessage } from '../pruebas/whatsapp-de-prueba';
 import { MENSAJES_WHATSAPP, SERVICIOS } from '../servicios/contenido-sitio';
 import { publicPageFor } from '../servicios/rutas-sitio';
 import { type ClaveServicioConPagina, SitioServicio } from './SitioServicio';
@@ -18,10 +19,7 @@ const CASES = (['accidentes', 'danos', 'sucesiones'] as const).map((clave) => {
   return [servicio.titulo, clave, servicio] as const;
 });
 
-const whatsappText = () =>
-  new URL(
-    screen.getByRole('link', { name: 'Escribinos por WhatsApp' }).getAttribute('href')!,
-  ).searchParams.get('text');
+const whatsappText = whatsappMessage;
 
 describe('SitioServicio (spec 007, RF-7, RF-13 y RF-14)', () => {
   it.each(CASES)('%s', (_titulo, clave: ClaveServicioConPagina, servicio) => {

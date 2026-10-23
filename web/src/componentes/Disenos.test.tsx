@@ -5,6 +5,7 @@ import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-d
 import { BloqueContactoEstudio } from './BloqueContactoEstudio';
 import { STUDIO_CONTACT, whatsappUrl } from '../servicios/datos-estudio';
 import type { UsuarioPropio } from '../servicios/sesion';
+import { whatsappButton, whatsappMenu } from '../pruebas/whatsapp-de-prueba';
 
 async function openAs(path: string, usuario: UsuarioPropio, firstHeading: string) {
   const service = fakeSessionService({ fetchOwnUser: vi.fn().mockResolvedValue(usuario) });
@@ -120,25 +121,33 @@ describe('DisenoPortal (RF-16)', () => {
     expect(Array.from(footer.querySelectorAll('p')).map((p) => p.textContent)).toEqual([
       STUDIO_CONTACT.nombre,
       'Pueyrredón Nº 47, Concordia',
-      'WhatsApp',
+      'WhatsApp Carolina Pertusatti: +54 9 3454 01-8174',
+      'WhatsApp Vanesa Sabalette: +54 9 3455 41-4147',
     ]);
     // Una tarjeta al final, con un margen debajo mayor que el botón de WhatsApp (spec 008, RF-4).
     expect(footer.className).toContain('pb-24');
     expect(footer.firstElementChild!.className).toContain('border');
-    const link = contact.getByRole('link', { name: 'WhatsApp' });
-    expect(link.getAttribute('href')).toBe(whatsappUrl());
-    expect(link.getAttribute('target')).toBe('_blank');
-    expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+    for (const whatsapp of STUDIO_CONTACT.whatsapps) {
+      const link = contact.getByRole('link', {
+        name: `WhatsApp ${whatsapp.nombre}: ${whatsapp.visible}`,
+      });
+      expect(link.getAttribute('href')).toBe(whatsappUrl(whatsapp));
+      expect(link.getAttribute('target')).toBe('_blank');
+      expect(link.getAttribute('rel')).toBe('noopener noreferrer');
+    }
   });
 
-  it('muestra siempre el botón de WhatsApp abajo a la derecha (spec 004, RF-19)', async () => {
+  it('muestra siempre el botón de WhatsApp abajo a la derecha, sin mensaje (spec 004, RF-19)', async () => {
     await openAs('/portal/mi-cuenta', testUser('cliente'), 'Mi cuenta');
 
-    const button = screen.getByRole('link', { name: 'Escribinos por WhatsApp' });
-    expect(button.getAttribute('href')).toBe(whatsappUrl());
+    const button = whatsappButton().closest('details')!;
     expect(button.className).toContain('fixed');
     expect(button.className).toContain('bottom-4');
     expect(button.className).toContain('right-4');
+    expect(whatsappMenu().map((opcion) => [opcion.numero, opcion.mensaje])).toEqual([
+      ['5493454018174', null],
+      ['5493455414147', null],
+    ]);
   });
 
   it('el enlace "Cambiar contraseña" lleva a la pantalla de cambio (spec 004, RF-2)', async () => {
@@ -192,7 +201,8 @@ describe('BloqueContactoEstudio (spec 004, RF-18)', () => {
     const footer = screen.getByRole('contentinfo', { name: 'Contacto del estudio' });
     expect(Array.from(footer.querySelectorAll('p')).map((p) => p.textContent)).toEqual([
       STUDIO_CONTACT.nombre,
-      'WhatsApp',
+      'WhatsApp Carolina Pertusatti: +54 9 3454 01-8174',
+      'WhatsApp Vanesa Sabalette: +54 9 3455 41-4147',
     ]);
   });
 });

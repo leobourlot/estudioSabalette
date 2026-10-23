@@ -42,7 +42,7 @@ export function legalServiceData(
     '@type': 'LegalService',
     name: contact.nombre,
     url: `${urlSitio}/`,
-    telephone: `+${contact.whatsapp}`,
+    telephone: contact.whatsapps.map((whatsapp) => `+${whatsapp.numero}`),
     logo: urlSitio + FULL_LOGO_PATH,
     image: urlSitio + FULL_LOGO_PATH,
   };

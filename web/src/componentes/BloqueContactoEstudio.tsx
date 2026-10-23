@@ -9,7 +9,7 @@ interface BloqueContactoEstudioProps {
 
 /**
  * Datos de contacto del estudio al pie de las pantallas del portal, salvo la de cambio de
- * contraseña (spec 004, RF-18): nombre, dirección como texto y WhatsApp como enlace. Mientras el
+ * contraseña (spec 004, RF-18): nombre, dirección como texto y el WhatsApp de cada abogada como enlace. Mientras el
  * estudio no informe la dirección, no se muestra ni deja un renglón vacío (spec 007, RF-24). Va en
  * una tarjeta al final del contenido (spec 008, RF-4), con un margen debajo mayor que el botón de
  * WhatsApp, para que este nunca lo tape (spec 004, RF-19).
@@ -25,16 +25,18 @@ export function BloqueContactoEstudio({ contact = STUDIO_CONTACT }: BloqueContac
           <NombreEstudio contact={contact} />
         </p>
         {contact.direccion && <p className="break-words">{contact.direccion}</p>}
-        <p>
-          <a
-            href={whatsappUrl(undefined, contact)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className={TEXT_LINK}
-          >
-            WhatsApp
-          </a>
-        </p>
+        {contact.whatsapps.map((whatsapp) => (
+          <p key={whatsapp.numero}>
+            <a
+              href={whatsappUrl(whatsapp)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={TEXT_LINK}
+            >
+              WhatsApp {whatsapp.nombre}: {whatsapp.visible}
+            </a>
+          </p>
+        ))}
       </div>
     </footer>
   );

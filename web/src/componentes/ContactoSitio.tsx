@@ -100,9 +100,13 @@ export function ContactoSitio({ mensaje, contact = STUDIO_CONTACT }: ContactoSit
               </Renglon>
             )}
             <Renglon icono={<IconoRedColor red="WhatsApp" />} etiqueta={TEXTOS.contacto.telefono}>
-              <a href={whatsappUrl(mensaje, contact)} className={LINK} {...EXTERNAL}>
-                {contact.whatsappVisible}
-              </a>
+              {contact.whatsapps.map((whatsapp) => (
+                <p key={whatsapp.numero}>
+                  <a href={whatsappUrl(whatsapp, mensaje)} className={LINK} {...EXTERNAL}>
+                    {whatsapp.nombre}: {whatsapp.visible}
+                  </a>
+                </p>
+              ))}
             </Renglon>
             {contact.horarios.length > 0 && (
               <Renglon icono={<IconoReloj />} etiqueta={TEXTOS.contacto.disponibilidad}>

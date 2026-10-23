@@ -19,8 +19,8 @@ interface DisenoMarcaProps {
 }
 
 /**
- * La dirección, como texto, y el WhatsApp, como enlace sin mensaje, separados por " · " (spec
- * 008, RF-11; spec 007, RF-27). La dirección solo si el estudio la informó (spec 007, RF-24).
+ * La dirección, como texto, y el WhatsApp de cada abogada, como enlace sin mensaje, separados por
+ * " · " (spec 008, RF-11; spec 007, RF-22 y RF-27). La dirección solo si el estudio la informó (spec 007, RF-24).
  * Antes del número, el ícono de WhatsApp en verde, con el contorno blanco que lo distingue sobre
  * el degradado (spec 007, RF-23); no se anuncia, porque el número va escrito al lado.
  */
@@ -33,15 +33,20 @@ function ContactoIngreso({ contact }: { contact: StudioContact }) {
           {' · '}
         </>
       )}
-      <a
-        href={whatsappUrl(undefined, contact)}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={`inline-flex items-center gap-1.5 rounded align-middle underline underline-offset-4 hover:text-estudio-blanco ${FOCUS_RING_ON_DARK}`}
-      >
-        <IconoRedColor red="WhatsApp" />
-        {contact.whatsappVisible}
-      </a>
+      {contact.whatsapps.map((whatsapp, index) => (
+        <span key={whatsapp.numero}>
+          {index > 0 && ' · '}
+          <a
+            href={whatsappUrl(whatsapp)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`inline-flex items-center gap-1.5 rounded align-middle underline underline-offset-4 hover:text-estudio-blanco ${FOCUS_RING_ON_DARK}`}
+          >
+            <IconoRedColor red="WhatsApp" />
+            {whatsapp.nombre}: {whatsapp.visible}
+          </a>
+        </span>
+      ))}
     </p>
   );
 }

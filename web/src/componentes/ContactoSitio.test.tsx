@@ -42,8 +42,14 @@ describe('ContactoSitio (spec 007, RF-23 a RF-25)', () => {
     render(<ContactoSitio mensaje={MESSAGE} />);
 
     expect(labels()).toEqual(['Ubicación', 'Teléfono / WhatsApp', 'Email', 'Instagram']);
-    const whatsapp = within(block()).getByRole('link', { name: '+54 9 3455 41-4147' });
-    expect(new URL(whatsapp.getAttribute('href')!).searchParams.get('text')).toBe(MESSAGE);
+    for (const whatsapp of STUDIO_CONTACT.whatsapps) {
+      const link = within(block()).getByRole('link', {
+        name: `${whatsapp.nombre}: ${whatsapp.visible}`,
+      });
+      const url = new URL(link.getAttribute('href')!);
+      expect(url.pathname).toBe(`/${whatsapp.numero}`);
+      expect(url.searchParams.get('text')).toBe(MESSAGE);
+    }
     expect(within(block()).getByText('Pueyrredón Nº 47, Concordia')).toBeTruthy();
   });
 
@@ -102,7 +108,7 @@ describe('ContactoSitio (spec 007, RF-23 a RF-25)', () => {
     render(<ContactoSitio mensaje={MESSAGE} contact={complete} />);
 
     const links = within(block()).getAllByRole('link');
-    expect(links).toHaveLength(6);
+    expect(links).toHaveLength(7);
     for (const link of links) {
       expect(link.getAttribute('target')).toBe('_blank');
       expect(link.getAttribute('rel')).toBe('noopener noreferrer');

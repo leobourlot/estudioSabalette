@@ -94,7 +94,7 @@ describe('legalServiceData (RF-37)', () => {
       '@type': 'LegalService',
       name: 'Pertusatti | Sabalette - Abogadas',
       url: `${SITE}/`,
-      telephone: '+5493455414147',
+      telephone: ['+5493454018174', '+5493455414147'],
       logo: `${SITE}/marca/logo.png`,
       image: `${SITE}/marca/logo.png`,
       address: { '@type': 'PostalAddress', streetAddress: 'Pueyrredón Nº 47, Concordia' },

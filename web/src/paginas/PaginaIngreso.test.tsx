@@ -2,6 +2,7 @@ import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-de-prueba';
+import { whatsappMenu } from '../pruebas/whatsapp-de-prueba';
 import { ApiError, NETWORK_ERROR_MESSAGE } from '../servicios/cliente-http';
 import type { UsuarioPropio } from '../servicios/sesion';
 import { TEXTOS_INGRESO } from '../servicios/textos-aplicacion';
@@ -105,8 +106,10 @@ describe('PaginaIngreso en el sitio (spec 007, RF-3, RF-26, RF-33 y RF-34)', () 
   it('muestra el botón de WhatsApp, sin mensaje', async () => {
     await openLogin(async () => testUser('abogado'));
 
-    const button = screen.getByRole('link', { name: 'Escribinos por WhatsApp' });
-    expect(button.getAttribute('href')).toBe('https://wa.me/5493455414147');
+    expect(whatsappMenu().map((opcion) => [opcion.numero, opcion.mensaje])).toEqual([
+      ['5493454018174', null],
+      ['5493455414147', null],
+    ]);
   });
 
   it('deja lugar abajo para que el botón no tape el formulario (RF-28)', async () => {
@@ -142,12 +145,14 @@ describe('PaginaIngreso con la identidad del estudio (spec 008, RF-11 a RF-13)',
     expect(screen.queryByText(/Clientes e integrantes del estudio ingresan/)).toBeNull();
   });
 
-  it('muestra la dirección y el WhatsApp del estudio, sin mensaje', async () => {
+  it('muestra la dirección y el WhatsApp de cada abogada, sin mensaje', async () => {
     await openLogin(async () => testUser('abogado'));
 
-    const whatsapp = screen.getByRole('link', { name: '+54 9 3455 41-4147' });
-    expect(whatsapp.getAttribute('href')).toBe('https://wa.me/5493455414147');
-    expect(whatsapp.parentElement!.textContent).toContain('Pueyrredón Nº 47, Concordia · ');
+    const carolina = screen.getByRole('link', { name: 'Carolina Pertusatti: +54 9 3454 01-8174' });
+    const vanesa = screen.getByRole('link', { name: 'Vanesa Sabalette: +54 9 3455 41-4147' });
+    expect(carolina.getAttribute('href')).toBe('https://wa.me/5493454018174');
+    expect(vanesa.getAttribute('href')).toBe('https://wa.me/5493455414147');
+    expect(carolina.closest('p')!.textContent).toContain('Pueyrredón Nº 47, Concordia · ');
   });
 
   it('el aviso de error va dentro de la tarjeta, arriba de los campos', async () => {

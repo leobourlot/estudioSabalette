@@ -37,22 +37,28 @@ describe('PieSitio (spec 007, RF-44)', () => {
     ]);
   });
 
-  it('el WhatsApp lleva el mensaje de la página', () => {
+  it('el WhatsApp de cada abogada lleva el mensaje de la página (RF-22, RF-27)', () => {
     render(<PieSitio mensaje={MESSAGE} anio={2026} />);
 
-    const whatsapp = footer().getByRole('link', { name: '+54 9 3455 41-4147' });
-    expect(new URL(whatsapp.getAttribute('href')!).searchParams.get('text')).toBe(MESSAGE);
+    for (const whatsapp of STUDIO_CONTACT.whatsapps) {
+      const link = footer().getByRole('link', { name: `${whatsapp.nombre}: ${whatsapp.visible}` });
+      const url = new URL(link.getAttribute('href')!);
+      expect(url.pathname).toBe(`/${whatsapp.numero}`);
+      expect(url.searchParams.get('text')).toBe(MESSAGE);
+      expect(link.querySelector('svg')!.getAttribute('aria-hidden')).toBe('true');
+    }
   });
 
-  it('con los datos de hoy, de las redes solo muestra WhatsApp, con su ícono (RF-24)', () => {
+  it('las redes empiezan por el WhatsApp de cada abogada, con su ícono (RF-44)', () => {
     render(<PieSitio mensaje={MESSAGE} anio={2026} />);
 
     const redes = within(screen.getByRole('list', { name: 'Redes' }));
-    expect(redes.getAllByRole('link').map((a) => a.textContent)).toEqual(['WhatsApp']);
-    const whatsapp = redes.getByRole('link', { name: 'WhatsApp' });
-    expect(new URL(whatsapp.getAttribute('href')!).searchParams.get('text')).toBe(MESSAGE);
-    expect(whatsapp.querySelector('svg')!.getAttribute('aria-hidden')).toBe('true');
-    expect(footer().queryByRole('link', { name: /@/ })).toBeNull();
+    expect(
+      redes
+        .getAllByRole('link')
+        .slice(0, 2)
+        .map((a) => a.textContent),
+    ).toEqual(['Carolina Pertusatti: +54 9 3454 01-8174', 'Vanesa Sabalette: +54 9 3455 41-4147']);
   });
 
   it('en los tests no aparecen las redes de muestra, que son solo de desarrollo', () => {
@@ -112,7 +118,7 @@ describe('PieSitio (spec 007, RF-44)', () => {
     const external = footer()
       .getAllByRole('link')
       .filter((a) => a.getAttribute('href')!.match(/^(https?:|mailto:)/));
-    expect(external).toHaveLength(6);
+    expect(external).toHaveLength(7);
     for (const link of external) {
       expect(link.getAttribute('target')).toBe('_blank');
       expect(link.getAttribute('rel')).toBe('noopener noreferrer');
@@ -129,7 +135,11 @@ describe('PieSitio: redes de una sola cuenta (RF-44)', () => {
     render(<PieSitio mensaje={MESSAGE} contact={contact} anio={2026} />);
 
     const redes = within(screen.getByRole('list', { name: 'Redes' }));
-    expect(redes.getAllByRole('link').map((a) => a.textContent)).toEqual(['WhatsApp', 'LinkedIn']);
+    expect(redes.getAllByRole('link').map((a) => a.textContent)).toEqual([
+      'Carolina Pertusatti: +54 9 3454 01-8174',
+      'Vanesa Sabalette: +54 9 3455 41-4147',
+      'LinkedIn',
+    ]);
   });
 });
 
@@ -138,7 +148,8 @@ describe('PieSitio: íconos a color, los mismos del contacto (spec 007, RF-23 y 
     render(<PieSitio mensaje={MESSAGE} contact={withNetworks} anio={2026} />);
 
     const icons = Array.from(screen.getByRole('list', { name: 'Redes' }).querySelectorAll('svg'));
-    expect(icons).toHaveLength(3);
+    // El WhatsApp de cada abogada y las dos cuentas de Instagram.
+    expect(icons).toHaveLength(4);
     for (const icon of icons) {
       expect(icon.querySelector(':scope > [stroke]')!.getAttribute('stroke')).toBe(CONTORNO.stroke);
     }
@@ -146,7 +157,8 @@ describe('PieSitio: íconos a color, los mismos del contacto (spec 007, RF-23 y 
       Array.from(icon.querySelectorAll('[fill]')).map((e) => e.getAttribute('fill')),
     );
     expect(fills[0]).toContain(COLORES_REDES.whatsapp);
-    expect(fills[1]).toContain(`url(#${icons[1].querySelector('radialGradient')!.id})`);
+    expect(fills[1]).toContain(COLORES_REDES.whatsapp);
+    expect(fills[2]).toContain(`url(#${icons[2].querySelector('radialGradient')!.id})`);
   });
 });
 
