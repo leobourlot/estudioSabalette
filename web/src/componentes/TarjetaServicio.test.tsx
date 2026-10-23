@@ -50,3 +50,42 @@ describe('TarjetaServicio (spec 007, RF-12)', () => {
     expect(within(link).getByText(`sobre ${servicio.nombre}`).className).toContain('sr-only');
   });
 });
+
+describe('TarjetaServicio: el ícono del tema (spec 007, RF-12 y RF-45)', () => {
+  const icon = (container: HTMLElement) => container.querySelector('svg')!;
+
+  it('cada servicio tiene su propio ícono, arriba del nombre, que no se anuncia', () => {
+    const drawings = SERVICIOS.map((servicio) => {
+      const { container, unmount } = render(<TarjetaServicio servicio={servicio} />);
+      const svg = icon(container);
+      expect(svg.getAttribute('data-icono')).toBe(servicio.clave);
+      expect(svg.getAttribute('aria-hidden')).toBe('true');
+      expect(svg.getAttribute('focusable')).toBe('false');
+      expect(svg.compareDocumentPosition(screen.getByRole('heading'))).toBe(
+        Node.DOCUMENT_POSITION_FOLLOWING,
+      );
+      const drawing = svg.innerHTML;
+      unmount();
+      return drawing;
+    });
+
+    expect(new Set(drawings).size).toBe(SERVICIOS.length);
+  });
+
+  it('se mueve al pasar el puntero por la tarjeta o al enfocarla, solo sin la reducción de movimiento', () => {
+    for (const servicio of SERVICIOS) {
+      const { container, unmount } = render(<TarjetaServicio servicio={servicio} />);
+      expect(container.querySelector('article')!.className).toMatch(/(^| )group( |$)/);
+      const moving = Array.from(icon(container).querySelectorAll('[class*="animate-"]'));
+      expect(moving.length).toBeGreaterThan(0);
+      for (const part of moving) {
+        const animations = part.className.baseVal.split(' ').filter((c) => c.includes('animate-'));
+        expect(animations).toHaveLength(2);
+        for (const animation of animations) {
+          expect(animation).toMatch(/^motion-safe:group-(hover|focus-within):animate-icono-/);
+        }
+      }
+      unmount();
+    }
+  });
+});

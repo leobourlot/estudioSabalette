@@ -69,7 +69,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - Servicios (RF-12).
   - Abogadas (RF-18).
   - Contacto: es el bloque de contacto del final de la página (RF-23).
-- RF-12: EL SISTEMA muestra en la sección Servicios el título "Nuestros servicios", el texto T-2 y cuatro tarjetas, en este orden: Derecho Laboral, Accidentes y Enfermedades Laborales, Derecho de Daños y Sucesiones. Cada tarjeta muestra el nombre del servicio, su frase (T-3 a T-6) y el botón "Conocer más", que lleva a la página de ese servicio.
+- RF-12: EL SISTEMA muestra en la sección Servicios el título "Nuestros servicios", el texto T-2 y cuatro tarjetas, en este orden: Derecho Laboral, Accidentes y Enfermedades Laborales, Derecho de Daños y Sucesiones. Cada tarjeta muestra arriba un ícono del tema, en el azul del logo y sin anunciarse para quien usa lector de pantalla (un maletín para Derecho Laboral, un casco de obra para Accidentes, una mano con monedas para Daños y un pergamino con texto para Sucesiones), el nombre del servicio, su frase (T-3 a T-6) y el botón "Conocer más", que lleva a la página de ese servicio. Al pasar el puntero por la tarjeta o al enfocar su botón, el ícono se mueve una vez (RF-45).
 
 ### Servicios
 - RF-13: EL SISTEMA nombra cada servicio así:

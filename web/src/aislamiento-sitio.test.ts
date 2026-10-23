@@ -42,6 +42,7 @@ const SITE_MODULES = new Set([
   'FotoAbogada',
   'IconosContacto',
   'IconosRedes',
+  'IconosServicios',
   'MenuSitio',
   'NombreEstudio',
   'OtrosServicios',

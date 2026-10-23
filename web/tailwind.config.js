@@ -16,6 +16,23 @@ export default {
           blanco: '#FCFFFF',
         },
       },
+      // Íconos de las tarjetas de los servicios al pasar el puntero (spec 007, RF-12 y RF-45):
+      // una sola vez y en menos de 0,6 s.
+      keyframes: {
+        'icono-balanceo': {
+          '0%, 100%': { transform: 'rotate(0deg)' },
+          '35%': { transform: 'rotate(-8deg)' },
+          '70%': { transform: 'rotate(5deg)' },
+        },
+        'icono-salto': {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '45%': { transform: 'translateY(-3px)' },
+        },
+      },
+      animation: {
+        'icono-balanceo': 'icono-balanceo 0.55s ease-in-out',
+        'icono-salto': 'icono-salto 0.5s ease-in-out',
+      },
     },
   },
   plugins: [],

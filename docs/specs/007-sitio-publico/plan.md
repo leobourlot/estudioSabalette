@@ -613,3 +613,7 @@ Pedido por el estudio después de las redes de muestra: en el bloque de contacto
 - `PieSitio` también usa `IconoRedColor`, pedido después: los mismos íconos que el contacto. `IconoRed` queda para las redes sin colores propios.
 - Debajo de la lista "Redes", el pie suma la lista "Email y dirección": el email con `mailto:` e `IconoEmail`, y la dirección con `mapsUrl` e `IconoUbicacionColor`, los dos con `EXTERNAL`. Los íconos van en un lugar de `w-7`, el ancho de los de las redes, para que el texto quede alineado. Sin email ni dirección, la lista no está.
 - Contraste: ningún fondo cumple 3 a 1 con todos los colores de las marcas (por ejemplo, el verde de WhatsApp da 2,0 sobre blanco y el amarillo de Maps, 1,7). Lo cumple el contorno; la spec exceptúa los colores de adentro por ser decorativos.
+
+### Íconos de las tarjetas de los servicios [RF-12, RF-45]
+- `componentes/IconosServicios.tsx`: `IconoServicio({ clave })` con los dibujos de Lucide `briefcase`, `hard-hat`, `hand-coins` y `scroll-text`, copiados en el proyecto con el aviso de su licencia ISC, sin la biblioteca (principio 1). Se evaluó `@animateicons/react`: trae su propia copia de Motion y no tiene casco.
+- La tarjeta es `group`; la parte que se mueve de cada dibujo lleva `motion-safe:group-hover:` y `motion-safe:group-focus-within:` con `animate-icono-balanceo` (maletín y pergamino) o `animate-icono-salto` (casco y monedas), definidas en `tailwind.config.js`, de 0,55 s y 0,5 s, una sola vez. Es CSS: funciona sin el código de la página y con la reducción de movimiento pedida no se mueve.
