@@ -13,7 +13,7 @@ const list = (...items: string[]): Bloque => ({ tipo: 'lista', items });
 
 /** T-1. */
 export const APERTURA =
-  'Brindamos asesoramiento jurídico integral, con especial dedicación al Derecho Laboral.';
+  'Asesoramiento legal estratégico, con especial dedicación al Derecho Laboral.';
 
 /** T-2. */
 export const INTRO_SERVICIOS =
@@ -214,7 +214,7 @@ export const ABOGADAS: readonly Abogada[] = [
     titulo: TITULO_PROFESIONAL,
     foto: '/fotos/vanesa-sabalette-rabello.jpg',
     resumen:
-      'Me especialicé en Derecho Procesal Civil, me formé como mediadora y me diplomé en Derecho Laboral. Entiendo el ejercicio de la abogacía como la búsqueda de soluciones.',
+      'Cada caso representa para mí un nuevo desafío. Busco que quienes confían en nuestro Estudio se sientan acompañados durante todo el proceso, y encuentren en nosotros una respuesta profesional, clara y responsable.',
     texto: [
       'Me gradué como abogada en 2012 en la Universidad Nacional del Litoral y, desde entonces, ejerzo una profesión que también es mi vocación.',
       'Me especialicé en Derecho Procesal Civil, me formé como mediadora y me diplomé en Derecho Laboral, áreas en las que desarrollo principalmente mi práctica profesional.',
@@ -273,6 +273,7 @@ export const TEXTOS = {
     nuestrosServicios: 'Nuestros servicios',
     conocerMas: 'Conocer más',
     abogadas: 'Abogadas',
+    equipoAbogadas: 'Equipo de abogadas',
     masInformacion: 'Más información',
   },
   detalle: {

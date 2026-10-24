@@ -103,7 +103,7 @@ export function ContactoSitio({ mensaje, contact = STUDIO_CONTACT }: ContactoSit
               {contact.whatsapps.map((whatsapp) => (
                 <p key={whatsapp.numero}>
                   <a href={whatsappUrl(whatsapp, mensaje)} className={LINK} {...EXTERNAL}>
-                    {whatsapp.nombre}: {whatsapp.visible}
+                    {whatsapp.nombre}: <span className='hover:text-slate-400' > {whatsapp.visible} </span>
                   </a>
                 </p>
               ))}

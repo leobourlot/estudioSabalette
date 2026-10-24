@@ -4,7 +4,7 @@
  */
 export const TEXTOS_INGRESO = {
   /** T-1, en el panel de la marca. */
-  titulo: 'Seguí tus causas desde donde estés.',
+  titulo: 'Seguí tu caso desde donde estés.',
   /** T-2, debajo de "Ingresar". */
   indicacion: 'Usá el email y la contraseña que te dio el estudio.',
   /** T-3, debajo del botón "Ingresar". */

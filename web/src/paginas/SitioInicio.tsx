@@ -65,7 +65,7 @@ export function SitioInicio() {
         <div className="mx-auto max-w-5xl">
           <Aparecer>
             <h2 id="abogadas-titulo" tabIndex={-1} className={SECTION_TITLE}>
-              {TEXTOS.inicio.abogadas}
+              {TEXTOS.inicio.equipoAbogadas}
             </h2>
           </Aparecer>
           <div className="mt-8 grid items-start gap-6 sm:grid-cols-2">

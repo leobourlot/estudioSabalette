@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import { STUDIO_CONTACT, type StudioContact, whatsappUrl } from '../servicios/datos-estudio';
 import { LOGO_PATH } from '../servicios/marca';
 import { AparecerAlCargar } from './AparecerAlCargar';
-import { CARD, FOCUS_RING_ON_DARK } from './estilos-aplicacion';
+import { FOCUS_RING_ON_DARK } from './estilos-aplicacion';
 import { IconoRedColor } from './IconosRedes';
 import { NombreEstudio } from './NombreEstudio';
 
@@ -86,7 +86,8 @@ export function DisenoMarca({
       </div>
 
       <main className="flex flex-col items-center justify-center px-4 py-8 pb-24 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:pb-8">
-        <AparecerAlCargar className={`w-full max-w-sm p-8 ${CARD}`}>{children}</AparecerAlCargar>
+        <AparecerAlCargar className="w-full max-w-sm rounded-xl border border-slate-300 bg-estudio-azul/15 p-8 shadow-sm">
+{children}</AparecerAlCargar>
       </main>
 
       {conContacto && (

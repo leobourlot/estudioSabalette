@@ -87,7 +87,7 @@ export function SitioDerechoLaboral({ pestana }: SitioDerechoLaboralProps) {
                 {actual.destacados.map((destacado) => (
                   <li
                     key={destacado}
-                    className="rounded-lg bg-gradient-to-r from-estudio-oscuro to-estudio-azul px-4 py-3 font-semibold text-estudio-blanco"
+                    className="rounded-lg bg-gradient-to-r from-estudio-oscuro to-estudio-azul px-4 py-3 font-semibold text-estudio-blanco text-center"
                   >
                     {destacado}
                   </li>

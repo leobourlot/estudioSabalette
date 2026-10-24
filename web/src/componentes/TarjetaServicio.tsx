@@ -14,8 +14,8 @@ interface TarjetaServicioProps {
  */
 export function TarjetaServicio({ servicio }: TarjetaServicioProps) {
   return (
-    <article className="group flex w-full flex-col rounded-lg border border-slate-200 bg-white p-5 shadow-sm transition hover:shadow-md focus-within:shadow-md motion-safe:hover:-translate-y-1 motion-safe:focus-within:-translate-y-1 motion-reduce:transition-none">
-      <span className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-estudio-azul/10 text-estudio-azul">
+    <article className="group flex w-full flex-col rounded-2xl border border-slate-300 bg-estudio-azul/15 p-5 shadow-sm transition hover:shadow-md focus-within:shadow-md motion-safe:hover:-translate-y-1 motion-safe:focus-within:-translate-y-1 motion-reduce:transition-none">
+      <span className="mb-3 inline-flex h-12 w-12 items-center justify-center rounded-full bg-estudio-azul/20 text-estudio-azul">
         <IconoServicio clave={servicio.clave} />
       </span>
       <h3 className="font-titulos text-2xl font-semibold text-estudio-oscuro">{servicio.nombre}</h3>
