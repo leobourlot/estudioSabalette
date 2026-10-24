@@ -79,7 +79,10 @@ describe('TarjetaServicio: el ícono del tema (spec 007, RF-12 y RF-45)', () => 
       const moving = Array.from(icon(container).querySelectorAll('[class*="animate-"]'));
       expect(moving.length).toBeGreaterThan(0);
       for (const part of moving) {
-        const animations = part.className.baseVal.split(' ').filter((c) => c.includes('animate-'));
+        const animations = part
+          .getAttribute('class')!
+          .split(' ')
+          .filter((c) => c.includes('animate-'));
         expect(animations).toHaveLength(2);
         for (const animation of animations) {
           expect(animation).toMatch(/^motion-safe:group-(hover|focus-within):animate-icono-/);
