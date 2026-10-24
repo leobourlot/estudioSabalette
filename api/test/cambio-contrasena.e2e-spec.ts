@@ -91,7 +91,7 @@ describe('PUT /api/sesion/contrasena', () => {
 
   it.each([
     ['tiene tildes', 'contraseña nueva 2026', 'La contraseña no puede tener tildes, ñ ni emojis'],
-    ['es corta', 'corta', 'La contraseña debe tener al menos 10 caracteres'],
+    ['es corta', 'corta', 'La contraseña debe tener al menos 8 caracteres'],
     ['es larga', 'a'.repeat(65), 'La contraseña no puede tener más de 64 caracteres'],
     ['es igual a la actual', TEST_PASSWORD, 'La contraseña nueva debe ser distinta de la actual'],
   ])(

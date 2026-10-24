@@ -125,7 +125,7 @@ describe('desactivación y reactivación de cuentas', () => {
 
       const short = await reactivate(adminSession, lawyer.id, { contrasenaTemporal: 'corta' });
       expect(short.status).toBe(400);
-      expect(short.body.message).toBe('La contraseña debe tener al menos 10 caracteres');
+      expect(short.body.message).toBe('La contraseña debe tener al menos 8 caracteres');
     });
 
     it('responde 409 si la cuenta ya está activa', async () => {

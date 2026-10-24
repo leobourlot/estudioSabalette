@@ -111,7 +111,7 @@ export function PaginaCambiarContrasena() {
 
           {pendiente && (
             <p className="text-sm text-slate-600">
-              Antes de continuar, elegí una contraseña nueva. Tiene que tener entre 10 y 64
+              Antes de continuar, elegí una contraseña nueva. Tiene que tener entre 8 y 64
               caracteres, sin tildes, ñ ni emojis.
             </p>
           )}

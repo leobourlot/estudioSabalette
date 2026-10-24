@@ -60,7 +60,7 @@ async function main(): Promise<void> {
           email: await ask(rl, 'Email: '),
           contrasena: await askNewPassword(
             rl,
-            'Contraseña (10 a 64 caracteres, sin tildes, ñ ni emojis)',
+            'Contraseña (8 a 64 caracteres, sin tildes, ñ ni emojis)',
           ),
         };
         try {

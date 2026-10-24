@@ -55,7 +55,7 @@ describe('PaginaCambiarContrasena: WhatsApp (spec 004, RF-18, RF-19)', () => {
 describe('PaginaCambiarContrasena (RF-11, RF-36 a RF-39)', () => {
   it.each([
     ['tiene tildes', 'contraseña nueva 2026', 'La contraseña no puede tener tildes, ñ ni emojis'],
-    ['es corta', 'corta', 'La contraseña debe tener al menos 10 caracteres'],
+    ['es corta', 'corta', 'La contraseña debe tener al menos 8 caracteres'],
     ['es larga', 'a'.repeat(65), 'La contraseña no puede tener más de 64 caracteres'],
     ['es igual a la actual', CURRENT, 'La contraseña nueva debe ser distinta de la actual'],
   ])('avisa antes de enviar si la nueva %s (RF-39)', async (_case, next, message) => {

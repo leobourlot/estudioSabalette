@@ -117,7 +117,7 @@ describe('PanelUsuarioDetalle — acciones (T43)', () => {
     await choose('Restablecer contraseña', 'corta');
 
     expect((await screen.findByRole('alert')).textContent).toBe(
-      'La contraseña debe tener al menos 10 caracteres',
+      'La contraseña debe tener al menos 8 caracteres',
     );
     expect(users.resetPassword).not.toHaveBeenCalled();
   });

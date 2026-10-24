@@ -117,7 +117,7 @@ describe('restablecimiento de contraseña y liberación de email', () => {
     it('aplica las reglas de RF-39 a la temporal', async () => {
       const short = await resetPassword(adminSession, lawyer.id, { contrasenaTemporal: 'corta' });
       expect(short.status).toBe(400);
-      expect(short.body.message).toBe('La contraseña debe tener al menos 10 caracteres');
+      expect(short.body.message).toBe('La contraseña debe tener al menos 8 caracteres');
 
       await resetPassword(adminSession, lawyer.id).expect(400);
     });

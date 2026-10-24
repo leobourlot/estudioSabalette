@@ -91,7 +91,7 @@ describe('PrincipalAdminService (RF-41, RF-42)', () => {
       [{ nombre: ' ' }, 'El nombre es obligatorio'],
       [{ apellido: 'a'.repeat(56) }, 'El apellido no puede tener más de 55 caracteres'],
       [{ email: 'carla@estudio' }, 'El email debe tener el formato texto@texto.texto'],
-      [{ contrasena: 'corta' }, 'La contraseña debe tener al menos 10 caracteres'],
+      [{ contrasena: 'corta' }, 'La contraseña debe tener al menos 8 caracteres'],
       [{ contrasena: 'contraseña segura' }, 'La contraseña no puede tener tildes, ñ ni emojis'],
     ])('rechaza datos inválidos: %j', async (change, message) => {
       await expect(service.createPrincipal({ ...validData, ...change })).rejects.toThrow(message);
@@ -127,7 +127,7 @@ describe('PrincipalAdminService (RF-41, RF-42)', () => {
       givenDatabase({ principal: { id: 4 } });
 
       await expect(service.resetPrincipalPassword('corta')).rejects.toThrow(
-        'La contraseña debe tener al menos 10 caracteres',
+        'La contraseña debe tener al menos 8 caracteres',
       );
       expect(users.update).not.toHaveBeenCalled();
     });

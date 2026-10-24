@@ -83,7 +83,7 @@ El panel de administración y el portal de clientes manejan información amparad
 - RF-37: SI la contraseña actual es incorrecta, ENTONCES EL SISTEMA rechaza el cambio con el mensaje "La contraseña actual no es correcta".
 - RF-38: SI se ingresa mal la contraseña actual 5 veces en 15 minutos, ENTONCES EL SISTEMA cierra la sesión con el mensaje "Por seguridad, cerramos tu sesión. Volvé a ingresar". El nuevo ingreso queda sujeto a RF-10.
 - RF-39: SI una contraseña nueva o temporal no cumple alguna regla, ENTONCES EL SISTEMA la rechaza con el mensaje de la regla incumplida:
-  - Menos de 10 caracteres: "La contraseña debe tener al menos 10 caracteres".
+  - Menos de 8 caracteres: "La contraseña debe tener al menos 8 caracteres".
   - Más de 64 caracteres: "La contraseña no puede tener más de 64 caracteres".
   - Caracteres fuera de letras sin tilde, números, espacios y símbolos comunes del teclado: "La contraseña no puede tener tildes, ñ ni emojis".
   - Al cambiar la propia, igual a la actual: "La contraseña nueva debe ser distinta de la actual".

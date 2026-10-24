@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import bcrypt from 'bcrypt';
 
 const BCRYPT_COST = 12;
-const MIN_LENGTH = 10;
+const MIN_LENGTH = 8;
 const MAX_LENGTH = 64;
 
 // Solo ASCII imprimible: letras sin tilde, números, espacio y símbolos del teclado.

@@ -68,7 +68,7 @@ describe('validateNewAccount (RF-6, RF-39)', () => {
   it.each([
     [{ email: 'ana@correo' }, 'El email debe tener el formato texto@texto.texto'],
     [{ nombre: 'a'.repeat(56) }, 'El nombre no puede tener más de 55 caracteres'],
-    [{ contrasenaTemporal: 'corta' }, 'La contraseña debe tener al menos 10 caracteres'],
+    [{ contrasenaTemporal: 'corta' }, 'La contraseña debe tener al menos 8 caracteres'],
     [{ dni: '123456' }, 'El DNI debe tener 7 u 8 dígitos'],
     [{ telefono: '1'.repeat(16) }, 'El teléfono no puede tener más de 15 caracteres'],
     [{ domicilio: 'a'.repeat(56) }, 'El domicilio no puede tener más de 55 caracteres'],

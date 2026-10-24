@@ -258,7 +258,7 @@ Reglas de permisos en `usuarios/permisos-gestion.ts`, como funciones puras sin a
 - **CUIT**: 11 dígitos; dígito verificador con los pesos `5,4,3,2,7,6,5,4,3,2` y módulo 11.
 - **Email**: `^[^\s@]+@[^\s@]+\.[^\s@]+$`, de hasta 254 caracteres.
 - **Longitudes**: 55 caracteres para nombre, apellido, razón social y domicilio; 15 para teléfono.
-- **Contraseña**: entre 10 y 64 caracteres, solo ASCII imprimible (`^[\x20-\x7E]{10,64}$`): letras sin tilde, números, espacio y símbolos del teclado. Se validan primero los caracteres y después el largo, para dar el mensaje correcto de RF-39.
+- **Contraseña**: entre 8 y 64 caracteres, solo ASCII imprimible (`^[\x20-\x7E]{8,64}$`): letras sin tilde, números, espacio y símbolos del teclado. Se validan primero los caracteres y después el largo, para dar el mensaje correcto de RF-39.
 - **Hash**: bcrypt con costo 12. Como la contraseña es ASCII de hasta 64 caracteres, ocupa como mucho 64 bytes y nunca alcanza el límite de 72 bytes de bcrypt.
 - **Registros**: las contraseñas y sus hashes nunca se escriben en logs. `UsuarioPropio` y `UsuarioDetalle` se arman explícitamente, nunca a partir de la entidad completa.
 

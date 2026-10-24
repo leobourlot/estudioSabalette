@@ -175,7 +175,7 @@ export function PanelUsuarioNuevo() {
           onChange={set('contrasenaTemporal')}
         />
         <p className="text-xs text-slate-500">
-          Entre 10 y 64 caracteres, sin tildes, ñ ni emojis. Comunicásela a la persona: al ingresar
+          Entre 8 y 64 caracteres, sin tildes, ñ ni emojis. Comunicásela a la persona: al ingresar
           va a tener que cambiarla.
         </p>
 

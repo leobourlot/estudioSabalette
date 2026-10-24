@@ -139,7 +139,7 @@ describe('longitudes (RF-6)', () => {
 
 describe('findPasswordRuleViolation (RF-39)', () => {
   it.each([
-    ['una contraseña de 10 caracteres', 'abcdefghij'],
+    ['una contraseña de 8 caracteres', 'abcdefgh'],
     ['una contraseña de 64 caracteres', 'a'.repeat(64)],
     ['espacios', 'mi clave del estudio'],
     ['símbolos del teclado', 'Cl@ve_Segura!#2026$%&*()[]{}<>?'],
@@ -156,8 +156,8 @@ describe('findPasswordRuleViolation (RF-39)', () => {
     expect(findPasswordRuleViolation(password)).toBe(PASSWORD_MESSAGES.invalidCharacters);
   });
 
-  it('rechaza contraseñas de menos de 10 y de más de 64 caracteres', () => {
-    expect(findPasswordRuleViolation('abcdefghi')).toBe(PASSWORD_MESSAGES.tooShort);
+  it('rechaza contraseñas de menos de 8 y de más de 64 caracteres', () => {
+    expect(findPasswordRuleViolation('abcdefg')).toBe(PASSWORD_MESSAGES.tooShort);
     expect(findPasswordRuleViolation('a'.repeat(65))).toBe(PASSWORD_MESSAGES.tooLong);
   });
 
@@ -175,7 +175,7 @@ describe('findPasswordRuleViolation (RF-39)', () => {
   it('usa los mensajes exactos de la spec', () => {
     expect(PASSWORD_MESSAGES).toEqual({
       invalidCharacters: 'La contraseña no puede tener tildes, ñ ni emojis',
-      tooShort: 'La contraseña debe tener al menos 10 caracteres',
+      tooShort: 'La contraseña debe tener al menos 8 caracteres',
       tooLong: 'La contraseña no puede tener más de 64 caracteres',
       sameAsCurrent: 'La contraseña nueva debe ser distinta de la actual',
     });

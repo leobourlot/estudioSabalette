@@ -193,7 +193,7 @@ describe('POST /api/panel/usuarios (alta de cuentas)', () => {
     const response = await create(adminSession, { ...newLawyer, contrasenaTemporal: 'corta' });
 
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe('La contraseña debe tener al menos 10 caracteres');
+    expect(response.body.message).toBe('La contraseña debe tener al menos 8 caracteres');
   });
 
   it('responde 400 con el mensaje del campo inválido', async () => {

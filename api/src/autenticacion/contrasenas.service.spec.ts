@@ -5,7 +5,7 @@ const passwords = new PasswordsService();
 
 describe('PasswordsService — reglas de RF-39', () => {
   it.each([
-    ['una contraseña de 10 caracteres', 'abcdefghij'],
+    ['una contraseña de 8 caracteres', 'abcdefgh'],
     ['una contraseña de 64 caracteres', 'a'.repeat(64)],
     ['espacios', 'mi clave del estudio'],
     ['símbolos del teclado', 'Cl@ve_Segura!#2026$%&*()[]{}<>?'],
@@ -22,8 +22,8 @@ describe('PasswordsService — reglas de RF-39', () => {
     expect(passwords.findRuleViolation(password)).toBe(PASSWORD_MESSAGES.invalidCharacters);
   });
 
-  it('rechaza contraseñas de menos de 10 caracteres', () => {
-    expect(passwords.findRuleViolation('abcdefghi')).toBe(PASSWORD_MESSAGES.tooShort);
+  it('rechaza contraseñas de menos de 8 caracteres', () => {
+    expect(passwords.findRuleViolation('abcdefg')).toBe(PASSWORD_MESSAGES.tooShort);
   });
 
   it('rechaza contraseñas de más de 64 caracteres', () => {
@@ -44,7 +44,7 @@ describe('PasswordsService — reglas de RF-39', () => {
   it('usa los mensajes exactos de la spec', () => {
     expect(PASSWORD_MESSAGES).toEqual({
       invalidCharacters: 'La contraseña no puede tener tildes, ñ ni emojis',
-      tooShort: 'La contraseña debe tener al menos 10 caracteres',
+      tooShort: 'La contraseña debe tener al menos 8 caracteres',
       tooLong: 'La contraseña no puede tener más de 64 caracteres',
       sameAsCurrent: 'La contraseña nueva debe ser distinta de la actual',
     });

@@ -8,7 +8,7 @@ export const MAX_TEXT_LENGTH = 55;
 export const MAX_PHONE_LENGTH = 15;
 export const MAX_EMAIL_LENGTH = 254;
 
-const MIN_PASSWORD_LENGTH = 10;
+const MIN_PASSWORD_LENGTH = 8;
 const MAX_PASSWORD_LENGTH = 64;
 const CUIT_WEIGHTS = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2];
 
