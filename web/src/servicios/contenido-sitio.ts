@@ -272,7 +272,6 @@ export const TEXTOS = {
   inicio: {
     nuestrosServicios: 'Nuestros servicios',
     conocerMas: 'Conocer más',
-    abogadas: 'Abogadas',
     equipoAbogadas: 'Equipo de abogadas',
     masInformacion: 'Más información',
   },

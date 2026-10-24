@@ -62,7 +62,7 @@ Rutas abreviadas:
 2. Tener a mano un cliente con causas y movimientos visibles (alguno anulado) y un abogado.
 
 ### Pasos
-1. En una computadora, abrir `/ingresar`: a la izquierda el degradado con el logo, el nombre y "Seguí tus causas desde donde estés.", y abajo "Pueyrredón Nº 47, Concordia · +54 9 3455 41-4147"; a la derecha la tarjeta con "Ingresar", "Usá el email y la contraseña…", los campos, el botón y "¿Olvidaste tu contraseña?…".
+1. En una computadora, abrir `/ingresar`: a la izquierda el degradado con el logo, el nombre y "Seguí tu caso desde donde estés.", y abajo "Pueyrredón Nº 47, Concordia · +54 9 3455 41-4147"; a la derecha la tarjeta con "Ingresar", "Usá el email y la contraseña…", los campos, el botón y "¿Olvidaste tu contraseña?…".
 2. Ingresar como cliente: el menú lateral con el logo, "Portal de clientes" y "Mis causas" marcada; cada causa en su tarjeta, bien separada. Abrir una causa: tres tarjetas, "Mis causas" sigue marcada, y los movimientos en la línea de tiempo, con el anulado de punto hueco.
 3. Ingresar como abogado: el menú del panel, el inicio con sus accesos, el listado de causas con sus filas separadas y resaltadas al pasar el puntero, el historial de movimientos de una causa con sus barras azul y gris, y los listados de jurisprudencia, modelos y cuentas.
 4. Repetir los pasos 1 a 3 con el navegador a 360 px: la barra de arriba en una línea (logo, nombre y "Menú"); "Menú" abre el menú desde la izquierda y se cierra al elegir; las tablas se desplazan dentro de su tarjeta; el formulario de ingreso se ve sin desplazarse y el botón de WhatsApp no lo tapa, tampoco con el teclado del celular abierto.

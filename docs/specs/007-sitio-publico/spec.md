@@ -83,7 +83,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 - RF-17: EL SISTEMA muestra en la pestaña "Empresas" los tres destacados de T-7, como texto, antes del texto T-8 completo. En la pestaña "Trabajadores" muestra el texto T-9 completo.
 
 ### Abogadas
-- RF-18: EL SISTEMA muestra en la sección Abogadas el título "Abogadas" y una tarjeta por cada integrante, en el orden del logo: Carolina Marisa Pertusatti y Vanesa Sabalette Rabello. Cada tarjeta muestra:
+- RF-18: EL SISTEMA muestra en la sección Abogadas el título "Equipo de abogadas" y una tarjeta por cada integrante, en el orden del logo: Carolina Marisa Pertusatti y Vanesa Sabalette Rabello. Cada tarjeta muestra:
   - La foto (RF-21).
   - El nombre, con "Dra." adelante (por ejemplo, "Dra. Vanesa Sabalette Rabello").
   - Su título profesional, "Abogada | Mediadora | Diplomada en Derecho Laboral" (T-21).
@@ -327,10 +327,10 @@ Ninguna impide planificar: cada dato pendiente tiene definido qué se muestra mi
 - Resuelta el 17/10/2026: el estudio informó su dirección ("Pueyrredón Nº 47, Concordia"), su email (estudiojuridicovsr@gmail.com) y su red social (Instagram, "@pertusattisabaletteabogadas") (RF-22). El 23/10/2026 la cuenta de Instagram pasó a ser "@persaestudiojuridico".
 
 ## Anexo — Textos aprobados
-Los textos de los servicios y de la abogada son los de la clienta. Las frases de las tarjetas y el resumen son recortes de esos textos, aprobados el 12/10/2026. Los mensajes de WhatsApp, los títulos, las descripciones y los textos de la interfaz se redactaron para esta spec. Los textos del bloque de contacto (T-17) y del pie de página (T-18) se tomaron del modelo que eligió el estudio y se aprobaron el 15/10/2026.
+Los textos de los servicios y de la abogada son los de la clienta. Las frases de las tarjetas y el resumen son recortes de esos textos, aprobados el 12/10/2026. Los mensajes de WhatsApp, los títulos, las descripciones y los textos de la interfaz se redactaron para esta spec. Los textos del bloque de contacto (T-17) y del pie de página (T-18) se tomaron del modelo que eligió el estudio y se aprobaron el 15/10/2026. El estudio pidió cambiar T-1, T-13 y el título de la sección de abogadas (T-17) el 24/10/2026.
 
 ### T-1 — Apertura del inicio
-> Brindamos asesoramiento jurídico integral, con especial dedicación al Derecho Laboral.
+> Asesoramiento legal estratégico, con especial dedicación al Derecho Laboral.
 
 ### T-2 — Encabezado de la sección Servicios
 > Nuestro trabajo parte del análisis particular de cada situación, priorizando soluciones estratégicas y negociadas cuando resultan convenientes, y una defensa judicial sólida cuando el conflicto requiere acudir a los tribunales.
@@ -410,7 +410,7 @@ Los textos de los servicios y de la abogada son los de la clienta. Las frases de
 > - Inscripción de inmuebles y demás bienes registrables.
 
 ### T-13 — Resumen de Vanesa Sabalette Rabello (tarjeta)
-> Me especialicé en Derecho Procesal Civil, me formé como mediadora y me diplomé en Derecho Laboral. Entiendo el ejercicio de la abogacía como la búsqueda de soluciones.
+> Cada caso representa para mí un nuevo desafío. Busco que quienes confían en nuestro Estudio se sientan acompañados durante todo el proceso, y encuentren en nosotros una respuesta profesional, clara y responsable.
 
 ### T-14 — Texto completo de Vanesa Sabalette Rabello (su página)
 > Me gradué como abogada en 2012 en la Universidad Nacional del Litoral y, desde entonces, ejerzo una profesión que también es mi vocación.
@@ -475,7 +475,7 @@ El título del inicio es el nombre del estudio. El de las demás páginas y pant
 
 ### T-17 — Textos de la interfaz
 - Menú y encabezado: "Servicios", "Abogadas", "Contacto", "Menú", "Ingresar", "Ir a mi portal", "Ir al panel", "Saltar al contenido".
-- Inicio: "Nuestros servicios", "Conocer más", "Abogadas", "Más información".
+- Inicio: "Nuestros servicios", "Conocer más", "Equipo de abogadas", "Más información".
 - Páginas de detalle: "Volver a servicios", "Otros servicios", "Volver a abogadas", "Empresas", "Trabajadores".
 - Contacto: "Contactate con nosotros", "Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal.", "Ubicación", "Cómo llegar", "Teléfono / WhatsApp", "Disponibilidad", "Email".
 - Botón de WhatsApp: "Escribinos por WhatsApp".

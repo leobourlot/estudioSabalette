@@ -184,10 +184,10 @@ El sitio público ya tiene la identidad del estudio: el logo, el degradado de su
 Ninguna. Resuelta el 17/10/2026: la dirección que muestra el ingreso (RF-11) es la que informó el estudio, "Pueyrredón Nº 47, Concordia", y la spec 007 ya la incluye (RF-22).
 
 ## Anexo — Textos aprobados
-Los textos T-1 a T-3 se tomaron del modelo que eligió el estudio y se aprobaron el 17/10/2026, sin el texto "Clientes e integrantes del estudio ingresan desde acá con la cuenta que les dio el estudio.", que el estudio pidió quitar.
+Los textos T-1 a T-3 se tomaron del modelo que eligió el estudio y se aprobaron el 17/10/2026, sin el texto "Clientes e integrantes del estudio ingresan desde acá con la cuenta que les dio el estudio.", que el estudio pidió quitar. El estudio pidió cambiar T-1 el 24/10/2026.
 
 ### T-1 — Título del panel de la marca, en el ingreso
-> Seguí tus causas desde donde estés.
+> Seguí tu caso desde donde estés.
 
 ### T-2 — Texto debajo de "Ingresar"
 > Usá el email y la contraseña que te dio el estudio.

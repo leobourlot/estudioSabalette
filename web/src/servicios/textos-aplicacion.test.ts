@@ -20,7 +20,7 @@ describe('textos del ingreso (spec 008, anexo)', () => {
   });
 
   it('la comparación detecta un texto distinto (caso de control)', () => {
-    expect(annexQuote('T-1')).not.toBe('Seguí tus causas desde donde estés');
+    expect(annexQuote('T-1')).not.toBe('Seguí tu caso desde donde estés');
   });
 
   it('no incluye el texto que el estudio pidió quitar', () => {
