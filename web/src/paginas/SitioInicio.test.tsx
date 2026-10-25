@@ -2,7 +2,7 @@ import { screen, within } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { headingOutline, renderAt, stubSessionStatus } from '../pruebas/sitio-de-prueba';
 import { whatsappMessage } from '../pruebas/whatsapp-de-prueba';
-import { APERTURA, INTRO_SERVICIOS, SERVICIOS } from '../servicios/contenido-sitio';
+import { APERTURA, INTRO_SERVICIOS, SERVICIOS, TEXTOS } from '../servicios/contenido-sitio';
 import { SitioInicio } from './SitioInicio';
 
 beforeEach(() => {
@@ -19,6 +19,7 @@ describe('SitioInicio (spec 007, RF-11, RF-12 y RF-18)', () => {
 
     expect(headingOutline(container)).toEqual([
       'h1 Pertusatti | Sabalette - Abogadas',
+      'h2 Seguí tus casos desde donde estés',
       'h2 Nuestros servicios',
       'h3 Derecho Laboral',
       'h3 Accidentes y Enfermedades Laborales',
@@ -49,6 +50,39 @@ describe('SitioInicio (spec 007, RF-11, RF-12 y RF-18)', () => {
     expect(opening.className).toContain('overflow-hidden');
   });
 
+  it('entre la apertura y Servicios va la sección Portal de clientes (RF-11, RF-47)', () => {
+    renderAt('/', <SitioInicio />);
+
+    const section = document.getElementById('portal')!;
+    expect(
+      section.previousElementSibling!.contains(screen.getByRole('heading', { level: 1 })),
+    ).toBe(true);
+    expect(section.nextElementSibling!.id).toBe('servicios');
+    expect(within(section).getByText(TEXTOS.portal.leyenda, { selector: 'p' })).toBeTruthy();
+    expect(within(section).getByRole('heading', { level: 2 }).textContent).toBe(
+      'Seguí tus casos desde donde estés',
+    );
+  });
+
+  it('el botón lleva a la dirección del portal, sin consultar la sesión (RF-47)', () => {
+    renderAt('/', <SitioInicio />);
+
+    const section = document.getElementById('portal')!;
+    const links = within(section).getAllByRole('link');
+    expect(links).toHaveLength(1);
+    expect(links[0].textContent).toBe('Ir al portal de clientes');
+    expect(links[0].getAttribute('href')).toBe('/portal');
+  });
+
+  it('la sección muestra la maqueta del portal como una sola imagen (RF-47)', () => {
+    renderAt('/', <SitioInicio />);
+
+    const section = document.getElementById('portal')!;
+    expect(
+      within(section).getByRole('img', { name: TEXTOS.portal.descripcionMaqueta }),
+    ).toBeTruthy();
+  });
+
   it('la sección Servicios muestra T-2 y las cuatro tarjetas, en orden', () => {
     renderAt('/', <SitioInicio />);
 
@@ -72,7 +106,7 @@ describe('SitioInicio (spec 007, RF-11, RF-12 y RF-18)', () => {
   it('las secciones tienen su "#" y su título recibe el foco', () => {
     renderAt('/', <SitioInicio />);
 
-    for (const id of ['servicios', 'abogadas', 'contacto']) {
+    for (const id of ['portal', 'servicios', 'abogadas', 'contacto']) {
       const section = document.getElementById(id)!;
       expect(section.querySelector('h2')!.getAttribute('tabindex')).toBe('-1');
     }

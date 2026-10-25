@@ -1,7 +1,12 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { fakeSessionService, renderApp, testUser } from './pruebas/aplicacion-de-prueba';
+import {
+  fakeSessionService,
+  findPanelHome,
+  renderApp,
+  testUser,
+} from './pruebas/aplicacion-de-prueba';
 import type { UsuarioPropio } from './servicios/sesion';
 
 const sessionFor = (usuario: UsuarioPropio) =>
@@ -36,7 +41,7 @@ describe('rutas de causas', () => {
 
   it('el enlace "Causas" del panel lleva al listado', async () => {
     renderApp('/panel', sessionFor(testUser('admin')));
-    await screen.findByRole('heading', { name: 'Panel' });
+    await findPanelHome();
 
     await userEvent
       .setup()

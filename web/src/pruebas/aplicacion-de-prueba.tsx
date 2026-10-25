@@ -1,4 +1,4 @@
-import { act, render } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import { vi } from 'vitest';
 import { ProveedorServicios } from '../componentes/ProveedorServicios';
@@ -8,6 +8,24 @@ import type { PortalService } from '../servicios/portal';
 import type { Rol, SessionService, UsuarioPropio } from '../servicios/sesion';
 import type { UsersService, UsuarioDetalle } from '../servicios/usuarios';
 import { fakePortalService } from './portal-de-prueba';
+
+/** El inicio del panel, en las listas de destinos de los tests (ver findScreenHeading). */
+export const INICIO_PANEL = 'inicio del panel';
+
+/**
+ * Espera el inicio del panel: el saludo como título principal y la navegación "Panel" (spec 008,
+ * RF-25). El portal saluda igual (RF-28), así que el saludo solo no alcanza para distinguirlos.
+ */
+export async function findPanelHome() {
+  const heading = await screen.findByRole('heading', { name: /^Hola, /, level: 1 });
+  screen.getByRole('navigation', { name: 'Panel' });
+  return heading;
+}
+
+/** Espera el título de una pantalla, o el inicio del panel con INICIO_PANEL. */
+export function findScreenHeading(name: string) {
+  return name === INICIO_PANEL ? findPanelHome() : screen.findByRole('heading', { name });
+}
 
 /** Usuario de prueba con el rol indicado. */
 export function testUser(rol: Rol, overrides: Partial<UsuarioPropio> = {}): UsuarioPropio {

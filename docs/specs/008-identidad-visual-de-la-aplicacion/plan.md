@@ -35,8 +35,8 @@ Los componentes solo muestran datos. Lo que decide algo sin React va en `src/ser
 No se modifica nada de `servicios/` salvo lo nuevo, ni el sitio público, ni `tailwind.config.js`: los colores del estudio ya están (`estudio.oscuro`, `estudio.azul`, `estudio.blanco`), y los tonos tenues salen de ellos con opacidad (`bg-estudio-azul/10`) y de los grises de Tailwind.
 
 ## Identidad visual [RF-3, RF-4]
-- Fondo de las pantallas: `bg-slate-100`.
-- Tarjeta (`CARD`): `rounded-xl border border-slate-300 bg-white shadow-sm`. El borde `slate-300` sobre `slate-100` da el corte entre tarjetas que pide RF-4; el contraste de 3 a 1 lo piden los bordes de controles, no los de las tarjetas, que se separan además por el espacio.
+- Fondo de las pantallas del portal y del panel: `bg-estudio-azul/15` (el azul del logo al 15 %), cambiado por el estudio el 24/10/2026 para que las tarjetas blancas se distingan mejor; antes era `bg-slate-100`.
+- Tarjeta (`CARD`): `rounded-xl border border-slate-300 bg-white shadow-sm`. El borde `slate-300` y el blanco de la tarjeta sobre el fondo azul dan el corte entre tarjetas que pide RF-4; el contraste de 3 a 1 lo piden los bordes de controles, no los de las tarjetas, que se separan además por el espacio.
 - Título principal de cada pantalla (`PAGE_TITLE`): `font-titulos text-3xl font-semibold text-estudio-oscuro`.
 - Botón principal (`PRIMARY_BUTTON`): el de `estilos-sitio.ts`, `bg-estudio-oscuro` con texto blanco y `hover:bg-estudio-azul`. Botón secundario (`SECONDARY_BUTTON`): `border border-slate-500 bg-white text-estudio-oscuro hover:bg-slate-50`. Los dos con `min-h-11` en el portal y `min-h-9` en el panel, que se usa con el mouse.
 - Campo (`INPUT`): `rounded-md border border-slate-500 bg-white` con foco `focus-visible:outline-estudio-azul`. El borde `slate-500` sobre blanco da 4,8 a 1; `slate-400` no alcanza (2,6 a 1).
@@ -70,7 +70,7 @@ No se modifica nada de `servicios/` salvo lo nuevo, ni el sitio público, ni `ta
 - `useAnchoEscritorio()` en `DisenoSeccion`: con `matchMedia('(min-width: 1024px)')`, si la ventana pasa a 1024 px o más con el menú abierto, lo cierra, así no queda `inert` en el contenido [casos límite]. Sin `matchMedia` (jsdom), no hace nada.
 
 ### `DisenoSeccion`
-- Estructura: `<div class="min-h-screen bg-slate-100 lg:flex">`, con el acceso "Saltar al contenido" primero (`sr-only focus:not-sr-only`, a `#contenido`), la barra, el fondo, `MenuLateral` y `<div id="contenido" tabIndex={-1} class="min-w-0 flex-1">` con el `Outlet` y el `footer`.
+- Estructura: `<div class="min-h-screen bg-estudio-azul/15 lg:flex">`, con el acceso "Saltar al contenido" primero (`sr-only focus:not-sr-only`, a `#contenido`), la barra, el fondo, `MenuLateral` y `<div id="contenido" tabIndex={-1} class="min-w-0 flex-1">` con el `Outlet` y el `footer`.
 - El `Outlet` va dentro de `AparecerAlCargar` con `key={pathname}`: cada pantalla aparece al abrirla [RF-26].
 - `DisenoPanel` y `DisenoPortal` le pasan el menú de `menu-aplicacion.ts`, el nombre de la sección y, en el portal, el `BloqueContactoEstudio` y el botón de WhatsApp como hoy.
 - `BloqueContactoEstudio` pasa a ser una tarjeta al final del contenido, con el mismo `aria-label` y los mismos datos (spec 004, RF-18), y conserva el margen inferior para el botón de WhatsApp (spec 004, RF-19).
@@ -78,13 +78,14 @@ No se modifica nada de `servicios/` salvo lo nuevo, ni el sitio público, ni `ta
 ## Ingreso y cambio de contraseña [RF-11 a RF-14]
 - `DisenoMarca({ marca, children })`: `lg:grid lg:grid-cols-2 min-h-screen`.
   - Izquierda: `bg-gradient-to-r from-estudio-oscuro to-estudio-azul text-estudio-blanco`, con el `<a href="/">` del logo y el nombre (como hoy: enlace común al sitio público, spec 007, RF-33) y lo que pase cada pantalla en `marca`. No usa animaciones: se ve desde el primer momento [RF-26].
-  - Derecha: `bg-slate-100`, centra la tarjeta (`CARD`, `max-w-sm`), que aparece con `AparecerAlCargar`.
+  - Derecha: `bg-slate-100`, centra la tarjeta (`max-w-sm`, con el borde y la sombra de `CARD` pero sobre `bg-estudio-azul/10`), que aparece con `AparecerAlCargar`.
 - `PaginaIngreso`: la marca lleva T-1 en un `<p>` con `font-titulos text-4xl` (el único `<h1>` sigue siendo "Ingresar"), y abajo `ContactoIngreso`: `[direccion, ' · ', WhatsApp]`, con la dirección solo si `STUDIO_CONTACT.direccion` no es `null` y el enlace `whatsappUrl()` sin mensaje, con `target="_blank"` y `rel="noopener noreferrer"`. Antes del número, dentro del enlace, `IconoRedColor red="WhatsApp"`: el mismo ícono verde con contorno blanco del bloque de contacto del sitio. La tarjeta suma T-2 debajo del título y T-3 debajo del botón. Los mensajes, la validación y el destino no cambian [RF-13].
 - En el celular, la marca es una franja con el logo de 40 px, el nombre y T-1 en `text-2xl`; `ContactoIngreso` se renderiza dos veces, con `hidden lg:block` y con `lg:hidden`, para ir abajo de la marca o abajo de la tarjeta [RF-12]. La copia que el ancho oculta queda con `display: none`, que ya la saca del lector de pantalla y del recorrido con Tab.
 - La tarjeta deja `pb-24` debajo en el celular, como hoy, para el botón de WhatsApp [RF-12; spec 007, RF-28].
 - `PaginaCambiarContrasena`: usa `DisenoMarca` sin `marca` extra [RF-14]; el formulario, los mensajes y el botón de WhatsApp para clientes no cambian.
 
-## Portal [RF-15 a RF-20]
+## Portal [RF-15 a RF-20, RF-28]
+- `PortalInicio`: `<h1>` con `greeting(nombre)` y debajo `<h2>` "Mis causas", los dos con `PAGE_TITLE`, y la lista. El usuario siempre está: la pantalla va dentro de `RutaProtegida` [RF-28].
 - `ListaCausasPortal`:
   - Título de grupo: `<h2>` con `border-b border-slate-300 pb-2 font-titulos text-xl` [RF-16].
   - Cada causa, un `<li>` con `CARD p-5`, separadas por `space-y-4`. Arriba, `flex justify-between gap-3`: `<h3>` con la carátula (`font-titulos text-xl line-clamp-2 break-words`) y la etiqueta de estado (`STATUS_BADGE`, `shrink-0`). Debajo, "Expte. " y `orNotAssigned(numeroExpediente)`. Si hay fecha, un recuadro `rounded-lg bg-slate-100 px-4 py-3` con "Último movimiento" en `text-xs font-semibold` y la fecha. Al final, `Link` "Ver detalle" con `SECONDARY_BUTTON` y `<span class="sr-only"> de {caratula}</span>` [RF-15].
@@ -113,7 +114,7 @@ No se modifica nada de `servicios/` salvo lo nuevo, ni el sitio público, ni `ta
 - Los filtros del panel usan `FIELD_SMALL`: el mismo campo que `INPUT`, más bajo y sin ancho completo.
 - `FilaMovimiento`: `CARD` con `border-l-4`, `border-l-estudio-azul` si es visible y `border-l-slate-400` si no; conserva las etiquetas. `HistorialMovimientos` pasa de `divide-y` a `space-y-4` [RF-23].
 - Formularios, detalles y confirmaciones: el contenido en `CARD p-6`, botones con `PRIMARY_BUTTON` y `SECONDARY_BUTTON` y campos con `INPUT`. No cambian textos, orden ni comportamiento [RF-24].
-- `PanelInicio`: el saludo de hoy y una grilla (`sm:grid-cols-2 lg:grid-cols-3`) con un `Link` por opción de `PANEL_MENU` salvo "Inicio", cada uno una `CARD` con su ícono y su nombre, con `motion-safe:hover:-translate-y-0.5 hover:shadow-md`. Hoy la pantalla tiene el enlace "Gestionar cuentas": pasa a ser la tarjeta "Cuentas" [RF-25].
+- `PanelInicio`: el saludo `greeting(nombre)` de `servicios/textos-aplicacion.ts` ("Hola, <nombre>.") como único `<h1>`, y una grilla (`sm:grid-cols-2 lg:grid-cols-3`) con un `Link` por opción de `PANEL_MENU` salvo "Inicio", cada uno una `CARD` con su ícono y su nombre, con `motion-safe:hover:-translate-y-0.5 hover:shadow-md`. Hoy la pantalla tiene el enlace "Gestionar cuentas": pasa a ser la tarjeta "Cuentas" [RF-25].
 
 ## Animaciones [RF-26, RF-27]
 - `RutasAplicacion.tsx` envuelve las rutas con `<LazyMotion features={domAnimation} strict>`, como `SitioPublico.tsx`. `main.tsx` ya separa el sitio público de la aplicación: cada uno carga Motion en su parte del código, y la del portal y el panel se carga una sola vez [RNF de rendimiento].
@@ -138,7 +139,7 @@ Ninguna. `motion` ya está en `web/` (plan 007, "Dependencia nueva").
   - `MenuLateral.test.tsx`: marca con el logo (`alt=""`) y el nombre en dos líneas, nombre de la sección, opciones con su ícono `aria-hidden`, `aria-current` en la actual y en sus detalles, usuario, "Cerrar sesión", logo al inicio de la sección [RF-5 a RF-8]. Plegado: "Menú" con `aria-expanded`, al abrir el foco en "Cerrar menú" y el contenido con `inert`; se cierra al elegir una opción, con "Cerrar menú", con Escape y al tocar el fondo, y el foco vuelve a "Menú" [RF-9]. `localStorage` y `sessionStorage` vacíos después de abrir y cerrar [RF-10].
   - `DisenoMarca.test.tsx` y `PaginaIngreso.test.tsx`: T-1, T-2 y T-3 contra el anexo, el WhatsApp sin mensaje y aparte, la dirección con " · " solo cuando está informada, sin la frase que el estudio pidió quitar [RF-11]. `PaginaCambiarContrasena.test.tsx`: la marca sin T-1 ni contacto y sin menú [RF-14].
   - `LineaDeTiempo.test.tsx`: un `<li>` por movimiento en el orden recibido, fecha, tipo y leyendas, punto hueco en el anulado, sin línea en el último [RF-18, RF-19].
-  - `PanelInicio`: el saludo y un acceso por opción [RF-25].
+  - `PanelInicio`: el saludo como título principal y un acceso por opción [RF-25]. `PortalInicio`: el saludo como título principal y "Mis causas" como `<h2>` [RF-28]. Los tests que esperan llegar al inicio del panel lo reconocen por el saludo y la navegación "Panel" (`findPanelHome`), porque el portal saluda igual.
   - `animaciones.test.tsx`: `pageTransition` dura 0 con la reducción, y `staggerDelay` nunca supera el límite [RF-27].
 - Ajustes de tests existentes, solo en lo que cambia de presentación [RF-2]:
   - `Disenos.test.tsx`: "Modelos de escritos"; la marca, que ya no está en el `banner` desde `lg`; la navegación con nombre.

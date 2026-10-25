@@ -4,23 +4,22 @@ import { CARD, FOCUS_RING, PAGE, PAGE_TITLE } from '../componentes/estilos-aplic
 import { IconoMenu } from '../componentes/IconosMenu';
 import { useSession } from '../componentes/ProveedorSesion';
 import { PANEL_MENU } from '../servicios/menu-aplicacion';
+import { greeting } from '../servicios/textos-aplicacion';
 
 /** Las opciones del menú del panel, salvo "Inicio", que es esta pantalla (spec 008, RF-25). */
 const ACCESOS = PANEL_MENU.filter((option) => !option.end);
 
 /**
- * Inicio del panel: el saludo y un acceso por cada opción del menú, en tarjetas con su ícono y
- * su nombre (spec 008, RF-25). Sin contadores ni resúmenes, que quedan fuera de alcance.
+ * Inicio del panel: el saludo como título principal y un acceso por cada opción del menú, en
+ * tarjetas con su ícono y su nombre (spec 008, RF-25). Sin contadores ni resúmenes, que quedan
+ * fuera de alcance. El usuario siempre está: la pantalla va dentro de RutaProtegida.
  */
 export function PanelInicio() {
   const { usuario } = useSession();
 
   return (
     <main className={PAGE}>
-      <div>
-        <h1 className={PAGE_TITLE}>Panel</h1>
-        {usuario && <p className="mt-1 text-slate-600">Hola, {usuario.nombre}.</p>}
-      </div>
+      {usuario && <h1 className={PAGE_TITLE}>{greeting(usuario.nombre)}</h1>}
       <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {ACCESOS.map((option, index) => (
           <AparecerAlCargar key={option.to} como="li" indice={index}>

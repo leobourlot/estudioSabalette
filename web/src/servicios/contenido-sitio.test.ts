@@ -13,8 +13,10 @@ import {
   lawyerName,
   APERTURA,
   type Bloque,
+  CAUSA_EJEMPLO,
   copyrightNotice,
   hasOwnPage,
+  INGRESO_EJEMPLO,
   INTRO_SERVICIOS,
   MENSAJES_WHATSAPP,
   PESTANAS_LABORAL,
@@ -60,6 +62,29 @@ describe('textos del sitio contra el anexo de la spec 007 (RF-2)', () => {
     expect(service('accidentes').bloques).toEqual(quoteBlocks(annexSection('T-10')));
     expect(service('danos').bloques).toEqual(quoteBlocks(annexSection('T-11')));
     expect(service('sucesiones').bloques).toEqual(quoteBlocks(annexSection('T-12')));
+  });
+
+  it('T-22, causa de ejemplo de la maqueta del portal', () => {
+    const section = annexSection('T-22');
+    const line = (prefix: string) => section.filter((l) => l.startsWith(`- ${prefix}:`));
+    const pairs = quotedStrings(line('Datos')[0]);
+
+    expect([CAUSA_EJEMPLO.caratula]).toEqual(quotedStrings(line('Carátula')[0]));
+    expect(CAUSA_EJEMPLO.datos.flat()).toEqual(pairs);
+    expect(CAUSA_EJEMPLO.movimientos.map((m) => [m.fecha, m.tipo, m.texto])).toEqual(
+      line('Movimiento').map(quotedStrings),
+    );
+  });
+
+  it('T-22, ingreso de ejemplo de la maqueta del portal', () => {
+    const ingreso = annexSection('T-22').find((l) => l.startsWith('- Ingreso:'))!;
+    const { titulo, etiquetaEmail, email, etiquetaContrasena, boton, largoContrasena } =
+      INGRESO_EJEMPLO;
+
+    expect([titulo, etiquetaEmail, email, etiquetaContrasena, boton]).toEqual(
+      quotedStrings(ingreso),
+    );
+    expect(ingreso).toContain(`${largoContrasena} puntos`);
   });
 
   it('T-19 y T-20, resumen y texto completo de Carolina Marisa Pertusatti', () => {
@@ -128,6 +153,23 @@ describe('servicios (RF-12, RF-13)', () => {
       ['trabajadores', 'Trabajadores', '/servicios/derecho-laboral/trabajadores'],
     ]);
     expect(PESTANAS_LABORAL[1].destacados).toEqual([]);
+  });
+});
+
+describe('causa de ejemplo del portal (RF-41, RF-47)', () => {
+  it('tiene los cuatro datos del portal, en su orden', () => {
+    expect(CAUSA_EJEMPLO.datos.map(([etiqueta]) => etiqueta)).toEqual([
+      'Expediente',
+      'Juzgado',
+      'Fuero',
+      'Estado',
+    ]);
+  });
+
+  it('los movimientos van del más reciente al más antiguo, como en el portal', () => {
+    const fechas = CAUSA_EJEMPLO.movimientos.map((m) => m.fecha.split('/').reverse().join('-'));
+
+    expect(fechas).toEqual([...fechas].sort().reverse());
   });
 });
 
@@ -207,6 +249,10 @@ describe('textos de la interfaz contra el anexo (T-17)', () => {
 
   it('inicio', () => {
     expect(Object.values(TEXTOS.inicio)).toEqual(lineFor('Inicio'));
+  });
+
+  it('portal de clientes', () => {
+    expect(Object.values(TEXTOS.portal)).toEqual(lineFor('Portal de clientes'));
   });
 
   it('páginas de detalle, con las etiquetas de las pestañas', () => {

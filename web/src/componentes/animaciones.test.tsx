@@ -10,6 +10,18 @@ import {
   APPEAR_SHOWN,
   appearTransition,
   MAX_DURATION_S,
+  MOCKUP_EMAIL_CHAR_S,
+  MOCKUP_FADE_S,
+  MOCKUP_HOLD_S,
+  MOCKUP_MOVEMENT_GAP_S,
+  MOCKUP_MOVEMENT_RISE_PX,
+  MOCKUP_PASSWORD_CHAR_S,
+  MOCKUP_PRESS_S,
+  MOCKUP_WINDOW_S,
+  mockupCycle,
+  mockupFrame,
+  mockupLoopFrame,
+  mockupTimeline,
   PAGE_ENTER,
   PAGE_SHOWN,
   pageTransition,
@@ -93,6 +105,160 @@ describe('sin el código de la página (RF-35, RF-45)', () => {
     const menu = renderToString(<MenuSitio />);
 
     expect(menu).not.toContain('opacity:0');
+  });
+});
+
+describe('secuencia de la maqueta del portal (spec 007, RF-45 y RF-47)', () => {
+  const EMAIL = 21;
+  const PASSWORD = 8;
+  const timeline = mockupTimeline(EMAIL, PASSWORD, 3);
+  const at = (t: number) => mockupFrame(t, timeline, EMAIL, PASSWORD);
+  const { emailStart, passwordStart, pointerStart, pressStart, portalStart, movementStarts } =
+    timeline;
+
+  it('va en orden: ventana, email, contraseña, puntero, clic, causa y movimientos', () => {
+    const steps = [0, emailStart, passwordStart, pointerStart, pressStart, portalStart];
+
+    expect(steps).toEqual([...steps].sort((a, b) => a - b));
+    expect(emailStart).toBeGreaterThanOrEqual(MOCKUP_WINDOW_S);
+    expect(passwordStart).toBeGreaterThanOrEqual(emailStart + EMAIL * MOCKUP_EMAIL_CHAR_S);
+    expect(pointerStart).toBeGreaterThanOrEqual(passwordStart + PASSWORD * MOCKUP_PASSWORD_CHAR_S);
+    expect(Math.min(...movementStarts)).toBeGreaterThan(portalStart);
+  });
+
+  it('los movimientos aparecen de a uno, del de abajo (el más antiguo) al de arriba', () => {
+    expect(movementStarts[1] - movementStarts[2]).toBeCloseTo(MOCKUP_MOVEMENT_GAP_S);
+    expect(movementStarts[0] - movementStarts[1]).toBeCloseTo(MOCKUP_MOVEMENT_GAP_S);
+  });
+
+  it('cada paso dura como mucho 0,6 segundos', () => {
+    for (const duration of [MOCKUP_WINDOW_S, MOCKUP_FADE_S, MOCKUP_PRESS_S]) {
+      expect(duration).toBeLessThanOrEqual(MAX_DURATION_S);
+    }
+  });
+
+  it('al empezar, la ventana está oculta, con el ingreso vacío', () => {
+    const frame = at(0);
+
+    expect(frame.ventana).toEqual({ opacity: 0, y: 16 });
+    expect([frame.ingreso, frame.portal]).toEqual([1, 0]);
+    expect([frame.emailChars, frame.passwordChars]).toEqual([0, 0]);
+    expect(frame.puntero.opacity).toBe(0);
+  });
+
+  it('el email se tipea letra por letra, con el cursor en su campo', () => {
+    const middle = at(emailStart + 5.5 * MOCKUP_EMAIL_CHAR_S);
+
+    expect(middle.ventana).toEqual({ opacity: 1, y: 0 });
+    expect(middle.emailChars).toBe(5);
+    expect(middle.passwordChars).toBe(0);
+    expect(middle.cursor).toBe('email');
+  });
+
+  it('después la contraseña, con el email completo y el cursor en la contraseña', () => {
+    const middle = at(passwordStart + 3.5 * MOCKUP_PASSWORD_CHAR_S);
+
+    expect(middle.emailChars).toBe(EMAIL);
+    expect(middle.passwordChars).toBe(3);
+    expect(middle.cursor).toBe('contrasena');
+  });
+
+  it('el puntero aparece y presiona "Ingresar" solo durante el clic', () => {
+    expect(at(pressStart - 0.01).presionado).toBe(false);
+    expect(at(pressStart).puntero.opacity).toBeCloseTo(1);
+    expect(at(pressStart).cursor).toBeNull();
+    expect(at(pressStart + 0.1).presionado).toBe(true);
+    expect(at(pressStart + MOCKUP_PRESS_S).presionado).toBe(false);
+  });
+
+  it('el ingreso da paso a la causa, sin movimientos todavía', () => {
+    const during = at(portalStart + MOCKUP_FADE_S / 2);
+
+    expect(during.ingreso + during.portal).toBeCloseTo(1);
+    expect(during.portal).toBeGreaterThan(0);
+    expect(during.movimientos.map((m) => m.opacity)).toEqual([0, 0, 0]);
+  });
+
+  it('al terminar, se ve la causa completa, igual que sin animaciones', () => {
+    // Un poco después del final, para no depender del redondeo del último cuadro.
+    const last = at(timeline.end + 0.01);
+
+    expect(last).toEqual(at(Infinity));
+    expect([last.ingreso, last.portal]).toEqual([0, 1]);
+    expect(last.movimientos).toEqual([
+      { opacity: 1, y: 0 },
+      { opacity: 1, y: 0 },
+      { opacity: 1, y: 0 },
+    ]);
+    expect(last.cursor).toBeNull();
+    expect(last.presionado).toBe(false);
+  });
+
+  it('un movimiento sube poco al aparecer', () => {
+    expect(at(movementStarts[2]).movimientos[2]).toEqual({
+      opacity: 0,
+      y: MOCKUP_MOVEMENT_RISE_PX,
+    });
+    expect(MOCKUP_MOVEMENT_RISE_PX).toBe(8);
+  });
+});
+
+describe('bucle de la maqueta del portal (spec 007, RF-47)', () => {
+  const EMAIL = 21;
+  const PASSWORD = 8;
+  const timeline = mockupTimeline(EMAIL, PASSWORD, 3);
+  const cycle = mockupCycle(timeline);
+  const loop = (t: number) => mockupLoopFrame(t, timeline, EMAIL, PASSWORD);
+  const once = (t: number) => mockupFrame(t, timeline, EMAIL, PASSWORD);
+
+  it('cada vuelta es la secuencia más la causa quieta', () => {
+    expect(cycle).toBeCloseTo(timeline.end + MOCKUP_HOLD_S);
+    expect(MOCKUP_HOLD_S).toBe(4);
+  });
+
+  it('la primera vuelta es la secuencia tal cual, con la aparición de la ventana', () => {
+    for (const t of [0, 0.2, timeline.emailStart, timeline.portalStart, cycle - 0.01]) {
+      expect(loop(t)).toEqual(once(t));
+    }
+  });
+
+  it('durante la causa quieta no cambia nada', () => {
+    expect(loop(timeline.end + 0.5)).toEqual(loop(cycle - 0.01));
+  });
+
+  it('al volver, la ventana sigue a la vista y la causa se desvanece sobre el ingreso vacío', () => {
+    const back = loop(cycle + MOCKUP_FADE_S / 2);
+
+    expect(back.ventana).toEqual({ opacity: 1, y: 0 });
+    expect(back.ingreso + back.portal).toBeCloseTo(1);
+    expect(back.portal).toBeGreaterThan(0);
+    expect(back.movimientos.every((m) => m.opacity === 1)).toBe(true);
+    expect([back.emailChars, back.passwordChars]).toEqual([0, 0]);
+  });
+
+  it('después de volver, repite la secuencia con la ventana a la vista', () => {
+    // Lo que se ve, sin comparar decimales que el resto de la división puede correr un poco.
+    const visible = (frame: ReturnType<typeof loop>) => ({
+      ventana: frame.ventana.opacity,
+      ingreso: Math.round(frame.ingreso * 100),
+      emailChars: frame.emailChars,
+      passwordChars: frame.passwordChars,
+      cursor: frame.cursor,
+      presionado: frame.presionado,
+      movimientos: frame.movimientos.map((m) => Math.round(m.opacity * 100)),
+    });
+    const offsets = [
+      timeline.emailStart + 5.5 * MOCKUP_EMAIL_CHAR_S,
+      timeline.pressStart + 0.1,
+      timeline.end + 1,
+    ];
+    for (const offset of offsets) {
+      expect(visible(loop(cycle * 2 + offset))).toEqual({ ...visible(once(offset)), ventana: 1 });
+    }
+  });
+
+  it('con la reducción de movimiento (tiempo infinito) es la causa completa, quieta', () => {
+    expect(loop(Infinity)).toEqual(once(Infinity));
   });
 });
 

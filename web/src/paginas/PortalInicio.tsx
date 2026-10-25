@@ -4,9 +4,11 @@ import { ListaCausasPortal } from '../componentes/ListaCausasPortal';
 import { Paginacion } from '../componentes/Paginacion';
 import { ERROR_ALERT, PAGE, PAGE_TITLE } from '../componentes/estilos-aplicacion';
 import { usePortalService } from '../componentes/ProveedorServicios';
+import { useSession } from '../componentes/ProveedorSesion';
 import { errorMessage } from '../servicios/cliente-http';
 import type { CausaPortalResumen, PortalPage } from '../servicios/portal';
 import { parsePageParam } from '../servicios/presentacion-portal';
+import { greeting } from '../servicios/textos-aplicacion';
 
 interface Loaded {
   pagina: number;
@@ -15,8 +17,9 @@ interface Loaded {
 }
 
 /**
- * Inicio del portal: las causas del cliente, en sus dos grupos y de a 20 (spec 004, RF-7 a
- * RF-12, RF-24, RF-25). La página va en la dirección. Una página inválida no pide nada, y una
+ * Inicio del portal: el saludo como título principal, "Mis causas" debajo (spec 008, RF-28) y
+ * las causas del cliente, en sus dos grupos y de a 20 (spec 004, RF-7 a RF-12, RF-24, RF-25). El
+ * usuario siempre está: la pantalla va dentro de RutaProtegida. La página va en la dirección. Una página inválida no pide nada, y una
  * página posterior a la última no muestra nada.
  */
 export function PortalInicio() {
@@ -26,6 +29,7 @@ export function PortalInicio() {
   // El resultado se guarda con su página: mientras no coincide con la de la dirección, se está
   // cargando la nueva.
   const [loaded, setLoaded] = useState<Loaded | null>(null);
+  const { usuario } = useSession();
 
   useEffect(() => {
     if (pagina === null) return;
@@ -81,7 +85,8 @@ export function PortalInicio() {
 
   return (
     <main className={PAGE}>
-      <h1 className={PAGE_TITLE}>Mis causas</h1>
+      {usuario && <h1 className={PAGE_TITLE}>{greeting(usuario.nombre)}</h1>}
+      <h2 className={PAGE_TITLE}>Mis causas</h2>
       {content()}
     </main>
   );

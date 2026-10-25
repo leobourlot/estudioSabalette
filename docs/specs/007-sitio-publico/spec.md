@@ -66,9 +66,15 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 ### Inicio
 - RF-11: EL SISTEMA muestra el inicio con estas secciones, en este orden:
   - Apertura: el nombre del estudio y el texto T-1, con una balanza de la justicia de fondo, decorativa, integrada con el degradado del logo.
+  - Portal de clientes (RF-47).
   - Servicios (RF-12).
   - Abogadas (RF-18).
   - Contacto: es el bloque de contacto del final de la página (RF-23).
+- RF-47: EL SISTEMA muestra en la sección Portal de clientes la leyenda "Portal de clientes", el título "Seguí tus casos desde donde estés", una maqueta apaisada del portal, en una ventana, y el botón "Ir al portal de clientes", que lleva a la dirección del portal: sin sesión, esa dirección lleva al ingreso (RF-10). El botón no consulta la sesión ni cambia con ella (RF-30, RF-31).
+  - La maqueta empieza con el ingreso de ejemplo de T-22, con las etiquetas de la pantalla de ingreso: el email, la contraseña como puntos y el botón "Ingresar". No tiene campos de verdad: nada se puede escribir ni enviar (RF-39).
+  - Después muestra la causa de ejemplo T-22 como la muestra el portal: la carátula y los datos a la izquierda, y a su lado los movimientos en una línea de tiempo, el más reciente arriba (spec 004, RF-13 y RF-21; spec 008, RF-18). Para no ocupar mucho alto, en pantallas anchas el título y el botón van a su izquierda; en el celular, la maqueta va debajo del botón, con los movimientos debajo de los datos. Lleva arriba la leyenda "Portal de clientes" y la marca "Ejemplo". Sus datos son inventados y fijos, están escritos en el sitio y no son de ningún cliente (RF-41).
+  - Es una imagen: quien usa lector de pantalla la escucha como una sola imagen con el texto "Ejemplo del portal de clientes: el ingreso con email y contraseña, y una causa con sus datos y sus últimos movimientos." (T-17). No tiene enlaces ni controles y no recibe el foco.
+  - CUANDO la maqueta entra en la pantalla, EL SISTEMA la hace aparecer con el ingreso vacío, tipea el email letra por letra y después la contraseña punto por punto, con un cursor de texto quieto en el campo que se está llenando, muestra un puntero que presiona "Ingresar", y el ingreso da paso a la causa, que muestra sus movimientos de a uno, del más antiguo al más reciente. El ingreso y la causa ocupan el mismo lugar y cada movimiento ya tiene el suyo reservado, así la maqueta no cambia de alto y nada se corre. Cada paso dura como mucho 0,6 segundos y cada pasada, menos de 5 segundos. Después la causa completa queda quieta 4 segundos y la maqueta vuelve al ingreso vacío con un fundido, sin que la ventana desaparezca, y repite la secuencia, en bucle. MIENTRAS la maqueta está fuera de la pantalla, la secuencia se detiene, y al volver sigue donde estaba. No tiene un control para pausarla: el estudio lo decidió el 24/10/2026, sabiendo que la pauta 2.2.2 de WCAG lo pide para lo que se mueve solo más de 5 segundos. Con la reducción de movimiento pedida, o sin el código de la página, se ve completa desde el principio (RF-45).
 - RF-12: EL SISTEMA muestra en la sección Servicios el título "Nuestros servicios", el texto T-2 y cuatro tarjetas, en este orden: Derecho Laboral, Accidentes y Enfermedades Laborales, Derecho de Daños y Sucesiones. Cada tarjeta muestra arriba un ícono del tema, en el azul del logo y sin anunciarse para quien usa lector de pantalla (un maletín para Derecho Laboral, un casco de obra para Accidentes, una mano con monedas para Daños y un pergamino con texto para Sucesiones), el nombre del servicio, su frase (T-3 a T-6) y el botón "Conocer más", que lleva a la página de ese servicio. Al pasar el puntero por la tarjeta o al enfocar su botón, el ícono se mueve una vez (RF-45).
 
 ### Servicios
@@ -139,7 +145,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 ### Privacidad, seguridad y aislamiento
 - RF-39: EL SISTEMA no pide ni guarda ningún dato de quien visita el sitio público. Las páginas públicas no tienen ningún campo para escribir. A un visitante sin sesión el sitio no le guarda nada en el navegador, salvo las copias de los archivos del propio sitio que el navegador conserva para cargarlo más rápido. Los registros técnicos del servidor y del alojamiento, que pueden incluir la dirección IP, no se usan para identificar ni medir a los visitantes.
 - RF-40: EL SISTEMA no mide las visitas ni identifica a los visitantes. Las páginas públicas solo usan recursos de terceros (por ejemplo, tipografías o íconos) que no hacen seguimiento ni registran la dirección IP para reconocer al visitante, y no incluyen mapas incrustados, botones de redes con seguimiento ni contadores.
-- RF-41: EL SISTEMA nunca muestra ni solicita en el sitio público datos de causas, partes, movimientos, clientes, cuentas, jurisprudencia, modelos ni escritos (spec 005, RF-36; spec 006, RF-52), haya o no una sesión abierta. La única información de la sesión que llega a las páginas públicas es la de RF-31.
+- RF-41: EL SISTEMA nunca muestra ni solicita en el sitio público datos de causas, partes, movimientos, clientes, cuentas, jurisprudencia, modelos ni escritos (spec 005, RF-36; spec 006, RF-52), haya o no una sesión abierta. La única excepción es la causa de ejemplo de la maqueta del portal (RF-47, T-22): sus datos son inventados, están escritos en el sitio y no son de ningún cliente. La única información de la sesión que llega a las páginas públicas es la de RF-31.
 - RF-42: SI una dirección trae datos agregados que el sitio no espera, ENTONCES EL SISTEMA los ignora: nunca los muestra en pantalla ni los usa para armar el mensaje de WhatsApp, un enlace o el destino después de ingresar.
 - RF-43: EL SISTEMA no permite que ninguna de sus pantallas (el sitio público, la pantalla de ingreso, la de cambio de contraseña, el portal ni el panel) se muestre dentro de otro sitio, para que nadie pueda disfrazarlas y engañar a quien las usa.
 
@@ -153,11 +159,11 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - La leyenda "Diseñado por" con el logo y el nombre "Bourder Web", que llevan a https://bourderweb.com.ar (T-18). Como todo enlace externo, se abre aparte (RF-25).
 
 ### Animaciones
-- RF-45: EL SISTEMA anima las páginas públicas: las secciones, las tarjetas y los bloques de texto aparecen con un movimiento suave al entrar en la pantalla; el menú plegado se despliega y se repliega; el contenido de las pestañas de Derecho Laboral cambia con una transición; la foto de una abogada aparece sobre sus iniciales; y las tarjetas, los botones y los enlaces responden al pasar el puntero o al recibir el foco. En todos los casos:
+- RF-45: EL SISTEMA anima las páginas públicas: las secciones, las tarjetas y los bloques de texto aparecen con un movimiento suave al entrar en la pantalla; el menú plegado se despliega y se repliega; el contenido de las pestañas de Derecho Laboral cambia con una transición; la foto de una abogada aparece sobre sus iniciales; la maqueta del portal muestra, en bucle, un ingreso y después los movimientos de una causa, de a uno (RF-47); y las tarjetas, los botones y los enlaces responden al pasar el puntero o al recibir el foco. En todos los casos:
   - MIENTRAS el visitante pidió a su dispositivo reducir las animaciones, todo aparece directamente, sin movimiento.
   - Sin el código de la página, todo el contenido se ve, sin animaciones (RF-35).
   - La apertura del inicio (el nombre del estudio y T-1) se ve desde el primer momento, sin esperar a ninguna animación.
-  - Cada animación dura como mucho 0,6 segundos, no hace parpadear nada, no mueve el contenido que ya está en su lugar y no impide usar ningún control mientras ocurre.
+  - Cada animación dura como mucho 0,6 segundos (la secuencia de la maqueta del portal encadena varias, de a una, como indica RF-47), no hace parpadear nada, no mueve el contenido que ya está en su lugar y no impide usar ningún control mientras ocurre.
 
 ## Requisitos no funcionales
 - Plataformas: el sitio se usa desde el celular tanto como desde la computadora.
@@ -254,6 +260,14 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - En la versión de desarrollo, sin redes informadas: el contacto y el pie muestran las redes de muestra; el sitio publicado, construido con los mismos datos, no muestra ninguna (RF-24).
   - Navegador que no ejecuta el código de la página: ve todo el contenido, sin animaciones (RF-35, RF-45).
   - Visitante que baja rápido hasta el final: las secciones que pasaron por la pantalla ya aparecieron, y ninguna queda oculta (RF-45).
+- **Portal de clientes en el inicio:**
+  - Visitante que confunde la causa de ejemplo con una real: la maqueta lleva la marca "Ejemplo" y sus datos son claramente inventados ("Empresa Ejemplo S.A."); no son de ningún cliente (RF-41, RF-47).
+  - Visitante que toca el ingreso de la maqueta para escribir: no pasa nada, porque es una imagen sin campos; para ingresar están "Ir al portal de clientes" y el acceso del encabezado (RF-39, RF-47).
+  - Visitante sin sesión que elige "Ir al portal de clientes": llega a la pantalla de ingreso (RF-10, RF-47).
+  - Cliente o integrante con la sesión abierta que elige "Ir al portal de clientes": el cliente llega a su portal; el integrante, a su panel, como indica la spec 001 para quien entra a la sección de otro rol (RF-10; spec 001, RF-20).
+  - Quien usa lector de pantalla: escucha la maqueta como una sola imagen, con su descripción, sin recorrer cada dato inventado (RF-47).
+  - Quien sale de la pantalla mientras corre la secuencia y vuelve: la secuencia estuvo detenida y sigue donde estaba (RF-47).
+  - Quien se queda mirando la sección: la secuencia se repite, con la causa completa quieta 4 segundos entre una pasada y la otra; no hay control para pausarla (RF-47).
 - **Sin conexión:** la página ya abierta sigue visible. Abrir otra depende de la conexión; no hay modo sin conexión (Fuera de alcance).
 
 ## Fuera de alcance
@@ -299,6 +313,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - El acceso de ingreso dentro del menú en pantallas chicas y el menú desplegado a lo ancho (RF-4, RF-6).
   - El bloque de contacto con sus textos y sus renglones, y el pie de página con sus datos, sus leyendas y el enlace a Bourder Web (RF-23, RF-44).
   - Que con la reducción de movimiento no hay animaciones, y que sin el código de la página todo el contenido se ve (RF-35, RF-45).
+  - La sección Portal de clientes entre la apertura y Servicios, con su título, su botón al portal y la maqueta de T-22 como una sola imagen sin enlaces ni controles, y que la secuencia de la maqueta va del ingreso (email, contraseña y clic) a la causa, y del movimiento más antiguo al más reciente, con pasos de hasta 0,6 segundos, la causa completa quieta 4 segundos y la vuelta al ingreso sin que desaparezca la ventana, en bucle (RF-11, RF-45, RF-47).
 - `pnpm test` y `pnpm lint` sin errores.
 - Demo manual:
   1. Sin sesión, abrir el inicio desde un celular y verificar la apertura, las cuatro tarjetas con su frase, las dos tarjetas de las abogadas, con su foto, su título profesional, su resumen y "Más información" y el bloque de contacto solo con los datos informados.
@@ -314,6 +329,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   11. Repetir los pasos 1 a 6 desde una computadora.
   12. En una pantalla de 360 px, verificar que el logo, el nombre y "Menú" van en una línea, que el menú abierto se ve completo con el acceso de ingreso como última opción, y que el pie de página muestra sus datos, la leyenda y "Diseñado por Bourder Web" con su enlace.
   13. Recorrer el inicio y verificar las animaciones; repetir con la reducción de movimiento activada en el dispositivo y verificar que todo aparece sin movimiento.
+  14. En el inicio, desde un celular y desde una computadora, bajar hasta la sección Portal de clientes y verificar que la maqueta aparece, tipea el ingreso, muestra sus movimientos de a uno desde el más antiguo, queda quieta 4 segundos y vuelve a empezar; elegir "Ir al portal de clientes" sin sesión y verificar que lleva al ingreso.
 - Al publicar el sitio en su dirección definitiva:
   1. Compartir por WhatsApp la dirección del inicio y la de Sucesiones, y verificar el título, la descripción y el logo en la vista previa (RF-36).
   2. Verificar con las herramientas de los buscadores que leen el texto de cada página, la lista de direcciones, los datos del estudio y que no listan las pantallas privadas (RF-35, RF-37, RF-38).
@@ -327,7 +343,7 @@ Ninguna impide planificar: cada dato pendiente tiene definido qué se muestra mi
 - Resuelta el 17/10/2026: el estudio informó su dirección ("Pueyrredón Nº 47, Concordia"), su email (estudiojuridicovsr@gmail.com) y su red social (Instagram, "@pertusattisabaletteabogadas") (RF-22). El 23/10/2026 la cuenta de Instagram pasó a ser "@persaestudiojuridico".
 
 ## Anexo — Textos aprobados
-Los textos de los servicios y de la abogada son los de la clienta. Las frases de las tarjetas y el resumen son recortes de esos textos, aprobados el 12/10/2026. Los mensajes de WhatsApp, los títulos, las descripciones y los textos de la interfaz se redactaron para esta spec. Los textos del bloque de contacto (T-17) y del pie de página (T-18) se tomaron del modelo que eligió el estudio y se aprobaron el 15/10/2026. El estudio pidió cambiar T-1, T-13 y el título de la sección de abogadas (T-17) el 24/10/2026.
+Los textos de los servicios y de la abogada son los de la clienta. Las frases de las tarjetas y el resumen son recortes de esos textos, aprobados el 12/10/2026. Los mensajes de WhatsApp, los títulos, las descripciones y los textos de la interfaz se redactaron para esta spec. Los textos del bloque de contacto (T-17) y del pie de página (T-18) se tomaron del modelo que eligió el estudio y se aprobaron el 15/10/2026. El estudio pidió cambiar T-1, T-13 y el título de la sección de abogadas (T-17) el 24/10/2026. Ese mismo día pidió la sección Portal de clientes (RF-47): la frase del título es suya, y los demás textos de esa sección y la causa de ejemplo (T-22) se redactaron para esta spec y se aprobaron.
 
 ### T-1 — Apertura del inicio
 > Asesoramiento legal estratégico, con especial dedicación al Derecho Laboral.
@@ -476,6 +492,7 @@ El título del inicio es el nombre del estudio. El de las demás páginas y pant
 ### T-17 — Textos de la interfaz
 - Menú y encabezado: "Servicios", "Abogadas", "Contacto", "Menú", "Ingresar", "Ir a mi portal", "Ir al panel", "Saltar al contenido".
 - Inicio: "Nuestros servicios", "Conocer más", "Equipo de abogadas", "Más información".
+- Portal de clientes: "Portal de clientes", "Seguí tus casos desde donde estés", "Ir al portal de clientes", "Ejemplo", "Movimientos", "Ejemplo del portal de clientes: el ingreso con email y contraseña, y una causa con sus datos y sus últimos movimientos.".
 - Páginas de detalle: "Volver a servicios", "Otros servicios", "Volver a abogadas", "Empresas", "Trabajadores".
 - Contacto: "Contactate con nosotros", "Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal.", "Ubicación", "Cómo llegar", "Teléfono / WhatsApp", "Disponibilidad", "Email".
 - Botón de WhatsApp: "Escribinos por WhatsApp".
@@ -503,3 +520,12 @@ Su primera y su última oración, aprobadas el 19/10/2026.
 ### T-21 — Título profesional de las abogadas
 El de Carolina Marisa Pertusatti es el de su texto; el de Vanesa Sabalette Rabello se armó con su texto (T-14: "me formé como mediadora y me diplomé en Derecho Laboral") y se aprobó el 19/10/2026. Va debajo del nombre, en la tarjeta y en la página.
 > Abogada | Mediadora | Diplomada en Derecho Laboral
+
+### T-22 — Causa de ejemplo del portal (maqueta del inicio)
+Datos inventados, de ningún cliente, para la maqueta del portal (RF-47), aprobados el 24/10/2026. El ingreso va con su título, la etiqueta y el valor del email, la etiqueta de la contraseña y el botón, con las etiquetas de la pantalla de ingreso. Los datos van como pares de etiqueta y valor, y los movimientos, del más reciente al más antiguo, con su fecha, su tipo y su texto.
+- Ingreso: "Ingresar", "Email", "ana.gomez@ejemplo.com", "Contraseña", "Ingresar"; la contraseña no se escribe: se muestra como 8 puntos.
+- Carátula: "Gómez, Ana c/ Empresa Ejemplo S.A. s/ despido"
+- Datos: "Expediente", "1234/2026", "Juzgado", "Juzgado Laboral N.º 1", "Fuero", "Laboral", "Estado", "En trámite"
+- Movimiento: "20/10/2026", "Audiencia", "Se fijó la audiencia de conciliación para el 12 de noviembre a las 9 h. Te vamos a avisar antes para prepararla."
+- Movimiento: "06/10/2026", "Escrito presentado", "Presentamos la demanda en el juzgado."
+- Movimiento: "18/09/2026", "Notificación", "La empresa recibió el telegrama con el reclamo."

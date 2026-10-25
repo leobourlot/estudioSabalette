@@ -8,16 +8,19 @@ async function openHome() {
     fetchOwnUser: vi.fn().mockResolvedValue(testUser('abogado', { nombre: 'Juan' })),
   });
   renderApp('/panel', service);
-  await screen.findByRole('heading', { name: 'Panel', level: 1 });
+  await screen.findByRole('heading', { name: 'Hola, Juan.', level: 1 });
 }
 
 const accesos = () => within(screen.getByRole('main')).getAllByRole('link');
 
 describe('PanelInicio (spec 008, RF-25)', () => {
-  it('muestra el saludo y un acceso por cada opción del menú, salvo "Inicio"', async () => {
+  it('muestra el saludo como único título principal y un acceso por cada opción del menú, salvo "Inicio"', async () => {
     await openHome();
 
-    expect(screen.getByText('Hola, Juan.')).toBeTruthy();
+    expect(screen.getAllByRole('heading', { level: 1 }).map((h) => h.textContent)).toEqual([
+      'Hola, Juan.',
+    ]);
+    expect(screen.queryByRole('heading', { name: 'Panel' })).toBeNull();
     expect(accesos().map((link) => [link.textContent, link.getAttribute('href')])).toEqual([
       ['Causas', '/panel/causas'],
       ['Jurisprudencia', '/panel/jurisprudencia'],

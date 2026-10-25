@@ -1,6 +1,6 @@
 import specText from '../../../docs/specs/008-identidad-visual-de-la-aplicacion/spec.md?raw';
 import { describe, expect, it } from 'vitest';
-import { TEXTOS_INGRESO } from './textos-aplicacion';
+import { greeting, TEXTOS_INGRESO } from './textos-aplicacion';
 
 /** La cita de una sección del anexo de la spec 008 ("T-1"), sin el signo de cita. */
 function annexQuote(id: string): string {
@@ -25,5 +25,16 @@ describe('textos del ingreso (spec 008, anexo)', () => {
 
   it('no incluye el texto que el estudio pidió quitar', () => {
     expect(JSON.stringify(TEXTOS_INGRESO)).not.toContain('Clientes e integrantes');
+  });
+});
+
+describe('saludo del inicio del panel y del portal (spec 008, RF-25 y RF-28)', () => {
+  it('es "Hola, <nombre>.", con coma y sin género', () => {
+    expect(greeting('Carolina')).toBe('Hola, Carolina.');
+  });
+
+  it('coincide con el formato de las dos RF', () => {
+    expect(specText).toContain('el saludo "Hola, <nombre>." como título principal');
+    expect(greeting('<nombre>')).toBe('Hola, <nombre>.');
   });
 });

@@ -1,7 +1,12 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-de-prueba';
+import {
+  fakeSessionService,
+  findPanelHome,
+  renderApp,
+  testUser,
+} from '../pruebas/aplicacion-de-prueba';
 import {
   fakePortalService,
   testCausaPortal,
@@ -33,7 +38,7 @@ describe('Portal: acceso a las rutas nuevas (spec 004, RF-1)', () => {
     async (path, rol) => {
       renderAs(path, testUser(rol));
 
-      expect(await screen.findByRole('heading', { name: 'Panel' })).toBeTruthy();
+      expect(await findPanelHome()).toBeTruthy();
     },
   );
 

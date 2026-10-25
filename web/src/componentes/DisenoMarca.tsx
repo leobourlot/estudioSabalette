@@ -86,8 +86,9 @@ export function DisenoMarca({
       </div>
 
       <main className="flex flex-col items-center justify-center px-4 py-8 pb-24 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:pb-8">
-        <AparecerAlCargar className="w-full max-w-sm rounded-xl border border-slate-300 bg-estudio-azul/15 p-8 shadow-sm">
-{children}</AparecerAlCargar>
+        <AparecerAlCargar className="w-full max-w-sm rounded-xl border border-slate-300 bg-estudio-azul/10 p-8 shadow-sm">
+          {children}
+        </AparecerAlCargar>
       </main>
 
       {conContacto && (

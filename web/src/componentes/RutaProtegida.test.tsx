@@ -1,6 +1,11 @@
 import { screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-de-prueba';
+import {
+  fakeSessionService,
+  findPanelHome,
+  renderApp,
+  testUser,
+} from '../pruebas/aplicacion-de-prueba';
 import type { UsuarioPropio } from '../servicios/sesion';
 
 /** Renderiza la aplicación en `path` con el usuario que devuelve la API (o una promesa pendiente). */
@@ -42,7 +47,7 @@ describe('RutaProtegida — orden de decisiones (RF-17, RF-20)', () => {
   it('4. un integrante en el portal va a su panel', async () => {
     renderAt('/portal', async () => testUser('abogado'));
 
-    expect(await heading('Panel')).toBeTruthy();
+    expect(await findPanelHome()).toBeTruthy();
   });
 
   it('5. si todo está bien, muestra la página pedida', async () => {
@@ -59,7 +64,7 @@ describe('RutaProtegida — orden de decisiones (RF-17, RF-20)', () => {
 
   it('si la sesión se cierra mientras navega, lleva a /ingresar', async () => {
     const { closeSession } = renderAt('/panel', async () => testUser('abogado'));
-    expect(await heading('Panel')).toBeTruthy();
+    expect(await findPanelHome()).toBeTruthy();
 
     closeSession();
 
@@ -79,7 +84,7 @@ describe('RutaProtegida — orden de decisiones (RF-17, RF-20)', () => {
     it('con sesión de integrante, /panel/no-existe lleva al inicio del panel', async () => {
       renderAt('/panel/no-existe', async () => testUser('abogado'));
 
-      expect(await heading('Panel')).toBeTruthy();
+      expect(await findPanelHome()).toBeTruthy();
     });
 
     it('con sesión de cliente, /portal/no-existe lleva al inicio del portal', async () => {
@@ -97,7 +102,7 @@ describe('RutaProtegida — orden de decisiones (RF-17, RF-20)', () => {
     it('un integrante en /portal/no-existe va a su panel', async () => {
       renderAt('/portal/no-existe', async () => testUser('admin'));
 
-      expect(await heading('Panel')).toBeTruthy();
+      expect(await findPanelHome()).toBeTruthy();
     });
 
     it('con el cambio de contraseña pendiente, lleva a cambiarla', async () => {
@@ -127,7 +132,7 @@ describe('ProveedorSesion — sin almacenamiento local (RNF de seguridad, princi
   it('no escribe nada en localStorage ni en sessionStorage', async () => {
     const setItem = vi.spyOn(Storage.prototype, 'setItem');
     const { closeSession } = renderAt('/panel', async () => testUser('admin'));
-    expect(await heading('Panel')).toBeTruthy();
+    expect(await findPanelHome()).toBeTruthy();
     closeSession();
     expect(await heading('Ingresar')).toBeTruthy();
 

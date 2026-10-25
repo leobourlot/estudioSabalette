@@ -68,6 +68,10 @@ Reglas para todas las tareas:
   Solo clases: tarjetas, botones y campos de `estilos-aplicacion.ts`.
   Hecho cuando: los tests de esos componentes y páginas siguen en verde sin cambiar sus casos.
 
+- [x] **T15 — Saludo en los inicios y fondos más marcados** [RF-4, RF-25, RF-28] **(modifica existente: `servicios/textos-aplicacion.ts`, `paginas/PanelInicio.tsx`, `paginas/PortalInicio.tsx`, `componentes/DisenoSeccion.tsx`, `componentes/DisenoMarca.tsx`, `pruebas/aplicacion-de-prueba.tsx` y los tests que esperaban el título "Panel" o "Mis causas" como `<h1>`, `spec.md`, `plan.md`, `validacion.md`)**
+  Pedido por el estudio el 24/10/2026: `greeting(nombre)` ("Hola, <nombre>.") como único `<h1>` del inicio del panel y del portal, con "Mis causas" como `<h2>` en el portal; el fondo de las pantallas en `bg-estudio-azul/15` y la tarjeta del ingreso en `bg-estudio-azul/10`. Los tests reconocen el inicio del panel con `findPanelHome` (el saludo y la navegación "Panel").
+  Hecho cuando: los tests verifican el saludo como único título principal en el panel, el saludo y debajo "Mis causas" en el portal, y el formato del saludo contra la spec; y los tests de ingreso, cambio de contraseña, rutas y menú siguen llegando al inicio de cada sección.
+
 ## Cierre
 
 - [ ] **T14 — Validación** **(crea `validacion.md`)**

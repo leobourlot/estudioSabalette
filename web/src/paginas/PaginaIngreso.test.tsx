@@ -1,7 +1,14 @@
 import { screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-de-prueba';
+import {
+  fakeSessionService,
+  findPanelHome,
+  findScreenHeading,
+  INICIO_PANEL,
+  renderApp,
+  testUser,
+} from '../pruebas/aplicacion-de-prueba';
 import { whatsappMenu } from '../pruebas/whatsapp-de-prueba';
 import { ApiError, NETWORK_ERROR_MESSAGE } from '../servicios/cliente-http';
 import type { UsuarioPropio } from '../servicios/sesion';
@@ -23,8 +30,8 @@ async function submit(email: string, contrasena: string) {
 
 describe('PaginaIngreso (RF-8 a RF-10)', () => {
   it.each([
-    ['admin', testUser('admin'), 'Panel'],
-    ['abogado', testUser('abogado'), 'Panel'],
+    ['admin', testUser('admin'), INICIO_PANEL],
+    ['abogado', testUser('abogado'), INICIO_PANEL],
     ['cliente', testUser('cliente'), 'Mis causas'],
     [
       'con cambio pendiente',
@@ -38,7 +45,7 @@ describe('PaginaIngreso (RF-8 a RF-10)', () => {
 
       await submit('juan@estudio.com', 'clave del estudio 2026');
 
-      expect(await screen.findByRole('heading', { name: page })).toBeTruthy();
+      expect(await findScreenHeading(page)).toBeTruthy();
       expect(service.login).toHaveBeenCalledWith('juan@estudio.com', 'clave del estudio 2026');
     },
   );
@@ -80,7 +87,7 @@ describe('PaginaIngreso (RF-8 a RF-10)', () => {
     const button = screen.getByRole('button', { name: 'Ingresando…' }) as HTMLButtonElement;
     expect(button.disabled).toBe(true);
     finish(testUser('admin'));
-    expect(await screen.findByRole('heading', { name: 'Panel' })).toBeTruthy();
+    expect(await findPanelHome()).toBeTruthy();
   });
 
   it('usa campos de email y contraseña con autocompletado del navegador', async () => {

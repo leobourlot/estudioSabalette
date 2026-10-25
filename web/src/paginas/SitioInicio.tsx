@@ -2,6 +2,8 @@ import { Aparecer } from '../componentes/Aparecer';
 import { STAGGER_S } from '../componentes/animaciones';
 import { BalanzaDecorativa } from '../componentes/BalanzaDecorativa';
 import { DisenoSitio } from '../componentes/DisenoSitio';
+import { PRIMARY_BUTTON } from '../componentes/estilos-sitio';
+import { MaquetaPortal } from '../componentes/MaquetaPortal';
 import { NombreEstudio } from '../componentes/NombreEstudio';
 import { TarjetaAbogada } from '../componentes/TarjetaAbogada';
 import { TarjetaServicio } from '../componentes/TarjetaServicio';
@@ -21,8 +23,15 @@ const SECTION_TITLE =
   'font-titulos text-3xl font-semibold text-estudio-oscuro outline-none sm:text-4xl';
 
 /**
- * Inicio del sitio público (spec 007, RF-11, RF-12 y RF-18): la apertura con el nombre del
- * estudio, los servicios, las abogadas y, al final, el contacto del diseño. Las secciones tienen
+ * La dirección del portal: sin sesión lleva al ingreso, y con la de un integrante, al panel
+ * (RF-10). Así el botón no consulta la sesión (RF-47).
+ */
+const PORTAL_HREF = '/portal';
+
+/**
+ * Inicio del sitio público (spec 007, RF-11, RF-12, RF-18 y RF-47): la apertura con el nombre del
+ * estudio, el portal de clientes con su maqueta, los servicios, las abogadas y, al final, el
+ * contacto del diseño. Las secciones tienen
  * su "#" para el menú, y su título recibe el foco al llegar (useFocoEnAncla).
  */
 export function SitioInicio() {
@@ -43,7 +52,28 @@ export function SitioInicio() {
         </div>
       </section>
 
-      <section id="servicios" aria-labelledby="servicios-titulo" className="px-4 py-12">
+      <section id="portal" aria-labelledby="portal-titulo" className="bg-white px-4 py-12">
+        <div className="mx-auto grid max-w-5xl items-center gap-8 lg:grid-cols-[1fr_2fr]">
+          <Aparecer>
+            <p className="text-sm font-semibold uppercase tracking-wide text-estudio-azul">
+              {TEXTOS.portal.leyenda}
+            </p>
+            <h2 id="portal-titulo" tabIndex={-1} className={`mt-2 ${SECTION_TITLE}`}>
+              {TEXTOS.portal.titulo}
+            </h2>
+            <a href={PORTAL_HREF} className={`mt-6 ${PRIMARY_BUTTON}`}>
+              {TEXTOS.portal.irAlPortal}
+            </a>
+          </Aparecer>
+          <MaquetaPortal />
+        </div>
+      </section>
+
+      <section
+        id="servicios"
+        aria-labelledby="servicios-titulo"
+        className="px-4 py-12 bg-estudio-oscuro/10"
+      >
         <div className="mx-auto max-w-5xl">
           <Aparecer>
             <h2 id="servicios-titulo" tabIndex={-1} className={SECTION_TITLE}>

@@ -243,6 +243,69 @@ export function lawyerPath(abogada: Abogada): string {
   return `/abogadas/${abogada.slug}`;
 }
 
+export interface MovimientoEjemplo {
+  /** Ya escrita como la muestra el portal (dd/mm/aaaa). */
+  fecha: string;
+  /** El nombre del tipo, como lo muestra el portal. */
+  tipo: string;
+  texto: string;
+}
+
+export interface CausaEjemplo {
+  caratula: string;
+  /** Etiqueta y valor de cada dato, en el orden del portal. */
+  datos: readonly (readonly [string, string])[];
+  /** Del más reciente al más antiguo, como los ordena el portal. */
+  movimientos: readonly MovimientoEjemplo[];
+}
+
+/**
+ * T-22: la causa de ejemplo de la maqueta del portal del inicio (RF-47). Es inventada y fija: no
+ * es de ningún cliente ni sale de la API (RF-41). Va con los nombres ya escritos, porque el sitio
+ * no usa los módulos de causas y movimientos de la aplicación.
+ */
+export const CAUSA_EJEMPLO: CausaEjemplo = {
+  caratula: 'Gómez, Ana c/ Empresa Ejemplo S.A. s/ despido',
+  datos: [
+    ['Expediente', '1234/2026'],
+    ['Juzgado', 'Juzgado Laboral N.º 1'],
+    ['Fuero', 'Laboral'],
+    ['Estado', 'En trámite'],
+  ],
+  movimientos: [
+    {
+      fecha: '20/10/2026',
+      tipo: 'Audiencia',
+      texto:
+        'Se fijó la audiencia de conciliación para el 12 de noviembre a las 9 h. Te vamos a avisar antes para prepararla.',
+    },
+    {
+      fecha: '06/10/2026',
+      tipo: 'Escrito presentado',
+      texto: 'Presentamos la demanda en el juzgado.',
+    },
+    {
+      fecha: '18/09/2026',
+      tipo: 'Notificación',
+      texto: 'La empresa recibió el telegrama con el reclamo.',
+    },
+  ],
+};
+
+/**
+ * T-22: el ingreso de ejemplo con el que empieza la maqueta (RF-47), con las etiquetas de la
+ * pantalla de ingreso. La contraseña no se escribe: se muestran sus puntos.
+ */
+export const INGRESO_EJEMPLO = {
+  titulo: 'Ingresar',
+  etiquetaEmail: 'Email',
+  email: 'ana.gomez@ejemplo.com',
+  etiquetaContrasena: 'Contraseña',
+  boton: 'Ingresar',
+  /** Cuántos puntos tiene la contraseña. */
+  largoContrasena: 8,
+} as const;
+
 /** T-15: el mensaje de WhatsApp de cada página pública (RF-27). */
 export const MENSAJES_WHATSAPP = {
   /** Inicio, páginas de las abogadas y página de dirección inexistente. */
@@ -274,6 +337,15 @@ export const TEXTOS = {
     conocerMas: 'Conocer más',
     equipoAbogadas: 'Equipo de abogadas',
     masInformacion: 'Más información',
+  },
+  portal: {
+    leyenda: 'Portal de clientes',
+    titulo: 'Seguí tus casos desde donde estés',
+    irAlPortal: 'Ir al portal de clientes',
+    ejemplo: 'Ejemplo',
+    movimientos: 'Movimientos',
+    descripcionMaqueta:
+      'Ejemplo del portal de clientes: el ingreso con email y contraseña, y una causa con sus datos y sus últimos movimientos.',
   },
   detalle: {
     volverAServicios: 'Volver a servicios',

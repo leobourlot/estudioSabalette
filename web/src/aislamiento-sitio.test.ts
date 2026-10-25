@@ -43,6 +43,7 @@ const SITE_MODULES = new Set([
   'IconosContacto',
   'IconosRedes',
   'IconosServicios',
+  'MaquetaPortal',
   'MenuSitio',
   'NombreEstudio',
   'OtrosServicios',

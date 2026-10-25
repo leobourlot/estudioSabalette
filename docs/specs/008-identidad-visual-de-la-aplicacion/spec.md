@@ -31,7 +31,7 @@ El sitio público ya tiene la identidad del estudio: el logo, el degradado de su
   - El blanco #FCFFFF para el texto sobre los azules.
   - La tipografía con serifa de los títulos (Cormorant Garamond) en el título principal de cada pantalla, en la carátula de cada causa de las listas y en el título del ingreso.
   - El azul oscuro en los botones principales y el azul en los enlaces y en el foco del teclado.
-- RF-4: EL SISTEMA muestra el contenido de cada pantalla sobre un fondo claro y neutro, y lo agrupa en tarjetas blancas con borde y sombra suave: cada tarjeta se distingue del fondo y de la tarjeta de al lado por el borde, no solo por el color.
+- RF-4: EL SISTEMA muestra el contenido de cada pantalla sobre un fondo claro, el azul del estudio muy suave, y lo agrupa en tarjetas blancas con borde y sombra suave (la tarjeta del ingreso y del cambio de contraseña, en un azul aún más suave): cada tarjeta se distingue del fondo y de la tarjeta de al lado por el borde, no solo por el color.
 
 ### Menú lateral
 - RF-5: EL SISTEMA muestra en el portal y en el panel un menú al costado izquierdo, sobre el azul oscuro del estudio, con:
@@ -55,6 +55,7 @@ El sitio público ya tiene la identidad del estudio: el logo, el degradado de su
 - RF-14: EL SISTEMA muestra la pantalla de cambio de contraseña con el mismo diseño de dos mitades: en el panel de la marca, el logo y el nombre del estudio, sin el título T-1 ni los datos de contacto; en la tarjeta, el formulario de la spec 001 (RF-36 a RF-39). Es una pantalla aparte, sin el menú lateral, porque puede ser obligatoria antes de entrar (spec 001, RF-11).
 
 ### Portal: causas
+- RF-28: EL SISTEMA muestra el inicio del portal (spec 004, RF-7) con el saludo "Hola, <nombre>." como título principal, con el nombre del cliente, y debajo el subtítulo "Mis causas", al mismo nivel que los títulos de los grupos (RF-16), seguido de la lista. El saludo es el mismo que el del panel (RF-25) y no tiene género.
 - RF-15: EL SISTEMA muestra cada causa de la lista del portal (spec 004, RF-9 y RF-10) en su propia tarjeta, separada de la siguiente por un espacio y con borde propio:
   - Arriba, la carátula en la tipografía de los títulos, en hasta dos líneas, y a la derecha, el estado en una etiqueta.
   - Debajo, "Expte." y el número de expediente, o "Sin asignar".
@@ -77,7 +78,7 @@ El sitio público ya tiene la identidad del estudio: el logo, el degradado de su
 - RF-22: EL SISTEMA aplica la presentación de RF-21 (tabla en tarjeta, títulos con fondo tenue, filas separadas por una línea visible y resaltadas al pasar el puntero) al listado de cuentas. En los listados de jurisprudencia y de modelos de escritos, que no son tablas, muestra cada fallo y cada modelo en su propia tarjeta con borde, separada de la siguiente por un espacio y que responde al pasar el puntero.
 - RF-23: EL SISTEMA muestra cada movimiento del historial del panel (spec 003, RF-24) en su propia tarjeta con borde, separada de la siguiente por un espacio, con una barra de color a la izquierda: azul si es visible para el cliente y gris si está oculto. La barra acompaña a la etiqueta "Visible" u "Oculto", que se sigue mostrando: la información no depende solo del color.
 - RF-24: EL SISTEMA muestra los formularios, los detalles y las preguntas de confirmación del panel dentro de tarjetas, con los botones principales en el azul oscuro del estudio y los secundarios con borde.
-- RF-25: EL SISTEMA muestra la pantalla "Inicio" del panel con su saludo actual (spec 001) y, debajo, un acceso por cada opción del menú, salvo "Inicio", en tarjetas con su ícono y su nombre. No muestra contadores ni resúmenes: quedan fuera de alcance.
+- RF-25: EL SISTEMA muestra la pantalla "Inicio" del panel con el saludo "Hola, <nombre>." como título principal, con el nombre del usuario, y, debajo, un acceso por cada opción del menú, salvo "Inicio", en tarjetas con su ícono y su nombre. No muestra contadores ni resúmenes: quedan fuera de alcance.
 
 ### Animaciones
 - RF-26: EL SISTEMA anima estas pantallas con la biblioteca Motion, la misma del sitio público (spec 007, RF-45), y con transiciones de CSS donde alcanzan, como en el sitio público:

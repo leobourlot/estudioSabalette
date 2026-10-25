@@ -9,7 +9,7 @@ function openPortal(path: string, portal: PortalService) {
     fetchOwnUser: vi.fn().mockResolvedValue(testUser('cliente')),
   });
   renderApp(path, session, { portal });
-  return screen.findByRole('heading', { name: 'Mis causas', level: 1 });
+  return screen.findByRole('heading', { name: 'Mis causas', level: 2 });
 }
 
 const listWith = (items: CausaPortalResumen[], haySiguiente = false) =>
@@ -18,6 +18,14 @@ const listWith = (items: CausaPortalResumen[], haySiguiente = false) =>
   });
 
 describe('PortalInicio: lista de causas (spec 004, RF-7 a RF-12, RF-24, RF-25)', () => {
+  it('saluda al cliente como título principal y debajo va "Mis causas" (spec 008, RF-28)', async () => {
+    await openPortal('/portal', listWith([]));
+
+    const [title, subtitle] = within(screen.getByRole('main')).getAllByRole('heading');
+    expect([title.tagName, title.textContent]).toEqual(['H1', 'Hola, Ana.']);
+    expect([subtitle.tagName, subtitle.textContent]).toEqual(['H2', 'Mis causas']);
+  });
+
   it('muestra los grupos con su título y cada causa con sus datos', async () => {
     const portal = listWith([
       testCausaPortal({ id: 1, caratula: 'Pérez c/ Gómez', estado: 'paralizada' }),

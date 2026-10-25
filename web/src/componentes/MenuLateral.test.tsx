@@ -1,14 +1,21 @@
 import { act, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-de-prueba';
+import {
+  fakeSessionService,
+  findPanelHome,
+  findScreenHeading,
+  INICIO_PANEL,
+  renderApp,
+  testUser,
+} from '../pruebas/aplicacion-de-prueba';
 import { LOGO_PATH } from '../servicios/marca';
 import type { UsuarioPropio } from '../servicios/sesion';
 
 async function openAs(path: string, usuario: UsuarioPropio, firstHeading: string) {
   const service = fakeSessionService({ fetchOwnUser: vi.fn().mockResolvedValue(usuario) });
   renderApp(path, service);
-  await screen.findByRole('heading', { name: firstHeading, level: 1 });
+  await findScreenHeading(firstHeading);
   return service;
 }
 
@@ -23,7 +30,7 @@ const current = () =>
 
 describe('MenuLateral (spec 008, RF-5 a RF-8)', () => {
   it('muestra el logo, el nombre del estudio en dos líneas y el nombre de la sección', async () => {
-    await openAs('/panel', testUser('abogado'), 'Panel');
+    await openAs('/panel', testUser('abogado'), INICIO_PANEL);
 
     const menu = within(aside());
     const home = menu.getByRole('link', { name: 'Pertusatti | Sabalette - Abogadas' });
@@ -47,7 +54,7 @@ describe('MenuLateral (spec 008, RF-5 a RF-8)', () => {
   });
 
   it.each([
-    ['/panel', 'Panel', 'Inicio'],
+    ['/panel', INICIO_PANEL, 'Inicio'],
     ['/panel/usuarios', 'Cuentas', 'Cuentas'],
     ['/panel/usuarios/nuevo', 'Nueva cuenta', 'Cuentas'],
     ['/panel/mi-cuenta', 'Mi cuenta', 'Mi cuenta'],
@@ -64,7 +71,7 @@ describe('MenuLateral (spec 008, RF-5 a RF-8)', () => {
       .setup()
       .click(within(aside()).getByRole('link', { name: 'Pertusatti | Sabalette - Abogadas' }));
 
-    expect(await screen.findByRole('heading', { name: 'Panel', level: 1 })).toBeTruthy();
+    expect(await findPanelHome()).toBeTruthy();
   });
 
   it('el logo de la barra de arriba también lleva al inicio de la sección', async () => {
@@ -75,7 +82,7 @@ describe('MenuLateral (spec 008, RF-5 a RF-8)', () => {
   });
 
   it('"Saltar al contenido" es lo primero y lleva al contenido, salteando el menú', async () => {
-    await openAs('/panel', testUser('abogado'), 'Panel');
+    await openAs('/panel', testUser('abogado'), INICIO_PANEL);
 
     const skip = screen.getByRole('link', { name: 'Saltar al contenido' });
     expect(skip.getAttribute('href')).toBe('#contenido');
@@ -92,7 +99,7 @@ describe('menú plegado (spec 008, RF-9 y RF-10)', () => {
   });
 
   it('"Menú" lo abre, lo indica y deja el foco en "Cerrar menú" con el contenido inerte', async () => {
-    await openAs('/panel', testUser('abogado'), 'Panel');
+    await openAs('/panel', testUser('abogado'), INICIO_PANEL);
     expect(menuButton().getAttribute('aria-expanded')).toBe('false');
     expect(menuButton().getAttribute('aria-controls')).toBe('menu-lateral');
     expect(aside().className).toContain('invisible');
@@ -109,7 +116,7 @@ describe('menú plegado (spec 008, RF-9 y RF-10)', () => {
 
   it('se cierra al elegir una opción y se ve el destino', async () => {
     const user = userEvent.setup();
-    await openAs('/panel', testUser('abogado'), 'Panel');
+    await openAs('/panel', testUser('abogado'), INICIO_PANEL);
     await user.click(menuButton());
 
     await user.click(within(aside()).getByRole('link', { name: 'Mi cuenta' }));
@@ -129,7 +136,7 @@ describe('menú plegado (spec 008, RF-9 y RF-10)', () => {
     ['con Escape', async (user: ReturnType<typeof userEvent.setup>) => user.keyboard('{Escape}')],
   ])('se cierra %s y el foco vuelve a "Menú"', async (_, closeMenu) => {
     const user = userEvent.setup();
-    await openAs('/panel', testUser('abogado'), 'Panel');
+    await openAs('/panel', testUser('abogado'), INICIO_PANEL);
     await user.click(menuButton());
 
     await closeMenu(user);
@@ -158,7 +165,7 @@ describe('menú plegado (spec 008, RF-9 y RF-10)', () => {
       removeEventListener: () => {},
     }));
     const user = userEvent.setup();
-    await openAs('/panel', testUser('abogado'), 'Panel');
+    await openAs('/panel', testUser('abogado'), INICIO_PANEL);
     await user.click(menuButton());
 
     act(() => listeners.forEach((listener) => listener({ matches: true })));
@@ -171,7 +178,7 @@ describe('menú plegado (spec 008, RF-9 y RF-10)', () => {
     localStorage.clear();
     sessionStorage.clear();
     const user = userEvent.setup();
-    await openAs('/panel', testUser('abogado'), 'Panel');
+    await openAs('/panel', testUser('abogado'), INICIO_PANEL);
 
     await user.click(menuButton());
     await user.keyboard('{Escape}');

@@ -1,7 +1,13 @@
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
-import { fakeSessionService, renderApp, testUser } from '../pruebas/aplicacion-de-prueba';
+import {
+  fakeSessionService,
+  findScreenHeading,
+  INICIO_PANEL,
+  renderApp,
+  testUser,
+} from '../pruebas/aplicacion-de-prueba';
 import { ApiError } from '../servicios/cliente-http';
 import type { Rol } from '../servicios/sesion';
 import { TEXTOS_INGRESO } from '../servicios/textos-aplicacion';
@@ -98,15 +104,15 @@ describe('PaginaCambiarContrasena (RF-11, RF-36 a RF-39)', () => {
   });
 
   it.each([
-    ['abogado', 'Panel'],
-    ['admin', 'Panel'],
+    ['abogado', INICIO_PANEL],
+    ['admin', INICIO_PANEL],
     ['cliente', 'Mis causas'],
   ] as const)('al cambiarla, un %s va al inicio de su sección (RF-36)', async (rol, page) => {
     const service = await openPage({ rol });
 
     await fill(CURRENT, NEW);
 
-    expect(await screen.findByRole('heading', { name: page })).toBeTruthy();
+    expect(await findScreenHeading(page)).toBeTruthy();
     expect(service.changePassword).toHaveBeenCalledWith(CURRENT, NEW);
   });
 

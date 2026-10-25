@@ -180,6 +180,10 @@ Reglas para todas las tareas:
   Recorrido de las rutas del portal.
   Hecho cuando: los tests verifican que un visitante va a `/ingresar`, un integrante al panel y un cliente con cambio pendiente a `/cambiar-contrasena` en cada ruta nueva, y que el flujo del portal no escribe en `localStorage` ni en `sessionStorage`.
 
+- [x] **T29 — Íconos y redes en el contacto del portal** [RF-18] **(modifica existente: `componentes/BloqueContactoEstudio.tsx`, `componentes/Disenos.test.tsx`, `spec.md`, `plan.md`, `validacion.md`)**
+  Pedido por el estudio el 24/10/2026: la dirección como enlace a Google Maps con el pin de Maps, el ícono de WhatsApp al lado de cada número y la cuenta de Instagram con su ícono, como enlace a su perfil.
+  Hecho cuando: los tests verifican los renglones en orden, que la dirección abre Google Maps y la cuenta de Instagram su perfil, aparte; que cada enlace empieza con su ícono, que no se anuncia, con los colores de Maps, WhatsApp e Instagram; y que sin dirección ni redes muestra solo el nombre y los WhatsApp.
+
 ## Cierre
 
 - [x] **T28 — Validación de la spec**

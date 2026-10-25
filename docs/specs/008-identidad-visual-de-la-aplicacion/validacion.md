@@ -29,7 +29,8 @@ Rutas abreviadas:
 | RF-22 | Cuentas en tabla; fallos y modelos en tarjetas | W `PanelUsuarios.test.tsx`, `PanelJurisprudencia.test.tsx`, `PanelModelos.test.tsx` (siguen en verde) | ✅ (aspecto: demo manual) |
 | RF-23 | Barra azul o gris junto a "Visible" u "Oculto" | W `FilaMovimiento.test.tsx` | ✅ |
 | RF-24 | Formularios, detalles y confirmaciones con los estilos del estudio | W tests de esos componentes y páginas, sin cambiar sus casos | ✅ (aspecto: demo manual) |
-| RF-25 | Inicio del panel: saludo y un acceso por opción, con ícono, sin contadores | W `PanelInicio.test.tsx` | ✅ |
+| RF-25 | Inicio del panel: el saludo "Hola, <nombre>." como título principal y un acceso por opción, con ícono, sin contadores | W `PanelInicio.test.tsx`, `textos-aplicacion.test.ts` | ✅ |
+| RF-28 | Inicio del portal: el saludo como título principal y "Mis causas" como subtítulo, antes de la lista | W `PortalInicio.test.tsx`, `textos-aplicacion.test.ts` | ✅ |
 | RF-26, RF-27 | Transiciones de 0 con la reducción de movimiento, escalonado sin pasar de 0,6 s, contenido en el documento desde el primer momento | W `animaciones.test.tsx` | ✅ (cómo se ven: demo manual) |
 
 ## Requisitos no funcionales
@@ -44,6 +45,7 @@ Rutas abreviadas:
 | Idioma | Todos los textos en español | ✅ |
 
 ## Observaciones
+- **Saludo y fondos (T15).** El 24/10/2026 el estudio cambió el título del inicio del panel y del portal por el saludo "Hola, <nombre>." (RF-25 y RF-28), con "Mis causas" como subtítulo en el portal, y los fondos: las pantallas en el azul del logo al 15 % y la tarjeta del ingreso al 10 % (RF-4). La web pasó entera (118 archivos, 1803 tests), con `pnpm lint` sin errores.
 - **Fallos del sitio público, ajenos a esta spec.** Fallan 4 tests de la spec 007, por cambios que ya estaban en el árbol sin commitear antes de esta spec: el pie con `pb-10` en lugar de `pb-28` (RF-28), el acceso de ingreso que pasa al menú debajo de 768 px en lugar de 420 px (RF-4) y el pie que muestra el número de WhatsApp en lugar de "WhatsApp" (RF-44). Contradicen la spec 007: hay que decidir si se actualiza la spec o se vuelve atrás el cambio.
 - **Datos del estudio.** El estudio informó la dirección, el email e Instagram (17/10/2026). Se actualizaron la spec 007 (RF-22, casos límite, dudas abiertas) y los tests que daban por hecho que faltaban (`datos-estudio`, `ContactoSitio`, `cabecera-pagina`, `Disenos`).
 - **Desvíos del plan, ya anotados en él.** `LazyMotion` va en `RutasAplicacion.tsx` y no en `App.tsx`; el menú usa `isSectionActive` con `details` en lugar de la regla de `NavLink`; los filtros usan `FIELD_SMALL`; los textos del ingreso viven en `servicios/textos-aplicacion.ts`.

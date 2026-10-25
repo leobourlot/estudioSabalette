@@ -94,7 +94,7 @@ export function DisenoSeccion({ section, footer }: DisenoSeccionProps) {
   }
 
   return (
-    <div className="min-h-screen bg-slate-100 lg:flex">
+    <div className="min-h-screen bg-estudio-azul/15 lg:flex">
       <a
         href="#contenido"
         className="sr-only z-50 rounded-md bg-estudio-blanco px-4 py-2 font-medium text-estudio-oscuro focus:not-sr-only focus:fixed focus:left-4 focus:top-4"
