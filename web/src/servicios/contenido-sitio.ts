@@ -17,7 +17,7 @@ export const APERTURA =
 
 /** T-2. */
 export const INTRO_SERVICIOS =
-  'Nuestro trabajo parte del análisis particular de cada situación, priorizando soluciones estratégicas y negociadas cuando resultan convenientes, y una defensa judicial sólida cuando el conflicto requiere acudir a los tribunales.';
+  'Nuestro trabajo parte del análisis particular de cada situación, priorizando soluciones estratégicas.';
 
 export type ClaveServicio = 'derecho-laboral' | 'accidentes' | 'danos' | 'sucesiones';
 

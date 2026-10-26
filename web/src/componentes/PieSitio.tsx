@@ -119,22 +119,18 @@ export function PieSitio({
               ))}
             </ul>
 
-            {(contact.email || contact.direccion) && (
+            {(contact.emails.length > 0 || contact.direccion) && (
               <ul aria-label="Email y dirección" className="flex flex-col">
-                {contact.email && (
-                  <li>
-                    <a
-                      href={`mailto:${contact.email}`}
-                      className={`${LINK} break-all`}
-                      {...EXTERNAL}
-                    >
+                {contact.emails.map(({ email }) => (
+                  <li key={email}>
+                    <a href={`mailto:${email}`} className={`${LINK} break-all`} {...EXTERNAL}>
                       <span className={ICON_BOX}>
                         <IconoEmail />
                       </span>
-                      {contact.email}
+                      {email}
                     </a>
                   </li>
-                )}
+                ))}
                 {contact.direccion && (
                   <li>
                     <a

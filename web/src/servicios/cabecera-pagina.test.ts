@@ -94,11 +94,11 @@ describe('legalServiceData (RF-37)', () => {
       '@type': 'LegalService',
       name: 'Pertusatti | Sabalette - Abogadas',
       url: `${SITE}/`,
-      telephone: ['+5493454018174', '+5493455414147'],
+      telephone: ['+5493454087098', '+5493455414147'],
       logo: `${SITE}/marca/logo.png`,
       image: `${SITE}/marca/logo.png`,
       address: { '@type': 'PostalAddress', streetAddress: 'Pueyrredón Nº 47, Concordia' },
-      email: 'estudiojuridicovsr@gmail.com',
+      email: ['carolina@persaestudiojuridico.com.ar', 'vanesa@persaestudiojuridico.com.ar'],
       sameAs: ['https://www.instagram.com/persaestudiojuridico/'],
     });
   });
@@ -108,14 +108,14 @@ describe('legalServiceData (RF-37)', () => {
       ...STUDIO_CONTACT,
       direccion: 'San Martín 123, Villaguay',
       horarios: ['Lunes a viernes de 8 a 13'],
-      email: 'estudio@ejemplo.test',
+      emails: [{ nombre: 'Dra. Ana Gómez', email: 'estudio@ejemplo.test' }],
       redes: [{ red: 'Instagram', usuario: '@estudio', url: 'https://instagram.com/estudio' }],
     };
 
     expect(legalServiceData(SITE, contact)).toMatchObject({
       address: { '@type': 'PostalAddress', streetAddress: 'San Martín 123, Villaguay' },
       openingHours: ['Lunes a viernes de 8 a 13'],
-      email: 'estudio@ejemplo.test',
+      email: ['estudio@ejemplo.test'],
       sameAs: ['https://instagram.com/estudio'],
     });
   });

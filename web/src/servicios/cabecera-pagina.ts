@@ -50,7 +50,7 @@ export function legalServiceData(
     data.address = { '@type': 'PostalAddress', streetAddress: contact.direccion };
   }
   if (contact.horarios.length > 0) data.openingHours = [...contact.horarios];
-  if (contact.email) data.email = contact.email;
+  if (contact.emails.length > 0) data.email = contact.emails.map(({ email }) => email);
   if (contact.redes.length > 0) data.sameAs = contact.redes.map((red) => red.url);
   return data;
 }

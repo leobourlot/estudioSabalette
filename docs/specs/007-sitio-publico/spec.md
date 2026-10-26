@@ -103,16 +103,16 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 ### Contacto
 - RF-22: EL SISTEMA toma los datos de contacto del estudio de una única fuente, la misma que usa el portal (spec 004, RF-18). Son públicos y fijos, y no se editan desde el panel:
   - Nombre: "Pertusatti | Sabalette - Abogadas".
-  - WhatsApp de cada abogada, en el orden del nombre del estudio: "Dra. Carolina Pertusatti", +54 9 3454 01-8174, y "Dra. Vanesa Sabalette", +54 9 3455 41-4147. Donde se muestra un número, va con el nombre de su abogada ("Dra. Carolina Pertusatti: +54 9 3454 01-8174").
+  - WhatsApp de cada abogada, en el orden del nombre del estudio: "Dra. Carolina Pertusatti", +54 9 3454 08-7098, y "Dra. Vanesa Sabalette", +54 9 3455 41-4147. Donde se muestra un número, va con el nombre de su abogada ("Dra. Carolina Pertusatti: +54 9 3454 08-7098").
   - Dirección: "Pueyrredón Nº 47, Concordia".
-  - Email: estudiojuridicovsr@gmail.com.
+  - Email de cada abogada, en el orden del nombre del estudio: "Dra. Carolina Pertusatti", carolina@persaestudiojuridico.com.ar, y "Dra. Vanesa Sabalette", vanesa@persaestudiojuridico.com.ar.
   - Redes sociales: Instagram, con la cuenta "@persaestudiojuridico" (https://www.instagram.com/persaestudiojuridico/).
   - Días y horarios de atención: los que informe el estudio (ver Dudas abiertas).
 - RF-23: EL SISTEMA muestra al final de todas las páginas públicas, antes del pie de página (RF-44), un bloque de contacto sobre el degradado del logo, con el título "Contactate con nosotros", una línea corta debajo del título y el texto "Estamos disponibles para escucharte. La primera consulta es el primer paso para resolver tu problema legal." (T-17). Debajo, cada dato en su renglón, con un ícono, una etiqueta corta en mayúsculas y el dato. Los íconos de Ubicación (el pin de Google Maps), de WhatsApp y de cada red llevan los colores de su marca, sin fondo, con un borde blanco que sigue el dibujo; los demás van en blanco:
   - "Ubicación": la dirección, como texto, y el enlace "Cómo llegar", que abre esa dirección en Google Maps.
   - "Teléfono / WhatsApp": con el ícono de WhatsApp, el número de cada abogada, escrito con su nombre, cada uno en su renglón y como enlace que abre una conversación con esa abogada (RF-27).
   - "Disponibilidad": los días y horarios de atención.
-  - "Email": el email, escrito, como enlace para escribirle al estudio.
+  - "Email": el email de cada abogada, escrito con su nombre ("Dra. Carolina Pertusatti: carolina@persaestudiojuridico.com.ar"), cada uno en su renglón y como enlace para escribirle a esa abogada.
   - Cada red social, con el nombre de la red como etiqueta (por ejemplo, "Instagram") y sus cuentas (por ejemplo, "@estudio"), cada una como enlace a su perfil.
 - RF-24: MIENTRAS el estudio no haya informado un dato de contacto, EL SISTEMA no muestra ese dato, ni su título, ni un espacio vacío en su lugar. Nunca muestra un dato de ejemplo o inventado. El enlace "Cómo llegar" solo se muestra cuando hay dirección. Única excepción: en la versión de desarrollo, la que se usa para construir y probar el sitio antes de publicarlo, mientras el estudio no haya informado sus redes se muestran redes de muestra (Instagram, Facebook, X y LinkedIn, con una cuenta de muestra y el enlace a la página principal de cada red), para ver cómo quedan el bloque de contacto y el pie de página. El sitio publicado nunca las incluye.
 - RF-25: CUANDO un visitante elige un enlace que lo lleva fuera del sitio (WhatsApp, "Cómo llegar", el email o una red social), EL SISTEMA lo abre aparte, sin reemplazar la página que estaba viendo. El sitio abierto no recibe ningún control sobre la página de origen ni la dirección desde la que se llegó.
@@ -139,7 +139,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
 - RF-37: EL SISTEMA ofrece a los buscadores:
   - La lista de las direcciones de las páginas públicas.
   - La dirección principal de cada página, la de RF-8, aunque se haya llegado por una variante con mayúsculas o barra final.
-  - Los datos del estudio como estudio jurídico: nombre, los WhatsApp de las abogadas y, cuando el estudio los informe, dirección, horarios, email y redes.
+  - Los datos del estudio como estudio jurídico: nombre, los WhatsApp de las abogadas y, cuando el estudio los informe, dirección, horarios, los emails de las abogadas y redes.
 - RF-38: EL SISTEMA indica a los buscadores que no listen la pantalla de ingreso, la de cambio de contraseña, el panel, el portal ni la página de dirección inexistente, y les informa que una dirección inexistente no existe.
 
 ### Privacidad, seguridad y aislamiento
@@ -154,7 +154,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - El logo y el nombre del estudio, que llevan al inicio.
   - Los accesos "Servicios", "Abogadas" y "Contacto", como en el menú (RF-5).
   - Las redes: el WhatsApp de cada abogada, con su nombre y su número, como enlace con el mensaje de la página (RF-27), y cada cuenta de las redes informadas, cada una con el mismo ícono del bloque de contacto, a color y con borde blanco (RF-23), y el nombre de la red (por ejemplo, "Instagram"), como enlace a su perfil. Si una red tiene más de una cuenta, cada enlace suma la cuenta al nombre. Sin redes informadas, solo se muestran los WhatsApp (RF-24).
-  - Debajo de las redes, el email, como enlace para escribirle al estudio, y la dirección, como enlace que la abre en Google Maps, cada uno con el mismo ícono del bloque de contacto (RF-23). Cada uno se muestra solo si el estudio lo informó (RF-24).
+  - Debajo de las redes, el email de cada abogada, sin su nombre, como enlace para escribirle a esa abogada, y la dirección, como enlace que la abre en Google Maps, cada uno con el mismo ícono del bloque de contacto (RF-23). Cada uno se muestra solo si el estudio lo informó (RF-24).
   - La leyenda "© <año> - Pertusatti | Sabalette - Abogadas. Todos los derechos reservados.", con el año en que se publicó el sitio (T-18).
   - La leyenda "Diseñado por" con el logo y el nombre "Bourder Web", que llevan a https://bourderweb.com.ar (T-18). Como todo enlace externo, se abre aparte (RF-25).
 
@@ -226,7 +226,7 @@ Hasta ahora el sistema solo sirve a quien ya tiene una cuenta: el panel para las
   - La dirección genérica y el número genérico que tenía el portal dejan de existir: ni el sitio ni el portal los muestran (RF-22, RF-24; spec 004, RF-18).
   - Email largo o dirección larga en 360 px: pasan a la línea siguiente (requisitos no funcionales).
   - Feria judicial, vacaciones o un cambio de número: se publican cambiando esta spec y el sitio. No hay avisos temporales (RF-2, Fuera de alcance).
-  - Alguien se hace pasar por el estudio desde otro número o email (por ejemplo, con el logo y el nombre en su perfil de WhatsApp) y le escribe a un cliente: el sistema no puede impedirlo. El sistema solo muestra los WhatsApp de las abogadas y el email del estudio, nunca otros números ni casillas, para que los clientes puedan comprobar cuáles son los oficiales. Se acepta.
+  - Alguien se hace pasar por el estudio desde otro número o email (por ejemplo, con el logo y el nombre en su perfil de WhatsApp) y le escribe a un cliente: el sistema no puede impedirlo. El sistema solo muestra los WhatsApp y los emails de las abogadas, nunca otros números ni casillas, para que los clientes puedan comprobar cuáles son los oficiales. Se acepta.
 - **WhatsApp:**
   - Visitante sin WhatsApp instalado: el enlace abre la página de WhatsApp, que le ofrece instalarlo o usarlo desde el navegador. El sitio no interviene.
   - El visitante borra o cambia el mensaje antes de enviarlo: es su decisión (RF-27).
@@ -340,16 +340,16 @@ Ninguna impide planificar: cada dato pendiente tiene definido qué se muestra mi
 - [NECESITA ACLARACIÓN] Días y horarios de atención.
 - Resuelta el 19/10/2026: el estudio entregó las fotos de las dos abogadas y los textos de Carolina Marisa Pertusatti (T-19 y T-20), y se aprobó el título profesional de las dos (T-21).
 - Resuelta el 16/10/2026: el estudio entregó el logo vectorizado en buena calidad (fondo azul).
-- Resuelta el 17/10/2026: el estudio informó su dirección ("Pueyrredón Nº 47, Concordia"), su email (estudiojuridicovsr@gmail.com) y su red social (Instagram, "@pertusattisabaletteabogadas") (RF-22). El 23/10/2026 la cuenta de Instagram pasó a ser "@persaestudiojuridico".
+- Resuelta el 17/10/2026: el estudio informó su dirección ("Pueyrredón Nº 47, Concordia"), su email (estudiojuridicovsr@gmail.com) y su red social (Instagram, "@pertusattisabaletteabogadas") (RF-22). El 23/10/2026 la cuenta de Instagram pasó a ser "@persaestudiojuridico". El 26/10/2026 el email pasó a ser uno por abogada: carolina@persaestudiojuridico.com.ar y vanesa@persaestudiojuridico.com.ar. Ese mismo día cambió el WhatsApp de Carolina Pertusatti a +54 9 3454 08-7098.
 
 ## Anexo — Textos aprobados
-Los textos de los servicios y de la abogada son los de la clienta. Las frases de las tarjetas y el resumen son recortes de esos textos, aprobados el 12/10/2026. Los mensajes de WhatsApp, los títulos, las descripciones y los textos de la interfaz se redactaron para esta spec. Los textos del bloque de contacto (T-17) y del pie de página (T-18) se tomaron del modelo que eligió el estudio y se aprobaron el 15/10/2026. El estudio pidió cambiar T-1, T-13 y el título de la sección de abogadas (T-17) el 24/10/2026. Ese mismo día pidió la sección Portal de clientes (RF-47): la frase del título es suya, y los demás textos de esa sección y la causa de ejemplo (T-22) se redactaron para esta spec y se aprobaron.
+Los textos de los servicios y de la abogada son los de la clienta. Las frases de las tarjetas y el resumen son recortes de esos textos, aprobados el 12/10/2026. Los mensajes de WhatsApp, los títulos, las descripciones y los textos de la interfaz se redactaron para esta spec. Los textos del bloque de contacto (T-17) y del pie de página (T-18) se tomaron del modelo que eligió el estudio y se aprobaron el 15/10/2026. El estudio pidió cambiar T-1, T-13 y el título de la sección de abogadas (T-17) el 24/10/2026, y acortar T-2 el 26/10/2026. Ese mismo día pidió la sección Portal de clientes (RF-47): la frase del título es suya, y los demás textos de esa sección y la causa de ejemplo (T-22) se redactaron para esta spec y se aprobaron.
 
 ### T-1 — Apertura del inicio
 > Asesoramiento legal estratégico, con especial dedicación al Derecho Laboral.
 
 ### T-2 — Encabezado de la sección Servicios
-> Nuestro trabajo parte del análisis particular de cada situación, priorizando soluciones estratégicas y negociadas cuando resultan convenientes, y una defensa judicial sólida cuando el conflicto requiere acudir a los tribunales.
+> Nuestro trabajo parte del análisis particular de cada situación, priorizando soluciones estratégicas.
 
 ### T-3 a T-6 — Frases de las tarjetas
 - T-3, Derecho Laboral:

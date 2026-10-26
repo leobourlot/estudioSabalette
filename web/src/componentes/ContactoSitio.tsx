@@ -117,11 +117,15 @@ export function ContactoSitio({ mensaje, contact = STUDIO_CONTACT }: ContactoSit
                 ))}
               </Renglon>
             )}
-            {contact.email && (
+            {contact.emails.length > 0 && (
               <Renglon icono={<IconoEmail />} etiqueta={TEXTOS.contacto.email}>
-                <a href={`mailto:${contact.email}`} className={LINK} {...EXTERNAL}>
-                  {contact.email}
-                </a>
+                {contact.emails.map(({ nombre, email }) => (
+                  <p key={email}>
+                    <a href={`mailto:${email}`} className={LINK} {...EXTERNAL}>
+                      {nombre}: {email}
+                    </a>
+                  </p>
+                ))}
               </Renglon>
             )}
             {groupByNetwork(networksToShow(contact)).map(([red, cuentas]) => (

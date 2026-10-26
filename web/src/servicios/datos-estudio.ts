@@ -24,6 +24,13 @@ export interface WhatsappAbogada {
   visible: string;
 }
 
+/** El email de una abogada (spec 007, RF-22). */
+export interface EmailAbogada {
+  /** Con qué nombre se muestra, con "Dra." adelante, como en su WhatsApp. */
+  nombre: string;
+  email: string;
+}
+
 export interface StudioContact {
   nombre: string;
   /** El nombre como se muestra en pantalla: la primera línea no se corta (RF-3). */
@@ -34,23 +41,27 @@ export interface StudioContact {
   direccion: string | null;
   /** Días y horarios de atención, un renglón por elemento. Vacío mientras no se informen. */
   horarios: readonly string[];
-  email: string | null;
+  /** Los emails del estudio, uno por abogada, en el orden del logo. Vacío mientras no se informen. */
+  emails: readonly EmailAbogada[];
   redes: readonly RedSocial[];
 }
 
-// Informados por el estudio el 17/10/2026 (spec 007, RF-22). PENDIENTE (dudas abiertas): los
+// Informados por el estudio el 17/10/2026, y los emails el 26/10/2026 (spec 007, RF-22). PENDIENTE (dudas abiertas): los
 // horarios. Hasta que el estudio los informe no se muestran, y nunca se reemplazan por datos de
 // ejemplo (RF-24).
 export const STUDIO_CONTACT: StudioContact = {
   nombre: 'Pertusatti | Sabalette - Abogadas',
   nombreLineas: ['Pertusatti | Sabalette', 'Abogadas'],
   whatsapps: [
-    { nombre: 'Dra. Carolina Pertusatti', numero: '5493454018174', visible: '+54 9 3454 01-8174' },
+    { nombre: 'Dra. Carolina Pertusatti', numero: '5493454087098', visible: '+54 9 3454 08-7098' },
     { nombre: 'Dra. Vanesa Sabalette', numero: '5493455414147', visible: '+54 9 3455 41-4147' },
   ],
   direccion: 'Pueyrredón Nº 47, Concordia',
   horarios: [],
-  email: 'estudiojuridicovsr@gmail.com',
+  emails: [
+    { nombre: 'Dra. Carolina Pertusatti', email: 'carolina@persaestudiojuridico.com.ar' },
+    { nombre: 'Dra. Vanesa Sabalette', email: 'vanesa@persaestudiojuridico.com.ar' },
+  ],
   redes: [
     {
       red: 'Instagram',

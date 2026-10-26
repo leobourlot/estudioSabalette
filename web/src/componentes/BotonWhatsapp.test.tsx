@@ -24,8 +24,8 @@ describe('BotonWhatsapp (spec 007, RF-22, RF-26 y RF-27; spec 004, RF-19)', () =
 
     expect(whatsappMenu()).toEqual([
       {
-        texto: 'Dra. Carolina Pertusatti+54 9 3454 01-8174',
-        numero: '5493454018174',
+        texto: 'Dra. Carolina Pertusatti+54 9 3454 08-7098',
+        numero: '5493454087098',
         mensaje: null,
       },
       {
@@ -100,7 +100,7 @@ describe('BotonWhatsapp (spec 007, RF-22, RF-26 y RF-27; spec 004, RF-19)', () =
     const html = renderToString(<BotonWhatsapp />);
 
     expect(html).toContain('<details');
-    expect(html).toContain('href="https://wa.me/5493454018174"');
+    expect(html).toContain('href="https://wa.me/5493454087098"');
     expect(html).toContain('href="https://wa.me/5493455414147"');
   });
 });

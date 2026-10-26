@@ -42,9 +42,9 @@ describe('DisenoSitio (spec 007, RF-4, RF-23, RF-26 y RF-28)', () => {
     renderLayout();
 
     expect(whatsappMessage()).toBe(MESSAGE);
-    // El contacto y el pie: un enlace por abogada en cada uno.
+    // El contacto y el pie: un WhatsApp por abogada en cada uno (los emails no llevan mensaje).
     const links = screen.getAllByRole('link', {
-      name: /^Dra\. (Carolina Pertusatti|Vanesa Sabalette): /,
+      name: /^Dra\. (Carolina Pertusatti|Vanesa Sabalette): \+54 /,
     });
     expect(links).toHaveLength(4);
     for (const link of links) {

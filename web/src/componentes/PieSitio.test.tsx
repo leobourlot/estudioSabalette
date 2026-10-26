@@ -8,7 +8,7 @@ const MESSAGE = 'Hola, me contacto desde el sitio web del estudio.';
 
 const withNetworks: StudioContact = {
   ...STUDIO_CONTACT,
-  email: 'estudio@ejemplo.test',
+  emails: [{ nombre: 'Dra. Ana Gómez', email: 'estudio@ejemplo.test' }],
   redes: [
     { red: 'Instagram', usuario: '@estudio', url: 'https://instagram.com/estudio' },
     { red: 'Instagram', usuario: '@abogada', url: 'https://instagram.com/abogada' },
@@ -59,7 +59,7 @@ describe('PieSitio (spec 007, RF-44)', () => {
         .slice(0, 2)
         .map((a) => a.textContent),
     ).toEqual([
-      'Dra. Carolina Pertusatti: +54 9 3454 01-8174',
+      'Dra. Carolina Pertusatti: +54 9 3454 08-7098',
       'Dra. Vanesa Sabalette: +54 9 3455 41-4147',
     ]);
   });
@@ -139,7 +139,7 @@ describe('PieSitio: redes de una sola cuenta (RF-44)', () => {
 
     const redes = within(screen.getByRole('list', { name: 'Redes' }));
     expect(redes.getAllByRole('link').map((a) => a.textContent)).toEqual([
-      'Dra. Carolina Pertusatti: +54 9 3454 01-8174',
+      'Dra. Carolina Pertusatti: +54 9 3454 08-7098',
       'Dra. Vanesa Sabalette: +54 9 3455 41-4147',
       'LinkedIn',
     ]);
@@ -186,6 +186,21 @@ describe('PieSitio: email y dirección debajo de las redes (spec 007, RF-24, RF-
     }
   });
 
+  it('con los datos de hoy muestra el email de cada abogada, solo la dirección, sin el nombre', () => {
+    render(<PieSitio mensaje={MESSAGE} anio={2026} />);
+
+    const list = screen.getByRole('list', { name: 'Email y dirección' });
+    expect(
+      within(list)
+        .getAllByRole('link')
+        .map((a) => [a.textContent, a.getAttribute('href')]),
+    ).toEqual([
+      ['carolina@persaestudiojuridico.com.ar', 'mailto:carolina@persaestudiojuridico.com.ar'],
+      ['vanesa@persaestudiojuridico.com.ar', 'mailto:vanesa@persaestudiojuridico.com.ar'],
+      ['Pueyrredón Nº 47, Concordia', mapsUrl('Pueyrredón Nº 47, Concordia')],
+    ]);
+  });
+
   it('va debajo de las redes', () => {
     render(<PieSitio mensaje={MESSAGE} contact={complete} anio={2026} />);
 
@@ -194,14 +209,14 @@ describe('PieSitio: email y dirección debajo de las redes (spec 007, RF-24, RF-
   });
 
   it('sin email ni dirección informados, no muestra la lista (RF-24)', () => {
-    const contact: StudioContact = { ...STUDIO_CONTACT, email: null, direccion: null };
+    const contact: StudioContact = { ...STUDIO_CONTACT, emails: [], direccion: null };
     render(<PieSitio mensaje={MESSAGE} contact={contact} anio={2026} />);
 
     expect(screen.queryByRole('list', { name: 'Email y dirección' })).toBeNull();
   });
 
   it('con solo la dirección, muestra la dirección sin el email', () => {
-    const contact: StudioContact = { ...STUDIO_CONTACT, email: null, direccion: ADDRESS };
+    const contact: StudioContact = { ...STUDIO_CONTACT, emails: [], direccion: ADDRESS };
     render(<PieSitio mensaje={MESSAGE} contact={contact} anio={2026} />);
 
     const list = screen.getByRole('list', { name: 'Email y dirección' });

@@ -18,8 +18,8 @@ describe('datos del estudio (spec 007, RF-3 y RF-22; spec 004, RF-18)', () => {
     expect(STUDIO_CONTACT.whatsapps).toEqual([
       {
         nombre: 'Dra. Carolina Pertusatti',
-        numero: '5493454018174',
-        visible: '+54 9 3454 01-8174',
+        numero: '5493454087098',
+        visible: '+54 9 3454 08-7098',
       },
       { nombre: 'Dra. Vanesa Sabalette', numero: '5493455414147', visible: '+54 9 3455 41-4147' },
     ]);
@@ -31,9 +31,12 @@ describe('datos del estudio (spec 007, RF-3 y RF-22; spec 004, RF-18)', () => {
     }
   });
 
-  it('tienen la dirección, el email y la red que informó el estudio (RF-22)', () => {
+  it('tienen la dirección, el email de cada abogada y la red que informó el estudio (RF-22)', () => {
     expect(STUDIO_CONTACT.direccion).toBe('Pueyrredón Nº 47, Concordia');
-    expect(STUDIO_CONTACT.email).toBe('estudiojuridicovsr@gmail.com');
+    expect(STUDIO_CONTACT.emails).toEqual([
+      { nombre: 'Dra. Carolina Pertusatti', email: 'carolina@persaestudiojuridico.com.ar' },
+      { nombre: 'Dra. Vanesa Sabalette', email: 'vanesa@persaestudiojuridico.com.ar' },
+    ]);
     expect(STUDIO_CONTACT.redes).toEqual([
       {
         red: 'Instagram',
@@ -55,14 +58,14 @@ describe('whatsappUrl (spec 007, RF-22 y RF-27)', () => {
   const carolina = STUDIO_CONTACT.whatsapps[0];
 
   it('sin mensaje abre la conversación vacía, como en el portal (spec 004, RF-19)', () => {
-    expect(whatsappUrl(carolina)).toBe('https://wa.me/5493454018174');
+    expect(whatsappUrl(carolina)).toBe('https://wa.me/5493454087098');
   });
 
   it('con mensaje lo deja escrito, codificado', () => {
     const url = whatsappUrl(carolina, 'Hola, me contacto por una consulta sobre Derecho de Daños.');
 
     expect(url).toBe(
-      'https://wa.me/5493454018174?text=Hola%2C%20me%20contacto%20por%20una%20consulta%20sobre%20Derecho%20de%20Da%C3%B1os.',
+      'https://wa.me/5493454087098?text=Hola%2C%20me%20contacto%20por%20una%20consulta%20sobre%20Derecho%20de%20Da%C3%B1os.',
     );
     expect(new URL(url).searchParams.get('text')).toBe(
       'Hola, me contacto por una consulta sobre Derecho de Daños.',
@@ -70,7 +73,7 @@ describe('whatsappUrl (spec 007, RF-22 y RF-27)', () => {
   });
 
   it('con un mensaje vacío abre la conversación sin mensaje', () => {
-    expect(whatsappUrl(carolina, '')).toBe('https://wa.me/5493454018174');
+    expect(whatsappUrl(carolina, '')).toBe('https://wa.me/5493454087098');
   });
 
   it('usa el número de la abogada que recibe', () => {

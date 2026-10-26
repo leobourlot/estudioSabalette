@@ -66,7 +66,7 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
 - RF-18: EL SISTEMA muestra en todas las pantallas del portal, salvo la de cambio de contraseña, los datos de contacto del estudio:
   - Nombre del estudio: "Pertusatti | Sabalette - Abogadas".
   - Dirección, como enlace que la abre en Google Maps, con el ícono de Maps al lado (spec 007, RF-23).
-  - El WhatsApp de cada abogada, con su nombre ("WhatsApp Dra. Carolina Pertusatti: +54 9 3454 01-8174" y "WhatsApp Dra. Vanesa Sabalette: +54 9 3455 41-4147"), cada uno como enlace que abre una conversación con esa abogada, sin mensaje precargado, con el ícono de WhatsApp al lado.
+  - El WhatsApp de cada abogada, con su nombre ("WhatsApp Dra. Carolina Pertusatti: +54 9 3454 08-7098" y "WhatsApp Dra. Vanesa Sabalette: +54 9 3455 41-4147"), cada uno como enlace que abre una conversación con esa abogada, sin mensaje precargado, con el ícono de WhatsApp al lado.
   - Cada red social informada, con su ícono, su nombre y la cuenta ("Instagram: @persaestudiojuridico"), como enlace a su perfil.
 
   Los íconos son los mismos del sitio público, con sus colores (spec 007, RF-23), y no se anuncian: el dato va escrito al lado. Todos los enlaces se abren aparte (spec 007, RF-25).

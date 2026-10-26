@@ -42,7 +42,7 @@ En desarrollo (`pnpm dev`) no hay prerenderizado: Vite sirve `index.html` en tod
 
 | Carpeta o archivo | Contenido | RF |
 |---|---|---|
-| `servicios/datos-estudio.ts` | Datos de contacto completos: nombre, nombre en dos líneas, WhatsApp, dirección, horarios, email y redes, con `null` o lista vacía para lo no informado. `whatsappUrl(mensaje?)` y `mapsUrl(direccion)`. | RF-3, RF-22 a RF-24, RF-27 |
+| `servicios/datos-estudio.ts` | Datos de contacto completos: nombre, nombre en dos líneas, WhatsApp, dirección, horarios, emails (`{ nombre, email }`, uno por abogada) y redes, con `null` o lista vacía para lo no informado. `whatsappUrl(mensaje?)` y `mapsUrl(direccion)`. | RF-3, RF-22 a RF-24, RF-27 |
 | `servicios/contenido-sitio.ts` (nuevo) | Los textos T-1 a T-15 y T-17 como datos: apertura, servicios, pestañas, destacados, abogadas, mensajes de WhatsApp y textos de la interfaz. | RF-2, RF-11 a RF-20, RF-27 |
 | `servicios/rutas-sitio.ts` (nuevo) | Catálogo de páginas públicas (dirección, archivo, título, descripción, mensaje de WhatsApp, si se indexa), `normalizePublicPath`, `isAppPath` y las redirecciones del sitio. | RF-8 a RF-10, RF-34 |
 | `servicios/cabecera-pagina.ts` (nuevo) | `buildHead(pagina, urlSitio)`: título, descripción, dirección principal, vista previa, robots y datos del estudio para buscadores, con todo escapado. | RF-34, RF-36 a RF-38 |
@@ -253,7 +253,7 @@ entrada-servidor.tsx:
 - `<title>` y `<meta name="description">` de T-16 [RF-34].
 - `<link rel="canonical">` con `urlSitio + ruta`: la dirección principal aunque se haya llegado por una variante [RF-37].
 - Vista previa: `og:type`, `og:site_name`, `og:locale` (`es_AR`), `og:title`, `og:description`, `og:url`, `og:image` (`urlSitio/marca/compartir.png`) y `twitter:card` (`summary_large_image`) [RF-36].
-- En el inicio, los datos del estudio para buscadores como `application/ld+json` de tipo `LegalService`: `name`, `url`, `telephone` (`+5493455414147`), `logo` y, solo si están informados, `address`, `openingHours`, `email` y `sameAs` (redes). Se arma con `JSON.stringify`, reemplazando `<` por `<` para que ningún texto pueda cerrar la etiqueta [RF-37].
+- En el inicio, los datos del estudio para buscadores como `application/ld+json` de tipo `LegalService`: `name`, `url`, `telephone` (`+5493455414147`), `logo` y, solo si están informados, `address`, `openingHours`, `email` (la lista de los emails de las abogadas) y `sameAs` (redes). Se arma con `JSON.stringify`, reemplazando `<` por `<` para que ningún texto pueda cerrar la etiqueta [RF-37].
 - En `404.html` y `app.html`, `<meta name="robots" content="noindex">` [RF-38].
 
 `lang="es"` ya está en `index.html` [RF-34]. Las pantallas de la aplicación y el cambio de pestaña ponen su título con `useTituloDocumento` (ver "Frontend").
@@ -371,7 +371,7 @@ Entre páginas públicas, los enlaces son enlaces comunes (`<a href>`): cada pá
   - WhatsApp: el número (`+54 9 3455 41-4147`) como enlace con el mensaje de la página.
   - Dirección como texto y "Cómo llegar" (`mapsUrl`).
   - Horarios, un renglón por línea.
-  - Email escrito, como enlace `mailto:`.
+  - El email de cada abogada, escrito con su nombre, como enlace `mailto:`.
   - Redes con su ícono SVG propio (`IconosRedes`) y el nombre de la red escrito.
   - Todo enlace externo lleva `target="_blank"` y `rel="noopener noreferrer"` [RF-25]. `break-words` en la dirección y el email.
 - **WhatsApp** (`BotonWhatsapp`) [RF-26, RF-27]: suma la propiedad opcional `mensaje`. `whatsappUrl(mensaje)` arma `https://wa.me/5493455414147?text=<mensaje codificado>`, o sin `?text` si no hay mensaje. Mismo aspecto y posición que en el portal. El ingreso y el portal lo siguen usando sin mensaje.
@@ -390,7 +390,7 @@ servicios/datos-estudio.ts:
     whatsappVisible: '+54 9 3455 41-4147',
     direccion: null,                         // pendiente (spec, dudas abiertas)
     horarios: [],                            // pendiente
-    email: null,                             // pendiente
+    emails: [],                              // pendiente: { nombre, email }, uno por abogada
     redes: [],                               // pendiente: { red: 'Instagram', url }
   }
   whatsappUrl(mensaje?) ; mapsUrl(direccion) = 'https://www.google.com/maps/search/?api=1&query=' + codificada
@@ -613,7 +613,7 @@ Pedido por el estudio después de las redes de muestra: en el bloque de contacto
 - `IconosRedes` suma `IconoRedColor`: WhatsApp (globo verde con el teléfono blanco), Instagram (degradado), Facebook, X y LinkedIn con sus colores; otra red usa el ícono de enlace de `IconoRed`. `IconosContacto` suma `IconoUbicacionColor`, el pin con los cuatro colores de Maps. Los colores están en `COLORES_REDES` y `COLORES_MAPS`.
 - Los degradados y recortes usan ids de `useIdSvg` (sobre `useId`, sin signos que rompan `url(#id)`), iguales en el prerenderizado y en la hidratación.
 - `PieSitio` también usa `IconoRedColor`, pedido después: los mismos íconos que el contacto. `IconoRed` queda para las redes sin colores propios.
-- Debajo de la lista "Redes", el pie suma la lista "Email y dirección": el email con `mailto:` e `IconoEmail`, y la dirección con `mapsUrl` e `IconoUbicacionColor`, los dos con `EXTERNAL`. Los íconos van en un lugar de `w-7`, el ancho de los de las redes, para que el texto quede alineado. Sin email ni dirección, la lista no está.
+- Debajo de la lista "Redes", el pie suma la lista "Email y dirección": el email de cada abogada, sin su nombre, con `mailto:` e `IconoEmail`, y la dirección con `mapsUrl` e `IconoUbicacionColor`, los dos con `EXTERNAL`. Los íconos van en un lugar de `w-7`, el ancho de los de las redes, para que el texto quede alineado. Sin email ni dirección, la lista no está.
 - Contraste: ningún fondo cumple 3 a 1 con todos los colores de las marcas (por ejemplo, el verde de WhatsApp da 2,0 sobre blanco y el amarillo de Maps, 1,7). Lo cumple el contorno; la spec exceptúa los colores de adentro por ser decorativos.
 
 ### Íconos de las tarjetas de los servicios [RF-12, RF-45]

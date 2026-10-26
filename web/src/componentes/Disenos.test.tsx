@@ -133,7 +133,7 @@ describe('DisenoPortal (RF-16)', () => {
     expect(Array.from(footer.querySelectorAll('p')).map((p) => p.textContent)).toEqual([
       STUDIO_CONTACT.nombre,
       'Pueyrredón Nº 47, Concordia',
-      'WhatsApp Dra. Carolina Pertusatti: +54 9 3454 01-8174',
+      'WhatsApp Dra. Carolina Pertusatti: +54 9 3454 08-7098',
       'WhatsApp Dra. Vanesa Sabalette: +54 9 3455 41-4147',
       'Instagram: @persaestudiojuridico',
     ]);
@@ -191,7 +191,7 @@ describe('DisenoPortal (RF-16)', () => {
     const footer = screen.getByRole('contentinfo', { name: 'Contacto del estudio' });
     expect(Array.from(footer.querySelectorAll('p')).map((p) => p.textContent)).toEqual([
       STUDIO_CONTACT.nombre,
-      'WhatsApp Dra. Carolina Pertusatti: +54 9 3454 01-8174',
+      'WhatsApp Dra. Carolina Pertusatti: +54 9 3454 08-7098',
       'WhatsApp Dra. Vanesa Sabalette: +54 9 3455 41-4147',
     ]);
   });
@@ -204,7 +204,7 @@ describe('DisenoPortal (RF-16)', () => {
     expect(button.className).toContain('bottom-4');
     expect(button.className).toContain('right-4');
     expect(whatsappMenu().map((opcion) => [opcion.numero, opcion.mensaje])).toEqual([
-      ['5493454018174', null],
+      ['5493454087098', null],
       ['5493455414147', null],
     ]);
   });
@@ -260,7 +260,7 @@ describe('BloqueContactoEstudio (spec 004, RF-18)', () => {
     const footer = screen.getByRole('contentinfo', { name: 'Contacto del estudio' });
     expect(Array.from(footer.querySelectorAll('p')).map((p) => p.textContent)).toEqual([
       STUDIO_CONTACT.nombre,
-      'WhatsApp Dra. Carolina Pertusatti: +54 9 3454 01-8174',
+      'WhatsApp Dra. Carolina Pertusatti: +54 9 3454 08-7098',
       'WhatsApp Dra. Vanesa Sabalette: +54 9 3455 41-4147',
       'Instagram: @persaestudiojuridico',
     ]);

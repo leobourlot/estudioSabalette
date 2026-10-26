@@ -114,7 +114,7 @@ describe('PaginaIngreso en el sitio (spec 007, RF-3, RF-26, RF-33 y RF-34)', () 
     await openLogin(async () => testUser('abogado'));
 
     expect(whatsappMenu().map((opcion) => [opcion.numero, opcion.mensaje])).toEqual([
-      ['5493454018174', null],
+      ['5493454087098', null],
       ['5493455414147', null],
     ]);
   });
@@ -156,10 +156,10 @@ describe('PaginaIngreso con la identidad del estudio (spec 008, RF-11 a RF-13)',
     await openLogin(async () => testUser('abogado'));
 
     const carolina = screen.getByRole('link', {
-      name: 'Dra. Carolina Pertusatti: +54 9 3454 01-8174',
+      name: 'Dra. Carolina Pertusatti: +54 9 3454 08-7098',
     });
     const vanesa = screen.getByRole('link', { name: 'Dra. Vanesa Sabalette: +54 9 3455 41-4147' });
-    expect(carolina.getAttribute('href')).toBe('https://wa.me/5493454018174');
+    expect(carolina.getAttribute('href')).toBe('https://wa.me/5493454087098');
     expect(vanesa.getAttribute('href')).toBe('https://wa.me/5493455414147');
     expect(carolina.closest('p')!.textContent).toContain('Pueyrredón Nº 47, Concordia · ');
   });

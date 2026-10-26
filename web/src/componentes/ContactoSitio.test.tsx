@@ -11,7 +11,7 @@ const complete: StudioContact = {
   ...STUDIO_CONTACT,
   direccion: 'San Martín 123, Piso 2, Villaguay',
   horarios: ['Lunes a viernes de 8 a 13', 'Martes y jueves de 17 a 20'],
-  email: 'estudio@ejemplo.test',
+  emails: [{ nombre: 'Dra. Ana Gómez', email: 'estudio@ejemplo.test' }],
   redes: [
     { red: 'Instagram', usuario: '@estudio', url: 'https://instagram.com/estudio' },
     { red: 'LinkedIn', usuario: 'Pertusatti Sabalette', url: 'https://linkedin.com/company/x' },
@@ -53,6 +53,32 @@ describe('ContactoSitio (spec 007, RF-23 a RF-25)', () => {
     expect(within(block()).getByText('Pueyrredón Nº 47, Concordia')).toBeTruthy();
   });
 
+  it('el email de cada abogada va con su nombre, en su renglón, y le escribe a ella (RF-23)', () => {
+    render(<ContactoSitio mensaje={MESSAGE} />);
+
+    const row = within(block()).getByText('Email').closest('li')!;
+    expect(
+      within(row)
+        .getAllByRole('link')
+        .map((a) => [a.textContent, a.getAttribute('href')]),
+    ).toEqual([
+      [
+        'Dra. Carolina Pertusatti: carolina@persaestudiojuridico.com.ar',
+        'mailto:carolina@persaestudiojuridico.com.ar',
+      ],
+      [
+        'Dra. Vanesa Sabalette: vanesa@persaestudiojuridico.com.ar',
+        'mailto:vanesa@persaestudiojuridico.com.ar',
+      ],
+    ]);
+  });
+
+  it('sin emails no muestra "Email" (RF-24)', () => {
+    render(<ContactoSitio mensaje={MESSAGE} contact={{ ...STUDIO_CONTACT, emails: [] }} />);
+
+    expect(labels()).not.toContain('Email');
+  });
+
   it('sin dirección no muestra "Ubicación" ni "Cómo llegar" (RF-24)', () => {
     render(<ContactoSitio mensaje={MESSAGE} contact={{ ...STUDIO_CONTACT, direccion: null }} />);
 
@@ -79,7 +105,9 @@ describe('ContactoSitio (spec 007, RF-23 a RF-25)', () => {
     expect(within(block()).getByText('Lunes a viernes de 8 a 13')).toBeTruthy();
     expect(within(block()).getByText('Martes y jueves de 17 a 20')).toBeTruthy();
     expect(
-      within(block()).getByRole('link', { name: 'estudio@ejemplo.test' }).getAttribute('href'),
+      within(block())
+        .getByRole('link', { name: 'Dra. Ana Gómez: estudio@ejemplo.test' })
+        .getAttribute('href'),
     ).toBe('mailto:estudio@ejemplo.test');
   });
 
