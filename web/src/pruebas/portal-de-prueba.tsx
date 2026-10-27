@@ -52,7 +52,6 @@ export function testMovimientoCliente(
     fecha: '2026-09-30',
     tipo: 'audiencia',
     texto: 'Se fijó audiencia preliminar.',
-    anulado: false,
     esFechaFutura: false,
     ...overrides,
   };

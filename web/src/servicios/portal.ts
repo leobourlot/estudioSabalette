@@ -47,7 +47,6 @@ export interface MovimientoCliente {
   fecha: string;
   tipo: TipoMovimiento;
   texto: string;
-  anulado: boolean;
   esFechaFutura: boolean;
 }
 

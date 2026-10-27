@@ -14,7 +14,7 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
 - H4: Como cliente quiero ver quiénes son las partes de la causa y con qué rol, y cuál soy yo, para entender el expediente.
 - H5: Como cliente quiero saber quién es el abogado responsable de mi causa y tener siempre a mano el WhatsApp del estudio, para consultar cuando lo necesito.
 - H6: Como cliente quiero ver el historial de movimientos de mi causa, en un lenguaje que entienda, para saber qué pasó sin tener que llamar al estudio.
-- H7: Como cliente quiero distinguir los movimientos anulados para no tomar como válido algo que ya no vale.
+- H7: Como cliente quiero dejar de ver los movimientos que el estudio anula, para no tomar como válido algo que ya no vale.
 - H8: Como cliente quiero distinguir los movimientos con fecha futura, como una audiencia ya fijada, para saber qué viene.
 - H9: Como cliente quiero usar el portal cómodamente desde el celular.
 - H10: Como integrante del estudio quiero que el cliente nunca vea información interna, de otras causas ni datos personales de las otras partes, para cumplir con el secreto profesional y la ley de protección de datos personales.
@@ -34,7 +34,7 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
 
 ### Lista de causas
 - RF-7: CUANDO un cliente ingresa al portal, EL SISTEMA le muestra como pantalla de inicio la lista de las causas a las que está vinculado, cualquiera sea su estado (incluidas Archivada y Finalizada), de a 20 por página.
-- RF-8: EL SISTEMA llama **fecha del último movimiento** de una causa, para un cliente, a la fecha más reciente entre sus movimientos que ese cliente puede ver (spec 003, RF-30), sin contar los anulados ni los que tienen una fecha posterior al día actual en Buenos Aires. Si no hay ninguno, la causa no tiene fecha del último movimiento.
+- RF-8: EL SISTEMA llama **fecha del último movimiento** de una causa, para un cliente, a la fecha más reciente entre sus movimientos que ese cliente puede ver (spec 003, RF-30), sin contar los que tienen una fecha posterior al día actual en Buenos Aires. Si no hay ninguno, la causa no tiene fecha del último movimiento.
 - RF-9: EL SISTEMA muestra de cada causa de la lista:
   - Carátula, en hasta dos líneas, terminada en "…" si no entra completa.
   - Número de expediente, o "Sin asignar" si no está informado.
@@ -75,7 +75,7 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
 - RF-19: EL SISTEMA muestra en todas las pantallas que ve el cliente, incluida la de cambio de contraseña, un botón de WhatsApp siempre visible abajo a la derecha, que abre un menú con el nombre y el número de cada abogada; cada opción abre una conversación con esa abogada sin mensaje precargado (spec 007, RF-26). El botón nunca tapa contenido ni controles: al llegar al final de la pantalla, todo lo que queda debajo se puede ver y usar.
 
 ### Movimientos
-- RF-20: CUANDO un cliente consulta una causa a la que está vinculado, EL SISTEMA muestra además los movimientos de esa causa que el cliente puede ver (spec 003, RF-30), anulados incluidos (spec 003, RF-17), de a 20 por página, en el mismo orden que el historial del panel (spec 003, RF-23):
+- RF-20: CUANDO un cliente consulta una causa a la que está vinculado, EL SISTEMA muestra además los movimientos de esa causa que el cliente puede ver (spec 003, RF-30), que nunca incluyen los anulados (spec 003, RF-17), de a 20 por página, en el mismo orden que el historial del panel (spec 003, RF-23):
   - Por fecha del movimiento, primero el más reciente.
   - A igual fecha, primero el último cargado.
   - A igual fecha e igual momento de carga, primero el último registrado en el sistema.
@@ -85,8 +85,7 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
   - Su fecha, con el formato dd/mm/aaaa.
   - Su tipo.
   - El texto visible para el cliente (spec 003, RF-7), con sus saltos de línea y sin indicar si es el texto para el cliente o la descripción. Si tiene hasta 300 caracteres, completo; si es más largo, sus primeros 300 caracteres y la opción "Ver más", que lo despliega completo en el mismo lugar. Desplegado, la opción "Ver menos" lo vuelve a recortar.
-  - La leyenda "Anulado", si lo está.
-  - La leyenda "Fecha futura", si su fecha es posterior al día actual en Buenos Aires y no está anulado. Un movimiento anulado muestra solo la leyenda "Anulado".
+  - La leyenda "Fecha futura", si su fecha es posterior al día actual en Buenos Aires.
 - RF-22: CUANDO un cliente abre un movimiento que puede ver, EL SISTEMA lo muestra solo, con los mismos datos de RF-21 y el texto completo, junto con la carátula de su causa y un acceso para volver a ella, en la misma página de movimientos en la que estaba.
 - RF-23: SI una causa a la que el cliente está vinculado no tiene ningún movimiento que él pueda ver, ENTONCES EL SISTEMA muestra el mensaje "Todavía no hay movimientos para mostrar".
 
@@ -98,7 +97,7 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
 ### Causas y movimientos que el cliente no puede ver
 - RF-27: EL SISTEMA solo permite al cliente pedir un movimiento dentro de su causa. Primero verifica la causa (RF-28) y después el movimiento (RF-29).
 - RF-28: SI un cliente pide una causa a la que no está vinculado, una causa desactivada, una causa que no existe o un identificador de causa mal formado, ENTONCES EL SISTEMA responde siempre lo mismo, con el mensaje "No existe esa causa", sin revelar de cuál de esos casos se trata. Lo mismo vale al pedir los movimientos o un movimiento de esa causa.
-- RF-29: SI un cliente pide, dentro de una causa a la que está vinculado, un movimiento que no puede ver porque está oculto, que no existe, que no pertenece a esa causa o con un identificador mal formado, ENTONCES EL SISTEMA responde siempre lo mismo, con el mensaje "No existe ese movimiento", sin revelar de cuál de esos casos se trata (spec 003, RF-33 y RF-34).
+- RF-29: SI un cliente pide, dentro de una causa a la que está vinculado, un movimiento que no puede ver porque está oculto o anulado, que no existe, que no pertenece a esa causa o con un identificador mal formado, ENTONCES EL SISTEMA responde siempre lo mismo, con el mensaje "No existe ese movimiento", sin revelar de cuál de esos casos se trata (spec 003, RF-33 y RF-34).
 
 ### Datos que recibe el cliente
 - RF-30: EL SISTEMA solo envía al cliente los datos que esta spec indica que puede ver (RF-9, RF-13, RF-14, RF-16, RF-18 y RF-21), además de los identificadores de sus causas y de los movimientos que puede ver. Nunca le envía datos que la interfaz después oculte. En particular, nunca recibe:
@@ -165,8 +164,8 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
   - Responsable que pasa de abogado a administrador: se lo sigue mostrando (RF-16).
 - **Movimientos:**
   - Causa con movimientos, pero ninguno visible: se muestra "Todavía no hay movimientos para mostrar", sin ningún indicio de los ocultos (RF-23, RF-26).
-  - Movimiento visible anulado: aparece en su lugar, con la leyenda "Anulado" y el texto que tenía al anularlo (RF-21; spec 003, RF-17).
-  - Movimiento anulado con fecha futura: muestra solo "Anulado" (RF-21).
+  - Movimiento visible anulado: deja de aparecer en la siguiente acción del cliente, aunque ya lo haya visto, sin ningún indicio de que existió. Si lo tenía abierto, recibe "No existe ese movimiento" (RF-26, RF-29; spec 003, RF-17).
+  - Movimiento visible anulado y después restaurado: vuelve a aparecer en su lugar (RF-20; spec 003, RF-18).
   - Movimiento con fecha futura (una audiencia fijada): aparece primero, con la leyenda "Fecha futura", hasta que llega ese día en Buenos Aires (RF-20, RF-21).
   - Fecha futura por un error de tipeo (por ejemplo, 2062): el cliente lo ve como "Fecha futura" hasta que un integrante lo corrige. Se acepta (spec 003, casos límite).
   - Movimiento visible que se oculta mientras el cliente lo tiene abierto: lo sigue viendo en pantalla hasta su siguiente acción, en la que recibe "No existe ese movimiento". Se acepta (RF-3, RF-29).
@@ -207,10 +206,10 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
 - Tests que verifiquen:
   - Que un cliente solo ve las causas a las que está vinculado, incluidas las Archivadas y Finalizadas, y que un cliente desvinculado, una causa desactivada o una cuenta desactivada cortan el acceso desde la siguiente acción (RF-3, RF-7).
   - Que una causa ajena, desactivada, inexistente o con un identificador mal formado recibe la misma respuesta, en el detalle, en sus movimientos y en un movimiento (RF-28).
-  - Que un movimiento oculto, inexistente, de otra causa o con un identificador mal formado recibe la misma respuesta (RF-29).
+  - Que un movimiento oculto, anulado, inexistente, de otra causa o con un identificador mal formado recibe la misma respuesta (RF-29).
   - Que las respuestas al cliente solo contienen los datos de RF-30: ni DNI, CUIT, tipo de persona ni identificadores de las partes, ni colaboradores ni datos de integrantes, ni auditoría de la causa, ni la descripción cuando hay texto para el cliente, ni autores o historial de los movimientos.
-  - Que los movimientos ocultos no aparecen ni influyen en la paginación, y que no se informan totales (RF-24, RF-26).
-  - Los grupos, el orden y la paginación de la lista de causas y de los movimientos, incluidas la fecha del último movimiento, la página inexistente y las leyendas "Anulado" y "Fecha futura" (RF-8, RF-10, RF-11, RF-20, RF-21, RF-25).
+  - Que los movimientos ocultos y los anulados no aparecen ni influyen en la paginación, y que no se informan totales (RF-24, RF-26).
+  - Los grupos, el orden y la paginación de la lista de causas y de los movimientos, incluidas la fecha del último movimiento, la página inexistente y la leyenda "Fecha futura" (RF-8, RF-10, RF-11, RF-20, RF-21, RF-25).
   - Que el responsable desactivado no se muestra y la leyenda "Vos" solo marca la parte del cliente que consulta (RF-14, RF-16).
   - Que un visitante, un integrante y un cliente con cambio de contraseña pendiente no acceden al portal, y que el cliente no puede modificar nada (RF-1, RF-2).
   - Que la sesión de un cliente se cierra tras 20 minutos sin acciones, y la de un integrante sigue abierta pasados esos 20 minutos (RF-4).
@@ -218,11 +217,11 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
 - `pnpm test` y `pnpm lint` sin errores.
 - Demo manual:
   1. Con un abogado, preparar dos clientes (A y B) y causas: una En trámite y una Finalizada solo con A; una con A y B como partes, más una parte no cliente; una solo con B; y una desactivada con A.
-  2. En la causa compartida, cargar movimientos visibles con y sin texto para el cliente (uno de más de 300 caracteres), uno oculto, uno visible anulado, uno con fecha futura y uno anulado con fecha futura.
+  2. En la causa compartida, cargar movimientos visibles con y sin texto para el cliente (uno de más de 300 caracteres), uno oculto, uno visible anulado y uno con fecha futura.
   3. Ingresar como A y verificar la lista: solo sus causas, en los grupos "En curso" y "Archivadas y finalizadas", con la fecha del último movimiento correcta, sin la desactivada y sin totales.
-  4. Abrir la causa compartida y verificar sus datos, las partes con "Vos" solo en A y sin documentos, el responsable, el contacto del estudio, el botón de WhatsApp y los movimientos: el oculto no aparece, el anulado tiene "Anulado", el futuro tiene "Fecha futura", el anulado futuro solo "Anulado", el largo se despliega con "Ver más" y se vuelve a recortar con "Ver menos", y cada uno muestra el texto que corresponde.
-  5. Cambiando la dirección, pedir la causa de B, la desactivada, una inexistente y una con letras en el identificador, y verificar que todas responden "No existe esa causa". Hacer lo mismo con el movimiento oculto, uno inexistente y uno mal formado, y verificar "No existe ese movimiento".
-  6. Con el abogado, desactivar al responsable, desvincular a A de una causa y ocultar un movimiento visible. Verificar como A, después de actualizar la página, que el responsable ya no se muestra, que la causa desvinculada desapareció y que el movimiento ya no se ve.
+  4. Abrir la causa compartida y verificar sus datos, las partes con "Vos" solo en A y sin documentos, el responsable, el contacto del estudio, el botón de WhatsApp y los movimientos: el oculto y el anulado no aparecen, el futuro tiene "Fecha futura", el largo se despliega con "Ver más" y se vuelve a recortar con "Ver menos", y cada uno muestra el texto que corresponde.
+  5. Cambiando la dirección, pedir la causa de B, la desactivada, una inexistente y una con letras en el identificador, y verificar que todas responden "No existe esa causa". Hacer lo mismo con el movimiento oculto, el anulado, uno inexistente y uno mal formado, y verificar "No existe ese movimiento".
+  6. Con el abogado, desactivar al responsable, desvincular a A de una causa, ocultar un movimiento visible y anular otro que A ya había visto. Verificar como A, después de actualizar la página, que el responsable ya no se muestra, que la causa desvinculada desapareció y que ninguno de los dos movimientos se ve. Restaurar el anulado y verificar que A vuelve a verlo.
   7. Ingresar como B y verificar que ve la causa compartida igual que A, con "Vos" en su propia parte.
   8. Cerrar sesión, volver atrás con el navegador y verificar que no se ve ningún dato. Ingresar de nuevo, dejar pasar 20 minutos sin acciones y verificar que la sesión se cerró.
   9. Repetir los pasos 3 y 4 desde un celular, verificando que el botón de WhatsApp no tapa nada.

@@ -97,7 +97,7 @@ describe('rendimiento del portal', () => {
       })),
     );
     const last = await repository.findOneOrFail({
-      where: { causaId: busyCausaId, visible: true },
+      where: { causaId: busyCausaId, visible: true, anulado: false },
       order: { id: 'DESC' },
     });
     lastMovementId = last.id;
@@ -134,7 +134,8 @@ describe('rendimiento del portal', () => {
 
   it('la primera y la última página de sus movimientos responden en menos de 2 segundos', async () => {
     const first = await timed(`/api/portal/causas/${busyCausaId}/movimientos`);
-    const last = await timed(`/api/portal/causas/${busyCausaId}/movimientos?pagina=125`);
+    // De los 2.500 visibles, 500 están anulados y el cliente no los ve: quedan 2.000.
+    const last = await timed(`/api/portal/causas/${busyCausaId}/movimientos?pagina=100`);
 
     expect(first.body.items).toHaveLength(20);
     expect(last.body.items).toHaveLength(20);

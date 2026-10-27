@@ -84,7 +84,7 @@ Errores con el formato de las specs anteriores (`statusCode`, `message`, en espa
 - `CausaPortalResumen`: `{ id, caratula, numeroExpediente, estado, grupo: 'en_curso' | 'archivadas_y_finalizadas', fechaUltimoMovimiento: 'AAAA-MM-DD' | null }`.
 - `CausaPortalDetalle`: `{ id, caratula, numeroExpediente, juzgado, fuero, estado, esIncidente, expedientePrincipal, partes: PartePortal[], responsable: { nombre, apellido } | null }`.
 - `PartePortal`: `{ nombre, rol, esVos }`. `nombre` es un solo texto: "Nombre Apellido" o la razón social. No lleva `id`, `tipoPersona`, DNI, CUIT, `clienteId` ni si es cliente [RF-14, RF-15]. Las partes van ya ordenadas.
-- `MovimientoCliente` (spec 003, ampliado): `{ id, fecha, tipo, texto, anulado, esFechaFutura }`.
+- `MovimientoCliente` (spec 003, ampliado): `{ id, fecha, tipo, texto, esFechaFutura }`.
 - `MovimientoClienteDetalle`: `MovimientoCliente` más `{ causa: { id, caratula } }` [RF-22].
 
 **Mensajes de 404** [RF-28, RF-29]. Son los de la spec 003 (`MOVIMIENTOS_MESSAGES`):
@@ -158,7 +158,7 @@ getMovimiento(cliente, causaId, movimientoId, ahora):
 ### Visibilidad para el cliente (cambios en la spec 003) [RF-8, RF-20, RF-21, RF-24, RF-26, RF-29]
 `ClientVisibilityService` sigue siendo la única regla de qué movimientos ve un cliente (spec 003, RF-30). Los cambios:
 - `canSeeCausa(clienteId, causaId)` pasa de privado a público.
-- `listVisible(clienteId, causaId, pagina, ahora)` pide 21 filas y devuelve `{ items, pagina, haySiguiente }`, sin `total` [RF-24]. La condición (`visible = 1`, anulados incluidos) y el orden (`fecha DESC, creadoEn DESC, id DESC`) no cambian [RF-20]. Como cuenta y pagina solo sobre los visibles, los ocultos no dejan rastro [RF-26].
+- `listVisible(clienteId, causaId, pagina, ahora)` pide 21 filas y devuelve `{ items, pagina, haySiguiente }`, sin `total` [RF-24]. La condición (`visible = 1 AND anulado = 0`) y el orden (`fecha DESC, creadoEn DESC, id DESC`) no cambian [RF-20]. Como cuenta y pagina solo sobre esos, los ocultos y los anulados no dejan rastro [RF-26].
 - `findVisible(clienteId, causaId, movimientoId, ahora)` busca con `id`, `causaId` y `visible = 1`. Si no hay fila o el cliente no puede ver la causa: 404 "No existe ese movimiento" [RF-29].
 - `lastVisibleDates(causaIds, hoy)` devuelve un mapa de causa a fecha:
   ```
@@ -167,7 +167,7 @@ getMovimiento(cliente, causaId, movimientoId, ahora):
   GROUP BY causaId
   ```
   Es la fecha del último movimiento de RF-8. La condición `visible = 1` es la misma regla de visibilidad. No verifica el vínculo: lo recibe ya resuelto de `listCausas`.
-- `toMovimientoCliente(m, ahora)` suma `esFechaFutura = !m.anulado && isFutureDate(m.fecha, ahora)`. Un anulado nunca lleva "Fecha futura" [RF-21]. Sigue sin incluir la descripción cuando hay texto para el cliente, ni autores, fechas de registro o cambios (spec 003, RF-31).
+- `toMovimientoCliente(m, ahora)` suma `esFechaFutura = isFutureDate(m.fecha, ahora)` [RF-21]. Sigue sin incluir la descripción cuando hay texto para el cliente, ni autores, fechas de registro o cambios (spec 003, RF-31).
 
 `ahora` es un parámetro, igual que en `reglas-movimientos.ts`, para testear el cambio de día.
 
@@ -286,7 +286,7 @@ En la misma tarea y el mismo commit que el código (principio 2), `docs/specs/00
   - "Responsable de la causa: Nombre Apellido", solo si `responsable` no es `null`.
   - Si la API responde 404, la página muestra solo el mensaje ("No existe esa causa") [RF-28].
 - **Movimientos** (`MovimientosPortal`, `TarjetaMovimientoPortal`) [RF-20 a RF-23]:
-  - Cada movimiento muestra la fecha, el tipo (`tipoMovimientoLabel`), la leyenda "Anulado" o "Fecha futura" según `movementLegend(m)`, y el texto con `TextoLiteral`.
+  - Cada movimiento muestra la fecha, el tipo (`tipoMovimientoLabel`), la leyenda "Fecha futura" según `movementLegend(m)`, y el texto con `TextoLiteral`.
   - `truncateClientText(texto)` corta en 300 caracteres, contados en puntos de código como en la spec 003, y agrega "…". "Ver más" muestra el texto completo en el mismo lugar y "Ver menos" lo vuelve a recortar, sin otra petición, porque la API ya lo envió [RF-21].
   - "Abrir" lleva al movimiento con la página actual en la dirección.
   - Página 1 sin movimientos: "Todavía no hay movimientos para mostrar" [RF-23].
@@ -332,7 +332,7 @@ Ninguna. Todo se resuelve con lo instalado en las specs 001 a 003. El ícono de 
   - `portalParty` y `comparePortalParties`: persona física, persona jurídica cliente y no cliente, orden por rol y después por apellido o razón social y nombre, y `esVos` solo para la parte del cliente que consulta.
   - `pageOf`: primera página, última página, página posterior a la última y `haySiguiente`.
 - `portal-detalle.ts` [RF-13 a RF-17, RF-30]: las claves exactas de cada respuesta. Ninguna incluye `dni`, `cuit`, `tipoPersona`, `clienteId`, ids de partes o integrantes, emails, colaboradores, `activa` ni auditoría. El responsable desactivado es `null`.
-- `movimiento-detalle.ts` [RF-21]: `esFechaFutura` falso en un anulado con fecha futura. Lo existente de `toMovimientoCliente` se mantiene.
+- `movimiento-detalle.ts` [RF-21]: `esFechaFutura` en un movimiento futuro y en uno de hoy, y sin la marca de anulado. Lo existente de `toMovimientoCliente` se mantiene.
 - Sesión [RF-4; spec 001, RF-12]:
   - `sessionTtlMs` para cada rol.
   - `autenticacion.service.spec.ts`: el ingreso y la renovación fijan `venceEn` según el rol (reemplaza las verificaciones de 7 días).
@@ -352,8 +352,8 @@ Mismo esquema que en las specs anteriores: migraciones sobre la base de tests, t
   - Causa de otro cliente, desactivada, inexistente y `abc`: las cuatro rutas responden el mismo cuerpo 404, comparado byte a byte.
   - Movimiento oculto, inexistente, de otra causa vinculada y `abc`: el mismo cuerpo 404.
 - **Movimientos** [RF-20 a RF-23, RF-26]:
-  - Solo los visibles, anulados incluidos, en el orden del panel. El texto es el texto para el cliente o, si no hay, la descripción.
-  - `esFechaFutura` en uno futuro y no en uno anulado futuro.
+  - Solo los visibles no anulados, en el orden del panel. El texto es el texto para el cliente o, si no hay, la descripción.
+  - `esFechaFutura` en uno futuro y no en uno pasado.
   - Con 45 visibles y 10 ocultos, la paginación recorre solo los visibles y no incluye `total`.
   - El detalle incluye la carátula.
 - **Siguiente acción** [RF-3]: después de desvincular al cliente, desactivar la causa, ocultar un movimiento o desactivar al responsable, la siguiente petición ya refleja el cambio.
@@ -370,7 +370,7 @@ Mismo esquema que en las specs anteriores: migraciones sobre la base de tests, t
 - `servicios/presentacion-portal.ts` [RF-9, RF-10, RF-21, RF-25]:
   - `groupCausas` con una página que empieza a mitad de un grupo y otra con un solo grupo.
   - `truncateClientText` con 300 y 301 caracteres, también con caracteres de dos unidades en UTF-16.
-  - `movementLegend` para cada combinación de anulado y fecha futura.
+  - `movementLegend` con y sin fecha futura.
   - `parsePageParam` con vacío, `1`, `3`, `0`, `-1`, `1.5` y `abc`.
 - `servicios/inactividad.ts` [RF-4, RF-5]: justo antes y justo después de los 20 minutos.
 - `cliente-http.ts`: `onActivity` se llama una vez por petición, también al renovar [RF-5].

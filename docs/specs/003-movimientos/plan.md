@@ -133,7 +133,7 @@ Errores con el formato de las specs anteriores (`statusCode`, `message`, en espa
   - `esFechaFutura` lo calcula la API con el día actual de Buenos Aires (RF-24).
 - `MovimientoDetalle`: `MovimientoResumen` más `{ causaId, causaActiva, textoCliente, textoVisible, origenTextoVisible: 'textoCliente' | 'descripcion', modificadoPor: AutorResumen | null, modificadoEn, cambios: CambioMovimiento[] }`. `causaActiva` permite a la interfaz ocultar las acciones (RF-28).
 - `CambioMovimiento`: `{ id, accion, usuario: AutorResumen, fechaHora, cambios: { campo, anterior, nuevo }[] }`, del más reciente al más antiguo (RF-22).
-- `MovimientoCliente` (solo para la spec 004, sin endpoint en esta): `{ id, fecha, tipo, texto, anulado }` (RF-31).
+- `MovimientoCliente` (solo para la spec 004, sin endpoint en esta): `{ id, fecha, tipo, texto }` (RF-31).
 
 **Mensajes de 400** (por campo, como en las specs anteriores) [RF-6]:
 - Fecha: "Indicá la fecha del movimiento", "La fecha no es válida" (formato distinto de `AAAA-MM-DD` o día inexistente) y "La fecha debe estar entre el 01/01/1900 y el 31/12/2099".
@@ -222,7 +222,7 @@ anular(actor, causaId, movimientoId):
 
 restaurar: igual, con "El movimiento no está anulado" si no lo está, y anulado = false   // RF-18
 ```
-La visibilidad no se toca: un movimiento visible anulado sigue visible (RF-17), y al restaurarlo conserva la que tenía (RF-18).
+La visibilidad no se toca: la marca de visible de un anulado se conserva, pero el cliente no lo ve mientras esté anulado (RF-17); al restaurarlo vuelve a valer la que tenía (RF-18).
 
 ### Historial de cambios [RF-20 a RF-22]
 - Cada escritura inserta su cambio en la misma transacción que el movimiento: no puede quedar un movimiento cambiado sin su registro, ni al revés.
@@ -253,7 +253,7 @@ LIMIT 20 OFFSET (pagina - 1) * 20
 ```
 listVisible(clienteId, causaId, pagina):
   si no ClientLinkService.isLinked(clienteId, causaId): devolver null       // la 004 decide la respuesta
-  movimientos de la causa con visible = 1 (anulados incluidos), en el orden del historial
+  movimientos de la causa con visible = 1 y anulado = 0, en el orden del historial
   devolver página de toMovimientoCliente(m)                                  // RF-31, RF-32
 
 findVisible(clienteId, movimientoId):
@@ -263,7 +263,7 @@ findVisible(clienteId, movimientoId):
   devolver toMovimientoCliente(m)
 ```
 - El vínculo se decide siempre con `ClientLinkService` (RF-26 de la spec 002), así que desvincular al cliente, desactivar la causa o desactivar su cuenta corta el acceso desde su siguiente petición [RF-32].
-- `toMovimientoCliente` arma `{ id, fecha, tipo, texto: visibleText(m).texto, anulado }` campo por campo. Nunca incluye la descripción cuando hay texto para el cliente, ni autores, fechas de registro o cambios [RF-31].
+- `toMovimientoCliente` arma `{ id, fecha, tipo, texto: visibleText(m).texto }` campo por campo. Nunca incluye la descripción cuando hay texto para el cliente, ni autores, fechas de registro o cambios [RF-31].
 - No hay controller para clientes en esta spec. Los tests prueban el service sobre la base de tests, como el vínculo en la spec 002.
 
 ### Respuestas
@@ -387,8 +387,8 @@ Mismo esquema que en las specs anteriores: migraciones sobre la base de tests, t
 - **Integridad** [RF-34]: causa inexistente, movimiento inexistente, movimiento de otra causa e ids no numéricos, con sus 404.
 - **Visibilidad para el cliente** [RF-30 a RF-33]: `ClientVisibilityService` sobre la base de tests.
   - Visible y vinculado: lo ve, con el texto para el cliente o, si no hay, con la descripción.
-  - Oculto, de una causa no vinculada o inexistente: `findVisible` responde el mismo 404 en los tres casos.
-  - Visible anulado: lo ve con `anulado: true`.
+  - Oculto, anulado, de una causa no vinculada o inexistente: `findVisible` responde el mismo 404 en todos los casos.
+  - Visible anulado: deja de verlo; al restaurarlo, lo vuelve a ver.
   - Cargado antes del vínculo: lo ve.
   - Cliente desvinculado, causa desactivada y cuenta del cliente desactivada: deja de verlo.
   - Causa Archivada: lo sigue viendo.
@@ -407,7 +407,7 @@ Mismo esquema que en las specs anteriores: migraciones sobre la base de tests, t
 - `TextoLiteral`: un texto con comillas, `&` y saltos de línea se muestra literal, con las líneas en blanco [RNF de textos seguros, RF-3].
 - `HistorialMovimientos` con servicios simulados [RF-23 a RF-27, RF-28]: filtros, buscador, paginado y vuelta a la página 1, etiquetas, "Ver completa", y sin "Nuevo movimiento" en una causa desactivada.
 - `FormularioMovimiento` [RF-8, RF-9, RF-11, RF-13]: casilla desmarcada al cargar, los dos avisos y que ninguno bloquea el guardado.
-- `PanelMovimientoDetalle` [RF-15 a RF-19, RF-22, RF-28]: texto visible con su origen, historial de cambios, anular y restaurar, sin "Editar" si está anulado, y sin acciones en una causa desactivada.
+- `PanelMovimientoDetalle` [RF-15 a RF-19, RF-22, RF-28]: texto visible con su origen y si el cliente lo ve (`clientViewSummary`, que en un anulado dice que no lo ve), historial de cambios, anular y restaurar, sin "Editar" si está anulado, y sin acciones en una causa desactivada.
 - `PanelCausaDetalle` muestra la sección de movimientos, y la ruta nueva no es accesible para un cliente [RF-35].
 - Ninguna escritura en `localStorage` ni `sessionStorage` en el flujo de movimientos [RNF de persistencia].
 

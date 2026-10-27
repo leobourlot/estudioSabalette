@@ -227,6 +227,25 @@ export function visibleTextPreview(form: Pick<MovementForm, 'descripcion' | 'tex
 }
 
 /**
+ * Qué ve el cliente de un movimiento guardado, para la sección "Lo que ve el cliente" del
+ * detalle (RF-7, RF-22). Un anulado no lo ve nunca, aunque esté marcado como visible, y al
+ * restaurarlo recupera la visibilidad que tenía (RF-17, RF-18).
+ */
+export function clientViewSummary(
+  movimiento: Pick<MovimientoDetalle, 'visible' | 'anulado' | 'origenTextoVisible'>,
+): string {
+  const origen = VISIBLE_TEXT_ORIGIN_LABELS[movimiento.origenTextoVisible];
+  if (movimiento.anulado) {
+    return movimiento.visible
+      ? `El cliente no ve este movimiento porque está anulado. Si se lo restaura, verá ${origen}:`
+      : `El cliente no ve este movimiento. Si se lo restaura y se lo hace visible, verá ${origen}:`;
+  }
+  return movimiento.visible
+    ? `El cliente ve este movimiento con ${origen}:`
+    : `El cliente no ve este movimiento. Si se lo hace visible, verá ${origen}:`;
+}
+
+/**
  * RF-13: el movimiento ya era visible, sigue siéndolo, y cambia algo de lo que ve el cliente
  * (fecha, tipo, descripción o texto para el cliente).
  */

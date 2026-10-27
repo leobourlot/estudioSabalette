@@ -55,12 +55,10 @@ describe('orNotAssigned (RF-9, RF-13)', () => {
 
 describe('movementLegend (RF-21)', () => {
   it.each([
-    [false, false, null],
-    [false, true, 'Fecha futura'],
-    [true, false, 'Anulado'],
-    [true, true, 'Anulado'],
-  ] as const)('anulado %s y fecha futura %s: %s', (anulado, esFechaFutura, legend) => {
-    expect(movementLegend({ anulado, esFechaFutura })).toBe(legend);
+    [false, null],
+    [true, 'Fecha futura'],
+  ] as const)('fecha futura %s: %s', (esFechaFutura, legend) => {
+    expect(movementLegend({ esFechaFutura })).toBe(legend);
   });
 });
 

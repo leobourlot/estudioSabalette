@@ -3,6 +3,7 @@ import {
   allowedCharactersMessage,
   buildCreateMovementData,
   buildUpdateMovementData,
+  clientViewSummary,
   EMPTY_MOVEMENT_FILTERS,
   EMPTY_MOVEMENT_FORM,
   MOVEMENT_MESSAGES,
@@ -199,6 +200,31 @@ describe('visibleTextPreview (RF-7, RF-9)', () => {
       textoCliente: 'el texto para el cliente',
       descripcion: 'la descripción (no hay texto para el cliente)',
     });
+  });
+});
+
+describe('clientViewSummary (RF-17, RF-18, RF-22)', () => {
+  it.each([
+    [true, false, 'El cliente ve este movimiento con el texto para el cliente:'],
+    [
+      false,
+      false,
+      'El cliente no ve este movimiento. Si se lo hace visible, verá el texto para el cliente:',
+    ],
+    [
+      true,
+      true,
+      'El cliente no ve este movimiento porque está anulado. Si se lo restaura, verá el texto para el cliente:',
+    ],
+    [
+      false,
+      true,
+      'El cliente no ve este movimiento. Si se lo restaura y se lo hace visible, verá el texto para el cliente:',
+    ],
+  ] as const)('visible %s y anulado %s', (visible, anulado, summary) => {
+    expect(clientViewSummary({ visible, anulado, origenTextoVisible: 'textoCliente' })).toBe(
+      summary,
+    );
   });
 });
 

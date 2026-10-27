@@ -67,8 +67,7 @@ export interface MovimientoCliente {
   fecha: string;
   tipo: TipoMovimiento;
   texto: string;
-  anulado: boolean;
-  /** Fecha posterior al día actual en Buenos Aires; nunca en un anulado (spec 004, RF-21). */
+  /** Fecha posterior al día actual en Buenos Aires (spec 004, RF-21). */
   esFechaFutura: boolean;
 }
 
@@ -140,7 +139,6 @@ export function toMovimientoCliente(
     fecha: movimiento.fecha,
     tipo: movimiento.tipo,
     texto: visibleText(movimiento).texto,
-    anulado: movimiento.anulado,
-    esFechaFutura: !movimiento.anulado && isFutureDate(movimiento.fecha, ahora),
+    esFechaFutura: isFutureDate(movimiento.fecha, ahora),
   };
 }

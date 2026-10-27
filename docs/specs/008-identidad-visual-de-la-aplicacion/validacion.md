@@ -23,7 +23,7 @@ Rutas abreviadas:
 | RF-14 | Cambio de contraseña con la marca, sin T-1, sin contacto y sin menú | W `PaginaCambiarContrasena.test.tsx` | ✅ |
 | RF-15, RF-16 | Cada causa en su tarjeta: carátula, estado, "Expte." o "Sin asignar", "Último movimiento" solo con fecha, "Ver detalle de …"; títulos de grupo con línea | W `PortalInicio.test.tsx` | ✅ |
 | RF-17 | Detalle de la causa en tres tarjetas | W `PortalCausaDetalle.test.tsx` | ✅ |
-| RF-18, RF-19 | Línea de tiempo: un elemento por movimiento en el orden recibido, fecha, tipo, leyendas, división entre movimientos, sin línea en el último, punto hueco en el anulado | W `LineaDeTiempo.test.tsx`, `PortalCausaDetalle.test.tsx` | ✅ |
+| RF-18, RF-19 | Línea de tiempo: un elemento por movimiento en el orden recibido, fecha, tipo, leyendas, división entre movimientos, sin línea en el último, punto lleno | W `LineaDeTiempo.test.tsx`, `PortalCausaDetalle.test.tsx` | ✅ |
 | RF-20 | El movimiento del portal en una tarjeta | W `PortalMovimientoDetalle.test.tsx` | ✅ (aspecto: demo manual) |
 | RF-21 | Listado de causas: "Nueva causa" con el "+" sin anunciar, filtros y tabla en tarjetas, filas con línea, estado en etiqueta, desactivada con su fondo | W `PanelCausas.test.tsx` | ✅ |
 | RF-22 | Cuentas en tabla; fallos y modelos en tarjetas | W `PanelUsuarios.test.tsx`, `PanelJurisprudencia.test.tsx`, `PanelModelos.test.tsx` (siguen en verde) | ✅ (aspecto: demo manual) |
@@ -61,11 +61,11 @@ Rutas abreviadas:
 
 ### Preparación
 1. `pnpm dev`. La web queda en `http://localhost:5173`.
-2. Tener a mano un cliente con causas y movimientos visibles (alguno anulado) y un abogado.
+2. Tener a mano un cliente con causas y movimientos visibles y un abogado.
 
 ### Pasos
 1. En una computadora, abrir `/ingresar`: a la izquierda el degradado con el logo, el nombre y "Seguí tu caso desde donde estés.", y abajo "Pueyrredón Nº 47, Concordia · +54 9 3455 41-4147"; a la derecha la tarjeta con "Ingresar", "Usá el email y la contraseña…", los campos, el botón y "¿Olvidaste tu contraseña?…".
-2. Ingresar como cliente: el menú lateral con el logo, "Portal de clientes" y "Mis causas" marcada; cada causa en su tarjeta, bien separada. Abrir una causa: tres tarjetas, "Mis causas" sigue marcada, y los movimientos en la línea de tiempo, con el anulado de punto hueco.
+2. Ingresar como cliente: el menú lateral con el logo, "Portal de clientes" y "Mis causas" marcada; cada causa en su tarjeta, bien separada. Abrir una causa: tres tarjetas, "Mis causas" sigue marcada, y los movimientos en la línea de tiempo, todos con el punto lleno.
 3. Ingresar como abogado: el menú del panel, el inicio con sus accesos, el listado de causas con sus filas separadas y resaltadas al pasar el puntero, el historial de movimientos de una causa con sus barras azul y gris, y los listados de jurisprudencia, modelos y cuentas.
 4. Repetir los pasos 1 a 3 con el navegador a 360 px: la barra de arriba en una línea (logo, nombre y "Menú"); "Menú" abre el menú desde la izquierda y se cierra al elegir; las tablas se desplazan dentro de su tarjeta; el formulario de ingreso se ve sin desplazarse y el botón de WhatsApp no lo tapa, tampoco con el teclado del celular abierto.
 5. Recorrer el ingreso, el portal y el panel solo con el teclado: "Saltar al contenido" aparece con el primer Tab, el menú plegado no deja salir el foco y se cierra con Escape, y el foco siempre se ve, también sobre el azul del menú.

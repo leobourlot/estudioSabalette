@@ -12,7 +12,6 @@ interface MovementItem {
   id: number;
   fecha: string;
   texto: string;
-  anulado: boolean;
   esFechaFutura: boolean;
 }
 
@@ -71,10 +70,10 @@ describe('GET /api/portal/causas/:causaId/movimientos', () => {
     return response.body;
   }
 
-  it('muestra solo los visibles, anulados incluidos, en el orden del panel (RF-20)', async () => {
+  it('muestra solo los visibles no anulados, en el orden del panel (RF-20)', async () => {
     const older = await movement({ fecha: '2024-01-01' });
     await movement({ fecha: '2024-02-01', visible: false });
-    const annulled = await movement({ fecha: '2024-03-01', anulado: true });
+    await movement({ fecha: '2024-03-01', anulado: true });
     const sameDayFirst = await movement({
       fecha: '2024-04-01',
       creadoEn: new Date('2026-01-01T10:00:00Z'),
@@ -86,11 +85,10 @@ describe('GET /api/portal/causas/:causaId/movimientos', () => {
 
     const page = await get('');
 
-    expect(page.items.map((item: MovementItem) => [item.id, item.anulado])).toEqual([
-      [sameDayLast.id, false],
-      [sameDayFirst.id, false],
-      [annulled.id, true],
-      [older.id, false],
+    expect(page.items.map((item: MovementItem) => item.id)).toEqual([
+      sameDayLast.id,
+      sameDayFirst.id,
+      older.id,
     ]);
   });
 
@@ -109,7 +107,6 @@ describe('GET /api/portal/causas/:causaId/movimientos', () => {
         fecha: '2024-02-01',
         tipo: 'providencia',
         texto: 'El juez fijó audiencia.',
-        anulado: false,
         esFechaFutura: false,
       },
       expect.objectContaining({ fecha: '2024-01-01', texto: 'Descripción técnica interna.' }),
@@ -117,15 +114,15 @@ describe('GET /api/portal/causas/:causaId/movimientos', () => {
     expect(JSON.stringify(page.items[0])).not.toContain('Descripción técnica');
   });
 
-  it('marca la fecha futura, salvo en un movimiento anulado (RF-21)', async () => {
+  it('marca la fecha futura (RF-21)', async () => {
     const future = await movement({ fecha: '2099-01-01' });
-    const annulledFuture = await movement({ fecha: '2099-01-02', anulado: true });
+    const past = await movement({ fecha: '2024-01-01' });
 
     const flags = Object.fromEntries(
       (await get('')).items.map((item: MovementItem) => [item.id, item.esFechaFutura]),
     );
 
-    expect(flags).toEqual({ [future.id]: true, [annulledFuture.id]: false });
+    expect(flags).toEqual({ [future.id]: true, [past.id]: false });
   });
 
   it('con 45 visibles y 10 ocultos, pagina solo los visibles y no informa totales (RF-24, RF-26)', async () => {
@@ -153,8 +150,9 @@ describe('GET /api/portal/causas/:causaId/movimientos', () => {
     expect((await get('?pagina=4')).items).toEqual([]);
   });
 
-  it('una causa sin movimientos visibles devuelve la lista vacía (RF-23)', async () => {
+  it('una causa sin movimientos visibles no anulados devuelve la lista vacía (RF-23)', async () => {
     await movement({ visible: false });
+    await movement({ anulado: true });
 
     expect(await get('')).toEqual({ items: [], pagina: 1, haySiguiente: false });
   });
@@ -173,7 +171,6 @@ describe('GET /api/portal/causas/:causaId/movimientos', () => {
       fecha: '2024-05-01',
       tipo: 'providencia',
       texto: 'Texto para el cliente.',
-      anulado: false,
       esFechaFutura: false,
       causa: { id: causa.id, caratula: 'Gómez c/ López s/ daños' },
     });

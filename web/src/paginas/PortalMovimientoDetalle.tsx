@@ -95,10 +95,7 @@ export function PortalMovimientoDetalle() {
             </span>
           )}
         </h1>
-        <TextoLiteral
-          texto={movimiento.texto}
-          className={`text-slate-800 ${movimiento.anulado ? 'line-through' : ''}`}
-        />
+        <TextoLiteral texto={movimiento.texto} className="text-slate-800" />
       </article>
     </main>
   );

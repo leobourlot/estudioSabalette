@@ -35,11 +35,10 @@ export const NOT_ASSIGNED = 'Sin asignar';
 /** Un dato opcional de la causa, o "Sin asignar" si no está informado (RF-9, RF-13). */
 export const orNotAssigned = (value: string | null): string => value ?? NOT_ASSIGNED;
 
-/** "Anulado" o "Fecha futura"; un anulado muestra solo "Anulado" (RF-21). */
+/** "Fecha futura", si corresponde (RF-21). El cliente nunca recibe movimientos anulados. */
 export function movementLegend(
-  movimiento: Pick<MovimientoCliente, 'anulado' | 'esFechaFutura'>,
+  movimiento: Pick<MovimientoCliente, 'esFechaFutura'>,
 ): string | null {
-  if (movimiento.anulado) return 'Anulado';
   return movimiento.esFechaFutura ? 'Fecha futura' : null;
 }
 

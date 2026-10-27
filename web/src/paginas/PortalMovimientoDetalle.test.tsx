@@ -34,11 +34,11 @@ describe('PortalMovimientoDetalle (spec 004, RF-22, RF-29)', () => {
     openMovement(
       '/portal/causas/7/movimientos/70',
       fakePortalService({
-        getMovimiento: vi.fn(async () => testMovimientoClienteDetalle({ anulado: true })),
+        getMovimiento: vi.fn(async () => testMovimientoClienteDetalle({ esFechaFutura: true })),
       }),
     );
 
-    expect(await screen.findByText('Anulado')).toBeTruthy();
+    expect(await screen.findByText('Fecha futura')).toBeTruthy();
   });
 
   it('"Volver a la causa" lleva a la misma página de movimientos', async () => {

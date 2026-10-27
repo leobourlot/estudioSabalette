@@ -36,7 +36,7 @@ Rutas abreviadas:
 | RF-14 | Visibilidad en los dos sentidos, salvo anulado o causa desactivada | E `modificacion-movimientos`, `estado-causa-movimientos`; W `movimientos.test.ts` | ✅ |
 | RF-15 | Un anulado no se modifica (también con una anulación simultánea) | E `modificacion-movimientos`, `estado-causa-movimientos`; W `PanelMovimientoDetalle.test.tsx` | ✅ |
 | RF-16 | Anular sin borrar, conservando datos y visibilidad | E `anulacion-movimientos`, `historial-cambios-movimientos`; W `PanelMovimientoDetalle.test.tsx` | ✅ |
-| RF-17 | Un visible anulado se sigue viendo, marcado como anulado | U `movimiento-detalle.spec.ts`; E `anulacion-movimientos`, `visibilidad-cliente` | ✅ |
+| RF-17 | Un visible anulado deja de verse, y vuelve a verse al restaurarlo | E `anulacion-movimientos`, `visibilidad-cliente`; W `formulario-movimiento.test.ts`, `PanelMovimientoDetalle.test.tsx` | ✅ |
 | RF-18 | Restaurar con la visibilidad que tenía | E `anulacion-movimientos`; W `PanelMovimientoDetalle.test.tsx` | ✅ |
 | RF-19 | Anular un anulado o restaurar uno que no lo está: 409 | E `anulacion-movimientos`; W `PanelMovimientoDetalle.test.tsx`, `movimientos.test.ts` | ✅ |
 | RF-20 | Cada cambio con acción, autor, momento y valor anterior y nuevo | U `reglas-movimientos.spec.ts`, `entidades.spec.ts`; E `carga-movimientos`, `modificacion-movimientos`, `anulacion-movimientos`, `historial-cambios-movimientos`, `migracion-movimientos` | ✅ |
@@ -50,7 +50,7 @@ Rutas abreviadas:
 | RF-28 | Causa desactivada: solo consultar (también con una desactivación simultánea) | E `estado-causa-movimientos`, `consulta-movimientos`, `historial-movimientos`; W `HistorialMovimientos.test.tsx`, `PanelMovimientoDetalle.test.tsx`, `PanelCausaDetalle.test.tsx` | ✅ |
 | RF-29 | Causa Archivada o Finalizada: gestión normal | E `estado-causa-movimientos`, `visibilidad-cliente` | ✅ |
 | RF-30 | Un cliente ve un movimiento solo si es visible y está vinculado a su causa | E `visibilidad-cliente` | ✅ |
-| RF-31 | Al cliente solo le llegan id, fecha, tipo, texto visible y la marca de anulado | U `movimiento-detalle.spec.ts`; E `visibilidad-cliente` | ✅ |
+| RF-31 | Al cliente solo le llegan id, fecha, tipo y texto visible, nunca la marca de anulado | U `movimiento-detalle.spec.ts`; E `visibilidad-cliente` | ✅ |
 | RF-32 | Ve los cargados antes del vínculo; deja de verlos al desvincularlo | E `visibilidad-cliente` | ✅ |
 | RF-33 | Oculto, ajeno o inexistente: siempre la misma respuesta | E `visibilidad-cliente` | ✅ |
 | RF-34 | Causa inexistente y movimiento inexistente o de otra causa: 404 | E `consulta-movimientos`, `carga-movimientos`, `modificacion-movimientos`, `anulacion-movimientos`, `historial-movimientos` | ✅ |
@@ -124,7 +124,7 @@ Contra la base de **desarrollo**. Cada paso dice qué hacer y qué tenés que ve
 
 ### 5. Anular y restaurar (RF-15 a RF-19)
 
-1. En el detalle del movimiento visible, **Anular** → "¿Anular este movimiento?" → **Sí, anular**. Aparece la etiqueta **Anulado**, desaparecen **Editar** y **Anular**, y queda **Restaurar**. La sección "Lo que ve el cliente" dice que el cliente lo ve marcado como anulado.
+1. En el detalle del movimiento visible, **Anular** → "¿Anular este movimiento?" → **Sí, anular**. Aparece la etiqueta **Anulado**, desaparecen **Editar** y **Anular**, y queda **Restaurar**. La sección "Lo que ve el cliente" dice que el cliente no lo ve porque está anulado.
 2. Anulá también un movimiento oculto: la sección dice que el cliente no lo ve.
 3. **Restaurar** uno de los dos: vuelve a poder editarse y conserva su visibilidad.
 

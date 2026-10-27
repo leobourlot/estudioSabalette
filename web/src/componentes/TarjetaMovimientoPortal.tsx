@@ -13,8 +13,8 @@ interface TarjetaMovimientoPortalProps {
 }
 
 /**
- * Un movimiento como lo ve el cliente (spec 004, RF-21): fecha, tipo, leyenda "Anulado" o
- * "Fecha futura" y el texto, recortado a 300 caracteres. "Ver más" lo despliega en el mismo
+ * Un movimiento como lo ve el cliente (spec 004, RF-21): fecha, tipo, leyenda "Fecha futura" y
+ * el texto, recortado a 300 caracteres. "Ver más" lo despliega en el mismo
  * lugar y "Ver menos" lo vuelve a recortar, sin otra petición: la API ya lo envió completo. Es
  * el contenido de cada elemento de la línea de tiempo (spec 008, RF-18).
  */
@@ -37,7 +37,7 @@ export function TarjetaMovimientoPortal({ movimiento, href }: TarjetaMovimientoP
       </div>
       <TextoLiteral
         texto={expanded ? movimiento.texto : preview.texto}
-        className={`text-sm text-slate-800 ${movimiento.anulado ? 'line-through' : ''}`}
+        className="text-sm text-slate-800"
       />
       <div className="flex gap-4 text-sm">
         {preview.recortado && (

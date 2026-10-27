@@ -39,8 +39,8 @@ Rutas abreviadas:
 | RF-17 | Nunca auditoría, `activa` ni el aviso de responsable desactivado | U `portal/portal-detalle.spec.ts`; E `portal-causa-detalle` | ✅ |
 | RF-18 | Nombre, dirección (con el pin de Maps, como enlace a Google Maps), el WhatsApp de cada abogada (con su ícono) y las redes informadas (con su ícono, como enlace a su perfil) en el portal, salvo en el cambio de contraseña; sin dirección ni redes, no deja renglones vacíos | W `datos-estudio.test.ts`, `Disenos.test.tsx`, `PaginaCambiarContrasena.test.tsx` | ✅ |
 | RF-19 | Botón de WhatsApp fijo abajo a la derecha, también en el cambio de contraseña, sin tapar contenido | W `Disenos.test.tsx`, `PaginaCambiarContrasena.test.tsx`; que no tape contenido, en la demo manual | ✅ |
-| RF-20 | Movimientos visibles, anulados incluidos, en el orden del panel, de a 20 | E `portal-movimientos`, `visibilidad-cliente`; W `PortalCausaDetalle.test.tsx` | ✅ |
-| RF-21 | Fecha, tipo, texto visible sin indicar su origen, recorte a 300 con "Ver más" y "Ver menos", "Anulado" y "Fecha futura" | U `movimientos/movimiento-detalle.spec.ts`; E `portal-movimientos`, `visibilidad-cliente`; W `presentacion-portal.test.ts`, `PortalCausaDetalle.test.tsx` | ✅ |
+| RF-20 | Movimientos visibles no anulados, en el orden del panel, de a 20 | E `portal-movimientos`, `visibilidad-cliente`; W `PortalCausaDetalle.test.tsx` | ✅ |
+| RF-21 | Fecha, tipo, texto visible sin indicar su origen, recorte a 300 con "Ver más" y "Ver menos", y "Fecha futura" | U `movimientos/movimiento-detalle.spec.ts`; E `portal-movimientos`, `visibilidad-cliente`; W `presentacion-portal.test.ts`, `PortalCausaDetalle.test.tsx` | ✅ |
 | RF-22 | Movimiento abierto con su carátula y "Volver a la causa" a la misma página | E `portal-movimientos`; W `PortalCausaDetalle.test.tsx` ("Abrir"), `PortalMovimientoDetalle.test.tsx` | ✅ |
 | RF-23 | "Todavía no hay movimientos para mostrar" | E `portal-movimientos`; W `PortalCausaDetalle.test.tsx` | ✅ |
 | RF-24 | Solo "Anterior" y "Siguiente", sin totales | U `portal/reglas-portal.spec.ts`; E `portal-causas-orden`, `portal-movimientos`, `visibilidad-cliente`; W `PortalInicio.test.tsx`, `PortalCausaDetalle.test.tsx` | ✅ |
@@ -110,7 +110,7 @@ Contra la base de **desarrollo**. Cada paso dice qué hacer y qué tenés que ve
    - Una con **A** y **B** como partes, más una parte no cliente.
    - Una con **B** como única parte cliente.
    - Una con **A**, que después se desactiva.
-3. En la causa compartida, cargar movimientos visibles con y sin texto para el cliente (uno de más de 300 caracteres), uno oculto, uno visible anulado, uno con fecha futura y uno anulado con fecha futura.
+3. En la causa compartida, cargar movimientos visibles con y sin texto para el cliente (uno de más de 300 caracteres), uno oculto, uno visible anulado y uno con fecha futura.
 
 ### 1. Lista de causas (RF-7 a RF-12)
 
@@ -123,8 +123,8 @@ Contra la base de **desarrollo**. Cada paso dice qué hacer y qué tenés que ve
    - Las partes, con "Vos" solo en **A** y sin documentos.
    - El responsable, el contacto del estudio y el botón de WhatsApp.
 2. En los movimientos:
-   - El oculto no aparece.
-   - El anulado muestra "Anulado", el futuro "Fecha futura" y el anulado futuro solo "Anulado".
+   - El oculto y el anulado no aparecen.
+   - El futuro muestra "Fecha futura".
    - El largo se despliega con "Ver más" y se vuelve a recortar con "Ver menos", en el mismo lugar.
    - Cada uno muestra el texto que corresponde.
 3. "Abrir" un movimiento y "Volver a la causa": vuelve a la misma página.

@@ -72,7 +72,7 @@ export class PortalService {
   }
 
   /**
-   * Movimientos que el cliente puede ver de una causa vinculada, anulados incluidos, en el
+   * Movimientos que el cliente puede ver de una causa vinculada, nunca los anulados, en el
    * orden del panel y de a 20, sin totales (RF-20, RF-24, RF-26).
    */
   async listMovimientos(

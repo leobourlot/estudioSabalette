@@ -148,7 +148,9 @@ describe('PanelMovimientoDetalle (RF-11, RF-15 a RF-19, RF-22, RF-28)', () => {
 
     expect(screen.queryByRole('button', { name: 'Editar' })).toBeNull();
     expect(screen.queryByRole('button', { name: 'Anular' })).toBeNull();
-    expect(clientSection().textContent).toContain('marcado como anulado');
+    expect(clientSection().textContent).toContain(
+      'El cliente no ve este movimiento porque está anulado.',
+    );
 
     await user.click(screen.getByRole('button', { name: 'Restaurar' }));
 

@@ -8,9 +8,9 @@ import { TextoLiteral } from '../componentes/TextoLiteral';
 import { ApiError, errorMessage } from '../servicios/cliente-http';
 import {
   buildUpdateMovementData,
+  clientViewSummary,
   type MovementForm,
   movementFormFrom,
-  VISIBLE_TEXT_ORIGIN_LABELS,
 } from '../servicios/formulario-movimiento';
 import type { MovimientoDetalle } from '../servicios/movimientos';
 import { EMPTY_VALUE } from '../servicios/presentacion';
@@ -215,8 +215,8 @@ export function PanelMovimientoDetalle() {
               ¿Anular este movimiento?
             </p>
             <p>
-              No se borra: queda en el historial marcado como anulado y se puede restaurar. Si es
-              visible, el cliente lo sigue viendo, marcado como anulado.
+              No se borra: queda en el historial marcado como anulado y se puede restaurar. El
+              cliente deja de verlo, aunque sea visible.
             </p>
             <div className="flex gap-2">
               <button
@@ -267,11 +267,7 @@ export function PanelMovimientoDetalle() {
 
       <section aria-label="Lo que ve el cliente" className={`space-y-2 p-6 ${CARD}`}>
         <h2 className={SECTION_TITLE}>Lo que ve el cliente</h2>
-        <p className="text-sm text-slate-600">
-          {movimiento.visible
-            ? `El cliente ve este movimiento${movimiento.anulado ? ', marcado como anulado,' : ''} con ${VISIBLE_TEXT_ORIGIN_LABELS[movimiento.origenTextoVisible]}:`
-            : `El cliente no ve este movimiento. Si se lo hace visible, verá ${VISIBLE_TEXT_ORIGIN_LABELS[movimiento.origenTextoVisible]}:`}
-        </p>
+        <p className="text-sm text-slate-600">{clientViewSummary(movimiento)}</p>
         <TextoLiteral texto={movimiento.textoVisible} className="text-slate-800" />
       </section>
 

@@ -10,10 +10,10 @@ interface LineaDeTiempoProps {
 
 /**
  * Los movimientos que ve el cliente como una línea de tiempo vertical, en el orden recibido
- * (spec 008, RF-18 y RF-19): una línea a la izquierda une un punto por movimiento, lleno o, si el
- * movimiento está anulado, hueco. Cada movimiento queda separado del siguiente por un espacio y
+ * (spec 008, RF-18 y RF-19): una línea a la izquierda une un punto lleno por movimiento; el
+ * cliente nunca recibe anulados. Cada movimiento queda separado del siguiente por un espacio y
  * una línea fina; el último no lleva línea hacia abajo. La línea y los puntos no se anuncian: la
- * fecha y la leyenda "Anulado" van escritas. Los movimientos aparecen escalonados (RF-26).
+ * fecha va escrita. Los movimientos aparecen escalonados (RF-26).
  */
 export function LineaDeTiempo({ movimientos, hrefFor }: LineaDeTiempoProps) {
   return (
@@ -32,8 +32,8 @@ export function LineaDeTiempo({ movimientos, hrefFor }: LineaDeTiempoProps) {
           />
           <span
             aria-hidden="true"
-            data-punto={movimiento.anulado ? 'hueco' : 'lleno'}
-            className={`absolute left-0 top-1 h-4 w-4 rounded-full border-2 border-estudio-oscuro ${movimiento.anulado ? 'bg-white' : 'bg-estudio-oscuro'}`}
+            data-punto=""
+            className="absolute left-0 top-1 h-4 w-4 rounded-full border-2 border-estudio-oscuro bg-estudio-oscuro"
           />
           <div className="border-b border-slate-200 pb-5 mb-5 group-last:mb-0 group-last:border-b-0 group-last:pb-0">
             <TarjetaMovimientoPortal movimiento={movimiento} href={hrefFor(movimiento)} />

@@ -61,17 +61,12 @@ describe('LineaDeTiempo (spec 008, RF-18 y RF-19)', () => {
     );
   });
 
-  it('un movimiento anulado lleva el punto hueco, la leyenda y el texto tachado (RF-19)', () => {
-    renderTimeline([
-      testMovimientoCliente({ id: 1 }),
-      testMovimientoCliente({ id: 2, anulado: true, texto: 'Anulado por error.' }),
-    ]);
+  it('todos los puntos van llenos y ningún texto va tachado (RF-19)', () => {
+    renderTimeline([testMovimientoCliente({ id: 1 }), testMovimientoCliente({ id: 2 })]);
 
-    const [normal, anulado] = items();
-    expect(normal.querySelector('[data-punto]')!.getAttribute('data-punto')).toBe('lleno');
-    expect(anulado.querySelector('[data-punto]')!.getAttribute('data-punto')).toBe('hueco');
-    expect(anulado.querySelector('[data-punto]')!.className).toContain('bg-white');
-    expect(within(anulado).getByText('Anulado')).toBeTruthy();
-    expect(within(anulado).getByText('Anulado por error.').closest('.line-through')).toBeTruthy();
+    for (const item of items()) {
+      expect(item.querySelector('[data-punto]')!.className).toContain('bg-estudio-oscuro');
+      expect(item.querySelector('.line-through')).toBeNull();
+    }
   });
 });

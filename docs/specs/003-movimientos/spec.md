@@ -16,7 +16,7 @@ Hoy el estudio registra las causas, sus partes y sus abogados (spec 002), pero n
 - H6: Como integrante del estudio quiero ver qué texto va a leer el cliente cuando marco un movimiento como visible, para no llevarme sorpresas.
 - H7: Como integrante del estudio quiero consultar el historial de movimientos de una causa, ordenado, filtrado y con buscador, para encontrar rápido lo que necesito.
 - H8: Como integrante del estudio quiero corregir un movimiento mal cargado.
-- H9: Como integrante del estudio quiero anular un movimiento cargado por error sin borrarlo y, si era visible para el cliente, que se siga viendo marcado como anulado, para que el cliente entienda que ya no vale en lugar de verlo desaparecer.
+- H9: Como integrante del estudio quiero anular un movimiento cargado por error sin borrarlo y que el cliente deje de verlo, aunque ya lo haya visto, para que no tome como válido algo que ya no vale.
 - H10: Como integrante del estudio quiero restaurar un movimiento anulado por error.
 - H11: Como integrante del estudio quiero consultar el historial de cambios de cada movimiento, para saber quién lo cargó, quién lo hizo visible, qué decía antes y quién lo cambió.
 
@@ -55,8 +55,8 @@ Hoy el estudio registra las causas, sus partes y sus abogados (spec 002), pero n
 
 ### Anulación y restauración
 - RF-16: CUANDO un integrante anula un movimiento de una causa activa, EL SISTEMA lo marca como anulado, registra quién lo hizo y cuándo (RF-2), y conserva sus datos y su visibilidad tal como estaban. Nunca se borran movimientos.
-- RF-17: MIENTRAS un movimiento visible está anulado, EL SISTEMA lo sigue considerando visible para el cliente, con el texto que tenía al anularlo e identificado como "Anulado". Un movimiento no visible que se anula sigue sin ser visible.
-- RF-18: CUANDO un integrante restaura un movimiento anulado de una causa activa, EL SISTEMA quita la marca de anulado, conserva la visibilidad que tenía y registra quién lo hizo y cuándo (RF-2).
+- RF-17: MIENTRAS un movimiento está anulado, EL SISTEMA no lo considera visible para el cliente, aunque esté marcado como visible y aunque el cliente ya lo haya visto: deja de verlo a partir de su siguiente acción. La marca de visible se conserva sin cambios y no queda registrado ningún cambio de visibilidad en su historial.
+- RF-18: CUANDO un integrante restaura un movimiento anulado de una causa activa, EL SISTEMA quita la marca de anulado, conserva la visibilidad que tenía y registra quién lo hizo y cuándo (RF-2). Si estaba marcado como visible, el cliente vuelve a verlo a partir de su siguiente acción.
 - RF-19: SI se intenta anular un movimiento ya anulado o restaurar uno que no lo está, ENTONCES EL SISTEMA lo rechaza con el mensaje "El movimiento ya está anulado" o "El movimiento no está anulado", según corresponda.
 
 ### Historial de cambios de cada movimiento
@@ -93,17 +93,19 @@ Hoy el estudio registra las causas, sus partes y sus abogados (spec 002), pero n
 - RF-29: MIENTRAS una causa activa tiene el estado Archivada o Finalizada, EL SISTEMA permite gestionar sus movimientos como en cualquier otra causa activa.
 
 ### Visibilidad para el cliente
-- RF-30: EL SISTEMA considera que un cliente puede ver un movimiento solo si se cumplen las dos condiciones:
+- RF-30: EL SISTEMA considera que un cliente puede ver un movimiento solo si se cumplen las tres condiciones:
   - El movimiento está marcado como visible.
+  - El movimiento no está anulado (RF-17).
   - El cliente está vinculado a la causa del movimiento según la spec 002 (RF-26 a RF-28).
 
   Esta es la única regla que decide qué movimientos ve un cliente, y se aplica siempre en el servidor.
-- RF-31: EL SISTEMA solo pone a disposición del cliente, de cada movimiento que puede ver, su identificador (para poder consultarlo), su fecha, su tipo, el texto visible para el cliente (RF-7) y, si corresponde, la marca "Anulado". Nunca le expone:
+- RF-31: EL SISTEMA solo pone a disposición del cliente, de cada movimiento que puede ver, su identificador (para poder consultarlo), su fecha, su tipo, el texto visible para el cliente (RF-7). Nunca le expone:
   - La descripción, cuando hay texto para el cliente.
   - Quién cargó, modificó, anuló o restauró el movimiento, ni cuándo (RF-2).
+  - Que un movimiento está o estuvo anulado.
   - El historial de cambios ni las versiones anteriores de sus textos (RF-20).
-- RF-32: CUANDO un cliente queda vinculado a una causa, EL SISTEMA le permite ver todos los movimientos visibles de esa causa, anulados incluidos, aunque se hayan cargado o anulado antes del vínculo. CUANDO deja de estar vinculado (spec 002, RF-27), deja de verlos a partir de su siguiente acción.
-- RF-33: SI un cliente pide un movimiento que no puede ver, porque está oculto, porque pertenece a una causa a la que no está vinculado o porque no existe, ENTONCES EL SISTEMA responde siempre lo mismo, como si no existiera, sin revelar de cuál de esos casos se trata.
+- RF-32: CUANDO un cliente queda vinculado a una causa, EL SISTEMA le permite ver todos los movimientos visibles y no anulados de esa causa, aunque se hayan cargado antes del vínculo. CUANDO deja de estar vinculado (spec 002, RF-27), deja de verlos a partir de su siguiente acción.
+- RF-33: SI un cliente pide un movimiento que no puede ver, porque está oculto, porque está anulado, porque pertenece a una causa a la que no está vinculado o porque no existe, ENTONCES EL SISTEMA responde siempre lo mismo, como si no existiera, sin revelar de cuál de esos casos se trata.
 
 ### Integridad y permisos
 - RF-34: SI la causa indicada en una operación no existe, ENTONCES EL SISTEMA la rechaza con el mensaje "No existe esa causa". SI el movimiento indicado no existe o no pertenece a la causa indicada, ENTONCES EL SISTEMA la rechaza con el mensaje "No existe ese movimiento", sin distinguir entre los dos casos.
@@ -114,7 +116,7 @@ Hoy el estudio registra las causas, sus partes y sus abogados (spec 002), pero n
 - Validación: el servidor valida todos los datos recibidos y rechaza los campos desconocidos, sin confiar en las validaciones de la interfaz (como en las specs 001 y 002).
 - Textos seguros: la descripción y el texto para el cliente se muestran siempre como texto literal, en el panel y en el portal, y nunca se interpretan como código ni como formato. Esto complementa RF-4 y no lo reemplaza.
 - Registros del servidor: la descripción, el texto para el cliente y sus valores en el historial de cambios nunca se escriben en los registros del servidor ni en mensajes de error. Los mensajes de error indican el campo y la regla, sin repetir el texto recibido.
-- Aislamiento: la regla de RF-30 se aplica en el servidor en toda consulta de un cliente. Un cliente nunca recibe movimientos no visibles, de causas a las que no está vinculado, la descripción interna cuando hay texto para el cliente ni el historial de cambios (principio 5).
+- Aislamiento: la regla de RF-30 se aplica en el servidor en toda consulta de un cliente. Un cliente nunca recibe movimientos no visibles, anulados, de causas a las que no está vinculado, la descripción interna cuando hay texto para el cliente ni el historial de cambios (principio 5).
 - Privacidad por defecto: ningún movimiento es visible para el cliente sin una acción expresa de un integrante.
 - Persistencia: ningún dato de movimientos se guarda en el almacenamiento local del navegador (principio 5).
 - Rendimiento: con hasta 5.000 movimientos en una causa, el historial de movimientos, con cualquier combinación de filtros y buscador, responde en menos de 2 segundos.
@@ -140,20 +142,20 @@ Hoy el estudio registra las causas, sus partes y sus abogados (spec 002), pero n
   - Descripción con emojis, tabulaciones o signos como `<` y `>`: se rechaza (RF-4).
   - Descripción con líneas en blanco entre párrafos: se conservan tal como se cargaron (RF-3).
 - **Anulación:**
-  - Movimiento visible anulado: el cliente lo sigue viendo, con la leyenda "Anulado" y el texto que tenía al anularlo (RF-17).
-  - Movimiento cargado en la causa equivocada: no se lo puede pasar a la correcta; se lo anula y se lo carga de nuevo (RF-12). Si era visible, los clientes de la causa equivocada lo siguen viendo como anulado, salvo que antes de anularlo se lo marque como no visible (RF-14, RF-17).
-  - Movimiento visible con información que no debía mostrarse y que además hay que anular: se lo marca como no visible y después se lo anula. Si ya estaba anulado, se lo restaura, se lo marca como no visible y se lo vuelve a anular. Todo queda en su historial de cambios (RF-14, RF-15, RF-18, RF-20).
-  - Movimiento anulado y restaurado: recupera su visibilidad anterior y se puede volver a modificar (RF-18).
+  - Movimiento visible anulado: el cliente deja de verlo, aunque ya lo haya visto, sin ningún indicio de que existió. En el panel sigue marcado como visible (RF-17, RF-33).
+  - Movimiento cargado en la causa equivocada: no se lo puede pasar a la correcta; se lo anula y se lo carga de nuevo (RF-12). Si era visible, los clientes de la causa equivocada dejan de verlo al anularlo (RF-17).
+  - Movimiento visible con información que no debía mostrarse y que además hay que anular: alcanza con anularlo para que el cliente deje de verlo. Si se quiere que tampoco lo vea en caso de que alguien lo restaure, se lo marca como no visible antes de anularlo; si ya estaba anulado, se lo restaura, se lo marca como no visible y se lo vuelve a anular. Todo queda en su historial de cambios (RF-14, RF-15, RF-17, RF-18, RF-20).
+  - Movimiento anulado y restaurado: recupera su visibilidad anterior, así que si era visible el cliente vuelve a verlo, y se puede volver a modificar (RF-18).
 - **Historial de cambios:**
   - Movimiento modificado muchas veces: queda registrado cada cambio con su valor anterior y nuevo (RF-20).
   - Quién hizo visible un movimiento, aunque después otro integrante lo haya editado: se ve en su historial de cambios (RF-20, RF-22).
   - El cliente nunca ve las versiones anteriores de los textos (RF-31).
 - **Clientes:**
-  - Cliente vinculado a una causa con movimientos previos: ve todos los visibles, anulados incluidos, aunque se hayan marcado como visibles pensando en otro cliente de la misma causa. El integrante que lo vincula no recibe ningún aviso. Se acepta por ahora (RF-32).
+  - Cliente vinculado a una causa con movimientos previos: ve todos los visibles no anulados, aunque se hayan marcado como visibles pensando en otro cliente de la misma causa. El integrante que lo vincula no recibe ningún aviso. Se acepta por ahora (RF-32).
   - Causa sin ningún cliente vinculado (solo partes no cliente, o con el cliente desactivado): la marca de visible no tiene efecto hasta que se vincule alguno, aunque el historial muestre el movimiento como visible. Se acepta (RF-30).
   - Dos clientes vinculados a la misma causa: ven los mismos movimientos visibles. No hay visibilidad por cliente.
   - El tipo y la fecha de un movimiento visible siempre llegan al cliente, aunque el texto para el cliente sea neutro (por ejemplo, el tipo "Pericia"). Se acepta por ahora (RF-31).
-  - Cliente que pide un movimiento oculto, de una causa ajena o inexistente: recibe siempre la misma respuesta (RF-33).
+  - Cliente que pide un movimiento oculto, anulado, de una causa ajena o inexistente: recibe siempre la misma respuesta (RF-33).
   - Cliente desvinculado, causa desactivada o cuenta del cliente desactivada: deja de ver los movimientos a partir de su siguiente acción (RF-30, RF-32; spec 002, RF-27 y RF-28; spec 001).
   - Causa reactivada: los clientes vinculados vuelven a ver sus movimientos visibles (spec 002, RF-42).
   - Incidentes: cada incidente es una causa aparte (spec 002, RF-10). El cliente de la causa principal que no es parte del incidente no ve sus movimientos, y al revés. Se acepta.
@@ -193,7 +195,7 @@ Hoy el estudio registra las causas, sus partes y sus abogados (spec 002), pero n
 - Todos los RF con al menos un test en verde.
 - Tests que verifiquen:
   - Que un movimiento nuevo es no visible si no se lo marca expresamente (RF-8).
-  - La regla de visibilidad para el cliente (RF-30 a RF-32): un cliente puede ver un movimiento solo si es visible y está vinculado a la causa activa, con los casos de cliente desvinculado, causa desactivada, movimiento oculto y movimiento visible anulado. También qué datos y qué texto le corresponden (RF-7, RF-31). La consulta del cliente desde el portal se prueba en la spec 004.
+  - La regla de visibilidad para el cliente (RF-30 a RF-32): un cliente puede ver un movimiento solo si es visible, no está anulado y el cliente está vinculado a la causa activa, con los casos de cliente desvinculado, causa desactivada, movimiento oculto, movimiento visible anulado y movimiento visible restaurado. También qué datos y qué texto le corresponden (RF-7, RF-31). La consulta del cliente desde el portal se prueba en la spec 004.
   - Que en una causa desactivada no se pueden cargar, modificar, anular ni restaurar movimientos (RF-28).
   - Que cada carga, modificación, cambio de visibilidad, anulación y restauración queda en el historial de cambios con sus valores anterior y nuevo, y que ese historial no se modifica (RF-20, RF-21).
   - Que se rechazan los caracteres no permitidos (RF-4).
@@ -205,7 +207,7 @@ Hoy el estudio registra las causas, sus partes y sus abogados (spec 002), pero n
   2. Verificar que se rechazan una fecha de 1890, una de 2100, una fecha inexistente y una descripción con emojis o con `<`, y que se acepta el 31/12/2099.
   3. Verificar que un movimiento nuevo queda oculto. Marcar uno como visible sin texto para el cliente y otro con texto para el cliente, y comprobar en el aviso de RF-9 qué texto verá el cliente en cada caso.
   4. Modificar un movimiento visible y verificar el aviso "Este movimiento es visible para el cliente; el cambio se verá en el portal".
-  5. Anular un movimiento visible y otro oculto. Verificar la leyenda "Anulado", que no se pueden modificar y que la regla de visibilidad sigue considerando visible solo al primero. Restaurar uno.
+  5. Anular un movimiento visible y otro oculto. Verificar la leyenda "Anulado", que no se pueden modificar y que la regla de visibilidad no considera visible a ninguno de los dos. Restaurar el visible y verificar que la regla vuelve a considerarlo visible.
   6. Consultar el historial de cambios de un movimiento modificado por dos integrantes y verificar que muestra cada acción, quién la hizo, cuándo y los valores anterior y nuevo.
   7. Usar cada filtro del historial y el buscador, con un texto en mayúsculas y sin tildes, incluido "Ocultar anulados" junto con "Solo visibles".
   8. Desactivar la causa, verificar que el historial se consulta pero no se puede cargar ni modificar nada, y reactivarla.

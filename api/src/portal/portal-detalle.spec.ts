@@ -237,7 +237,6 @@ describe('toMovimientoClienteDetalle (RF-22)', () => {
       fecha: '2026-09-30',
       tipo: 'audiencia',
       texto: 'Audiencia fijada.',
-      anulado: false,
       esFechaFutura: false,
     };
 

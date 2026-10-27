@@ -27,6 +27,7 @@ describe('Portal: respuestas indistinguibles, acceso y siguiente acción', () =>
   let deactivatedCausa: Causa;
   let visible: Movimiento;
   let hidden: Movimiento;
+  let annulled: Movimiento;
   let fromOtherOwnCausa: Movimiento;
 
   const NO_CAUSA = { statusCode: 404, message: 'No existe esa causa', error: 'Not Found' };
@@ -55,10 +56,11 @@ describe('Portal: respuestas indistinguibles, acceso y siguiente acción', () =>
     otherOwnCausa = await causaOf(client.id);
     foreignCausa = await causaOf(other.id);
     deactivatedCausa = await causaOf(client.id, false);
-    const movement = (causaId: number, isVisible = true) =>
-      createTestMovimiento(app, { causaId, creadoPorId: lawyer.id, visible: isVisible });
+    const movement = (causaId: number, isVisible = true, anulado = false) =>
+      createTestMovimiento(app, { causaId, creadoPorId: lawyer.id, visible: isVisible, anulado });
     visible = await movement(causa.id);
     hidden = await movement(causa.id, false);
+    annulled = await movement(causa.id, true, true);
     fromOtherOwnCausa = await movement(otherOwnCausa.id);
     await movement(foreignCausa.id);
     await movement(deactivatedCausa.id);
@@ -103,10 +105,10 @@ describe('Portal: respuestas indistinguibles, acceso y siguiente acción', () =>
       expect(bodies.size).toBe(1);
     });
 
-    it('un movimiento oculto, inexistente, de otra causa del cliente o con un id inválido recibe el mismo 404 (RF-29)', async () => {
+    it('un movimiento oculto, anulado, inexistente, de otra causa del cliente o con un id inválido recibe el mismo 404 (RF-29)', async () => {
       const bodies = new Set<string>();
 
-      for (const movimientoId of [hidden.id, 999999, fromOtherOwnCausa.id, 'abc']) {
+      for (const movimientoId of [hidden.id, annulled.id, 999999, fromOtherOwnCausa.id, 'abc']) {
         const response = await get(
           `/api/portal/causas/${causa.id}/movimientos/${movimientoId}`,
         ).expect(404);

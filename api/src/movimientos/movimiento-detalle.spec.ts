@@ -57,44 +57,32 @@ const leaksAccountData = (value: unknown) =>
   /email|contrasena|@estudio\.com|\$2b\$/.test(JSON.stringify(value));
 
 describe('toMovimientoCliente (RF-31; spec 004, RF-21)', () => {
-  it('tiene solo id, fecha, tipo, texto, anulado y la marca de fecha futura', () => {
+  it('tiene solo id, fecha, tipo, texto y la marca de fecha futura', () => {
     expect(toMovimientoCliente(movement(), NOW)).toEqual({
       id: 7,
       fecha: '2026-10-06',
       tipo: 'providencia',
       texto: 'Descripción técnica interna.',
-      anulado: false,
       esFechaFutura: false,
     });
   });
 
   it('con texto para el cliente, usa ese texto y nunca incluye la descripción', () => {
-    const cliente = toMovimientoCliente(
-      movement({ textoCliente: 'El juez fijó audiencia.', anulado: true }),
-      NOW,
-    );
+    const cliente = toMovimientoCliente(movement({ textoCliente: 'El juez fijó audiencia.' }), NOW);
 
     expect(cliente).toEqual({
       id: 7,
       fecha: '2026-10-06',
       tipo: 'providencia',
       texto: 'El juez fijó audiencia.',
-      anulado: true,
       esFechaFutura: false,
     });
     expect(JSON.stringify(cliente)).not.toContain('Descripción técnica');
   });
 
-  it('no incluye autores, fechas de registro ni cambios', () => {
+  it('no incluye autores, fechas de registro, cambios ni la marca de anulado', () => {
     const cliente = toMovimientoCliente(movement({ cambios: [change(1, user(1))] }), NOW);
-    expect(Object.keys(cliente).sort()).toEqual([
-      'anulado',
-      'esFechaFutura',
-      'fecha',
-      'id',
-      'texto',
-      'tipo',
-    ]);
+    expect(Object.keys(cliente).sort()).toEqual(['esFechaFutura', 'fecha', 'id', 'texto', 'tipo']);
   });
 
   it('marca la fecha futura en un movimiento posterior al día actual en Buenos Aires', () => {
@@ -103,12 +91,6 @@ describe('toMovimientoCliente (RF-31; spec 004, RF-21)', () => {
 
   it('no marca la fecha futura en un movimiento del día actual', () => {
     expect(toMovimientoCliente(movement({ fecha: '2026-10-06' }), NOW).esFechaFutura).toBe(false);
-  });
-
-  it('un movimiento anulado nunca lleva la marca de fecha futura (spec 004, RF-21)', () => {
-    expect(
-      toMovimientoCliente(movement({ fecha: '2026-10-07', anulado: true }), NOW).esFechaFutura,
-    ).toBe(false);
   });
 });
 

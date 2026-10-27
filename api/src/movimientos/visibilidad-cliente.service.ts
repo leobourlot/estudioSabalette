@@ -21,8 +21,8 @@ export interface MovimientoClientePage {
 
 /**
  * Única regla de qué movimientos ve un cliente (RF-30 a RF-33). Un cliente puede ver un
- * movimiento solo si está marcado como visible y el cliente está vinculado a su causa según
- * ClientLinkService (spec 002, RF-26 a RF-28). Además se exige que la cuenta del cliente esté
+ * movimiento solo si está marcado como visible, no está anulado (RF-17) y el cliente está
+ * vinculado a su causa según ClientLinkService (spec 002, RF-26 a RF-28). Además se exige que la cuenta del cliente esté
  * activa: la spec 001 ya corta su sesión, y esto lo repite como segunda barrera. La usa la
  * spec 004 en cada petición del portal; esta spec no tiene endpoints para clientes.
  */
@@ -35,10 +35,10 @@ export class ClientVisibilityService {
   ) {}
 
   /**
-   * Movimientos visibles de una causa, anulados incluidos y cargados antes o después del
-   * vínculo (RF-32), en el orden del historial (RF-23). Devuelve null si el cliente no puede
-   * ver la causa: la spec 004 decide la respuesta. Cuenta y pagina solo los visibles, así los
-   * ocultos no dejan rastro (spec 004, RF-26).
+   * Movimientos visibles y no anulados de una causa, cargados antes o después del vínculo
+   * (RF-32), en el orden del historial (RF-23). Devuelve null si el cliente no puede ver la
+   * causa: la spec 004 decide la respuesta. Cuenta y pagina solo esos, así los ocultos y los
+   * anulados no dejan rastro (spec 004, RF-26).
    */
   async listVisible(
     clienteId: number,
@@ -49,7 +49,7 @@ export class ClientVisibilityService {
     if (!(await this.canSeeCausa(clienteId, causaId))) return null;
     // Una fila de más indica si hay página siguiente, sin contar el total.
     const movimientos = await this.movimientos.find({
-      where: { causaId, visible: true },
+      where: { causaId, visible: true, anulado: false },
       order: { fecha: 'DESC', creadoEn: 'DESC', id: 'DESC' },
       skip: (pagina - 1) * PAGE_SIZE,
       take: PAGE_SIZE + 1,
@@ -63,9 +63,9 @@ export class ClientVisibilityService {
 
   /**
    * Un movimiento que el cliente puede ver, pedido dentro de su causa (spec 004, RF-27). Si está
-   * oculto, es de una causa a la que no está vinculado, no pertenece a la causa indicada o no
-   * existe, responde siempre el mismo 404, sin revelar cuál de los casos es (RF-33; spec 004,
-   * RF-29).
+   * oculto o anulado, es de una causa a la que no está vinculado, no pertenece a la causa
+   * indicada o no existe, responde siempre el mismo 404, sin revelar cuál de los casos es
+   * (RF-33; spec 004, RF-29).
    */
   async findVisible(
     clienteId: number,
@@ -77,6 +77,7 @@ export class ClientVisibilityService {
       id: movimientoId,
       causaId,
       visible: true,
+      anulado: false,
     });
     if (!movimiento || !(await this.canSeeCausa(clienteId, causaId))) {
       throw new NotFoundException(MOVIMIENTOS_MESSAGES.notFound);
@@ -86,7 +87,7 @@ export class ClientVisibilityService {
 
   /**
    * Fecha del último movimiento de cada causa para un cliente (spec 004, RF-8): la más reciente
-   * entre los visibles, sin contar los anulados ni los posteriores a `hoy` (AAAA-MM-DD). No
+   * entre los que el cliente puede ver (visibles y no anulados), sin contar los posteriores a `hoy` (AAAA-MM-DD). No
    * verifica el vínculo: recibe las causas ya resueltas con ClientLinkService. Las causas sin
    * ninguno no aparecen en el mapa.
    */

@@ -96,7 +96,7 @@ No se modifica nada de `servicios/` salvo lo nuevo, ni el sitio público, ni `ta
 - `LineaDeTiempo` (`<ol>`):
   - Cada movimiento es un `<li class="relative pl-8 pb-6">` con su contenido de `TarjetaMovimientoPortal`.
   - La línea: un `<span aria-hidden>` `absolute left-[7px] top-4 bottom-0 w-0.5 bg-slate-300`, que no lleva el último elemento (`last:` en el `<li>`, con la línea en un hijo `group-last:hidden`) [casos límite: un solo movimiento].
-  - El punto: `<span aria-hidden>` `absolute left-0 top-1.5 h-4 w-4 rounded-full`, lleno (`bg-estudio-oscuro`) o, si está anulado, hueco (`border-2 border-estudio-oscuro bg-white`) [RF-19].
+  - El punto: `<span aria-hidden>` `absolute left-0 top-1.5 h-4 w-4 rounded-full`, siempre lleno (`border-2 border-estudio-oscuro bg-estudio-oscuro`): el cliente nunca recibe anulados [RF-19].
   - Entre movimientos, `border-b border-slate-200` en el contenido del `<li>`, salvo el último [RF-18].
   - Escalonado con `AparecerAlCargar` [RF-26].
 - `TarjetaMovimientoPortal` deja de ser una tarjeta: es el contenido del elemento, con la fecha en `font-semibold`, el tipo, las leyendas, el texto y los mismos "Ver más", "Ver menos" y "Abrir". `PortalMovimientoDetalle` muestra lo mismo dentro de una `CARD` [RF-20].
@@ -138,7 +138,7 @@ Ninguna. `motion` ya está en `web/` (plan 007, "Dependencia nueva").
   - `menu-aplicacion.test.ts`: el orden y los nombres de RF-6, y `isSectionActive` con cada dirección de `RutasAplicacion` [RF-6, RF-7].
   - `MenuLateral.test.tsx`: marca con el logo (`alt=""`) y el nombre en dos líneas, nombre de la sección, opciones con su ícono `aria-hidden`, `aria-current` en la actual y en sus detalles, usuario, "Cerrar sesión", logo al inicio de la sección [RF-5 a RF-8]. Plegado: "Menú" con `aria-expanded`, al abrir el foco en "Cerrar menú" y el contenido con `inert`; se cierra al elegir una opción, con "Cerrar menú", con Escape y al tocar el fondo, y el foco vuelve a "Menú" [RF-9]. `localStorage` y `sessionStorage` vacíos después de abrir y cerrar [RF-10].
   - `DisenoMarca.test.tsx` y `PaginaIngreso.test.tsx`: T-1, T-2 y T-3 contra el anexo, el WhatsApp sin mensaje y aparte, la dirección con " · " solo cuando está informada, sin la frase que el estudio pidió quitar [RF-11]. `PaginaCambiarContrasena.test.tsx`: la marca sin T-1 ni contacto y sin menú [RF-14].
-  - `LineaDeTiempo.test.tsx`: un `<li>` por movimiento en el orden recibido, fecha, tipo y leyendas, punto hueco en el anulado, sin línea en el último [RF-18, RF-19].
+  - `LineaDeTiempo.test.tsx`: un `<li>` por movimiento en el orden recibido, fecha, tipo y leyenda, punto lleno, sin línea en el último [RF-18, RF-19].
   - `PanelInicio`: el saludo como título principal y un acceso por opción [RF-25]. `PortalInicio`: el saludo como título principal y "Mis causas" como `<h2>` [RF-28]. Los tests que esperan llegar al inicio del panel lo reconocen por el saludo y la navegación "Panel" (`findPanelHome`), porque el portal saluda igual.
   - `animaciones.test.tsx`: `pageTransition` dura 0 con la reducción, y `staggerDelay` nunca supera el límite [RF-27].
 - Ajustes de tests existentes, solo en lo que cambia de presentación [RF-2]:

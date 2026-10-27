@@ -121,21 +121,18 @@ describe('PortalCausaDetalle: movimientos (spec 004, RF-20, RF-21, RF-23, RF-24)
     expect(portal.listMovimientos).toHaveBeenCalledWith('7', 1);
   });
 
-  it('muestra "Anulado" o "Fecha futura", y en un anulado futuro solo "Anulado" (RF-21)', async () => {
+  it('muestra "Fecha futura" solo en el movimiento que la tiene (RF-21)', async () => {
     openCausa(
       '/portal/causas/7',
       withMovements([
         testMovimientoCliente({ id: 1, esFechaFutura: true }),
-        testMovimientoCliente({ id: 2, anulado: true }),
-        testMovimientoCliente({ id: 3, anulado: true, esFechaFutura: false }),
+        testMovimientoCliente({ id: 2 }),
       ]),
     );
 
     const items = await (await movements()).findAllByRole('article');
     expect(within(items[0]).getByText('Fecha futura')).toBeTruthy();
-    expect(within(items[1]).getByText('Anulado')).toBeTruthy();
     expect(within(items[1]).queryByText('Fecha futura')).toBeNull();
-    expect(within(items[2]).getByText('Anulado')).toBeTruthy();
   });
 
   it('recorta un texto largo y "Ver más" lo despliega sin otra petición (RF-21)', async () => {

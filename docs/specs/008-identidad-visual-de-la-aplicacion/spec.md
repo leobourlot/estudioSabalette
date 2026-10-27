@@ -65,8 +65,8 @@ El sitio público ya tiene la identidad del estudio: el logo, el degradado de su
 - RF-17: EL SISTEMA muestra el detalle de la causa del portal (spec 004, RF-13 a RF-17) en tarjetas separadas: una con la carátula y los datos de la causa, una con las partes y el responsable, y una con los movimientos (RF-18).
 
 ### Portal: movimientos
-- RF-18: EL SISTEMA muestra los movimientos que ve el cliente (spec 004, RF-20 a RF-24) como una línea de tiempo vertical, en el mismo orden que hoy: una línea a la izquierda que une un punto por movimiento y, al lado de cada punto, la fecha en negrita, el tipo, las leyendas "Anulado" o "Fecha futura" y el texto, con "Ver más", "Ver menos" y "Abrir" como hoy. Cada movimiento queda separado del siguiente por un espacio y una línea fina, de modo que se ve dónde termina uno y empieza otro.
-- RF-19: EL SISTEMA marca un movimiento anulado en la línea de tiempo con un punto hueco, además de la leyenda "Anulado" y el texto tachado (spec 004, RF-21).
+- RF-18: EL SISTEMA muestra los movimientos que ve el cliente (spec 004, RF-20 a RF-24) como una línea de tiempo vertical, en el mismo orden que hoy: una línea a la izquierda que une un punto por movimiento y, al lado de cada punto, la fecha en negrita, el tipo, la leyenda "Fecha futura" y el texto, con "Ver más", "Ver menos" y "Abrir" como hoy. Cada movimiento queda separado del siguiente por un espacio y una línea fina, de modo que se ve dónde termina uno y empieza otro.
+- RF-19: EL SISTEMA muestra todos los puntos de la línea de tiempo llenos: el cliente nunca ve movimientos anulados (spec 003, RF-17), así que no hay un punto distinto para ellos.
 - RF-20: EL SISTEMA muestra la pantalla de un movimiento del portal (spec 004) en una tarjeta, con la misma presentación de la fecha, el tipo y las leyendas que en la línea de tiempo.
 
 ### Panel: listados y movimientos
@@ -105,7 +105,7 @@ El sitio público ya tiene la identidad del estudio: el logo, el degradado de su
   - Todo se recorre y se usa con el teclado, con el foco siempre visible en el azul del estudio, también sobre el azul oscuro del menú, donde el foco va en blanco.
   - El menú plegado se recorre con Tab sin salir de él mientras está abierto y se cierra con Escape (RF-9).
   - El texto contrasta con su fondo al menos 4,5 a 1, y 3 a 1 en títulos grandes, íconos y bordes de controles: el blanco sobre los dos azules, el texto del menú y de sus opciones marcadas, las etiquetas de estado y los bordes de las tarjetas y de los campos.
-  - Ninguna información depende solo del color: la opción marcada del menú (RF-7), la barra de los movimientos del panel (RF-23) y el punto de un movimiento anulado (RF-19) van siempre con su texto.
+  - Ninguna información depende solo del color: la opción marcada del menú (RF-7), y la barra de los movimientos del panel (RF-23) van siempre con su texto.
   - El texto se puede agrandar hasta el 200 % sin que se corte ni se superponga.
   - El logo junto al nombre escrito no se anuncia dos veces, como en el sitio público (plan 007, "Identidad visual"). Los íconos del menú no se anuncian: el nombre de la opción va al lado.
 - Rendimiento: las animaciones no demoran la carga de los datos ni su lectura, y la parte del código que las hace se carga una sola vez para el portal y el panel.
@@ -135,7 +135,7 @@ El sitio público ya tiene la identidad del estudio: el logo, el degradado de su
   - Un solo grupo con causas: solo se ve ese título (spec 004, RF-10).
   - Causa sin movimientos visibles: el mensaje "Todavía no hay movimientos para mostrar" dentro de la tarjeta de movimientos, sin línea de tiempo (RF-18).
   - Un solo movimiento: la línea de tiempo muestra un punto, sin línea que lo una a otro (RF-18).
-  - Movimiento anulado: punto hueco, leyenda y texto tachado (RF-19).
+  - Movimiento anulado: no aparece en la línea de tiempo (RF-19; spec 003, RF-17).
   - Movimiento con texto largo desplegado con "Ver más": la línea de tiempo se alarga con él, sin superponerse con el siguiente (RF-18).
 - **Panel:**
   - Tabla más ancha que la pantalla: se desplaza dentro de su tarjeta, sin que la página se desplace a lo ancho (RNF de plataformas).
@@ -167,7 +167,7 @@ El sitio público ya tiene la identidad del estudio: el logo, el degradado de su
   - Que no se guarda nada en el navegador (RF-10).
   - La pantalla de ingreso: logo al sitio público, T-1, T-2, T-3, el WhatsApp sin mensaje, la dirección solo cuando está informada, y los mismos mensajes y el mismo destino que hoy (RF-11, RF-13). La de cambio de contraseña: el logo y el formulario, sin menú (RF-14).
   - Las tarjetas del portal: carátula, estado, expediente o "Sin asignar", el recuadro del último movimiento solo con fecha y "Ver detalle" con la carátula para el lector de pantalla (RF-15).
-  - La línea de tiempo: un elemento por movimiento, en el orden recibido, con su fecha, su tipo, sus leyendas y el punto hueco del anulado (RF-18, RF-19).
+  - La línea de tiempo: un elemento por movimiento, en el orden recibido, con su fecha, su tipo, su leyenda y el punto lleno (RF-18, RF-19).
   - El historial del panel: la barra de visible u oculto junto a su etiqueta (RF-23).
   - El inicio del panel: el saludo y un acceso por opción del menú (RF-25).
   - Que con la reducción de movimiento las animaciones duran 0 (RF-27).
