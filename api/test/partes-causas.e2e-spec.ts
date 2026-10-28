@@ -18,6 +18,7 @@ interface PartyBody {
   nombre: string | null;
   apellido: string | null;
   dni: string | null;
+  abogadoPatrocinante: string | null;
 }
 
 /** RF-2, RF-13 a RF-21, RF-25: agregar y modificar partes de una causa existente. */
@@ -228,6 +229,133 @@ describe('POST /:id/partes y PUT /:id/partes/:parteId', () => {
       );
 
       expect(response.body.message).toBe('La causa está desactivada. Reactivala para modificarla');
+    });
+
+    it('rechaza nombres y razones sociales con signos fuera de RF-4, al agregar y al modificar', async () => {
+      const { causa, pedro } = await freshCausa();
+
+      const added = await addParty(causa.id, {
+        rol: 'tercero',
+        tipoPersona: 'juridica',
+        razonSocial: '<script>Gómez</script> S.A.',
+      }).expect(400);
+      expect(added.body.message).toEqual([
+        expect.stringContaining('La razón social solo puede tener letras'),
+      ]);
+
+      const updated = await updateParty(causa.id, pedro.id, {
+        rol: 'actor',
+        tipoPersona: 'fisica',
+        nombre: 'Pedro',
+        apellido: 'López {x}',
+      }).expect(400);
+      expect(updated.body.message).toEqual([
+        expect.stringContaining('El apellido solo puede tener letras'),
+      ]);
+    });
+  });
+
+  describe('abogado patrocinante (RF-15, RF-21)', () => {
+    it('lo guarda al agregar una parte no cliente, lo cambia y lo borra al modificarla', async () => {
+      const { causa } = await freshCausa();
+      const marta = {
+        rol: 'demandado',
+        tipoPersona: 'fisica',
+        nombre: 'Marta',
+        apellido: 'Ruiz',
+      };
+
+      const added = await addParty(causa.id, {
+        ...marta,
+        abogadoPatrocinante: '  Fernández Ocampo, Raúl ',
+      }).expect(201);
+      const parte = (added.body.causa.partes as PartyBody[]).find((p) => p.nombre === 'Marta')!;
+      expect(parte.abogadoPatrocinante).toBe('Fernández Ocampo, Raúl');
+
+      const changed = await updateParty(causa.id, parte.id, {
+        ...marta,
+        abogadoPatrocinante: 'Iturraspe, Carla',
+      }).expect(200);
+      expect(
+        (changed.body.causa.partes as PartyBody[]).find((p) => p.id === parte.id)!
+          .abogadoPatrocinante,
+      ).toBe('Iturraspe, Carla');
+
+      // Como los demás datos propios, si no se envía queda sin informar.
+      const cleared = await updateParty(causa.id, parte.id, marta).expect(200);
+      expect(
+        (cleared.body.causa.partes as PartyBody[]).find((p) => p.id === parte.id)!
+          .abogadoPatrocinante,
+      ).toBeNull();
+    });
+
+    it('cambiar solo el rol lo conserva', async () => {
+      const { causa, pedro } = await freshCausa();
+      await updateParty(causa.id, pedro.id, {
+        rol: 'actor',
+        tipoPersona: 'fisica',
+        nombre: 'Pedro',
+        apellido: 'López',
+        dni: '20111222',
+        abogadoPatrocinante: 'Iturraspe, Carla',
+      }).expect(200);
+
+      const response = await updateParty(causa.id, pedro.id, { rol: 'tercero' }).expect(200);
+
+      expect(response.body.causa.partes[0]).toMatchObject({
+        rol: 'tercero',
+        abogadoPatrocinante: 'Iturraspe, Carla',
+      });
+    });
+
+    it('lo rechaza en una parte cliente y con caracteres no permitidos', async () => {
+      const { causa } = await freshCausa();
+
+      const onClient = await addParty(causa.id, {
+        rol: 'actor',
+        clienteId: marcos.id,
+        abogadoPatrocinante: 'Iturraspe, Carla',
+      }).expect(400);
+      expect(onClient.body.message).toEqual([
+        'Una parte cliente no lleva datos propios: se toman de su cuenta',
+      ]);
+
+      const withSymbols = await addParty(causa.id, {
+        rol: 'tercero',
+        tipoPersona: 'fisica',
+        nombre: 'Marta',
+        apellido: 'Ruiz',
+        abogadoPatrocinante: '<b>Iturraspe</b>',
+      }).expect(400);
+      expect(withSymbols.body.message).toEqual([
+        expect.stringContaining('El abogado patrocinante solo puede tener letras'),
+      ]);
+    });
+
+    it('al convertir la parte en cliente no lo conserva', async () => {
+      const { causa, pedro } = await freshCausa();
+      await updateParty(causa.id, pedro.id, {
+        rol: 'actor',
+        tipoPersona: 'fisica',
+        nombre: 'Pedro',
+        apellido: 'López',
+        dni: '20111222',
+        abogadoPatrocinante: 'Iturraspe, Carla',
+      }).expect(200);
+
+      const converted = await updateParty(causa.id, pedro.id, {
+        rol: 'actor',
+        clienteId: marcos.id,
+      }).expect(200);
+
+      expect(converted.body.causa.partes[0]).toMatchObject({
+        esCliente: true,
+        abogadoPatrocinante: null,
+      });
+      const [row]: Record<string, unknown>[] = await app
+        .get(DataSource)
+        .query('SELECT abogadoPatrocinante FROM partes WHERE id = ?', [pedro.id]);
+      expect(row).toEqual({ abogadoPatrocinante: null });
     });
   });
 

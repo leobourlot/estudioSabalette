@@ -71,12 +71,23 @@ describe('FormularioParte (RF-13 a RF-15)', () => {
     expect(screen.getByLabelText('Nombre')).toBeTruthy();
     expect(screen.getByLabelText('Apellido')).toBeTruthy();
     expect(screen.getByLabelText('DNI (opcional)')).toBeTruthy();
+    expect(
+      screen.getByLabelText('Abogado patrocinante, apellido y nombre (opcional)'),
+    ).toBeTruthy();
     expect(screen.queryByLabelText('Buscar cliente')).toBeNull();
 
     await user.click(screen.getByLabelText('Persona jurídica'));
     expect(screen.getByLabelText('Razón social')).toBeTruthy();
     expect(screen.getByLabelText('CUIT (opcional)')).toBeTruthy();
+    expect(
+      screen.getByLabelText('Abogado patrocinante, apellido y nombre (opcional)'),
+    ).toBeTruthy();
     expect(screen.queryByLabelText('Nombre')).toBeNull();
+
+    await user.click(screen.getByLabelText('Cliente del estudio'));
+    expect(
+      screen.queryByLabelText('Abogado patrocinante, apellido y nombre (opcional)'),
+    ).toBeNull();
   });
 
   it('ofrece los roles procesales de la spec', () => {
@@ -135,10 +146,20 @@ describe('FormularioParte (RF-13 a RF-15)', () => {
     await user.click(screen.getByLabelText('Persona jurídica'));
     await user.type(screen.getByLabelText('Razón social'), 'Zeta S.R.L.');
     await user.type(screen.getByLabelText('CUIT (opcional)'), '30-71234567-1');
+    await user.type(
+      screen.getByLabelText('Abogado patrocinante, apellido y nombre (opcional)'),
+      'Martínez, Laura',
+    );
     await user.click(screen.getByRole('button', { name: 'Agregar parte' }));
 
     expect(onSubmit).toHaveBeenCalledWith(
-      { rol: 'actor', tipoPersona: 'juridica', razonSocial: 'Zeta S.R.L.', cuit: '30712345671' },
+      {
+        rol: 'actor',
+        tipoPersona: 'juridica',
+        razonSocial: 'Zeta S.R.L.',
+        cuit: '30712345671',
+        abogadoPatrocinante: 'Martínez, Laura',
+      },
       'Zeta S.R.L.',
     );
   });

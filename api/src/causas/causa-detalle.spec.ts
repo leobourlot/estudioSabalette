@@ -67,6 +67,7 @@ function party(id: number, overrides: Partial<Parte> = {}): Parte {
     razonSocial: null,
     dni: null,
     cuit: null,
+    abogadoPatrocinante: null,
     vigente: true,
     creadoPorId: 1,
     creadoPor: user(1),
@@ -166,8 +167,10 @@ describe('toIntegranteResumen', () => {
 });
 
 describe('toParteDetalle (RF-12, RF-14)', () => {
-  it('una parte no cliente muestra sus datos propios', () => {
-    expect(toParteDetalle(party(1, { dni: '20111222' }))).toEqual({
+  it('una parte no cliente muestra sus datos propios, con su abogado patrocinante (RF-15)', () => {
+    expect(
+      toParteDetalle(party(1, { dni: '20111222', abogadoPatrocinante: 'Martínez, Laura' })),
+    ).toEqual({
       id: 1,
       rol: 'actor',
       esCliente: false,
@@ -179,6 +182,7 @@ describe('toParteDetalle (RF-12, RF-14)', () => {
       razonSocial: null,
       dni: '20111222',
       cuit: null,
+      abogadoPatrocinante: 'Martínez, Laura',
     });
   });
 
@@ -195,6 +199,7 @@ describe('toParteDetalle (RF-12, RF-14)', () => {
       razonSocial: null,
       dni: '30123456',
       cuit: null,
+      abogadoPatrocinante: null,
     });
   });
 

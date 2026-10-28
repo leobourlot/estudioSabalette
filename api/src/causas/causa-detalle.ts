@@ -32,6 +32,8 @@ export interface ParteDetalle {
   razonSocial: string | null;
   dni: string | null;
   cuit: string | null;
+  /** Solo en una parte no cliente (RF-15); null si no está cargado o es cliente. */
+  abogadoPatrocinante: string | null;
 }
 
 export interface CausaResumen {
@@ -99,6 +101,7 @@ export function toParteDetalle(parte: Parte): ParteDetalle {
     razonSocial: identity.razonSocial,
     dni: identity.dni,
     cuit: identity.cuit,
+    abogadoPatrocinante: identity.clienteId === null ? parte.abogadoPatrocinante : null,
   };
 }
 

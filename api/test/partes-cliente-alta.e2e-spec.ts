@@ -91,6 +91,7 @@ describe('POST /api/panel/causas: partes cliente', () => {
         razonSocial: null,
         dni: '30123456',
         cuit: null,
+        abogadoPatrocinante: null,
       },
       expect.objectContaining({
         esCliente: true,
@@ -110,7 +111,7 @@ describe('POST /api/panel/causas: partes cliente', () => {
     const [row]: Record<string, unknown>[] = await app
       .get(DataSource)
       .query(
-        'SELECT tipoPersona, nombre, apellido, razonSocial, dni, cuit FROM partes WHERE causaId = ?',
+        'SELECT tipoPersona, nombre, apellido, razonSocial, dni, cuit, abogadoPatrocinante FROM partes WHERE causaId = ?',
         [response.body.causa.id],
       );
     expect(row).toEqual({
@@ -120,6 +121,7 @@ describe('POST /api/panel/causas: partes cliente', () => {
       razonSocial: null,
       dni: null,
       cuit: null,
+      abogadoPatrocinante: null,
     });
   });
 

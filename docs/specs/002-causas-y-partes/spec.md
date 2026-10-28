@@ -12,7 +12,7 @@ Hoy el estudio no tiene en el sistema un registro único de sus causas: qué exp
 - H2: Como integrante del estudio quiero que el alta no se pierda si una parte o un colaborador es rechazado, para no volver a cargar todo.
 - H3: Como integrante del estudio quiero editar los datos de una causa para mantenerla al día, por ejemplo cuando se le asigna número de expediente o cambia de estado.
 - H4: Como integrante del estudio quiero marcar una causa como incidente de un expediente principal, para que pueda compartir su número sin que el sistema la tome como duplicada.
-- H5: Como integrante del estudio quiero registrar las partes de una causa con su rol procesal, distinguiendo cuáles son clientes del estudio, para saber quién es quién en el expediente.
+- H5: Como integrante del estudio quiero registrar las partes de una causa con su rol procesal, distinguiendo cuáles son clientes del estudio y, en las que no lo son, quién es su abogado patrocinante, para saber quién es quién en el expediente y con quién tratar del otro lado.
 - H6: Como integrante del estudio quiero que el sistema me avise cuando una persona que cargo ya es cliente del estudio o ya figura en la causa, para no duplicar personas.
 - H7: Como integrante del estudio quiero que un cliente quede vinculado a una causa solo cuando es parte en ella, para que el vínculo sea siempre coherente con el expediente.
 - H8: Como integrante del estudio quiero desvincular una parte de una causa, consultar después sus datos y volver a vincularla si hace falta.
@@ -47,7 +47,7 @@ Hoy el estudio no tiene en el sistema un registro único de sus causas: qué exp
 - RF-11: CUANDO un integrante modifica los datos de una causa activa, EL SISTEMA guarda los cambios y registra quién la modificó. Se pueden modificar todos los datos de RF-1, con las mismas validaciones que en el alta, salvo si está activa o desactivada: eso solo cambia con las acciones de RF-40 y RF-42.
 - RF-12: CUANDO se consulta una causa, EL SISTEMA muestra:
   - Sus datos.
-  - Sus partes vigentes con su rol procesal, indicando cuáles son clientes del estudio.
+  - Sus partes vigentes con su rol procesal, indicando cuáles son clientes del estudio y, en las que no lo son, su abogado patrocinante, si está cargado.
   - El abogado responsable y los colaboradores.
   - Quién la creó, quién la modificó por última vez y cuándo.
   - Aparte, sus partes desvinculadas.
@@ -57,8 +57,11 @@ Hoy el estudio no tiene en el sistema un registro único de sus causas: qué exp
 - RF-14: CUANDO se agrega una parte que es cliente del estudio, EL SISTEMA la vincula a la cuenta de ese cliente y toma sus datos de identificación (nombre y apellido o razón social, DNI o CUIT) de esa cuenta, sin duplicarlos. Si los datos del cliente cambian, la parte muestra los datos actualizados.
 - RF-15: CUANDO se agrega una parte que no es cliente del estudio, EL SISTEMA registra:
   - Su tipo de persona (física o jurídica).
-  - Su nombre y apellido o su razón social, obligatorios y de hasta 55 caracteres cada uno.
+  - Su nombre y apellido o su razón social, obligatorios y de hasta 55 caracteres cada uno. Se les quitan los espacios al inicio y al final, y aceptan los mismos caracteres que la carátula (RF-4).
   - Opcionalmente, su DNI o CUIT, que se normaliza y valida con las mismas reglas de la spec 001 (RF-5 y RF-6).
+  - Opcionalmente, su abogado patrocinante: el apellido y el nombre como un solo texto libre, de hasta 110 caracteres, sin vincularlo a ninguna cuenta. Se le quitan los espacios al inicio y al final, si queda vacío se guarda como no informado, y acepta los mismos caracteres que la carátula (RF-4). Vale para personas físicas y jurídicas.
+
+  Una parte cliente no lleva abogado patrocinante: la patrocina el estudio, con los abogados de RF-29. SI se indica un abogado patrocinante en una parte cliente, ENTONCES EL SISTEMA lo rechaza con el mensaje "Una parte cliente no lleva datos propios: se toman de su cuenta".
 - RF-16: SI al agregar o modificar una parte que no es cliente se indica un DNI o CUIT que pertenece a un cliente activo del estudio, ENTONCES EL SISTEMA avisa "Ese DNI o CUIT pertenece a un cliente del estudio" y pregunta si se la agrega como cliente:
   - Si se responde que sí, la vincula como parte cliente (RF-14).
   - Si se responde que no, la guarda como parte no cliente.
@@ -94,6 +97,7 @@ Hoy el estudio no tiene en el sistema un registro único de sus causas: qué exp
 - RF-37: CUANDO un integrante escribe en el buscador, EL SISTEMA muestra las causas en las que el texto buscado aparece, aunque sea como fragmento ("ere" encuentra "Pérez"):
   - En su carátula o su número de expediente.
   - En el nombre, el apellido, la razón social, el DNI o el CUIT de alguna parte vigente.
+  - En el abogado patrocinante de alguna parte vigente que no es cliente.
 
   La búsqueda no distingue mayúsculas, minúsculas ni tildes. En el número de expediente ignora los separadores: "1234/2024" encuentra "1234/2024" y "1234-2024". Los DNI y CUIT se comparan normalizados (RF-5 de la spec 001).
 - RF-38: EL SISTEMA permite filtrar el listado por:
@@ -139,6 +143,13 @@ Hoy el estudio no tiene en el sistema un registro único de sus causas: qué exp
 - **Parte no cliente cuyo DNI o CUIT es de un cliente:** se pregunta si se la agrega como cliente (RF-16).
 - **Parte con el mismo nombre que otra de la causa, sin DNI ni CUIT que las distinga:** se pregunta si es la misma persona (RF-19).
 - **Parte no cliente cargada sin DNI ni CUIT, con el nombre de uno o varios clientes del estudio:** se pregunta si es alguno de ellos, mostrando sus datos para distinguir homónimos (RF-19).
+- **Abogado patrocinante:**
+  - Contraparte sin abogado conocido todavía (por ejemplo, antes de que conteste la demanda): se deja sin cargar y se agrega después modificando la parte (RF-15, RF-21).
+  - Parte no cliente que, al responder la pregunta de RF-16 o RF-19, se vincula como cliente: no conserva el abogado patrocinante, porque la patrocina el estudio (RF-15).
+  - Mismo abogado escrito de formas distintas ("Pérez, Juan" y "Juan Pérez"): el sistema no puede saber que es el mismo, porque es texto libre. La búsqueda por fragmento ("Pérez") encuentra los dos (RF-37).
+  - Parte desvinculada: conserva su abogado patrocinante, como el resto de sus datos (RF-22).
+  - Abogado patrocinante con `<`, `>` u otros signos fuera de RF-4: se rechaza (RF-15).
+- **Nombre, apellido o razón social de una parte no cliente con `<`, `{`, `=` u otros signos fuera de RF-4:** se rechaza al agregarla y al modificarla (RF-15, RF-21). Los apóstrofos, guiones, puntos, comas y `&` se aceptan ("O'Connor", "Gómez & Cía. S.A."). Una parte cargada antes con esos signos se sigue mostrando, pero para modificar sus datos hay que corregirlos.
 - **Parte no cliente con DNI o CUIT que no es de ningún cliente:** no se compara por nombre contra los clientes, porque todo cliente tiene DNI o CUIT y el documento ya indica que es otra persona.
 - **Desvincular la única parte:** se rechaza (RF-23).
 - **Parte desvinculada por error:** se la vuelve a vincular desde la causa (RF-24).
@@ -149,6 +160,7 @@ Hoy el estudio no tiene en el sistema un registro único de sus causas: qué exp
 - **Búsquedas:**
   - Con un fragmento, en mayúsculas o sin tildes ("PEREZ", "ere"): encuentra las causas de "Pérez" (RF-37).
   - Con DNI o CUIT escrito con puntos o guiones: encuentra la causa igual (RF-37).
+  - Con el apellido del abogado patrocinante de una contraparte: encuentra las causas en las que patrocina a una parte vigente, no aquellas en las que la parte fue desvinculada (RF-37).
 - **Causa desactivada:**
   - Intento de editarla: se rechaza hasta reactivarla (RF-41).
   - Archivada o Finalizada: sigue activa, aparece en el listado y el cliente la sigue viendo. Solo la desactivación la quita (RF-26, RF-40).
@@ -166,7 +178,7 @@ Hoy el estudio no tiene en el sistema un registro único de sus causas: qué exp
 - Controlar conflictos de intereses entre clientes de una misma causa.
 - Avisar, al crear la cuenta de un cliente, que ya figura como parte no cliente: se avisa al vincularlo como parte (RF-20).
 - Catálogo administrable de juzgados.
-- Datos de contacto, domicilio o abogados de la contraparte.
+- Datos de contacto o domicilio de la contraparte, y de su abogado patrocinante más que su apellido y nombre (matrícula, domicilio, teléfono o email). Tampoco un catálogo de abogados de la contraparte.
 - Permisos por causa: todos los integrantes ven y editan todas.
 - Borrado definitivo de causas, partes o clientes.
 - Historial completo de cambios sobre las causas: solo se guardan la creación, la última modificación, la desactivación y la reactivación. No se registra quién desvinculó cada parte ni cuándo.
@@ -178,6 +190,7 @@ Hoy el estudio no tiene en el sistema un registro único de sus causas: qué exp
 - Tests que verifiquen:
   - Que un cliente queda vinculado a una causa solo mientras es parte vigente y la causa está activa, cualquiera sea su estado (RF-26, RF-27, RF-42).
   - Que un cliente o un visitante no puede consultar ni gestionar causas (RF-44).
+  - Que el abogado patrocinante se guarda, se modifica y se borra en una parte no cliente, se rechaza en una parte cliente y con caracteres no permitidos, y se encuentra con el buscador (RF-15, RF-21, RF-37).
 - `pnpm test` y `pnpm lint` sin errores.
 - Demo manual:
   1. Con un abogado, dar de alta una causa sin número de expediente, con una parte cliente, una parte no cliente y un colaborador desactivado. Verificar que la causa se crea y que se informa el colaborador rechazado.
@@ -189,7 +202,7 @@ Hoy el estudio no tiene en el sistema un registro único de sus causas: qué exp
      - Una parte no cliente con el DNI de un cliente.
      - Una con un nombre ya cargado en la causa.
      - Una sin DNI con el nombre de un cliente del estudio.
-  4. Agregar colaboradores.
+  4. Cargar el abogado patrocinante de la parte no cliente, verificar que se muestra en la causa, modificarlo y buscar la causa por su apellido. Agregar colaboradores.
   5. Buscar la causa por fragmento de carátula, por número con otro separador y por DNI del cliente, en mayúsculas y sin tildes, y usar cada filtro.
   6. Desvincular la parte cliente, verificar que deja de estar vinculado, consultarla entre las desvinculadas y volver a vincularla.
   7. Desactivar al abogado responsable y verificar el aviso y el filtro.

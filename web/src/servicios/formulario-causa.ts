@@ -28,6 +28,7 @@ import {
 const MAX_CARATULA_LENGTH = 255;
 const MAX_CASE_NUMBER_LENGTH = 50;
 const MAX_COURT_LENGTH = 150;
+const MAX_COUNSEL_LENGTH = 110;
 
 const ALLOWED_SYMBOLS = '. , ; : / - _ ( ) " \' $ & # ° º ª';
 const ALLOWED_CHARACTERS = /^[\p{L}\p{N} .,;:/\-_()"'$&#°ºª]*$/u;
@@ -171,6 +172,7 @@ export interface PartyForm {
   razonSocial: string;
   dni: string;
   cuit: string;
+  abogadoPatrocinante: string;
 }
 
 export const EMPTY_PARTY_FORM: PartyForm = {
@@ -183,23 +185,31 @@ export const EMPTY_PARTY_FORM: PartyForm = {
   razonSocial: '',
   dni: '',
   cuit: '',
+  abogadoPatrocinante: '',
 };
 
-function requiredName(value: string, label: string, required: string): string | null {
-  if (isBlank(value)) return required;
-  return fitsMaxLength(value.trim(), MAX_TEXT_LENGTH)
-    ? null
-    : `${label} no puede tener más de ${MAX_TEXT_LENGTH} caracteres`;
-}
+/** Nombre, apellido o razón social: obligatorio, hasta 55 caracteres y los de RF-4. */
+const requiredName = (value: string, label: string, required: string) =>
+  causaTextProblem(value, label, MAX_TEXT_LENGTH, required);
 
-/** Problemas de la parte (RF-15): cliente elegido, o datos según el tipo de persona. */
+/**
+ * Problemas de la parte (RF-15): cliente elegido, o datos según el tipo de persona y, de
+ * cualquier tipo, el abogado patrocinante opcional. Los textos siguen las reglas de la
+ * carátula (RF-4).
+ */
 export function validatePartyForm(form: PartyForm): string[] {
   if (form.modo === 'cliente') return form.clienteId === null ? ['Elegí el cliente'] : [];
+  const counsel = causaTextProblem(
+    form.abogadoPatrocinante,
+    'El abogado patrocinante',
+    MAX_COUNSEL_LENGTH,
+  );
   if (form.tipoPersona === 'fisica') {
     return onlyProblems([
       requiredName(form.nombre, 'El nombre', 'El nombre es obligatorio'),
       requiredName(form.apellido, 'El apellido', 'El apellido es obligatorio'),
       isBlank(form.dni) ? null : validateDni(form.dni),
+      counsel,
     ]);
   }
   return onlyProblems([
@@ -209,26 +219,31 @@ export function validatePartyForm(form: PartyForm): string[] {
       'La razón social es obligatoria para personas jurídicas',
     ),
     isBlank(form.cuit) ? null : validateCuit(form.cuit),
+    counsel,
   ]);
 }
 
 /** Datos de la parte para la API: solo los campos de su forma (RF-14, RF-15). */
 export function buildPartyData(form: PartyForm): NewPartyData {
   if (form.modo === 'cliente') return { rol: form.rol, clienteId: form.clienteId! };
+  const counsel = clean(form.abogadoPatrocinante);
+  const withCounsel = counsel === '' ? {} : { abogadoPatrocinante: counsel };
   if (form.tipoPersona === 'fisica') {
     return {
       rol: form.rol,
       tipoPersona: 'fisica',
-      nombre: form.nombre.trim(),
-      apellido: form.apellido.trim(),
+      nombre: clean(form.nombre),
+      apellido: clean(form.apellido),
       ...(isBlank(form.dni) ? {} : { dni: normalizeDocumentNumber(form.dni) }),
+      ...withCounsel,
     };
   }
   return {
     rol: form.rol,
     tipoPersona: 'juridica',
-    razonSocial: form.razonSocial.trim(),
+    razonSocial: clean(form.razonSocial),
     ...(isBlank(form.cuit) ? {} : { cuit: normalizeDocumentNumber(form.cuit) }),
+    ...withCounsel,
   };
 }
 
@@ -243,6 +258,7 @@ export function partyFormFrom(parte: ParteDetalle): PartyForm {
     razonSocial: parte.razonSocial ?? '',
     dni: parte.dni ?? '',
     cuit: parte.cuit ?? '',
+    abogadoPatrocinante: parte.abogadoPatrocinante ?? '',
   };
 }
 

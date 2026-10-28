@@ -14,6 +14,7 @@ const pedro = testParte({
   nombre: 'Pedro',
   apellido: 'López',
   dni: '20111222',
+  abogadoPatrocinante: 'Martínez, Laura',
 });
 const ana = testParte({
   id: 2,
@@ -61,6 +62,12 @@ describe('TablaPartes (RF-12 a RF-25)', () => {
 
     expect(within(activeRow('Pedro López')).getByText('Actor')).toBeTruthy();
     expect(within(activeRow('Pedro López')).getByText('DNI 20.111.222')).toBeTruthy();
+    expect(within(activeRow('Pedro López')).getByText('Martínez, Laura')).toBeTruthy();
+    expect(
+      within(screen.getByRole('table', { name: 'Partes vigentes' })).getByRole('columnheader', {
+        name: 'Abogado patrocinante',
+      }),
+    ).toBeTruthy();
     expect(within(activeRow('Ana Gómez')).getByText('Cliente (desactivado)')).toBeTruthy();
     const unlinked = screen.getByRole('table', { name: 'Partes desvinculadas' });
     expect(within(unlinked).getByText('Marta Ruiz')).toBeTruthy();
@@ -206,6 +213,7 @@ describe('TablaPartes (RF-12 a RF-25)', () => {
         nombre: 'Pedro José',
         apellido: 'López',
         dni: '20111222',
+        abogadoPatrocinante: 'Martínez, Laura',
       });
     });
 

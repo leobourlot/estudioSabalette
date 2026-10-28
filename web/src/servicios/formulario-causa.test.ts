@@ -220,6 +220,24 @@ describe('formulario de parte (RF-13 a RF-15)', () => {
     ]);
   });
 
+  it('acepta un abogado patrocinante de hasta 110 caracteres, y vacío', () => {
+    expect(validatePartyForm({ ...NATURAL_PERSON, abogadoPatrocinante: 'a'.repeat(110) })).toEqual(
+      [],
+    );
+    expect(validatePartyForm({ ...NATURAL_PERSON, abogadoPatrocinante: '  ' })).toEqual([]);
+  });
+
+  it('acepta en los nombres apóstrofo, guion, punto, coma y "&"', () => {
+    expect(validatePartyForm({ ...NATURAL_PERSON, apellido: "O'Connor-Peña" })).toEqual([]);
+    expect(
+      validatePartyForm({
+        ...NATURAL_PERSON,
+        tipoPersona: 'juridica',
+        razonSocial: 'Gómez & Cía., S.A.',
+      }),
+    ).toEqual([]);
+  });
+
   it('acepta una persona física o jurídica no cliente, con o sin documento', () => {
     expect(validatePartyForm(NATURAL_PERSON)).toEqual([]);
     expect(validatePartyForm({ ...NATURAL_PERSON, dni: '30.123.456' })).toEqual([]);
@@ -255,6 +273,26 @@ describe('formulario de parte (RF-13 a RF-15)', () => {
       { tipoPersona: 'juridica', razonSocial: 'Gómez S.A.', cuit: '30712345672' },
       ['El CUIT debe tener 11 dígitos y un dígito verificador válido'],
     ],
+    [
+      'el abogado patrocinante es largo',
+      { abogadoPatrocinante: 'a'.repeat(111) },
+      ['El abogado patrocinante no puede tener más de 110 caracteres'],
+    ],
+    [
+      'el nombre y el apellido tienen signos no permitidos',
+      { nombre: 'Juan <script>', apellido: 'Pérez = {x}' },
+      [allowedCharactersMessage('El nombre'), allowedCharactersMessage('El apellido')],
+    ],
+    [
+      'la razón social tiene signos no permitidos',
+      { tipoPersona: 'juridica', razonSocial: 'Gómez [S.A.] | Cía' },
+      [allowedCharactersMessage('La razón social')],
+    ],
+    [
+      'el abogado patrocinante tiene signos no permitidos',
+      { tipoPersona: 'juridica', razonSocial: 'Gómez S.A.', abogadoPatrocinante: '<b>Pérez</b>' },
+      [allowedCharactersMessage('El abogado patrocinante')],
+    ],
   ])('rechaza si %s', (_case, changes, messages) => {
     expect(validatePartyForm({ ...NATURAL_PERSON, ...changes })).toEqual(messages);
   });
@@ -282,6 +320,31 @@ describe('formulario de parte (RF-13 a RF-15)', () => {
         dni: '30123456',
       });
       expect(buildPartyData(NATURAL_PERSON)).not.toHaveProperty('dni');
+    });
+
+    it('envía el abogado patrocinante recortado solo si está cargado, de cualquier tipo de persona', () => {
+      expect(
+        buildPartyData({ ...NATURAL_PERSON, abogadoPatrocinante: ' Martínez, Laura ' }),
+      ).toMatchObject({ abogadoPatrocinante: 'Martínez, Laura' });
+      expect(
+        buildPartyData({
+          ...NATURAL_PERSON,
+          tipoPersona: 'juridica',
+          razonSocial: 'Gómez S.A.',
+          abogadoPatrocinante: 'Martínez, Laura',
+        }),
+      ).toMatchObject({ abogadoPatrocinante: 'Martínez, Laura' });
+      expect(buildPartyData({ ...NATURAL_PERSON, abogadoPatrocinante: ' ' })).not.toHaveProperty(
+        'abogadoPatrocinante',
+      );
+      expect(
+        buildPartyData({
+          ...NATURAL_PERSON,
+          modo: 'cliente',
+          clienteId: 5,
+          abogadoPatrocinante: 'Martínez, Laura',
+        }),
+      ).toEqual({ rol: 'actor', clienteId: 5 });
     });
 
     it('una persona jurídica envía la razón social y el CUIT normalizado si lo tiene', () => {
@@ -314,6 +377,7 @@ describe('formulario de parte (RF-13 a RF-15)', () => {
       razonSocial: null,
       dni: '30123456',
       cuit: null,
+      abogadoPatrocinante: 'Martínez, Laura',
     };
 
     expect(partyFormFrom(nonClient)).toEqual({
@@ -326,6 +390,7 @@ describe('formulario de parte (RF-13 a RF-15)', () => {
       razonSocial: '',
       dni: '30123456',
       cuit: '',
+      abogadoPatrocinante: 'Martínez, Laura',
     });
     expect(partyFormFrom({ ...nonClient, esCliente: true, clienteId: 5 })).toMatchObject({
       modo: 'cliente',

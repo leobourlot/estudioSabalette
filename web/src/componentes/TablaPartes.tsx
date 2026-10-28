@@ -43,7 +43,8 @@ function clientMark(parte: ParteDetalle): string {
 const buttonClass = `text-sm ${TEXT_LINK}`;
 
 /**
- * Partes de una causa (RF-12 a RF-25): vigentes y desvinculadas. Permite agregar, modificar,
+ * Partes de una causa (RF-12 a RF-25): vigentes y desvinculadas, con el abogado patrocinante de
+ * las que no son clientes (RF-15). Permite agregar, modificar,
  * desvincular y volver a vincular partes, respondiendo las preguntas de la API (RF-16,
  * RF-19). De una parte cliente solo se modifica el rol (RF-21). En una causa desactivada no
  * ofrece acciones (RF-41).
@@ -157,41 +158,50 @@ export function TablaPartes({ causa, onChanged }: TablaPartesProps) {
         </p>
       )}
 
-      <table aria-label="Partes vigentes" className="w-full text-left text-sm">
-        <thead className="text-slate-600">
-          <tr>
-            <th className="py-1 font-medium">Parte</th>
-            <th className="py-1 font-medium">Documento</th>
-            <th className="py-1 font-medium">Rol</th>
-            <th className="py-1 font-medium">Tipo</th>
-            {canEdit && <th className="py-1 font-medium">Acciones</th>}
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-slate-200">
-          {causa.partes.map((parte) => (
-            <tr key={parte.id}>
-              <td className="py-1">{partyName(parte)}</td>
-              <td className="py-1">{partyDocument(parte) ?? EMPTY_VALUE}</td>
-              <td className="py-1">{rolProcesalLabel(parte.rol)}</td>
-              <td className="py-1">{clientMark(parte)}</td>
-              {canEdit && (
-                <td className="flex gap-3 py-1">
-                  <button
-                    type="button"
-                    onClick={() => open({ kind: 'edit', parte })}
-                    className={buttonClass}
-                  >
-                    Modificar
-                  </button>
-                  <button type="button" onClick={() => void unlink(parte)} className={buttonClass}>
-                    Desvincular
-                  </button>
-                </td>
-              )}
+      {/* En un celular, las tablas se desplazan dentro de la tarjeta (spec 008). */}
+      <div className="overflow-x-auto">
+        <table aria-label="Partes vigentes" className="w-full text-left text-sm">
+          <thead className="text-slate-600">
+            <tr>
+              <th className="py-1 font-medium">Parte</th>
+              <th className="py-1 font-medium">Documento</th>
+              <th className="py-1 font-medium">Rol</th>
+              <th className="py-1 font-medium">Tipo</th>
+              <th className="py-1 font-medium">Abogado patrocinante</th>
+              {canEdit && <th className="py-1 font-medium">Acciones</th>}
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody className="divide-y divide-slate-200">
+            {causa.partes.map((parte) => (
+              <tr key={parte.id}>
+                <td className="py-1">{partyName(parte)}</td>
+                <td className="py-1">{partyDocument(parte) ?? EMPTY_VALUE}</td>
+                <td className="py-1">{rolProcesalLabel(parte.rol)}</td>
+                <td className="py-1">{clientMark(parte)}</td>
+                <td className="py-1">{parte.abogadoPatrocinante ?? EMPTY_VALUE}</td>
+                {canEdit && (
+                  <td className="flex gap-3 py-1">
+                    <button
+                      type="button"
+                      onClick={() => open({ kind: 'edit', parte })}
+                      className={buttonClass}
+                    >
+                      Modificar
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => void unlink(parte)}
+                      className={buttonClass}
+                    >
+                      Desvincular
+                    </button>
+                  </td>
+                )}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {editing && (
         <div className="space-y-3 rounded border border-slate-200 p-4">
@@ -217,32 +227,35 @@ export function TablaPartes({ causa, onChanged }: TablaPartesProps) {
       {causa.partesDesvinculadas.length > 0 && (
         <div className="space-y-2">
           <h3 className="text-sm font-semibold text-slate-700">Partes desvinculadas</h3>
-          <table
-            aria-label="Partes desvinculadas"
-            className="w-full text-left text-sm text-slate-600"
-          >
-            <tbody className="divide-y divide-slate-200">
-              {causa.partesDesvinculadas.map((parte) => (
-                <tr key={parte.id}>
-                  <td className="py-1">{partyName(parte)}</td>
-                  <td className="py-1">{partyDocument(parte) ?? EMPTY_VALUE}</td>
-                  <td className="py-1">{rolProcesalLabel(parte.rol)}</td>
-                  <td className="py-1">{clientMark(parte)}</td>
-                  {canEdit && (
-                    <td className="py-1">
-                      <button
-                        type="button"
-                        onClick={() => void relink(parte)}
-                        className={buttonClass}
-                      >
-                        Volver a vincular
-                      </button>
-                    </td>
-                  )}
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto">
+            <table
+              aria-label="Partes desvinculadas"
+              className="w-full text-left text-sm text-slate-600"
+            >
+              <tbody className="divide-y divide-slate-200">
+                {causa.partesDesvinculadas.map((parte) => (
+                  <tr key={parte.id}>
+                    <td className="py-1">{partyName(parte)}</td>
+                    <td className="py-1">{partyDocument(parte) ?? EMPTY_VALUE}</td>
+                    <td className="py-1">{rolProcesalLabel(parte.rol)}</td>
+                    <td className="py-1">{clientMark(parte)}</td>
+                    <td className="py-1">{parte.abogadoPatrocinante ?? EMPTY_VALUE}</td>
+                    {canEdit && (
+                      <td className="py-1">
+                        <button
+                          type="button"
+                          onClick={() => void relink(parte)}
+                          className={buttonClass}
+                        >
+                          Volver a vincular
+                        </button>
+                      </td>
+                    )}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </section>

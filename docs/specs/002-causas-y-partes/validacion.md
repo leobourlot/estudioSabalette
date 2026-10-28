@@ -34,7 +34,7 @@ Rutas abreviadas:
 | RF-12 | Consulta con partes vigentes y desvinculadas, abogados y registro | U `causa-detalle.spec.ts`; E `alta-causas`, `desvinculacion-partes`; W `PanelCausaDetalle.test.tsx`, `TablaPartes.test.tsx` | ✅ |
 | RF-13 | Rol procesal de la lista cerrada | U `entidades.spec.ts`, `dto/parte.dto.spec.ts`; W `FormularioParte.test.tsx` | ✅ |
 | RF-14 | Parte cliente con los datos de su cuenta | U `causa-detalle.spec.ts`, `reglas-causas.spec.ts`; E `partes-cliente-alta`, `partes-causas` | ✅ |
-| RF-15 | Parte no cliente: tipo de persona, nombre o razón social, DNI/CUIT opcional | U `dto/parte.dto.spec.ts`; E `alta-causas`, `partes-causas`; W `FormularioParte.test.tsx`, `formulario-causa.test.ts` | ✅ |
+| RF-15 | Parte no cliente: tipo de persona, nombre o razón social (con los caracteres de RF-4), DNI/CUIT y abogado patrocinante opcionales | U `dto/parte.dto.spec.ts`; E `alta-causas`, `partes-causas`; W `FormularioParte.test.tsx`, `formulario-causa.test.ts` | ✅ |
 | RF-16 | Pregunta por DNI/CUIT de un cliente (activo o desactivado), al agregar y al modificar | E `preguntas-partes-alta`, `partes-causas`; W `preguntas.test.ts`, `PanelCausaNueva.test.tsx`, `TablaPartes.test.tsx` | ✅ |
 | RF-17 | No vincular a un cliente desactivado | E `partes-cliente-alta`, `alta-parcial-causas`, `partes-causas`, `desvinculacion-partes` | ✅ |
 | RF-18 | Persona repetida en la causa (cliente o DNI/CUIT) | U `reglas-causas.spec.ts`; E `partes-cliente-alta`, `partes-causas`, `desvinculacion-partes` | ✅ |
@@ -56,7 +56,7 @@ Rutas abreviadas:
 | RF-34 | Reemplazar o quitar abogados | E `abogados-causas`; W `EditorAbogados.test.tsx`, `PanelCausaDetalle.test.tsx` | ✅ |
 | RF-35 | Sin permisos por causa | E `acceso-causas` (un integrante que no interviene la edita) | ✅ |
 | RF-36 | Listado de a 20, orden por modificación o alta, columnas | E `listado-causas`; W `PanelCausas.test.tsx` | ✅ |
-| RF-37 | Búsqueda por fragmentos, sin mayúsculas ni tildes, con separadores y documentos normalizados | U `validadores/texto-causa.spec.ts`; E `busqueda-causas`; W `PanelCausas.test.tsx` | ✅ |
+| RF-37 | Búsqueda por fragmentos, sin mayúsculas ni tildes, con separadores y documentos normalizados, también por abogado patrocinante | U `validadores/texto-causa.spec.ts`; E `busqueda-causas`; W `PanelCausas.test.tsx` | ✅ |
 | RF-38 | Filtros combinables; responsables activos como opción | E `listado-causas`, `busqueda-causas`; W `PanelCausas.test.tsx`, `causas.test.ts` | ✅ |
 | RF-39 | Mostrar desactivadas | E `listado-causas`; W `PanelCausas.test.tsx` | ✅ |
 | RF-40 | Desactivar con registro; confirmación en la interfaz | E `desactivacion-causas`; W `AccionesCausa.test.tsx`, `PanelCausaDetalle.test.tsx` | ✅ |

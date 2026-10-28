@@ -87,6 +87,7 @@ Mismas convenciones que en la spec 001: `DATETIME` en hora de Buenos Aires, tabl
 | `tipoPersona` | enum `fisica`, `juridica`, nullable | Solo partes no cliente. RF-15 |
 | `nombre`, `apellido` | varchar(55), nullable | Solo partes no cliente, persona física. |
 | `razonSocial` | varchar(55), nullable | Solo partes no cliente, persona jurídica. |
+| `abogadoPatrocinante` | varchar(110), nullable | Solo partes no cliente, de cualquier tipo de persona. Lo agrega la migración `AgregarAbogadoPatrocinanteAPartes`. |
 | `dni` | varchar(8), nullable | Opcional; solo persona física no cliente. Sin índice único: la misma persona puede ser parte de varias causas. |
 | `cuit` | char(11), nullable | Opcional; solo persona jurídica no cliente. |
 | `vigente` | boolean, default true | RF-22, RF-24 |
@@ -143,7 +144,9 @@ La parte se modifica con `PUT` (reemplazo completo) y no con `PATCH`: si cambia 
 **Tipos:**
 - `ParteNueva`: hay dos formas.
   - Parte cliente: `{ rol, clienteId }`.
-  - Parte no cliente: `{ rol, tipoPersona, nombre?, apellido?, razonSocial?, dni?, cuit?, confirmarDocumentoDeCliente?, confirmarNombreRepetido?, confirmarNombreDeCliente? }`.
+  - Parte no cliente: `{ rol, tipoPersona, nombre?, apellido?, razonSocial?, dni?, cuit?, abogadoPatrocinante?, confirmarDocumentoDeCliente?, confirmarNombreRepetido?, confirmarNombreDeCliente? }`.
+    - `abogadoPatrocinante`: opcional, con `toOptionalCausaText` y `causaText` (hasta 110 caracteres, los de RF-4). Una parte cliente que lo trae se rechaza con "Una parte cliente no lleva datos propios: se toman de su cuenta". Como los demás datos propios, al modificar la parte sin enviarlo queda sin informar.
+    - `nombre`, `apellido` y `razonSocial`: con `toCausaText` y `causaText` (hasta 55 caracteres, los de RF-4).
     - Persona física: se exigen `nombre` y `apellido`, y se rechazan `razonSocial` y `cuit`.
     - Persona jurídica: se exige `razonSocial`, y se rechazan `nombre`, `apellido` y `dni`.
     - DNI y CUIT se normalizan y validan con los validadores de la spec 001.
@@ -157,7 +160,7 @@ La parte se modifica con `PUT` (reemplazo completo) y no con `PATCH`: si cambia 
   - `colaboradores: IntegranteResumen[]`.
   - `partes` y `partesDesvinculadas`, las dos `ParteDetalle[]` (RF-12).
   - `creadoPor`, `modificadoPor`, `desactivadaPor`, `desactivadaEn`, `reactivadaPor` y `reactivadaEn`. Los autores van como `{ id, nombre, apellido }` o `null`.
-- `ParteDetalle`: `{ id, rol, esCliente, clienteId, clienteActivo, tipoPersona, nombre, apellido, razonSocial, dni, cuit }`. En una parte cliente, los datos de identificación salen de su cuenta (RF-14): nombre y apellido si es persona física, razón social si es jurídica. El contacto de una persona jurídica no se muestra como parte.
+- `ParteDetalle`: `{ id, rol, esCliente, clienteId, clienteActivo, tipoPersona, nombre, apellido, razonSocial, dni, cuit, abogadoPatrocinante }` (`abogadoPatrocinante` siempre `null` en una parte cliente). En una parte cliente, los datos de identificación salen de su cuenta (RF-14): nombre y apellido si es persona física, razón social si es jurídica. El contacto de una persona jurídica no se muestra como parte.
 
 **Mensajes de 400** (por campo, como en la spec 001) [RF-5, RF-15]:
 - Carátula: "La carátula es obligatoria" y "La carátula no puede tener más de 255 caracteres".
@@ -166,7 +169,7 @@ La parte se modifica con `PUT` (reemplazo completo) y no con `PATCH`: si cambia 
 - Caracteres: "<Campo> solo puede tener letras, números, espacios y los símbolos . , ; : / - _ ( ) \" ' $ & # ° º ª" (RF-4).
 - Listas cerradas: "El fuero debe ser civil, penal, familia, laboral, federal u otro", "El estado debe ser en trámite, paralizada, archivada o finalizada" y "El rol procesal debe ser actor, demandado, tercero u otro".
 - Partes y abogados: "La causa debe tener al menos una parte" y "El responsable debe ser un integrante del estudio".
-- Los de nombre, apellido, razón social, DNI y CUIT de la spec 001, y los de campos desconocidos.
+- Los de nombre, apellido, razón social, DNI y CUIT de la spec 001, el de caracteres para nombre, apellido y razón social, y los de campos desconocidos.
 
 **Preguntas (409 con `codigo`):**
 | `codigo` | Mensaje | Datos extra | Se responde con | RF |
@@ -203,7 +206,7 @@ Las reglas que no necesitan la base viven en `causas/reglas-causas.ts` como func
 Los services las consultan.
 
 ### Caracteres permitidos [RF-4]
-`validadores/texto-causa.ts`. El texto se normaliza a NFC antes de validar, para que una letra con tilde escrita como dos caracteres (letra más tilde combinable) cuente como una sola. Después se valida con `^[\p{L}\p{N} .,;:/\-_()"'$&#°ºª]*$` (con la bandera `u`). Ese patrón excluye emojis, saltos de línea y tabulaciones. Se aplica a la carátula, el número de expediente, el número del expediente principal y el juzgado. `web/src/servicios/formulario-causa.ts` repite la misma regla.
+`validadores/texto-causa.ts`. El texto se normaliza a NFC antes de validar, para que una letra con tilde escrita como dos caracteres (letra más tilde combinable) cuente como una sola. Después se valida con `^[\p{L}\p{N} .,;:/\-_()"'$&#°ºª]*$` (con la bandera `u`). Ese patrón excluye emojis, saltos de línea y tabulaciones. Se aplica a la carátula, el número de expediente, el número del expediente principal y el juzgado, y en las partes no cliente al nombre, el apellido, la razón social y el abogado patrocinante (RF-15). `web/src/servicios/formulario-causa.ts` repite la misma regla.
 
 ### Bloqueo por causa [RF-18, RF-23, RF-31, RF-41]
 Toda escritura sobre una causa existente (datos, partes, abogados, desactivación, reactivación) corre en una transacción que empieza con `SELECT … FOR UPDATE` sobre la fila de la causa. Así, dos operaciones simultáneas sobre la misma causa se ejecutan de a una, y la segunda ve el resultado de la primera (caso límite de concurrencia). Dentro de la misma transacción:
@@ -317,6 +320,7 @@ Desactivar una cuenta (spec 001) no toca causas ni partes (RF-28, RF-32). El avi
     parte vigente de la causa (con su cliente y su usuario, si es cliente) donde
       nombre, apellido, razonSocial, CONCAT_WS(' ', nombre, apellido) o CONCAT_WS(' ', apellido, nombre) LIKE t
       (de la parte no cliente, o de la cuenta si es cliente persona física; razón social si es jurídica)
+      o parte.abogadoPatrocinante LIKE t
       o, si el texto normalizado son solo dígitos, dni o cuit LIKE dígitos
   )
   ```

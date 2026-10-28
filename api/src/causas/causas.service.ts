@@ -100,8 +100,8 @@ const escapeLike = (value: string) => value.replace(/[\\%_]/g, (char) => `\\${ch
 
 /**
  * Partes vigentes de la causa que coinciden con la búsqueda (RF-37): nombre, apellido,
- * ambos en los dos órdenes o razón social de la parte no cliente; los mismos datos de la
- * cuenta de una parte cliente (la razón social, no el contacto, en una persona jurídica); y,
+ * ambos en los dos órdenes, razón social o abogado patrocinante de la parte no cliente; los
+ * mismos datos de la cuenta de una parte cliente (la razón social, no el contacto, en una persona jurídica); y,
  * si el texto son dígitos, el DNI o el CUIT. Con EXISTS una causa aparece una sola vez.
  */
 function partySearchSql(searchDocuments: boolean): string {
@@ -121,7 +121,7 @@ function partySearchSql(searchDocuments: boolean): string {
     LEFT JOIN clientes cliente ON cliente.usuarioId = parte.clienteId
     LEFT JOIN usuarios usuarioCliente ON usuarioCliente.id = parte.clienteId
     WHERE parte.causaId = causa.id AND parte.vigente = 1 AND (
-      ${names('parte')} OR parte.razonSocial LIKE :text
+      ${names('parte')} OR parte.razonSocial LIKE :text OR parte.abogadoPatrocinante LIKE :text
       OR (cliente.tipoPersona = 'fisica' AND (${names('usuarioCliente')}))
       OR cliente.razonSocial LIKE :text${documents}
     )
@@ -146,6 +146,7 @@ function toParteRow(parte: CreateParteDto | UpdateParteDto, causaId: number, act
     razonSocial: isClient ? null : (parte.razonSocial ?? null),
     dni: isClient ? null : (parte.dni ?? null),
     cuit: isClient ? null : (parte.cuit ?? null),
+    abogadoPatrocinante: isClient ? null : (parte.abogadoPatrocinante ?? null),
     vigente: true,
     creadoPorId: actorId,
   };
@@ -463,11 +464,17 @@ export class CausasService {
 
       const others = await this.loadActiveParties(manager, causaId, parte.id);
       const resolved = await this.partes.resolveNewParty(dto, others);
-      const { rol, clienteId, tipoPersona, nombre, apellido, razonSocial, dni, cuit } = toParteRow(
-        dto,
-        causaId,
-        actor.id,
-      );
+      const {
+        rol,
+        clienteId,
+        tipoPersona,
+        nombre,
+        apellido,
+        razonSocial,
+        dni,
+        cuit,
+        abogadoPatrocinante,
+      } = toParteRow(dto, causaId, actor.id);
       await manager.update(Parte, parte.id, {
         rol,
         clienteId,
@@ -477,6 +484,7 @@ export class CausasService {
         razonSocial,
         dni,
         cuit,
+        abogadoPatrocinante,
         ...audit,
       });
       return resolved;

@@ -2,6 +2,7 @@ import { plainToInstance } from 'class-transformer';
 import { validate } from 'class-validator';
 import { describe, expect, it } from 'vitest';
 import { formatValidationErrors } from '../../configuracion/errores-de-validacion.js';
+import { allowedCharactersMessage } from '../validadores/texto-causa.js';
 import {
   CreateParteDto,
   PARTE_MESSAGES,
@@ -170,6 +171,106 @@ describe('CreateParteDto (RF-13 a RF-15)', () => {
     ],
   ])('rechaza si %s', async (_case, plain, message) => {
     expect((await check(CreateParteDto, plain)).messages).toEqual([message]);
+  });
+});
+
+describe('caracteres del nombre, el apellido y la razón social (RF-15, RF-4)', () => {
+  it.each([
+    ['nombre', 'El nombre', NATURAL_PERSON],
+    ['apellido', 'El apellido', NATURAL_PERSON],
+    ['razonSocial', 'La razón social', LEGAL_PERSON],
+  ])('%s rechaza signos que permiten inyectar código', async (field, label, plain) => {
+    for (const value of [
+      'Pérez <script>',
+      'Pérez {x}',
+      'Pérez = Gómez',
+      'Pérez\nGómez',
+      'Pérez 😀',
+    ]) {
+      expect((await check(CreateParteDto, { ...plain, [field]: value })).messages).toEqual([
+        allowedCharactersMessage(label),
+      ]);
+    }
+  });
+
+  it('acepta apóstrofo, guion, punto, coma y "&", con las tildes unidas', async () => {
+    const natural = await check(CreateParteDto, {
+      ...NATURAL_PERSON,
+      nombre: ' José María '.normalize('NFD'),
+      apellido: "O'Connor-Peña",
+    });
+    const legal = await check(CreateParteDto, {
+      ...LEGAL_PERSON,
+      razonSocial: 'Gómez & Cía., S.A.',
+    });
+
+    expect(natural.messages).toEqual([]);
+    expect(natural.instance.nombre).toBe('José María'.normalize('NFC'));
+    expect(legal.messages).toEqual([]);
+  });
+
+  it('valida los caracteres también al modificar', async () => {
+    expect(
+      (await check(UpdateParteDto, { ...NATURAL_PERSON, apellido: 'Pérez <b>' })).messages,
+    ).toEqual([allowedCharactersMessage('El apellido')]);
+  });
+});
+
+describe('abogado patrocinante (RF-15)', () => {
+  it.each([
+    ['una persona física', NATURAL_PERSON],
+    ['una persona jurídica', LEGAL_PERSON],
+  ])('se acepta en %s, recortado y con las tildes unidas', async (_case, plain) => {
+    const { instance, messages } = await check(CreateParteDto, {
+      ...plain,
+      abogadoPatrocinante: '  Martínez, Laura ',
+    });
+
+    expect(messages).toEqual([]);
+    expect(instance.abogadoPatrocinante).toBe('Martínez, Laura'.normalize('NFC'));
+  });
+
+  it('vacío queda como no informado', async () => {
+    const { instance, messages } = await check(CreateParteDto, {
+      ...NATURAL_PERSON,
+      abogadoPatrocinante: '   ',
+    });
+
+    expect(messages).toEqual([]);
+    expect(instance.abogadoPatrocinante).toBeNull();
+  });
+
+  it('acepta 110 caracteres y rechaza 111', async () => {
+    const withLength = (length: number) =>
+      check(CreateParteDto, { ...NATURAL_PERSON, abogadoPatrocinante: 'a'.repeat(length) });
+
+    expect((await withLength(110)).messages).toEqual([]);
+    expect((await withLength(111)).messages).toEqual([
+      'El abogado patrocinante no puede tener más de 110 caracteres',
+    ]);
+  });
+
+  it.each(['Pérez <script>', 'Pérez {x}', 'Pérez = Gómez', 'Pérez\nGómez', 'Pérez 😀'])(
+    'rechaza signos fuera de RF-4: %s',
+    async (abogadoPatrocinante) => {
+      expect(
+        (await check(CreateParteDto, { ...NATURAL_PERSON, abogadoPatrocinante })).messages,
+      ).toEqual([allowedCharactersMessage('El abogado patrocinante')]);
+    },
+  );
+
+  it('se rechaza en una parte cliente', async () => {
+    expect(
+      (await check(CreateParteDto, { ...CLIENT_PARTY, abogadoPatrocinante: 'Martínez, Laura' }))
+        .messages,
+    ).toEqual([PARTE_MESSAGES.clientOwnData]);
+  });
+
+  it('al modificar, exige el tipo de persona como los demás datos propios', async () => {
+    expect(
+      (await check(UpdateParteDto, { rol: 'actor', abogadoPatrocinante: 'Martínez, Laura' }))
+        .messages,
+    ).toEqual([PARTE_MESSAGES.tipoPersonaRequired]);
   });
 });
 

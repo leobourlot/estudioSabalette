@@ -7,13 +7,21 @@ import {
   Rule,
   type RuleFn,
   toDocumentNumber,
-  trimText,
 } from '../../usuarios/dto/reglas.js';
 import { PERSON_TYPES, type TipoPersona } from '../../usuarios/cliente.entity.js';
 import { isValidCuit, isValidDni } from '../../usuarios/validadores/documentos.js';
-import { fitsMaxLength, MAX_TEXT_LENGTH } from '../../usuarios/validadores/longitudes.js';
+import { MAX_TEXT_LENGTH } from '../../usuarios/validadores/longitudes.js';
 import { PROCEDURAL_ROLES, type RolProcesal } from '../parte.entity.js';
-import { booleanRule, CAUSA_MESSAGES, enumRule, idRule } from './reglas-causa.js';
+import { MAX_COUNSEL_LENGTH } from '../validadores/longitudes.js';
+import {
+  booleanRule,
+  CAUSA_MESSAGES,
+  causaText,
+  enumRule,
+  idRule,
+  toCausaText,
+  toOptionalCausaText,
+} from './reglas-causa.js';
 
 export const PARTE_MESSAGES = {
   rol: 'El rol procesal debe ser actor, demandado, tercero u otro',
@@ -22,7 +30,14 @@ export const PARTE_MESSAGES = {
   tipoPersonaRequired: 'Indicá el tipo de persona de la parte',
 } as const;
 
-const OWN_DATA_FIELDS = ['nombre', 'apellido', 'razonSocial', 'dni', 'cuit'] as const;
+const OWN_DATA_FIELDS = [
+  'nombre',
+  'apellido',
+  'razonSocial',
+  'dni',
+  'cuit',
+  'abogadoPatrocinante',
+] as const;
 
 const isPresent = (value: unknown) => value !== undefined && value !== null && value !== '';
 const isClientParty = (object: Record<string, unknown>) => isPresent(object.clienteId);
@@ -55,10 +70,9 @@ const ownData =
     return format(value);
   };
 
-const maxText = (label: string) => (value: unknown) =>
-  fitsMaxLength(String(value), MAX_TEXT_LENGTH)
-    ? null
-    : `${label} no puede tener más de ${MAX_TEXT_LENGTH} caracteres`;
+/** Nombre, apellido o razón social: hasta 55 caracteres, los mismos que la carátula (RF-4). */
+const nameText = (label: string) => (value: unknown) =>
+  causaText(label, MAX_TEXT_LENGTH)(value, {});
 
 /** Tipo de persona: prohibido en una parte cliente; si no, missing decide qué pasa si falta. */
 const personType =
@@ -81,7 +95,7 @@ abstract class ParteDataDto {
   @Rule(optional(idRule(PARTE_MESSAGES.clienteId)))
   clienteId?: number;
 
-  @Transform(trimText)
+  @Transform(toCausaText)
   @Rule(
     ownData(
       'fisica',
@@ -89,12 +103,12 @@ abstract class ParteDataDto {
         required: 'El nombre es obligatorio',
         forbidden: 'El nombre solo corresponde a personas físicas',
       },
-      maxText('El nombre'),
+      nameText('El nombre'),
     ),
   )
   nombre?: string;
 
-  @Transform(trimText)
+  @Transform(toCausaText)
   @Rule(
     ownData(
       'fisica',
@@ -102,12 +116,12 @@ abstract class ParteDataDto {
         required: 'El apellido es obligatorio',
         forbidden: 'El apellido solo corresponde a personas físicas',
       },
-      maxText('El apellido'),
+      nameText('El apellido'),
     ),
   )
   apellido?: string;
 
-  @Transform(trimText)
+  @Transform(toCausaText)
   @Rule(
     ownData(
       'juridica',
@@ -115,7 +129,7 @@ abstract class ParteDataDto {
         required: 'La razón social es obligatoria para personas jurídicas',
         forbidden: 'La razón social solo corresponde a personas jurídicas',
       },
-      maxText('La razón social'),
+      nameText('La razón social'),
     ),
   )
   razonSocial?: string;
@@ -137,6 +151,14 @@ abstract class ParteDataDto {
     ),
   )
   cuit?: string | null;
+
+  /** Opcional, de cualquier tipo de persona; una parte cliente la patrocina el estudio (RF-15). */
+  @Transform(toOptionalCausaText)
+  @Rule((value, object) => {
+    if (isClientParty(object)) return isPresent(value) ? PARTE_MESSAGES.clientOwnData : null;
+    return causaText('El abogado patrocinante', MAX_COUNSEL_LENGTH)(value, object);
+  })
+  abogadoPatrocinante?: string | null;
 
   // Respuestas a las preguntas de RF-16 y RF-19.
   @Rule(optional(booleanRule(CAUSA_MESSAGES.confirmation)))

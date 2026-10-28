@@ -33,6 +33,8 @@ export interface ParteDetalle {
   razonSocial: string | null;
   dni: string | null;
   cuit: string | null;
+  /** Apellido y nombre, solo en una parte no cliente (RF-15). */
+  abogadoPatrocinante: string | null;
 }
 
 /** Causa como la devuelve el listado. Fechas en ISO. */
@@ -126,6 +128,7 @@ export interface NonClientPartyData extends PartyAnswers {
   razonSocial?: string;
   dni?: string | null;
   cuit?: string | null;
+  abogadoPatrocinante?: string;
 }
 
 export type NewPartyData = ClientPartyData | NonClientPartyData;

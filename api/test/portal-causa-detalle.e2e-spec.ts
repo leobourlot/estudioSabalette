@@ -88,7 +88,14 @@ describe('GET /api/portal/causas/:causaId', () => {
       creadoPorId: lawyer.id,
       colaboradorIds: [collaborator.id],
       partes: [
-        { rol: 'demandado', nombre: 'Pedro', apellido: 'López', dni: '20999888' },
+        {
+          rol: 'demandado',
+          nombre: 'Pedro',
+          apellido: 'López',
+          dni: '20999888',
+          // El abogado de la contraparte no llega al portal (RF-15).
+          abogadoPatrocinante: 'Iturraspe, Carla',
+        },
         { rol: 'actor', clienteId: client.id },
         { rol: 'demandado', nombre: 'Quique', apellido: 'Desvinculado', vigente: false },
       ],

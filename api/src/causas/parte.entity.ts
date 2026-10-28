@@ -63,6 +63,10 @@ export class Parte {
   @Column({ type: 'char', length: 11, nullable: true })
   cuit: string | null;
 
+  // Apellido y nombre, como texto libre; solo en una parte no cliente (RF-15).
+  @Column({ type: 'varchar', length: 110, nullable: true })
+  abogadoPatrocinante: string | null;
+
   // false cuando se desvincula; nunca se borran partes (RF-22, RF-24).
   @Column({ type: 'boolean', default: true })
   vigente: boolean;

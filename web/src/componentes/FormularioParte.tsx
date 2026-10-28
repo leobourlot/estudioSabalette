@@ -38,8 +38,9 @@ const fieldClass = INPUT;
 
 /**
  * Parte de una causa (RF-13 a RF-15): cliente del estudio, elegido con el buscador, o parte
- * no cliente con sus datos según el tipo de persona. Al modificar una parte cliente solo se
- * cambia el rol: sus datos se modifican desde su cuenta (RF-21).
+ * no cliente con sus datos según el tipo de persona y su abogado patrocinante opcional. Al
+ * modificar una parte cliente solo se cambia el rol: sus datos se modifican desde su cuenta
+ * (RF-21).
  */
 export function FormularioParte({
   value,
@@ -190,6 +191,13 @@ export function FormularioParte({
               />
             </div>
           )}
+
+          <CampoTexto
+            id="parteAbogadoPatrocinante"
+            label="Abogado patrocinante, apellido y nombre (opcional)"
+            value={value.abogadoPatrocinante}
+            onChange={set('abogadoPatrocinante')}
+          />
         </>
       )}
 

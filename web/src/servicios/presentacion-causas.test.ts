@@ -38,6 +38,7 @@ const party = (overrides: Partial<ParteDetalle> = {}): ParteDetalle => ({
   razonSocial: null,
   dni: null,
   cuit: null,
+  abogadoPatrocinante: null,
   ...overrides,
 });
 

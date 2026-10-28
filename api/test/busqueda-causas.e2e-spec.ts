@@ -54,7 +54,15 @@ describe('GET /api/panel/causas?buscar=', () => {
         caratula: 'Pérez, Juan c/ Gómez S.A. s/ daños',
         numeroExpediente: '1234/2024',
         fuero: 'civil',
-        partes: [{ clienteId: ana.id }, { nombre: 'Pedro', apellido: 'López', dni: '20111222' }],
+        partes: [
+          { clienteId: ana.id },
+          {
+            nombre: 'Pedro',
+            apellido: 'López',
+            dni: '20111222',
+            abogadoPatrocinante: 'Fernández Ocampo, Raúl',
+          },
+        ],
       })
     ).id;
     ids.C2 = (
@@ -71,7 +79,12 @@ describe('GET /api/panel/causas?buscar=', () => {
             razonSocial: 'Zeta S.R.L.',
             cuit: '30712345671',
           },
-          { nombre: 'Marta', apellido: 'Ruiz', vigente: false },
+          {
+            nombre: 'Marta',
+            apellido: 'Ruiz',
+            vigente: false,
+            abogadoPatrocinante: 'Iturraspe, Carla',
+          },
         ],
       })
     ).id;
@@ -142,6 +155,13 @@ describe('GET /api/panel/causas?buscar=', () => {
 
   it('no encuentra partes desvinculadas', async () => {
     expect(await search('ruiz')).toEqual([]);
+  });
+
+  it('busca por el abogado patrocinante de una parte vigente no cliente (RF-37)', async () => {
+    expect(await search('fernandez ocampo')).toEqual([ids.C1]);
+    expect(await search('RAUL')).toEqual([ids.C1]);
+    // El de la parte desvinculada no cuenta.
+    expect(await search('iturraspe')).toEqual([]);
   });
 
   it('trata % y _ como texto', async () => {

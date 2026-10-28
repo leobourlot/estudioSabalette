@@ -301,6 +301,7 @@ Buena parte de los escritos que presenta el estudio (demandas, contestaciones, o
 
 ## Fuera de alcance
 - Guardar los escritos completados, su historial o un registro de qué modelo se usó en qué causa.
+- Una variable con el abogado patrocinante de las partes que no son clientes (spec 002, RF-15). Por ahora se escribe a mano en el procesador de textos.
 - Registro de accesos del panel y límite de escritos completados por integrante.
 - Vaciar el portapapeles al pegar el escrito, al vencer la sesión o en el historial del portapapeles del equipo: el navegador no lo permite.
 - Descargar, imprimir o exportar el escrito a Word, PDF u otro formato, y enviarlo por email.
