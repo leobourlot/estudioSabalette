@@ -14,6 +14,8 @@ export interface UsuarioPropio {
   rol: Rol;
   esPrincipal: boolean;
   email: string | null;
+  /** DNI de un integrante; el de un cliente persona física va en `cliente.dni`. */
+  dni: string | null;
   nombre: string;
   apellido: string;
   debeCambiarContrasena: boolean;
@@ -72,8 +74,8 @@ export function canAccess(path: string, usuario: UsuarioPropio | null): AccessDe
 
 export function createSessionService(http: HttpClient) {
   return {
-    login: (email: string, contrasena: string) =>
-      http.post<UsuarioPropio>('/sesion/ingresar', { email, contrasena }),
+    login: (documento: string, contrasena: string) =>
+      http.post<UsuarioPropio>('/sesion/ingresar', { documento, contrasena }),
 
     logout: () => http.post<void>('/sesion/cerrar'),
 

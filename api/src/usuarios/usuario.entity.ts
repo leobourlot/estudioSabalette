@@ -32,6 +32,12 @@ export class Usuario {
   @Column({ type: 'varchar', length: 254, nullable: true })
   email: string | null;
 
+  // Solo integrantes: 7 u 8 dígitos. El DNI de los clientes vive en `clientes` (RF-2, RF-3).
+  // Null en los clientes y en los integrantes cargados antes de que existiera (spec 001, RF-8).
+  @Index('UQ_usuarios_dni', { unique: true })
+  @Column({ type: 'varchar', length: 8, nullable: true })
+  dni: string | null;
+
   // En personas jurídicas: nombre y apellido de la persona de contacto.
   @Column({ type: 'varchar', length: 55 })
   nombre: string;

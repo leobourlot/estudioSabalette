@@ -44,7 +44,7 @@ describe('restablecimiento de contraseña y liberación de email', () => {
       nombre: 'Mario',
       apellido: 'Rossi',
     });
-    lawyer = await createTestUser(app, { email: 'juan@estudio.com' });
+    lawyer = await createTestUser(app, { email: 'juan@estudio.com', dni: '20111222' });
     client = await createTestUser(app, {
       rol: 'cliente',
       email: 'ana@correo.com',
@@ -64,11 +64,11 @@ describe('restablecimiento de contraseña y liberación de email', () => {
   const deactivate = (id: number) =>
     withAccess(request(server()).post(`${USERS}/${id}/desactivar`), adminSession).expect(204);
   const detail = (id: number) => withAccess(request(server()).get(`${USERS}/${id}`), adminSession);
-  const login = (email: string, contrasena: string) =>
+  const login = (documento: string, contrasena: string) =>
     request(server())
       .post('/api/sesion/ingresar')
       .set('X-Forwarded-For', nextTestIp())
-      .send({ email, contrasena });
+      .send({ documento, contrasena });
 
   describe('restablecer la contraseña (RF-33)', () => {
     it('guarda la temporal, deja el cambio pendiente y cierra la sesión', async () => {
@@ -77,8 +77,8 @@ describe('restablecimiento de contraseña y liberación de email', () => {
       }).expect(204);
 
       await withAccess(request(server()).get('/api/sesion/usuario'), lawyerSession).expect(401);
-      await login('juan@estudio.com', TEST_PASSWORD).expect(401);
-      const response = await login('juan@estudio.com', TEMPORARY_PASSWORD);
+      await login('20111222', TEST_PASSWORD).expect(401);
+      const response = await login('20111222', TEMPORARY_PASSWORD);
       expect(response.status).toBe(200);
       expect(response.body.debeCambiarContrasena).toBe(true);
       expect((await detail(lawyer.id)).body.modificadoPor).toMatchObject({ id: admin.id });
@@ -110,8 +110,8 @@ describe('restablecimiento de contraseña y liberación de email', () => {
 
       expect(interleaved).toBe(true);
       expect(change.status).toBe(401);
-      await login('juan@estudio.com', 'mi clave nueva 2026').expect(401);
-      await login('juan@estudio.com', TEMPORARY_PASSWORD).expect(200);
+      await login('20111222', 'mi clave nueva 2026').expect(401);
+      await login('20111222', TEMPORARY_PASSWORD).expect(200);
     });
 
     it('aplica las reglas de RF-39 a la temporal', async () => {
@@ -149,6 +149,7 @@ describe('restablecimiento de contraseña y liberación de email', () => {
         .send({
           rol: 'abogado',
           email: 'ana@correo.com',
+          dni: '25666777',
           nombre: 'Ana',
           apellido: 'Gómez',
           contrasenaTemporal: TEMPORARY_PASSWORD,
@@ -156,20 +157,30 @@ describe('restablecimiento de contraseña y liberación de email', () => {
         .expect(201);
     });
 
-    it('para reactivar la cuenta, primero hay que asignarle un email nuevo', async () => {
-      await deactivate(client.id);
-      await releaseEmail(adminSession, client.id).expect(204);
+    it('para reactivar a un integrante, primero hay que asignarle un email nuevo', async () => {
+      await deactivate(lawyer.id);
+      await releaseEmail(adminSession, lawyer.id).expect(204);
       const body = { contrasenaTemporal: TEMPORARY_PASSWORD };
 
-      await withAccess(request(server()).post(`${USERS}/${client.id}/reactivar`), adminSession)
+      await withAccess(request(server()).post(`${USERS}/${lawyer.id}/reactivar`), adminSession)
         .send(body)
         .expect(409);
-      await withAccess(request(server()).patch(`${USERS}/${client.id}`), adminSession)
-        .send({ email: 'ana.nueva@correo.com' })
+      await withAccess(request(server()).patch(`${USERS}/${lawyer.id}`), adminSession)
+        .send({ email: 'juan.nuevo@estudio.com' })
         .expect(200);
-      await withAccess(request(server()).post(`${USERS}/${client.id}/reactivar`), adminSession)
+      await withAccess(request(server()).post(`${USERS}/${lawyer.id}/reactivar`), adminSession)
         .send(body)
         .expect(204);
+    });
+
+    it('un cliente con el email liberado se reactiva sin email (RF-3, RF-24)', async () => {
+      await deactivate(client.id);
+      await releaseEmail(adminSession, client.id).expect(204);
+
+      await withAccess(request(server()).post(`${USERS}/${client.id}/reactivar`), adminSession)
+        .send({ contrasenaTemporal: TEMPORARY_PASSWORD })
+        .expect(204);
+      await login('30123456', TEMPORARY_PASSWORD).expect(200);
     });
 
     it('responde 409 si la cuenta está activa', async () => {

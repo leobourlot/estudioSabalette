@@ -11,6 +11,7 @@ import {
 const validData = {
   nombre: 'Carla',
   apellido: 'Sabalette',
+  dni: ' 20.111.222 ',
   email: '  Carla@Estudio.com ',
   contrasena: 'clave del estudio 2026',
 };
@@ -25,13 +26,20 @@ describe('PrincipalAdminService (RF-41, RF-42)', () => {
   let passwords: PasswordsService;
   let service: PrincipalAdminService;
 
-  /** Simula la base: qué devuelve buscar el principal y buscar por email. */
-  function givenDatabase(state: { principal?: Partial<Usuario>; emailOwner?: Partial<Usuario> }) {
-    users.findOne.mockImplementation(async (options: { where: Record<string, unknown> }) => {
-      if (options.where.esPrincipal) return state.principal ?? null;
-      if (options.where.email) return state.emailOwner ?? null;
-      return null;
-    });
+  /** Simula la base: qué devuelve buscar el principal, buscar por DNI y buscar por email. */
+  function givenDatabase(state: {
+    principal?: Partial<Usuario>;
+    dniOwner?: Partial<Usuario>;
+    emailOwner?: Partial<Usuario>;
+  }) {
+    users.findOne.mockImplementation(
+      async (options: { where: Record<string, unknown> | Record<string, unknown>[] }) => {
+        if (Array.isArray(options.where)) return state.dniOwner ?? null;
+        if (options.where.esPrincipal) return state.principal ?? null;
+        if (options.where.email) return state.emailOwner ?? null;
+        return null;
+      },
+    );
   }
 
   beforeEach(() => {
@@ -59,6 +67,7 @@ describe('PrincipalAdminService (RF-41, RF-42)', () => {
         rol: 'admin',
         esPrincipal: true,
         email: 'carla@estudio.com',
+        dni: '20111222',
         nombre: 'Carla',
         apellido: 'Sabalette',
         contrasenaHash: '$2b$12$hash-de-prueba',
@@ -78,6 +87,18 @@ describe('PrincipalAdminService (RF-41, RF-42)', () => {
       expect(users.save).not.toHaveBeenCalled();
     });
 
+    it('rechaza un DNI que ya usa otra cuenta, de integrante o de cliente (RF-1)', async () => {
+      givenDatabase({ dniOwner: { id: 9 } });
+
+      await expect(service.createPrincipal(validData)).rejects.toThrow(
+        'Ya existe una cuenta con ese DNI',
+      );
+      expect(users.findOne).toHaveBeenCalledWith({
+        where: [{ dni: '20111222' }, { cliente: { dni: '20111222' } }],
+      });
+      expect(users.save).not.toHaveBeenCalled();
+    });
+
     it('rechaza un email que ya usa otra cuenta', async () => {
       givenDatabase({ emailOwner: { id: 9 } });
 
@@ -90,6 +111,8 @@ describe('PrincipalAdminService (RF-41, RF-42)', () => {
     it.each([
       [{ nombre: ' ' }, 'El nombre es obligatorio'],
       [{ apellido: 'a'.repeat(56) }, 'El apellido no puede tener más de 55 caracteres'],
+      [{ dni: '' }, 'El DNI debe tener 7 u 8 dígitos'],
+      [{ dni: '123456' }, 'El DNI debe tener 7 u 8 dígitos'],
       [{ email: 'carla@estudio' }, 'El email debe tener el formato texto@texto.texto'],
       [{ contrasena: 'corta' }, 'La contraseña debe tener al menos 8 caracteres'],
       [{ contrasena: 'contraseña segura' }, 'La contraseña no puede tener tildes, ñ ni emojis'],

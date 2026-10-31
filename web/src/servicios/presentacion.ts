@@ -52,9 +52,10 @@ export function formatDateTime(iso: string): string {
 export const listName = (usuario: UsuarioPropio) =>
   usuario.cliente?.razonSocial ?? `${usuario.apellido}, ${usuario.nombre}`;
 
-/** DNI o CUIT formateado, o EMPTY_VALUE si la cuenta no es de un cliente. */
+/** DNI o CUIT formateado, de un cliente o de un integrante, o EMPTY_VALUE si no tiene. */
 export function documentLabel(usuario: UsuarioPropio): string {
   const { cliente } = usuario;
+  if (usuario.dni) return formatDni(usuario.dni);
   if (cliente?.dni) return formatDni(cliente.dni);
   if (cliente?.cuit) return formatCuit(cliente.cuit);
   return EMPTY_VALUE;
@@ -78,6 +79,8 @@ export function accountRows(usuario: UsuarioPropio): [string, string][] {
     } else {
       rows.push(['DNI', cliente.dni ? formatDni(cliente.dni) : EMPTY_VALUE]);
     }
+  } else {
+    rows.push(['DNI', usuario.dni ? formatDni(usuario.dni) : EMPTY_VALUE]);
   }
   rows.push([isLegalPerson ? 'Nombre del contacto' : 'Nombre', usuario.nombre]);
   rows.push([isLegalPerson ? 'Apellido del contacto' : 'Apellido', usuario.apellido]);

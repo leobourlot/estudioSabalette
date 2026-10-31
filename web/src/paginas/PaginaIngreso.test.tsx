@@ -14,16 +14,16 @@ import { ApiError, NETWORK_ERROR_MESSAGE } from '../servicios/cliente-http';
 import type { UsuarioPropio } from '../servicios/sesion';
 import { TEXTOS_INGRESO } from '../servicios/textos-aplicacion';
 
-async function openLogin(login: (email: string, contrasena: string) => Promise<UsuarioPropio>) {
+async function openLogin(login: (documento: string, contrasena: string) => Promise<UsuarioPropio>) {
   const service = fakeSessionService({ login: vi.fn(login) });
   renderApp('/ingresar', service);
   await screen.findByRole('heading', { name: 'Ingresar' });
   return service;
 }
 
-async function submit(email: string, contrasena: string) {
+async function submit(documento: string, contrasena: string) {
   const user = userEvent.setup();
-  if (email) await user.type(screen.getByLabelText('Email'), email);
+  if (documento) await user.type(screen.getByLabelText('DNI o CUIT'), documento);
   if (contrasena) await user.type(screen.getByLabelText('Contraseña'), contrasena);
   await user.click(screen.getByRole('button', { name: 'Ingresar' }));
 }
@@ -43,15 +43,15 @@ describe('PaginaIngreso (RF-8 a RF-10)', () => {
     async (_case, usuario, page) => {
       const service = await openLogin(async () => usuario);
 
-      await submit('juan@estudio.com', 'clave del estudio 2026');
+      await submit('20.111.222', 'clave del estudio 2026');
 
       expect(await findScreenHeading(page)).toBeTruthy();
-      expect(service.login).toHaveBeenCalledWith('juan@estudio.com', 'clave del estudio 2026');
+      expect(service.login).toHaveBeenCalledWith('20.111.222', 'clave del estudio 2026');
     },
   );
 
   it.each([
-    ['401', new ApiError(401, ['Email o contraseña incorrectos'])],
+    ['401', new ApiError(401, ['DNI/CUIT o contraseña incorrectos'])],
     ['429', new ApiError(429, ['Demasiados intentos. Probá de nuevo en unos minutos'])],
     ['sin conexión', new ApiError(0, [NETWORK_ERROR_MESSAGE])],
   ])('muestra el mensaje de la API ante un %s y borra la contraseña', async (_case, error) => {
@@ -59,21 +59,21 @@ describe('PaginaIngreso (RF-8 a RF-10)', () => {
       throw error;
     });
 
-    await submit('juan@estudio.com', 'otra clave');
+    await submit('20.111.222', 'otra clave');
 
     expect((await screen.findByRole('alert')).textContent).toBe(error.message);
     expect(screen.getByRole('heading', { name: 'Ingresar' })).toBeTruthy();
     expect((screen.getByLabelText('Contraseña') as HTMLInputElement).value).toBe('');
-    expect((screen.getByLabelText('Email') as HTMLInputElement).value).toBe('juan@estudio.com');
+    expect((screen.getByLabelText('DNI o CUIT') as HTMLInputElement).value).toBe('20.111.222');
   });
 
   it('pide completar los dos campos antes de enviar', async () => {
     const service = await openLogin(async () => testUser('admin'));
 
-    await submit('juan@estudio.com', '');
+    await submit('20.111.222', '');
 
     expect((await screen.findByRole('alert')).textContent).toBe(
-      'Completá el email y la contraseña',
+      'Completá el DNI o CUIT y la contraseña',
     );
     expect(service.login).not.toHaveBeenCalled();
   });
@@ -82,7 +82,7 @@ describe('PaginaIngreso (RF-8 a RF-10)', () => {
     let finish!: (usuario: UsuarioPropio) => void;
     await openLogin(() => new Promise((resolve) => (finish = resolve)));
 
-    await submit('juan@estudio.com', 'clave del estudio 2026');
+    await submit('20.111.222', 'clave del estudio 2026');
 
     const button = screen.getByRole('button', { name: 'Ingresando…' }) as HTMLButtonElement;
     expect(button.disabled).toBe(true);
@@ -90,10 +90,14 @@ describe('PaginaIngreso (RF-8 a RF-10)', () => {
     expect(await findPanelHome()).toBeTruthy();
   });
 
-  it('usa campos de email y contraseña con autocompletado del navegador', async () => {
+  it('usa campos de DNI o CUIT y contraseña con autocompletado del navegador', async () => {
     await openLogin(async () => testUser('admin'));
 
-    expect(screen.getByLabelText('Email').getAttribute('autocomplete')).toBe('username');
+    const document = screen.getByLabelText('DNI o CUIT');
+    expect(document.getAttribute('autocomplete')).toBe('username');
+    // Texto con teclado numérico: acepta los puntos y guiones con que se suele escribir.
+    expect(document.getAttribute('type')).toBe('text');
+    expect(document.getAttribute('inputmode')).toBe('numeric');
     expect(screen.getByLabelText('Contraseña').getAttribute('type')).toBe('password');
     expect(screen.getByLabelText('Contraseña').getAttribute('autocomplete')).toBe(
       'current-password',
@@ -167,12 +171,12 @@ describe('PaginaIngreso con la identidad del estudio (spec 008, RF-11 a RF-13)',
   it('el aviso de error va dentro de la tarjeta, arriba de los campos', async () => {
     await openLogin(async () => testUser('admin'));
 
-    await submit('juan@estudio.com', '');
+    await submit('20.111.222', '');
 
     const alert = await screen.findByRole('alert');
     expect(within(screen.getByRole('main')).getByRole('alert')).toBe(alert);
     expect(
-      alert.compareDocumentPosition(screen.getByLabelText('Email')) &
+      alert.compareDocumentPosition(screen.getByLabelText('DNI o CUIT')) &
         Node.DOCUMENT_POSITION_FOLLOWING,
     ).toBeTruthy();
   });

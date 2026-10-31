@@ -196,3 +196,31 @@ Reglas para todas las tareas:
 - [x] **T44 — Validación de la spec**
   Recorrer `spec.md` requisito por requisito con su test, correr la migración `up` y `down` sobre la base de tests y hacer la demo manual de los criterios de finalización.
   Hecho cuando: cada RF tiene al menos un test en verde identificado, `pnpm test` y `pnpm lint` pasan, y la demo manual se completó sin errores.
+
+## Cambio del 30/10/2026 — Ingreso con DNI o CUIT y email opcional del cliente
+
+El estudio pidió que el email del cliente sea opcional y que se ingrese con el DNI (o el CUIT, en personas jurídicas). Los integrantes también ingresan con su DNI, que pasa a ser obligatorio para ellos (RF-1 a RF-3, RF-7 a RF-10, RF-23 a RF-27, RF-30, RF-31, RF-41).
+
+- [x] **T45 — DNI de los integrantes** [RF-1, RF-2] **(modifica existente: `usuario.entity.ts`, `esquema.ts`)**
+  Columna `usuarios.dni` (varchar(8), opcional, única) y la migración `AgregarDniAIntegrantes1793318400000`.
+  Hecho cuando: el test de entidades verifica la columna y su índice único, y el e2e `migracion-dni-integrantes` verifica `up`, el esquema igual a las entidades y `down`.
+
+- [x] **T46 — Ingreso con DNI o CUIT** [RF-5, RF-8 a RF-10] **(modifica existente: `autenticacion.service.ts`, `sesion.controller.ts`, `limitador-intentos.service.ts`, `dto/ingresar.dto.ts`)**
+  `POST /api/sesion/ingresar` recibe `{ documento, contrasena }`: 11 dígitos se buscan como CUIT; 7 u 8, como DNI de integrante o de cliente; cualquier otra cosa responde el 401 genérico sin consultar la base. El límite cuenta por DNI o CUIT e IP.
+  Hecho cuando: los unitarios verifican cada búsqueda, el texto que no puede ser un documento y el límite con el DNI escrito de distintas formas, y el e2e `ingreso` verifica el ingreso de un integrante, de una persona física, de una jurídica y de un cliente sin email, y el rechazo de un email.
+
+- [x] **T47 — Alta y modificación** [RF-2, RF-3, RF-7, RF-23 a RF-27, RF-30, RF-31] **(modifica existente: DTO, `reglas.ts`, `usuarios.service.ts`, `permisos-gestion.ts`, `usuario-propio.ts`)**
+  Email obligatorio para integrantes y opcional para clientes; DNI obligatorio para integrantes y modificable solo en ellos; un mismo DNI no puede ser de un integrante y de un cliente; cambiar el DNI de otro integrante cierra su sesión, y cambiar el email ya no; reactivar a un cliente no exige email; el principal queda protegido del cambio de DNI en lugar del de email.
+  Hecho cuando: los unitarios de DTO y de permisos, y los e2e `alta-usuarios`, `modificacion-usuarios`, `desactivacion-usuarios`, `restablecimiento-y-email`, `administrador-principal` y `listado-usuarios` verifican cada regla.
+
+- [x] **T48 — Comando de consola** [RF-41] **(modifica existente: `consola/administrador-principal*.ts`)**
+  Pide también el DNI del principal y lo rechaza si ya es de otra cuenta.
+  Hecho cuando: el unitario verifica el DNI normalizado, su formato y que no se repita.
+
+- [x] **T49 — Web** [RF-3, RF-8, RF-27] **(modifica existente: `PaginaIngreso`, `ProveedorSesion`, `servicios/sesion.ts`, `formulario-cuenta.ts`, `validaciones.ts`, `presentacion.ts`, `usuarios.ts`, `acciones-cuenta.ts`, `PanelUsuarioNuevo`, `PanelUsuarioDetalle`)**
+  El ingreso pide "DNI o CUIT"; el alta y la edición piden el DNI de los integrantes y muestran el email del cliente como opcional; los datos de un integrante muestran su DNI. También cambian T-2 (spec 008) y la maqueta del portal del sitio público (spec 007, RF-47, T-17 y T-22).
+  Hecho cuando: los tests de la web verifican el campo de ingreso, los campos del alta según el rol, la edición del DNI de un integrante, el borrado del email de un cliente y los textos de los anexos.
+
+- [ ] **T50 — Validación del cambio**
+  Correr `pnpm test` completo, con los e2e contra la base de tests, y la demo manual del cambio (ver `validacion.md`). Antes de desplegar, cargar a mano el DNI de las cuentas de integrantes que ya existen en producción: sin DNI no pueden ingresar.
+  Hecho cuando: `pnpm test` y `pnpm lint` pasan y la demo se completó sin errores.

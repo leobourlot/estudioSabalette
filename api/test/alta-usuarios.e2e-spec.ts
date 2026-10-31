@@ -12,6 +12,7 @@ const TEMPORARY_PASSWORD = 'clave temporal 2026';
 const newLawyer = {
   rol: 'abogado',
   email: 'nuevo@estudio.com',
+  dni: '25.666.777',
   nombre: 'Marcos',
   apellido: 'Díaz',
   contrasenaTemporal: TEMPORARY_PASSWORD,
@@ -64,7 +65,7 @@ describe('POST /api/panel/usuarios (alta de cuentas)', () => {
       nombre: 'Carla',
       apellido: 'Sabalette',
     });
-    lawyer = await createTestUser(app, { email: 'juan@estudio.com' });
+    lawyer = await createTestUser(app, { email: 'juan@estudio.com', dni: '20999888' });
     adminSession = await loginAs(app, 'principal@estudio.com');
     lawyerSession = await loginAs(app, 'juan@estudio.com');
   });
@@ -82,6 +83,7 @@ describe('POST /api/panel/usuarios (alta de cuentas)', () => {
       rol: 'abogado',
       esPrincipal: false,
       email: 'nuevo@estudio.com',
+      dni: '25666777',
       nombre: 'Marcos',
       apellido: 'Díaz',
       debeCambiarContrasena: true,
@@ -95,13 +97,56 @@ describe('POST /api/panel/usuarios (alta de cuentas)', () => {
     expect(typeof response.body.creadoEn).toBe('string');
     expect(JSON.stringify(response.body)).not.toContain('$2b$');
 
-    // La cuenta nueva ingresa con la contraseña temporal y tiene el cambio pendiente.
+    // La cuenta nueva ingresa con su DNI y la contraseña temporal, y tiene el cambio pendiente.
     const login = await request(app.getHttpServer())
       .post('/api/sesion/ingresar')
       .set('X-Forwarded-For', nextTestIp())
-      .send({ email: 'nuevo@estudio.com', contrasena: TEMPORARY_PASSWORD });
+      .send({ documento: '25666777', contrasena: TEMPORARY_PASSWORD });
     expect(login.status).toBe(200);
     expect(login.body.debeCambiarContrasena).toBe(true);
+  });
+
+  it('responde 400 si falta el DNI de un integrante (RF-2)', async () => {
+    const response = await create(adminSession, { ...newLawyer, dni: undefined });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toContain('El DNI es obligatorio');
+  });
+
+  it('crea un cliente sin email, que ingresa con su DNI (RF-3, RF-8)', async () => {
+    const response = await create(lawyerSession, { ...naturalPerson, email: undefined });
+
+    expect(response.status).toBe(201);
+    expect(response.body).toMatchObject({ email: null, dni: null });
+    expect(response.body.cliente.dni).toBe('30123456');
+
+    const login = await request(app.getHttpServer())
+      .post('/api/sesion/ingresar')
+      .set('X-Forwarded-For', nextTestIp())
+      .send({ documento: '30123456', contrasena: TEMPORARY_PASSWORD });
+    expect(login.status).toBe(200);
+    expect(login.body.id).toBe(response.body.id);
+  });
+
+  it('dos clientes sin email no chocan entre sí (RF-23)', async () => {
+    await create(lawyerSession, { ...naturalPerson, email: '' }).expect(201);
+
+    const response = await create(lawyerSession, {
+      ...naturalPerson,
+      email: null,
+      cliente: { tipoPersona: 'fisica', dni: '30123457' },
+    });
+
+    expect(response.status).toBe(201);
+  });
+
+  it('responde 400 si un cliente trae un DNI de integrante', async () => {
+    const response = await create(lawyerSession, { ...naturalPerson, dni: '30123456' });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toContain(
+      'El DNI de un cliente se indica en sus datos de cliente',
+    );
   });
 
   it('un abogado crea un cliente persona física, con el DNI normalizado (RF-3, RF-4)', async () => {
@@ -171,6 +216,36 @@ describe('POST /api/panel/usuarios (alta de cuentas)', () => {
 
     expect(response.status).toBe(409);
     expect(response.body.message).toBe('Ya existe un cliente con ese DNI o CUIT');
+  });
+
+  it('responde 409 si el DNI de un cliente nuevo es de un integrante (RF-1, RF-25)', async () => {
+    const response = await create(lawyerSession, {
+      ...naturalPerson,
+      cliente: { tipoPersona: 'fisica', dni: '20.999.888' },
+    });
+
+    expect(response.status).toBe(409);
+    expect(response.body.message).toBe('Ya existe un integrante del estudio con ese DNI');
+  });
+
+  it('responde 409 si el DNI de un integrante nuevo es de un cliente (RF-1, RF-25)', async () => {
+    await create(lawyerSession, naturalPerson).expect(201);
+
+    const response = await create(adminSession, { ...newLawyer, dni: '30123456' });
+
+    expect(response.status).toBe(409);
+    expect(response.body.message).toBe('Ya existe un cliente con ese DNI o CUIT');
+  });
+
+  it('si el integrante con ese DNI está desactivado, sugiere reactivarlo (RF-25)', async () => {
+    await createTestUser(app, { email: 'ex@estudio.com', dni: '25666777', activo: false });
+
+    const response = await create(adminSession, newLawyer);
+
+    expect(response.status).toBe(409);
+    expect(response.body.message).toBe(
+      'Ya existe un integrante del estudio con ese DNI. Está desactivado: reactivalo en lugar de crear uno nuevo',
+    );
   });
 
   it('si el cliente con ese CUIT está desactivado, sugiere reactivarlo (RF-25)', async () => {

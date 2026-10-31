@@ -78,9 +78,18 @@ export function validateEmail(value: string): string | null {
   return isValidEmail(email) ? null : 'El email debe tener el formato texto@texto.texto';
 }
 
-export function validateDni(value: string): string | null {
+/** Email opcional de un cliente (spec 001, RF-3): vacío es válido. */
+export function validateOptionalEmail(value: string): string | null {
+  return normalizeEmail(value) === '' ? null : validateEmail(value);
+}
+
+/** El mensaje de obligatorio cambia entre un cliente persona física y un integrante. */
+export function validateDni(
+  value: string,
+  required = 'El DNI es obligatorio para personas físicas',
+): string | null {
   const dni = normalizeDocumentNumber(value);
-  if (dni === '') return 'El DNI es obligatorio para personas físicas';
+  if (dni === '') return required;
   return isValidDni(dni) ? null : 'El DNI debe tener 7 u 8 dígitos';
 }
 

@@ -2,19 +2,21 @@ import { Transform, Type } from 'class-transformer';
 import { ValidateNested } from 'class-validator';
 import type { TipoPersona } from '../cliente.entity.js';
 import type { Rol } from '../usuario.entity.js';
-import { isValidCuit, isValidDni } from '../validadores/documentos.js';
+import { isValidCuit } from '../validadores/documentos.js';
 import { fitsMaxLength, MAX_PHONE_LENGTH, MAX_TEXT_LENGTH } from '../validadores/longitudes.js';
 import {
-  emailRule,
+  dniFormatRule,
+  emailForRoleRule,
   onlyForPersonType,
   optionalText,
   personTypeRule,
   requiredText,
   rolRule,
   Rule,
+  staffDniRule,
   temporaryPasswordRule,
   toDocumentNumber,
-  toNormalizedEmail,
+  toOptionalEmail,
   trimOptionalText,
   trimText,
 } from './reglas.js';
@@ -32,7 +34,7 @@ export class CreateClientDataDto {
         required: 'El DNI es obligatorio para personas físicas',
         forbidden: 'El DNI solo corresponde a personas físicas',
       },
-      (value) => (isValidDni(String(value)) ? null : 'El DNI debe tener 7 u 8 dígitos'),
+      (value) => dniFormatRule(value, {}),
     ),
   )
   dni?: string;
@@ -90,15 +92,21 @@ export class CreateClientDataDto {
 
 /**
  * Alta de una cuenta (RF-21, RF-22). En personas jurídicas, nombre y apellido son los de la
- * persona de contacto. Las reglas de la contraseña temporal (RF-39) las aplica el service.
+ * persona de contacto. Los integrantes llevan DNI y email; los clientes, su DNI o CUIT en
+ * `cliente` y el email es opcional. Las reglas de la contraseña temporal (RF-39) las aplica
+ * el service.
  */
 export class CreateUserDto {
   @Rule(rolRule)
   rol: Rol;
 
-  @Transform(toNormalizedEmail)
-  @Rule(emailRule)
-  email: string;
+  @Transform(toOptionalEmail)
+  @Rule(emailForRoleRule)
+  email?: string | null;
+
+  @Transform(toDocumentNumber)
+  @Rule(staffDniRule)
+  dni?: string;
 
   @Transform(trimText)
   @Rule(

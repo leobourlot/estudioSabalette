@@ -298,8 +298,8 @@ export const CAUSA_EJEMPLO: CausaEjemplo = {
  */
 export const INGRESO_EJEMPLO = {
   titulo: 'Ingresar',
-  etiquetaEmail: 'Email',
-  email: 'ana.gomez@ejemplo.com',
+  etiquetaDocumento: 'DNI o CUIT',
+  documento: '30.123.456',
   etiquetaContrasena: 'Contraseña',
   boton: 'Ingresar',
   /** Cuántos puntos tiene la contraseña. */
@@ -345,7 +345,7 @@ export const TEXTOS = {
     ejemplo: 'Ejemplo',
     movimientos: 'Movimientos',
     descripcionMaqueta:
-      'Ejemplo del portal de clientes: el ingreso con email y contraseña, y una causa con sus datos y sus últimos movimientos.',
+      'Ejemplo del portal de clientes: el ingreso con DNI y contraseña, y una causa con sus datos y sus últimos movimientos.',
   },
   detalle: {
     volverAServicios: 'Volver a servicios',

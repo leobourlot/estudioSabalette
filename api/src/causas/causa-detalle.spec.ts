@@ -22,6 +22,7 @@ function user(id: number, overrides: Partial<Usuario> = {}): Usuario {
     rol: 'abogado',
     esPrincipal: false,
     email: `usuario${id}@estudio.com`,
+    dni: null,
     nombre: `Nombre${id}`,
     apellido: `Apellido${id}`,
     contrasenaHash: '$2b$12$hash-secreto',

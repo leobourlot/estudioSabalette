@@ -45,7 +45,7 @@ describe('MaquetaPortal (spec 007, RF-47)', () => {
     const login = part(mockup, 'ingreso');
     for (const text of [
       INGRESO_EJEMPLO.titulo,
-      INGRESO_EJEMPLO.etiquetaEmail,
+      INGRESO_EJEMPLO.etiquetaDocumento,
       INGRESO_EJEMPLO.etiquetaContrasena,
     ]) {
       expect(login.textContent).toContain(text);
@@ -85,10 +85,12 @@ describe('MaquetaPortal (spec 007, RF-47)', () => {
     render(tree);
 
     const mockup = screen.getByRole('img');
-    const emailField = mockup.querySelector('[data-campo="email"]')!;
+    const documentField = mockup.querySelector('[data-campo="documento"]')!;
     const passwordField = mockup.querySelector('[data-campo="contrasena"]')!;
     await expect.poll(() => mockup.dataset.vista).toBe('ingreso');
-    await expect.poll(() => emailField.textContent, { timeout: 4000 }).toBe(INGRESO_EJEMPLO.email);
+    await expect
+      .poll(() => documentField.textContent, { timeout: 4000 })
+      .toBe(INGRESO_EJEMPLO.documento);
     await expect
       .poll(() => passwordField.textContent, { timeout: 4000 })
       .toBe('•'.repeat(INGRESO_EJEMPLO.largoContrasena));

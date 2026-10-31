@@ -2,21 +2,23 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Repository } from 'typeorm';
 import { PasswordsService } from '../autenticacion/contrasenas.service.js';
-import { emailRule, requiredText } from '../usuarios/dto/reglas.js';
+import { dniFormatRule, emailRule, requiredText } from '../usuarios/dto/reglas.js';
 import { Sesion } from '../usuarios/sesion.entity.js';
 import { Usuario } from '../usuarios/usuario.entity.js';
 import { MAX_TEXT_LENGTH } from '../usuarios/validadores/longitudes.js';
-import { normalizeEmail } from '../usuarios/validadores/normalizar.js';
+import { normalizeDocumentNumber, normalizeEmail } from '../usuarios/validadores/normalizar.js';
 
 export const PRINCIPAL_CONSOLE_MESSAGES = {
   alreadyExists: 'Ya existe un administrador principal',
   notFound: 'No existe un administrador principal',
   emailTaken: 'Ya existe una cuenta con ese email',
+  dniTaken: 'Ya existe una cuenta con ese DNI',
 } as const;
 
 export interface PrincipalData {
   nombre: string;
   apellido: string;
+  dni: string;
   email: string;
   contrasena: string;
 }
@@ -58,14 +60,20 @@ export class PrincipalAdminService {
 
     const nombre = data.nombre.trim();
     const apellido = data.apellido.trim();
+    const dni = normalizeDocumentNumber(data.dni);
     const email = normalizeEmail(data.email);
     const problem =
       nameRule(nombre, {}) ??
       surnameRule(apellido, {}) ??
+      dniFormatRule(dni, {}) ??
       emailRule(email, {}) ??
       this.passwords.findRuleViolation(data.contrasena);
     if (problem) throw new Error(problem);
 
+    // El DNI no puede ser de otra cuenta, ni de integrante ni de cliente (RF-1).
+    if (await this.users.findOne({ where: [{ dni }, { cliente: { dni } }] })) {
+      throw new Error(PRINCIPAL_CONSOLE_MESSAGES.dniTaken);
+    }
     if (await this.users.findOne({ where: { email } })) {
       throw new Error(PRINCIPAL_CONSOLE_MESSAGES.emailTaken);
     }
@@ -74,6 +82,7 @@ export class PrincipalAdminService {
       rol: 'admin',
       esPrincipal: true,
       email,
+      dni,
       nombre,
       apellido,
       contrasenaHash: await this.passwords.hash(data.contrasena),

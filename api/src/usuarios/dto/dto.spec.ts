@@ -19,20 +19,24 @@ async function check<T extends object>(dto: DtoClass<T>, plain: object) {
 const lawyer = {
   rol: 'abogado',
   email: 'juan@estudio.com',
+  dni: '20111222',
   nombre: 'Juan',
   apellido: 'Pérez',
   contrasenaTemporal: 'clave temporal 2026',
 };
 
+// Los clientes llevan su DNI en `cliente`, no como integrantes.
+const clientBase = { ...lawyer, dni: undefined };
+
 const naturalPersonClient = {
-  ...lawyer,
+  ...clientBase,
   rol: 'cliente',
   email: 'ana@correo.com',
   cliente: { tipoPersona: 'fisica', dni: '30123456' },
 };
 
 const legalPersonClient = {
-  ...lawyer,
+  ...clientBase,
   rol: 'cliente',
   email: 'contacto@empresa.com',
   cliente: { tipoPersona: 'juridica', cuit: '30712345671', razonSocial: 'Empresa S.A.' },
@@ -46,6 +50,24 @@ describe('CreateUserDto', () => {
     ['un cliente persona jurídica', legalPersonClient],
   ])('acepta %s', async (_case, plain) => {
     expect((await check(CreateUserDto, plain)).messages).toEqual([]);
+  });
+
+  it.each([
+    ['sin el campo', undefined],
+    ['con null', null],
+    ['vacío', '  '],
+  ])('acepta un cliente sin email (%s) y lo guarda como null (RF-3)', async (_case, email) => {
+    const { instance, messages } = await check(CreateUserDto, { ...naturalPersonClient, email });
+
+    expect(messages).toEqual([]);
+    expect(instance.email ?? null).toBeNull();
+  });
+
+  it('normaliza el DNI de un integrante (RF-5)', async () => {
+    const { instance, messages } = await check(CreateUserDto, { ...lawyer, dni: '20.111.222' });
+
+    expect(messages).toEqual([]);
+    expect(instance.dni).toBe('20111222');
   });
 
   it('normaliza el email y el DNI, y recorta los textos (RF-5)', async () => {
@@ -76,7 +98,24 @@ describe('CreateUserDto', () => {
   it.each([
     ['falta el rol', { ...lawyer, rol: undefined }, 'El rol debe ser admin, abogado o cliente'],
     ['el rol no existe', { ...lawyer, rol: 'pasante' }, 'El rol debe ser admin, abogado o cliente'],
-    ['falta el email', { ...lawyer, email: undefined }, 'El email es obligatorio'],
+    ['falta el email de un integrante', { ...lawyer, email: undefined }, 'El email es obligatorio'],
+    ['el email de un integrante está vacío', { ...lawyer, email: ' ' }, 'El email es obligatorio'],
+    [
+      'el email de un cliente es inválido',
+      { ...naturalPersonClient, email: 'ana@correo' },
+      'El email debe tener el formato texto@texto.texto',
+    ],
+    ['falta el DNI de un integrante', { ...lawyer, dni: undefined }, 'El DNI es obligatorio'],
+    [
+      'el DNI de un integrante es inválido',
+      { ...lawyer, dni: '123456' },
+      'El DNI debe tener 7 u 8 dígitos',
+    ],
+    [
+      'un cliente trae DNI de integrante',
+      { ...naturalPersonClient, dni: '30123456' },
+      'El DNI de un cliente se indica en sus datos de cliente',
+    ],
     [
       'el email es inválido',
       { ...lawyer, email: 'juan@estudio' },
@@ -95,7 +134,7 @@ describe('CreateUserDto', () => {
     ],
     [
       'un cliente no tiene datos de cliente',
-      { ...lawyer, rol: 'cliente' },
+      { ...clientBase, rol: 'cliente' },
       'Los datos del cliente son obligatorios para el rol cliente',
     ],
     [
@@ -220,6 +259,24 @@ describe('UpdateUserDto', () => {
     );
     const { instance } = await check(UpdateUserDto, { email: ' Nuevo@Estudio.com' });
     expect(instance.email).toBe('nuevo@estudio.com');
+  });
+
+  it.each([null, ' '])(
+    'acepta borrar el email (%j); que sea de un cliente lo controla el service',
+    async (email) => {
+      const { instance, messages } = await check(UpdateUserDto, { email });
+
+      expect(messages).toEqual([]);
+      expect(instance.email).toBeNull();
+    },
+  );
+
+  it('valida y normaliza el DNI de un integrante', async () => {
+    expect((await check(UpdateUserDto, { dni: '123' })).messages).toContain(
+      'El DNI debe tener 7 u 8 dígitos',
+    );
+    const { instance } = await check(UpdateUserDto, { dni: '20.111.222' });
+    expect(instance.dni).toBe('20111222');
   });
 
   it('valida el rol', async () => {

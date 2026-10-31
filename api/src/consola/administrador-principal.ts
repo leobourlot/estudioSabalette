@@ -57,6 +57,7 @@ async function main(): Promise<void> {
         const data = {
           nombre: await ask(rl, 'Nombre: '),
           apellido: await ask(rl, 'Apellido: '),
+          dni: await ask(rl, 'DNI (con el que va a ingresar): '),
           email: await ask(rl, 'Email: '),
           contrasena: await askNewPassword(
             rl,
@@ -65,7 +66,9 @@ async function main(): Promise<void> {
         };
         try {
           const created = await service.createPrincipal(data);
-          console.log(`Listo: ${created.email} es el administrador principal.`);
+          console.log(
+            `Listo: ${created.nombre} ${created.apellido} (DNI ${created.dni}) es el administrador principal.`,
+          );
           return;
         } catch (error) {
           console.log(`No se pudo crear: ${(error as Error).message}. Probá de nuevo.`);
@@ -73,7 +76,9 @@ async function main(): Promise<void> {
       }
     }
 
-    console.log(`El administrador principal es ${principal.email}.`);
+    console.log(
+      `El administrador principal es ${principal.nombre} ${principal.apellido} (DNI ${principal.dni ?? 'sin cargar'}).`,
+    );
     const answer = await ask(rl, '¿Querés restablecer su contraseña? (s/n): ');
     if (answer.trim().toLowerCase() !== 's') {
       console.log('No se hizo ningún cambio.');

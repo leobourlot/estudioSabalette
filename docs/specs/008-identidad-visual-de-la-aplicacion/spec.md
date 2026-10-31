@@ -49,7 +49,7 @@ El sitio público ya tiene la identidad del estudio: el logo, el degradado de su
 ### Pantalla de ingreso
 - RF-11: EL SISTEMA muestra la pantalla de ingreso dividida en dos mitades:
   - A la izquierda, el panel de la marca, sobre el degradado del estudio: arriba, el logo y el nombre del estudio, que llevan al inicio del sitio público (spec 007, RF-33); en el medio, el título T-1; abajo, la dirección del estudio, como texto, y el WhatsApp de cada abogada, escrito con su nombre ("Dra. Carolina Pertusatti: +54 9 3454 08-7098"), con el ícono de WhatsApp en verde y con borde blanco antes de cada número (spec 007, RF-23), cada uno como enlace que abre una conversación con esa abogada sin mensaje (spec 007, RF-27), todos separados por " · ". La dirección solo aparece si el estudio la informó (spec 007, RF-24), y nunca una de ejemplo.
-  - A la derecha, sobre el fondo claro, una tarjeta con el título "Ingresar", el texto T-2, los campos "Email" y "Contraseña", el botón "Ingresar" y, debajo, el texto T-3.
+  - A la derecha, sobre el fondo claro, una tarjeta con el título "Ingresar", el texto T-2, los campos "DNI o CUIT" y "Contraseña", el botón "Ingresar" y, debajo, el texto T-3.
 - RF-12: MIENTRAS la pantalla mide menos de 1024 px de ancho, EL SISTEMA muestra el panel de la marca arriba, más bajo, con el logo, el nombre y el título T-1, y la tarjeta debajo. La dirección y el WhatsApp pasan al final, debajo de la tarjeta. El formulario se ve sin desplazarse en un celular de 360 × 640 px con el teclado cerrado, y el botón de WhatsApp no tapa los campos ni "Ingresar", tampoco con el teclado abierto (spec 007, RF-28).
 - RF-13: EL SISTEMA conserva en la pantalla de ingreso los mensajes, las validaciones y el comportamiento de la spec 001 (RF-8 a RF-10) y de la spec 007 (RF-26 y RF-33): el aviso de error va dentro de la tarjeta, arriba de los campos.
 - RF-14: EL SISTEMA muestra la pantalla de cambio de contraseña con el mismo diseño de dos mitades: en el panel de la marca, el logo y el nombre del estudio, sin el título T-1 ni los datos de contacto; en la tarjeta, el formulario de la spec 001 (RF-36 a RF-39). Es una pantalla aparte, sin el menú lateral, porque puede ser obligatoria antes de entrar (spec 001, RF-11).
@@ -191,7 +191,7 @@ Los textos T-1 a T-3 se tomaron del modelo que eligió el estudio y se aprobaron
 > Seguí tu caso desde donde estés.
 
 ### T-2 — Texto debajo de "Ingresar"
-> Usá el email y la contraseña que te dio el estudio.
+> Usá tu DNI (o el CUIT de tu empresa) y la contraseña que te dio el estudio.
 
 ### T-3 — Texto debajo del botón "Ingresar"
 > ¿Olvidaste tu contraseña? Comunicate con el estudio y te la restablecemos.

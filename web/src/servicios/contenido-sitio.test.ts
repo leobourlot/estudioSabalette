@@ -78,10 +78,10 @@ describe('textos del sitio contra el anexo de la spec 007 (RF-2)', () => {
 
   it('T-22, ingreso de ejemplo de la maqueta del portal', () => {
     const ingreso = annexSection('T-22').find((l) => l.startsWith('- Ingreso:'))!;
-    const { titulo, etiquetaEmail, email, etiquetaContrasena, boton, largoContrasena } =
+    const { titulo, etiquetaDocumento, documento, etiquetaContrasena, boton, largoContrasena } =
       INGRESO_EJEMPLO;
 
-    expect([titulo, etiquetaEmail, email, etiquetaContrasena, boton]).toEqual(
+    expect([titulo, etiquetaDocumento, documento, etiquetaContrasena, boton]).toEqual(
       quotedStrings(ingreso),
     );
     expect(ingreso).toContain(`${largoContrasena} puntos`);

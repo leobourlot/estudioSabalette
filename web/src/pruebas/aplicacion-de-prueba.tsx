@@ -34,6 +34,7 @@ export function testUser(rol: Rol, overrides: Partial<UsuarioPropio> = {}): Usua
     rol,
     esPrincipal: false,
     email: 'usuario@estudio.com',
+    dni: rol === 'cliente' ? null : '20111222',
     nombre: 'Ana',
     apellido: 'Gómez',
     debeCambiarContrasena: false,
@@ -45,7 +46,7 @@ export function testUser(rol: Rol, overrides: Partial<UsuarioPropio> = {}): Usua
 /** Cuenta de prueba con auditoría, como la devuelve la gestión de cuentas. */
 export function testAccount(overrides: Partial<UsuarioDetalle> = {}): UsuarioDetalle {
   return {
-    ...testUser('abogado'),
+    ...testUser(overrides.rol ?? 'abogado'),
     activo: true,
     ultimoIngreso: null,
     creadoEn: '2026-09-01T15:00:00.000Z',

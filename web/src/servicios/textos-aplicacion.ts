@@ -6,7 +6,7 @@ export const TEXTOS_INGRESO = {
   /** T-1, en el panel de la marca. */
   titulo: 'Seguí tu caso desde donde estés.',
   /** T-2, debajo de "Ingresar". */
-  indicacion: 'Usá el email y la contraseña que te dio el estudio.',
+  indicacion: 'Usá tu DNI (o el CUIT de tu empresa) y la contraseña que te dio el estudio.',
   /** T-3, debajo del botón "Ingresar". */
   olvido: '¿Olvidaste tu contraseña? Comunicate con el estudio y te la restablecemos.',
 } as const;

@@ -38,7 +38,10 @@ export interface ListUsersQuery {
 
 export interface CreateUserData {
   rol: Rol;
-  email: string;
+  /** Obligatorio para los integrantes; opcional para los clientes (spec 001, RF-2, RF-3). */
+  email?: string;
+  /** Solo integrantes: el de un cliente persona física va en `cliente.dni`. */
+  dni?: string;
   nombre: string;
   apellido: string;
   contrasenaTemporal: string;
@@ -52,9 +55,13 @@ export interface CreateUserData {
   };
 }
 
-/** Solo los campos que cambian. DNI, CUIT y tipo de persona no se modifican (RF-7). */
+/**
+ * Solo los campos que cambian. El DNI de un integrante se puede cambiar; el DNI, el CUIT y
+ * el tipo de persona de un cliente, no (RF-7). Un email null lo borra (solo clientes).
+ */
 export interface UpdateUserData {
-  email?: string;
+  email?: string | null;
+  dni?: string;
   nombre?: string;
   apellido?: string;
   rol?: Rol;

@@ -46,13 +46,15 @@ describe('accountRows', () => {
     id: 1,
     esPrincipal: false,
     email: 'ana@correo.com',
+    dni: null,
     nombre: 'Ana',
     apellido: 'Gómez',
     debeCambiarContrasena: false,
   };
 
-  it('a un integrante le arma solo sus datos personales', () => {
-    expect(accountRows({ ...base, rol: 'admin', cliente: null })).toEqual([
+  it('a un integrante le arma su DNI y sus datos personales', () => {
+    expect(accountRows({ ...base, rol: 'admin', dni: '20111222', cliente: null })).toEqual([
+      ['DNI', '20.111.222'],
       ['Nombre', 'Ana'],
       ['Apellido', 'Gómez'],
       ['Email', 'ana@correo.com'],
@@ -95,6 +97,7 @@ describe('listName y documentLabel', () => {
     rol: 'cliente' as const,
     esPrincipal: false,
     email: null,
+    dni: null,
     nombre: 'Ana',
     apellido: 'Gómez',
     debeCambiarContrasena: false,
@@ -117,9 +120,10 @@ describe('listName y documentLabel', () => {
     expect(listName(client(null, '30712345671', 'Acme SRL'))).toBe('Acme SRL');
   });
 
-  it('muestra el DNI o el CUIT formateado, o un guion si no es cliente', () => {
+  it('muestra el DNI o el CUIT formateado, el DNI de un integrante, o un guion si no tiene', () => {
     expect(documentLabel(client('30123456', null, null))).toBe('30.123.456');
     expect(documentLabel(client(null, '30712345671', 'Acme SRL'))).toBe('30-71234567-1');
+    expect(documentLabel({ ...person, rol: 'abogado', dni: '20111222' })).toBe('20.111.222');
     expect(documentLabel(person)).toBe('—');
   });
 });

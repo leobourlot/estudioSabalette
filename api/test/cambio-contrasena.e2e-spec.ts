@@ -33,7 +33,7 @@ describe('PUT /api/sesion/contrasena', () => {
 
   async function startWith(data: { debeCambiarContrasena?: boolean } = {}) {
     await clearTables(app);
-    await createTestUser(app, data);
+    await createTestUser(app, { ...data, dni: '20111222' });
     session = await loginAs(app, 'juan@estudio.com');
   }
 
@@ -52,7 +52,7 @@ describe('PUT /api/sesion/contrasena', () => {
     request(app.getHttpServer())
       .post('/api/sesion/ingresar')
       .set('X-Forwarded-For', nextTestIp())
-      .send({ email: 'juan@estudio.com', contrasena });
+      .send({ documento: '20111222', contrasena });
 
   it('cambia la contraseña y mantiene la sesión actual (RF-36)', async () => {
     await changePassword({ contrasenaActual: TEST_PASSWORD, contrasenaNueva: NEW_PASSWORD }).expect(

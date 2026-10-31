@@ -10,6 +10,7 @@ import { CrearMovimientosYCambios1791333903330 } from '../migraciones/1791333903
 import { CrearFallosYPalabrasClave1791589649680 } from '../migraciones/1791589649680-crear-fallos-y-palabras-clave.js';
 import { CrearModelosEscritos1791689533533 } from '../migraciones/1791689533533-crear-modelos-escritos.js';
 import { AgregarAbogadoPatrocinanteAPartes1793145297279 } from '../migraciones/1793145297279-agregar-abogado-patrocinante-a-partes.js';
+import { AgregarDniAIntegrantes1793318400000 } from '../migraciones/1793318400000-agregar-dni-a-integrantes.js';
 import { ModeloEscrito } from '../modelos-escritos/modelo-escrito.entity.js';
 import { CambioMovimiento } from '../movimientos/cambio-movimiento.entity.js';
 import { Movimiento } from '../movimientos/movimiento.entity.js';
@@ -41,4 +42,5 @@ export const MIGRATIONS = [
   CrearFallosYPalabrasClave1791589649680,
   CrearModelosEscritos1791689533533,
   AgregarAbogadoPatrocinanteAPartes1793145297279,
+  AgregarDniAIntegrantes1793318400000,
 ];

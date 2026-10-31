@@ -2,21 +2,22 @@
 -- partes, movimientos con su historial, jurisprudencia y modelos de escritos.
 --
 -- Requisitos: una base con todas las migraciones aplicadas y sin estos datos cargados (los emails
--- son únicos, así que una segunda carga falla y no deja nada a medias). Nunca en producción, ni
+-- y los DNI son únicos, así que una segunda carga falla y no deja nada a medias). Nunca en producción, ni
 -- en la base de los tests e2e (.env.test): los tests vacían las tablas antes de correr.
 --
 -- Si la base ya tiene un administrador principal, se conserva; si no, Carolina Ferreyra pasa a
 -- ser la principal.
 --
--- Todos los usuarios ingresan con la contraseña Muestra2026 y no se les pide cambiarla.
---   Administradora: carolina.ferreyra@estudiomuestra.test
---   Abogados:       julian.ibarra@estudiomuestra.test, sofia.lucero@estudiomuestra.test
---                   (tomas.quiroga@estudiomuestra.test está desactivado)
---   Clientes:       maria.gomez@correo.test (2 causas, una desactivada), daniel.rossi@correo.test
---                   (2 causas), lucia.fernandez@correo.test (causa e incidente),
---                   ana.herrera@correo.test, gustavo.paz@correo.test,
---                   administracion@lostalas.test, legales@constructoradelta.test
---                   (carlos.medina@correo.test está desactivado)
+-- Todos los usuarios ingresan con su DNI (o el CUIT, las personas jurídicas) y la contraseña
+-- Muestra2026, y no se les pide cambiarla.
+--   Administradora: Carolina Ferreyra, DNI 23456781
+--   Abogados:       Julián Ibarra, DNI 24567892; Sofía Lucero, DNI 33789014
+--                   (Tomás Quiroga, DNI 27678903, está desactivado)
+--   Clientes:       María Elena Gómez, DNI 28456123 (2 causas, una desactivada); Daniel Rossi,
+--                   DNI 31789456 (2 causas); Lucía Fernández, DNI 35123987 (causa e incidente);
+--                   Ana Laura Herrera, DNI 26987654; Gustavo Paz, DNI 30111222 (sin email);
+--                   Agropecuaria Los Talas, CUIT 30712345604; Constructora Delta,
+--                   CUIT 30709876518 (Carlos Medina, DNI 22333444, está desactivado)
 --
 -- Los datos de personas, empresas, expedientes y domicilios son ficticios. Los fallos son reales
 -- de la Corte Suprema; los sumarios son una síntesis propia, no transcripciones oficiales.
@@ -34,13 +35,13 @@ SET @principalId = (SELECT `id` FROM `usuarios` WHERE `esPrincipal` = 1 LIMIT 1)
 -- --------------------------------------------------------------------------------------
 -- Integrantes del estudio
 -- --------------------------------------------------------------------------------------
-INSERT INTO `usuarios` (`rol`, `esPrincipal`, `email`, `nombre`, `apellido`, `contrasenaHash`, `debeCambiarContrasena`, `activo`, `ultimoIngreso`, `creadoPorId`, `creadoEn`, `modificadoPorId`, `modificadoEn`) VALUES ('admin', (@principalId IS NULL), 'carolina.ferreyra@estudiomuestra.test', 'Carolina', 'Ferreyra', @hash, 0, 1, '2026-10-24 08:47:12', @principalId, '2021-03-01 09:00:00', NULL, NULL);
+INSERT INTO `usuarios` (`rol`, `esPrincipal`, `email`, `dni`, `nombre`, `apellido`, `contrasenaHash`, `debeCambiarContrasena`, `activo`, `ultimoIngreso`, `creadoPorId`, `creadoEn`, `modificadoPorId`, `modificadoEn`) VALUES ('admin', (@principalId IS NULL), 'carolina.ferreyra@estudiomuestra.test', '23456781', 'Carolina', 'Ferreyra', @hash, 0, 1, '2026-10-24 08:47:12', @principalId, '2021-03-01 09:00:00', NULL, NULL);
 SET @u_admin = LAST_INSERT_ID();
-INSERT INTO `usuarios` (`rol`, `esPrincipal`, `email`, `nombre`, `apellido`, `contrasenaHash`, `debeCambiarContrasena`, `activo`, `ultimoIngreso`, `creadoPorId`, `creadoEn`, `modificadoPorId`, `modificadoEn`) VALUES ('abogado', 0, 'julian.ibarra@estudiomuestra.test', 'Julián', 'Ibarra', @hash, 0, 1, '2026-10-23 17:20:05', @u_admin, '2021-03-02 10:15:00', NULL, NULL);
+INSERT INTO `usuarios` (`rol`, `esPrincipal`, `email`, `dni`, `nombre`, `apellido`, `contrasenaHash`, `debeCambiarContrasena`, `activo`, `ultimoIngreso`, `creadoPorId`, `creadoEn`, `modificadoPorId`, `modificadoEn`) VALUES ('abogado', 0, 'julian.ibarra@estudiomuestra.test', '24567892', 'Julián', 'Ibarra', @hash, 0, 1, '2026-10-23 17:20:05', @u_admin, '2021-03-02 10:15:00', NULL, NULL);
 SET @u_julian = LAST_INSERT_ID();
-INSERT INTO `usuarios` (`rol`, `esPrincipal`, `email`, `nombre`, `apellido`, `contrasenaHash`, `debeCambiarContrasena`, `activo`, `ultimoIngreso`, `creadoPorId`, `creadoEn`, `modificadoPorId`, `modificadoEn`) VALUES ('abogado', 0, 'tomas.quiroga@estudiomuestra.test', 'Tomás', 'Quiroga', @hash, 0, 0, '2024-12-19 18:02:44', @u_admin, '2021-03-02 10:20:00', @u_admin, '2024-12-20 09:30:00');
+INSERT INTO `usuarios` (`rol`, `esPrincipal`, `email`, `dni`, `nombre`, `apellido`, `contrasenaHash`, `debeCambiarContrasena`, `activo`, `ultimoIngreso`, `creadoPorId`, `creadoEn`, `modificadoPorId`, `modificadoEn`) VALUES ('abogado', 0, 'tomas.quiroga@estudiomuestra.test', '27678903', 'Tomás', 'Quiroga', @hash, 0, 0, '2024-12-19 18:02:44', @u_admin, '2021-03-02 10:20:00', @u_admin, '2024-12-20 09:30:00');
 SET @u_tomas = LAST_INSERT_ID();
-INSERT INTO `usuarios` (`rol`, `esPrincipal`, `email`, `nombre`, `apellido`, `contrasenaHash`, `debeCambiarContrasena`, `activo`, `ultimoIngreso`, `creadoPorId`, `creadoEn`, `modificadoPorId`, `modificadoEn`) VALUES ('abogado', 0, 'sofia.lucero@estudiomuestra.test', 'Sofía', 'Lucero', @hash, 0, 1, '2026-10-24 11:05:31', @u_admin, '2023-02-06 09:30:00', NULL, NULL);
+INSERT INTO `usuarios` (`rol`, `esPrincipal`, `email`, `dni`, `nombre`, `apellido`, `contrasenaHash`, `debeCambiarContrasena`, `activo`, `ultimoIngreso`, `creadoPorId`, `creadoEn`, `modificadoPorId`, `modificadoEn`) VALUES ('abogado', 0, 'sofia.lucero@estudiomuestra.test', '33789014', 'Sofía', 'Lucero', @hash, 0, 1, '2026-10-24 11:05:31', @u_admin, '2023-02-06 09:30:00', NULL, NULL);
 SET @u_sofia = LAST_INSERT_ID();
 
 -- --------------------------------------------------------------------------------------
@@ -58,7 +59,7 @@ INSERT INTO `clientes` (`usuarioId`, `tipoPersona`, `dni`, `cuit`, `razonSocial`
 INSERT INTO `usuarios` (`rol`, `esPrincipal`, `email`, `nombre`, `apellido`, `contrasenaHash`, `debeCambiarContrasena`, `activo`, `ultimoIngreso`, `creadoPorId`, `creadoEn`, `modificadoPorId`, `modificadoEn`) VALUES ('cliente', 0, 'ana.herrera@correo.test', 'Ana Laura', 'Herrera', @hash, 0, 1, '2023-12-05 10:11:12', @u_admin, '2023-03-08 15:00:00', NULL, NULL);
 SET @u_herrera = LAST_INSERT_ID();
 INSERT INTO `clientes` (`usuarioId`, `tipoPersona`, `dni`, `cuit`, `razonSocial`, `telefono`, `domicilio`) VALUES (@u_herrera, 'fisica', '26987654', NULL, NULL, '3415550104', 'Av. Pellegrini 2290, Rosario');
-INSERT INTO `usuarios` (`rol`, `esPrincipal`, `email`, `nombre`, `apellido`, `contrasenaHash`, `debeCambiarContrasena`, `activo`, `ultimoIngreso`, `creadoPorId`, `creadoEn`, `modificadoPorId`, `modificadoEn`) VALUES ('cliente', 0, 'gustavo.paz@correo.test', 'Gustavo Adrián', 'Paz', @hash, 0, 1, '2026-02-26 08:30:41', @u_admin, '2025-08-29 12:00:00', NULL, NULL);
+INSERT INTO `usuarios` (`rol`, `esPrincipal`, `email`, `nombre`, `apellido`, `contrasenaHash`, `debeCambiarContrasena`, `activo`, `ultimoIngreso`, `creadoPorId`, `creadoEn`, `modificadoPorId`, `modificadoEn`) VALUES ('cliente', 0, NULL, 'Gustavo Adrián', 'Paz', @hash, 0, 1, '2026-02-26 08:30:41', @u_admin, '2025-08-29 12:00:00', NULL, NULL);
 SET @u_paz = LAST_INSERT_ID();
 INSERT INTO `clientes` (`usuarioId`, `tipoPersona`, `dni`, `cuit`, `razonSocial`, `telefono`, `domicilio`) VALUES (@u_paz, 'fisica', '30111222', NULL, NULL, '3415550105', 'San Lorenzo 1777, Rosario');
 INSERT INTO `usuarios` (`rol`, `esPrincipal`, `email`, `nombre`, `apellido`, `contrasenaHash`, `debeCambiarContrasena`, `activo`, `ultimoIngreso`, `creadoPorId`, `creadoEn`, `modificadoPorId`, `modificadoEn`) VALUES ('cliente', 0, 'carlos.medina@correo.test', 'Carlos', 'Medina', @hash, 0, 0, '2022-09-13 12:00:00', @u_admin, '2021-07-20 09:45:00', @u_admin, '2023-01-10 10:00:00');

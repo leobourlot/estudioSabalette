@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { normalizeEmail } from '../usuarios/validadores/normalizar.js';
+import { normalizeDocumentNumber } from '../usuarios/validadores/normalizar.js';
 
 const WINDOW_MS = 15 * 60_000;
-const MAX_ATTEMPTS_PER_IP_AND_EMAIL = 5;
+const MAX_ATTEMPTS_PER_IP_AND_DOCUMENT = 5;
 const MAX_ATTEMPTS_PER_IP = 30;
 
 interface Counter {
@@ -20,25 +20,25 @@ export class LoginAttemptLimiter {
   private readonly counters = new Map<string, Counter>();
 
   /**
-   * Si la IP o la combinación IP + email ya agotaron su límite, devuelve false sin contar.
+   * Si la IP o la combinación IP + DNI o CUIT ya agotaron su límite, devuelve false sin contar.
    * Si no, cuenta el intento (exitoso o fallido) y devuelve true.
    */
-  consumeAttempt(ip: string, email: string): boolean {
+  consumeAttempt(ip: string, document: string): boolean {
     const now = Date.now();
     this.forgetExpired(now);
 
     const ipKey = `ip:${ip}`;
-    const ipAndEmailKey = `ip-email:${ip}|${normalizeEmail(email)}`;
+    const ipAndDocumentKey = `ip-documento:${ip}|${normalizeDocumentNumber(document)}`;
 
     if (
       this.hasReachedLimit(ipKey, MAX_ATTEMPTS_PER_IP) ||
-      this.hasReachedLimit(ipAndEmailKey, MAX_ATTEMPTS_PER_IP_AND_EMAIL)
+      this.hasReachedLimit(ipAndDocumentKey, MAX_ATTEMPTS_PER_IP_AND_DOCUMENT)
     ) {
       return false;
     }
 
     this.count(ipKey, now);
-    this.count(ipAndEmailKey, now);
+    this.count(ipAndDocumentKey, now);
     return true;
   }
 

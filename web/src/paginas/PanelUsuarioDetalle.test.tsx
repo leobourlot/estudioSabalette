@@ -199,6 +199,36 @@ describe('PanelUsuarioDetalle — edición (RF-27, RF-28)', () => {
     expect(users.updateUser).toHaveBeenCalledWith(9, { rol: 'admin' });
   });
 
+  it('edita el DNI de un integrante (RF-7, RF-27)', async () => {
+    const users = await openDetail(lawyerAccount, {
+      updateUser: async () => ({ ...lawyerAccount, dni: '25666777' }),
+    });
+    const user = userEvent.setup();
+
+    expect(await dataValue('DNI')).toBe('20.111.222');
+    await user.clear(within(editForm()).getByLabelText('DNI'));
+    await user.type(within(editForm()).getByLabelText('DNI'), '25.666.777');
+    await user.click(within(editForm()).getByRole('button', { name: 'Guardar cambios' }));
+
+    await screen.findByRole('status');
+    expect(users.updateUser).toHaveBeenCalledWith(9, { dni: '25.666.777' });
+    expect(await dataValue('DNI')).toBe('25.666.777');
+  });
+
+  it('borra el email de un cliente, que es opcional (RF-3)', async () => {
+    const users = await openDetail(naturalClient, {
+      updateUser: async () => ({ ...naturalClient, email: null }),
+    });
+    const user = userEvent.setup();
+
+    await user.clear(within(editForm()).getByLabelText('Email (opcional)'));
+    await user.click(within(editForm()).getByRole('button', { name: 'Guardar cambios' }));
+
+    await screen.findByRole('status');
+    expect(users.updateUser).toHaveBeenCalledWith(7, { email: null });
+    expect(await dataValue('Email')).toBe('—');
+  });
+
   it('sin cambios, avisa y no llama a la API', async () => {
     const users = await openDetail(naturalClient);
 

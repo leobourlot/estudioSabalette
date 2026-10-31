@@ -13,18 +13,24 @@ async function openMyAccount(path: string, usuario: UsuarioPropio) {
 const valueOf = (label: string) => screen.getByText(label).nextElementSibling?.textContent;
 
 describe('MiCuenta (RF-35)', () => {
-  it('a un integrante le muestra sus datos, sin datos de cliente', async () => {
+  it('a un integrante le muestra sus datos y su DNI, sin datos de cliente', async () => {
     await openMyAccount(
       '/panel/mi-cuenta',
-      testUser('abogado', { nombre: 'Juan', apellido: 'Pérez', email: 'juan@estudio.com' }),
+      testUser('abogado', {
+        nombre: 'Juan',
+        apellido: 'Pérez',
+        email: 'juan@estudio.com',
+        dni: '20111222',
+      }),
     );
 
+    expect(valueOf('DNI')).toBe('20.111.222');
     expect(valueOf('Nombre')).toBe('Juan');
     expect(valueOf('Apellido')).toBe('Pérez');
     expect(valueOf('Email')).toBe('juan@estudio.com');
     expect(valueOf('Rol')).toBe('Abogado');
     expect(screen.queryByText('Tipo de persona')).toBeNull();
-    expect(screen.queryByText('DNI')).toBeNull();
+    expect(screen.queryByText('Teléfono')).toBeNull();
   });
 
   it('a un cliente persona física le muestra también sus datos de cliente', async () => {

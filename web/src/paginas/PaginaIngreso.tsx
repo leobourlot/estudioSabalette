@@ -10,10 +10,10 @@ import { APP_TITLES } from '../servicios/rutas-sitio';
 import { resolveLandingRoute } from '../servicios/sesion';
 import { TEXTOS_INGRESO } from '../servicios/textos-aplicacion';
 
-const EMPTY_FIELDS_MESSAGE = 'Completá el email y la contraseña';
+const EMPTY_FIELDS_MESSAGE = 'Completá el DNI o CUIT y la contraseña';
 
 /**
- * Ingreso con email y contraseña (RF-8 a RF-10). Muestra los mensajes de la API tal cual
+ * Ingreso con DNI o CUIT y contraseña (RF-8 a RF-10). Muestra los mensajes de la API tal cual
  * (credenciales incorrectas, demasiados intentos) y, al ingresar, lleva a donde indica
  * resolveLandingRoute: el cambio de contraseña pendiente o el inicio de la sección. Arriba, el
  * logo y el nombre del estudio llevan al sitio público, y el botón de WhatsApp abre la
@@ -24,7 +24,7 @@ export function PaginaIngreso() {
   const { login, notice, clearNotice } = useSession();
   const navigate = useNavigate();
   useTituloDocumento(APP_TITLES.ingreso);
-  const [email, setEmail] = useState('');
+  const [documento, setDocumento] = useState('');
   const [contrasena, setContrasena] = useState('');
   // Aviso que deja otra pantalla al cerrar la sesión, por ejemplo el de RF-38.
   const [error, setError] = useState<string | null>(notice);
@@ -36,14 +36,14 @@ export function PaginaIngreso() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (email.trim() === '' || contrasena === '') {
+    if (documento.trim() === '' || contrasena === '') {
       setError(EMPTY_FIELDS_MESSAGE);
       return;
     }
     setError(null);
     setEnviando(true);
     try {
-      const usuario = await login(email, contrasena);
+      const usuario = await login(documento, contrasena);
       navigate(resolveLandingRoute(usuario), { replace: true });
     } catch (caught) {
       setError(errorMessage(caught));
@@ -75,15 +75,16 @@ export function PaginaIngreso() {
           )}
 
           <div className="space-y-1">
-            <label htmlFor="email" className={LABEL}>
-              Email
+            <label htmlFor="documento" className={LABEL}>
+              DNI o CUIT
             </label>
             <input
-              id="email"
-              type="email"
+              id="documento"
+              type="text"
+              inputMode="numeric"
               autoComplete="username"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
+              value={documento}
+              onChange={(event) => setDocumento(event.target.value)}
               className={INPUT}
             />
           </div>

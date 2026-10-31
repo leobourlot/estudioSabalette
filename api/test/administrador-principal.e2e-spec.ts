@@ -71,10 +71,7 @@ describe('administrador principal (RF-31, RF-32)', () => {
     it.each([
       ['quitarle el rol', () => patch(adminASession, principal.id, { rol: 'abogado' })],
       ['desactivarlo', () => post(adminASession, `/${principal.id}/desactivar`)],
-      [
-        'cambiarle el email',
-        () => patch(adminASession, principal.id, { email: 'otro@estudio.com' }),
-      ],
+      ['cambiarle el DNI', () => patch(adminASession, principal.id, { dni: '27999888' })],
       [
         'restablecerle la contraseña',
         () =>

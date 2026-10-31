@@ -3,13 +3,15 @@ import { ValidateNested } from 'class-validator';
 import type { Rol } from '../usuario.entity.js';
 import { MAX_PHONE_LENGTH, MAX_TEXT_LENGTH } from '../validadores/longitudes.js';
 import {
+  dniFormatRule,
   emailRule,
   optional,
   optionalText,
   requiredText,
   rolRule,
   Rule,
-  toNormalizedEmail,
+  toDocumentNumber,
+  toOptionalEmail,
   trimOptionalText,
   trimText,
 } from './reglas.js';
@@ -54,13 +56,20 @@ export class UpdateClientDataDto {
 }
 
 /**
- * Modificación parcial de una cuenta (RF-27, RF-28). Los campos ausentes no cambian.
- * Qué roles se pueden asignar y a quién lo controla el service.
+ * Modificación parcial de una cuenta (RF-27, RF-28). Los campos ausentes no cambian; un
+ * email null o vacío lo borra. Qué roles se pueden asignar y a quién, que solo los clientes
+ * queden sin email y que solo los integrantes cambien el DNI (RF-7) lo controla el service.
  */
 export class UpdateUserDto {
-  @Transform(toNormalizedEmail)
-  @Rule(optional(emailRule))
-  email?: string;
+  @Transform(toOptionalEmail)
+  @Rule((value, object) =>
+    value === undefined || value === null ? null : emailRule(value, object),
+  )
+  email?: string | null;
+
+  @Transform(toDocumentNumber)
+  @Rule(optional(dniFormatRule))
+  dni?: string;
 
   @Transform(trimText)
   @Rule(

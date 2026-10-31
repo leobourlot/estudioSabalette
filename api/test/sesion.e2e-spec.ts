@@ -47,6 +47,7 @@ describe('sesión: usuario propio, cierre y sesión única', () => {
         rol: 'abogado',
         esPrincipal: false,
         email: 'juan@estudio.com',
+        dni: usuario.dni,
         nombre: 'Juan',
         apellido: 'Pérez',
         debeCambiarContrasena: false,

@@ -22,18 +22,26 @@ type UserData = Partial<Omit<Usuario, 'cliente'>> & {
   cliente?: Partial<Omit<Cliente, 'usuarioId' | 'usuario'>>;
 };
 
-/** Crea un usuario (y su cliente, si se indica) directamente en la base de tests. */
+let testStaffDniCounter = 0;
+
+/**
+ * Crea un usuario (y su cliente, si se indica) directamente en la base de tests. Los
+ * integrantes reciben un DNI único (47 millones en adelante, lejos de los de los tests) si no
+ * se indica uno, para que puedan ingresar.
+ */
 export async function createTestUser(
   app: NestExpressApplication,
   data: UserData = {},
 ): Promise<Usuario> {
   const dataSource = app.get(DataSource);
   const { cliente, ...userData } = data;
+  const isClient = (userData.rol ?? 'abogado') === 'cliente';
 
   const usuario = await dataSource.getRepository(Usuario).save({
     rol: 'abogado',
     esPrincipal: false,
     email: 'juan@estudio.com',
+    dni: isClient ? null : String(47000000 + ++testStaffDniCounter),
     nombre: 'Juan',
     apellido: 'Pérez',
     contrasenaHash: await testPasswordHash(),

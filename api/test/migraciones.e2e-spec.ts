@@ -43,6 +43,7 @@ describe('migraciones', () => {
       expect(uniqueIndexes.map((index) => index.name).sort()).toEqual([
         'UQ_clientes_cuit',
         'UQ_clientes_dni',
+        'UQ_usuarios_dni',
         'UQ_usuarios_email',
       ]);
 

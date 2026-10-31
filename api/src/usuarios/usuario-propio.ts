@@ -7,6 +7,8 @@ export interface UsuarioPropio {
   rol: Rol;
   esPrincipal: boolean;
   email: string | null;
+  /** DNI de un integrante; el de un cliente persona física va en `cliente.dni`. */
+  dni: string | null;
   nombre: string;
   apellido: string;
   debeCambiarContrasena: boolean;
@@ -31,6 +33,7 @@ export function toUsuarioPropio(usuario: Usuario): UsuarioPropio {
     rol: usuario.rol,
     esPrincipal: usuario.esPrincipal,
     email: usuario.email,
+    dni: usuario.dni,
     nombre: usuario.nombre,
     apellido: usuario.apellido,
     debeCambiarContrasena: usuario.debeCambiarContrasena,

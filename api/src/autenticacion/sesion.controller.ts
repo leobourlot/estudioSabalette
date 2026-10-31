@@ -32,7 +32,7 @@ export class SessionController {
     private readonly limiter: LoginAttemptLimiter,
   ) {}
 
-  /** Ingreso con email y contraseña (RF-8 a RF-10). */
+  /** Ingreso con DNI o CUIT y contraseña (RF-8 a RF-10). */
   @Public()
   @Post('ingresar')
   @HttpCode(HttpStatus.OK)
@@ -42,11 +42,11 @@ export class SessionController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<UsuarioPropio> {
     // request.ip ya es la IP real del usuario gracias a `trust proxy` (configureApp).
-    if (!this.limiter.consumeAttempt(request.ip ?? '', body.email)) {
+    if (!this.limiter.consumeAttempt(request.ip ?? '', body.documento)) {
       throw new HttpException(TOO_MANY_ATTEMPTS_MESSAGE, HttpStatus.TOO_MANY_REQUESTS);
     }
 
-    const result = await this.authentication.login(body.email, body.contrasena);
+    const result = await this.authentication.login(body.documento, body.contrasena);
     setSessionCookies(response, result);
     return toUsuarioPropio(result.usuario);
   }

@@ -34,7 +34,7 @@ export function switchTransition(reduceMotion: boolean): Transition {
 
 /*
  * La secuencia de la maqueta del portal del inicio (spec 007, RF-47), en bucle mientras está en
- * la pantalla: aparece la ventana con el ingreso, se tipean el email y la contraseña, el puntero
+ * la pantalla: aparece la ventana con el ingreso, se tipean el DNI y la contraseña, el puntero
  * elige "Ingresar", el ingreso da paso a la causa y sus movimientos aparecen de a uno, del más
  * antiguo (abajo) al más reciente (arriba). La causa completa queda quieta un rato y la maqueta
  * vuelve al ingreso vacío. Todo sale del tiempo transcurrido, en segundos.
@@ -43,8 +43,8 @@ export function switchTransition(reduceMotion: boolean): Transition {
 /** Duración de la aparición de la ventana, en segundos. */
 export const MOCKUP_WINDOW_S = 0.5;
 
-/** Cuánto tarda cada letra del email y cada punto de la contraseña, en segundos. */
-export const MOCKUP_EMAIL_CHAR_S = 0.05;
+/** Cuánto tarda cada carácter del DNI y cada punto de la contraseña, en segundos. */
+export const MOCKUP_DOCUMENT_CHAR_S = 0.05;
 export const MOCKUP_PASSWORD_CHAR_S = 0.07;
 
 /** Duración de cada fundido (puntero, cambio de vista y cada movimiento), en segundos. */
@@ -64,7 +64,7 @@ export const MOCKUP_MOVEMENT_RISE_PX = 8;
 
 /** Los momentos de la secuencia, en segundos desde que la maqueta entra en la pantalla. */
 export interface MockupTimeline {
-  emailStart: number;
+  documentStart: number;
   passwordStart: number;
   pointerStart: number;
   pressStart: number;
@@ -74,14 +74,14 @@ export interface MockupTimeline {
   end: number;
 }
 
-/** Los momentos de la secuencia para un email, una contraseña y una cantidad de movimientos. */
+/** Los momentos de la secuencia para un DNI, una contraseña y una cantidad de movimientos. */
 export function mockupTimeline(
-  emailLength: number,
+  documentLength: number,
   passwordLength: number,
   movementCount: number,
 ): MockupTimeline {
-  const emailStart = MOCKUP_WINDOW_S + 0.1;
-  const passwordStart = emailStart + emailLength * MOCKUP_EMAIL_CHAR_S + 0.15;
+  const documentStart = MOCKUP_WINDOW_S + 0.1;
+  const passwordStart = documentStart + documentLength * MOCKUP_DOCUMENT_CHAR_S + 0.15;
   const pointerStart = passwordStart + passwordLength * MOCKUP_PASSWORD_CHAR_S + 0.1;
   const pressStart = pointerStart + MOCKUP_FADE_S;
   const portalStart = pressStart + MOCKUP_PRESS_S + 0.1;
@@ -93,7 +93,15 @@ export function mockupTimeline(
     portalStart + MOCKUP_FADE_S,
     ...movementStarts.map((s) => s + MOCKUP_FADE_S),
   );
-  return { emailStart, passwordStart, pointerStart, pressStart, portalStart, movementStarts, end };
+  return {
+    documentStart,
+    passwordStart,
+    pointerStart,
+    pressStart,
+    portalStart,
+    movementStarts,
+    end,
+  };
 }
 
 /** Lo que aparece: su opacidad y cuánto le falta subir, en píxeles. */
@@ -108,11 +116,11 @@ export interface MockupFrame {
   /** Opacidad del ingreso y de la causa: están en el mismo lugar, una sobre la otra. */
   ingreso: number;
   portal: number;
-  /** Letras del email y puntos de la contraseña ya tipeados. */
-  emailChars: number;
+  /** Caracteres del DNI y puntos de la contraseña ya tipeados. */
+  documentChars: number;
   passwordChars: number;
   /** El campo donde se está tipeando, que muestra el cursor de texto. */
-  cursor: 'email' | 'contrasena' | null;
+  cursor: 'documento' | 'contrasena' | null;
   puntero: MockupFade;
   presionado: boolean;
   movimientos: MockupFade[];
@@ -138,21 +146,21 @@ function fade(t: number, start: number, duration: number, rise: number): MockupF
 export function mockupFrame(
   t: number,
   timeline: MockupTimeline,
-  emailLength: number,
+  documentLength: number,
   passwordLength: number,
 ): MockupFrame {
-  const { emailStart, passwordStart, pointerStart, pressStart, portalStart } = timeline;
+  const { documentStart, passwordStart, pointerStart, pressStart, portalStart } = timeline;
   const typed = (start: number, perChar: number, length: number) =>
     Math.min(length, Math.max(0, Math.floor((t - start) / perChar)));
   const portal = eased(t, portalStart, MOCKUP_FADE_S);
   let cursor: MockupFrame['cursor'] = null;
-  if (t >= emailStart && t < passwordStart) cursor = 'email';
+  if (t >= documentStart && t < passwordStart) cursor = 'documento';
   else if (t >= passwordStart && t < pointerStart) cursor = 'contrasena';
   return {
     ventana: fade(t, 0, MOCKUP_WINDOW_S, RISE_PX),
     ingreso: 1 - portal,
     portal,
-    emailChars: typed(emailStart, MOCKUP_EMAIL_CHAR_S, emailLength),
+    documentChars: typed(documentStart, MOCKUP_DOCUMENT_CHAR_S, documentLength),
     passwordChars: typed(passwordStart, MOCKUP_PASSWORD_CHAR_S, passwordLength),
     cursor,
     puntero: fade(t, pointerStart, MOCKUP_FADE_S, 12),
@@ -177,15 +185,15 @@ export function mockupCycle(timeline: MockupTimeline): number {
 export function mockupLoopFrame(
   elapsed: number,
   timeline: MockupTimeline,
-  emailLength: number,
+  documentLength: number,
   passwordLength: number,
 ): MockupFrame {
   const cycle = mockupCycle(timeline);
   if (!Number.isFinite(elapsed) || elapsed < cycle) {
-    return mockupFrame(elapsed, timeline, emailLength, passwordLength);
+    return mockupFrame(elapsed, timeline, documentLength, passwordLength);
   }
   const t = elapsed % cycle;
-  const frame = mockupFrame(t, timeline, emailLength, passwordLength);
+  const frame = mockupFrame(t, timeline, documentLength, passwordLength);
   const shown = { opacity: 1, y: 0 };
   if (t >= MOCKUP_FADE_S) return { ...frame, ventana: shown };
   const back = eased(t, 0, MOCKUP_FADE_S);

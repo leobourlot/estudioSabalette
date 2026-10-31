@@ -2,10 +2,11 @@ import { randomBytes } from 'node:crypto';
 import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, type FindOptionsWhere } from 'typeorm';
 import { Sesion } from '../usuarios/sesion.entity.js';
 import { Usuario } from '../usuarios/usuario.entity.js';
-import { normalizeEmail } from '../usuarios/validadores/normalizar.js';
+import { isValidDni } from '../usuarios/validadores/documentos.js';
+import { normalizeDocumentNumber } from '../usuarios/validadores/normalizar.js';
 import type { AccessTokenPayload } from './autenticacion.guard.js';
 import { ACCESS_TOKEN_TTL_SECONDS, INVALID_SESSION_MESSAGE, sessionTtlMs } from './constantes.js';
 import { PasswordsService } from './contrasenas.service.js';
@@ -21,7 +22,7 @@ import { findValidSession } from './sesion-valida.js';
 /** Sección a la que lleva el acceso del sitio público (spec 007, RF-30). */
 export type SeccionSesion = 'portal' | 'panel';
 
-export const INVALID_CREDENTIALS_MESSAGE = 'Email o contraseña incorrectos';
+export const INVALID_CREDENTIALS_MESSAGE = 'DNI/CUIT o contraseña incorrectos';
 export const WRONG_CURRENT_PASSWORD_MESSAGE = 'La contraseña actual no es correcta';
 export const SESSION_CLOSED_FOR_SECURITY_MESSAGE =
   'Por seguridad, cerramos tu sesión. Volvé a ingresar';
@@ -38,9 +39,20 @@ export interface LoginResult extends SessionTokens {
   usuario: Usuario;
 }
 
+/**
+ * A quién corresponde un DNI o CUIT ya normalizado: 11 dígitos son el CUIT de una persona
+ * jurídica; 7 u 8, el DNI de un integrante o de una persona física (RF-8). Null si no puede
+ * ser ninguno de los dos.
+ */
+function credentialsWhere(document: string): FindOptionsWhere<Usuario>[] | null {
+  if (/^\d{11}$/.test(document)) return [{ cliente: { cuit: document } }];
+  if (isValidDni(document)) return [{ dni: document }, { cliente: { dni: document } }];
+  return null;
+}
+
 @Injectable()
 export class AuthenticationService {
-  // Hash de una contraseña al azar, para comparar contra algo cuando el email no existe y
+  // Hash de una contraseña al azar, para comparar contra algo cuando la cuenta no existe y
   // que la respuesta tarde lo mismo exista o no la cuenta.
   private readonly dummyHash: Promise<string>;
 
@@ -54,16 +66,17 @@ export class AuthenticationService {
   }
 
   /**
-   * Ingreso con email y contraseña (RF-8, RF-9). Ante cualquier falla responde el mismo
+   * Ingreso con DNI o CUIT y contraseña (RF-8, RF-9). Ante cualquier falla responde el mismo
    * mensaje, sin indicar qué dato falló. El límite de intentos (RF-10) lo aplica el controlador.
    */
-  async login(email: string, password: string): Promise<LoginResult> {
-    const normalizedEmail = normalizeEmail(email);
-
-    const credentials = await this.users.findOne({
-      where: { email: normalizedEmail },
-      select: { id: true, contrasenaHash: true, activo: true, rol: true },
-    });
+  async login(document: string, password: string): Promise<LoginResult> {
+    const where = credentialsWhere(normalizeDocumentNumber(document));
+    const credentials = where
+      ? await this.users.findOne({
+          where,
+          select: { id: true, contrasenaHash: true, activo: true, rol: true },
+        })
+      : null;
     const passwordMatches = await this.passwords.verify(
       password,
       credentials?.contrasenaHash ?? (await this.dummyHash),

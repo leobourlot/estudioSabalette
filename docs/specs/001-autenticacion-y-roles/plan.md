@@ -58,7 +58,8 @@ Las fechas se guardan en `DATETIME` con la conexión configurada en `-03:00` (Bu
 | `id` | int autoincremental | PK |
 | `rol` | enum `admin`, `abogado`, `cliente` | RF-1 |
 | `esPrincipal` | boolean, default false | Exactamente uno en `true`; se garantiza en el service dentro de una transacción. RF-31, RF-32 |
-| `email` | varchar(254), nullable, único | `NULL` cuando un administrador lo libera. MySQL admite varios `NULL` en un índice único. RF-24 |
+| `email` | varchar(254), nullable, único | Obligatorio para los integrantes y opcional para los clientes (RF-2, RF-3). `NULL` cuando un administrador lo libera o el cliente no tiene. MySQL admite varios `NULL` en un índice único. RF-24 |
+| `dni` | varchar(8), nullable, único | Solo integrantes (7 u 8 dígitos), con el que ingresan (RF-2, RF-8). `NULL` en los clientes, que lo guardan en `clientes`, y en los integrantes cargados antes de la migración `AgregarDniAIntegrantes`, hasta que se les asigne. Que no repita el DNI de un cliente lo controla el service (RF-1, RF-25). |
 | `nombre` | varchar(55) | En personas jurídicas, nombre del contacto. |
 | `apellido` | varchar(55) | En personas jurídicas, apellido del contacto. |
 | `contrasenaHash` | varchar(255) | RF-40 |
@@ -106,7 +107,7 @@ Todas las respuestas de error usan el formato por defecto de NestJS (`statusCode
 
 | Método y ruta | Acceso | Cuerpo | Respuesta | Errores |
 |---|---|---|---|---|
-| `POST /ingresar` | Público, con límite de intentos | `{ email, contrasena }` | 200 `UsuarioPropio` y cookies de sesión | 400, 401 "Email o contraseña incorrectos", 429 |
+| `POST /ingresar` | Público, con límite de intentos | `{ documento, contrasena }` (DNI o CUIT, con o sin separadores) | 200 `UsuarioPropio` y cookies de sesión | 400, 401 "DNI/CUIT o contraseña incorrectos", 429 |
 | `POST /renovar` | Público, usa la cookie de renovación | — | 204 y cookies nuevas | 401 (borra las cookies) |
 | `POST /cerrar` | Público, usa la cookie de renovación si existe | — | 204 y borra las cookies | — |
 | `GET /usuario` | Con sesión, también con cambio pendiente | — | 200 `UsuarioPropio` | 401 |
@@ -117,7 +118,7 @@ Todas las respuestas de error usan el formato por defecto de NestJS (`statusCode
 
 `/estado` es del sitio público (plan 007, "Contrato de la API"): responde siempre 200, solo con la sección, y no extiende ni renueva la sesión (spec 001, RF-12; spec 007, RF-31).
 
-`UsuarioPropio`: `{ id, rol, esPrincipal, email, nombre, apellido, debeCambiarContrasena, cliente?: { tipoPersona, dni, cuit, razonSocial, telefono, domicilio } }`.
+`UsuarioPropio`: `{ id, rol, esPrincipal, email, dni, nombre, apellido, debeCambiarContrasena, cliente?: { tipoPersona, dni, cuit, razonSocial, telefono, domicilio } }`. El `dni` de afuera es el de un integrante; el de un cliente persona física va en `cliente.dni`.
 
 ### Gestión de cuentas — `/api/panel/usuarios` (roles `admin` y `abogado`) [RF-21 a RF-34]
 
@@ -125,15 +126,17 @@ Todas las respuestas de error usan el formato por defecto de NestJS (`statusCode
 |---|---|---|---|---|
 | `GET /?pagina&buscar&rol&activo` | admin; abogado solo con `rol=cliente` (se fuerza si no lo envía) | — | 200 `{ items, total, pagina, porPagina: 20 }` | 403 si un abogado pide otro rol |
 | `GET /:id` | admin; abogado solo clientes | — | 200 `UsuarioDetalle` | 403, 404 |
-| `POST /` | admin; abogado solo `rol=cliente` | `{ rol, email, nombre, apellido, contrasenaTemporal, cliente? }` | 201 `UsuarioDetalle` | 400, 403, 409 (email activo, email de cuenta desactivada, DNI/CUIT existente) |
-| `PATCH /:id` | admin; abogado solo clientes | Parcial: `{ email?, nombre?, apellido?, rol?, cliente?: { razonSocial?, telefono?, domicilio? } }` | 200 `UsuarioDetalle` | 400 (incluye intentar enviar DNI, CUIT o tipo de persona), 403, 404, 409 |
+| `POST /` | admin; abogado solo `rol=cliente` | `{ rol, email?, dni?, nombre, apellido, contrasenaTemporal, cliente? }` | 201 `UsuarioDetalle` | 400, 403, 409 (email activo, email de cuenta desactivada, DNI/CUIT existente) |
+| `PATCH /:id` | admin; abogado solo clientes | Parcial: `{ email?, dni?, nombre?, apellido?, rol?, cliente?: { razonSocial?, telefono?, domicilio? } }` | 200 `UsuarioDetalle` | 400 (incluye enviar DNI, CUIT o tipo de persona de un cliente, o borrar el email de un integrante), 403, 404, 409 |
 | `POST /:id/desactivar` | admin; abogado solo clientes | — | 204 | 403, 404, 409 principal |
-| `POST /:id/reactivar` | admin; abogado solo clientes | `{ contrasenaTemporal }` | 204 | 400, 403, 404, 409 si no tiene email |
+| `POST /:id/reactivar` | admin; abogado solo clientes | `{ contrasenaTemporal }` | 204 | 400, 403, 404, 409 si es un integrante sin email |
 | `POST /:id/restablecer-contrasena` | admin; abogado solo clientes | `{ contrasenaTemporal }` | 204 | 400, 403, 404, 409 principal |
 | `POST /:id/liberar-email` | solo admin; solo cuentas desactivadas | — | 204 | 403, 404, 409 si la cuenta está activa |
 | `POST /:id/transferir-principal` | solo el principal; destino: administrador activo | — | 204 | 403, 404, 409 si el destino no es un administrador activo |
 
-`cliente` en el alta: `{ tipoPersona, dni?, cuit?, razonSocial?, telefono?, domicilio? }`. Para `fisica` se exige `dni` y se rechazan `cuit` y `razonSocial`; para `juridica` se exigen `cuit` y `razonSocial` y se rechaza `dni`.
+En el alta, un integrante lleva `email` y `dni` obligatorios y no lleva `cliente`. Un cliente puede no traer `email` (o traerlo vacío o `null`), no lleva `dni` afuera y su `cliente` es `{ tipoPersona, dni?, cuit?, razonSocial?, telefono?, domicilio? }`: para `fisica` se exige `dni` y se rechazan `cuit` y `razonSocial`; para `juridica` se exigen `cuit` y `razonSocial` y se rechaza `dni`.
+
+En la modificación, `email: null` (o vacío) borra el email de un cliente; en un integrante responde 400 "El email es obligatorio para los integrantes del estudio". `dni` solo vale para integrantes; en un cliente responde 400 "El DNI de un cliente no se puede modificar" (RF-7).
 
 `UsuarioDetalle`: `UsuarioPropio` más `activo`, `ultimoIngreso`, `creadoEn`, `modificadoEn`, `creadoPor` y `modificadoPor` (cada uno `{ id, nombre, apellido }` o `null`).
 
@@ -141,8 +144,9 @@ Mensajes de 409:
 - "Ya existe una cuenta con ese email" (RF-23).
 - "Ese email pertenece a una cuenta desactivada" (RF-24).
 - "Ya existe un cliente con ese DNI o CUIT", con el agregado "Está desactivado: reactivalo en lugar de crear uno nuevo" si corresponde (RF-25).
+- "Ya existe un integrante del estudio con ese DNI", con el mismo agregado si corresponde (RF-1, RF-25). El DNI de un integrante se compara contra los integrantes y los clientes, y el de un cliente persona física, también contra los integrantes.
 - "No se puede modificar al administrador principal" (RF-31).
-- "La cuenta no tiene email. Asignale uno antes de reactivarla" (RF-24, RF-30).
+- "La cuenta no tiene email. Asignale uno antes de reactivarla", solo para integrantes (RF-24, RF-30).
 
 ## Flujo de la sesión
 
@@ -154,12 +158,15 @@ Mensajes de 409:
 
 ### Ingreso [RF-8, RF-9, RF-10, RF-13]
 ```
-ingresar(email, contrasena, ip):
-  email = normalizar(email)
-  si limitador.superado(ip) o limitador.superado(ip + email): 429
-  limitador.contar(ip); limitador.contar(ip + email)
-  credenciales = buscar por email (solo id, contrasenaHash, activo, rol)   // el hash no viaja en otras consultas
-  hashAComparar = credenciales?.contrasenaHash ?? HASH_FICTICIO       // tiempo similar exista o no el email
+ingresar(documento, contrasena, ip):
+  documento = normalizar(documento)                  // solo dígitos: sin puntos, guiones ni espacios
+  si limitador.superado(ip) o limitador.superado(ip + documento): 429
+  limitador.contar(ip); limitador.contar(ip + documento)
+  si documento tiene 11 dígitos: credenciales = buscar por clientes.cuit
+  si tiene 7 u 8:                credenciales = buscar por usuarios.dni o clientes.dni
+  si no:                         credenciales = null   // ni se consulta la base (un email, por ejemplo)
+  (cada búsqueda trae solo id, contrasenaHash, activo, rol)          // el hash no viaja en otras consultas
+  hashAComparar = credenciales?.contrasenaHash ?? HASH_FICTICIO       // tiempo similar exista o no la cuenta
   ok = bcrypt.compare(contrasena, hashAComparar)
   si no credenciales o no ok o no credenciales.activo: 401 genérico
   borrar las sesiones del usuario                    // sesión única; también limpia las viejas
@@ -240,16 +247,16 @@ Supone una sola instancia de la API. Si en el futuro se escala a varias réplica
 
 Reglas de permisos en `usuarios/permisos-gestion.ts`, como funciones puras sin acceso a la base, que `usuarios.service.ts` consulta antes de cada operación (código HTTP y mensaje):
 - **Abogado**: toda operación sobre una cuenta que no sea de cliente responde 403 (RF-21).
-- **Principal**: si la cuenta destino es el principal y el actor es otro usuario, se rechazan desactivar, cambiar el rol, cambiar el email y restablecer la contraseña. El principal tampoco puede quitarse el rol ni desactivarse (RF-31). Como el principal siempre es un administrador activo, el sistema nunca se queda sin administradores.
+- **Principal**: si la cuenta destino es el principal y el actor es otro usuario, se rechazan desactivar, cambiar el rol, cambiar el DNI y restablecer la contraseña. El principal tampoco puede quitarse el rol ni desactivarse (RF-31). Como el principal siempre es un administrador activo, el sistema nunca se queda sin administradores.
 - **Transferencia** (RF-32): en una transacción con bloqueo de filas (`SELECT … FOR UPDATE`), pone `esPrincipal = false` en el actual y `true` en el destino.
 - **Rol** (RF-28): solo cambia entre `admin` y `abogado`. No se cierra la sesión (RF-14).
-- **Email** (RF-27): si cambia el de otra cuenta, se revoca su sesión. Si el administrador cambia el propio, su sesión sigue.
+- **DNI de un integrante** (RF-27): si cambia el de otra cuenta, se revoca su sesión. Si el administrador cambia el propio, su sesión sigue. Cambiar el email no revoca ninguna sesión, porque no sirve para ingresar.
 - **Desactivar** (RF-29): `activo = false` y se revoca la sesión.
-- **Reactivar** (RF-30): exige email asignado y contraseña temporal; `activo = true`, `debeCambiarContrasena = true`.
+- **Reactivar** (RF-30): exige contraseña temporal y, si es un integrante, email asignado; `activo = true`, `debeCambiarContrasena = true`.
 - **Restablecer** (RF-33): guarda el hash de la temporal, `debeCambiarContrasena = true` y revoca la sesión.
 - **Liberar email** (RF-24): solo cuentas desactivadas; `email = NULL`.
 - **Auditoría** (RF-4, RF-34): cada alta completa `creadoPorId` y `creadoEn`; cada modificación, `modificadoPorId` y `modificadoEn`. Si dos personas modifican a la vez, gana el último cambio.
-- **Listado** (RF-26): 20 por página. Orden por `COALESCE(razonSocial, apellido)` y luego `nombre`. La búsqueda aplica `LIKE` sobre apellido, nombre y razón social; si el texto es numérico, compara también contra DNI y CUIT normalizados.
+- **Listado** (RF-26): 20 por página. Orden por `COALESCE(razonSocial, apellido)` y luego `nombre`. La búsqueda aplica `LIKE` sobre apellido, nombre y razón social; si el texto es numérico, compara también contra DNI (de integrantes y de clientes) y CUIT normalizados.
 
 ## Validaciones y contraseñas [RF-5, RF-6, RF-39, RF-40]
 
@@ -266,7 +273,7 @@ Reglas de permisos en `usuarios/permisos-gestion.ts`, como funciones puras sin a
 
 - **Ejecución**: `pnpm --filter api admin:principal` en desarrollo; en Easypanel, `node dist/consola/administrador-principal.js` desde la consola del servicio.
 - **Implementación**: abre el contexto de NestJS sin servidor HTTP (`NestFactory.createApplicationContext`) con un `ConsoleModule` mínimo (configuración, base y contraseñas) y pide los datos con `node:readline`. La contraseña se pide dos veces y no se muestra en pantalla. La lógica vive en `PrincipalAdminService`, separada de la entrada por teclado.
-- **Si no hay principal**: pide nombre, apellido, email y contraseña, aplica las mismas validaciones y crea el administrador con `esPrincipal = true` y `debeCambiarContrasena = false`.
+- **Si no hay principal**: pide nombre, apellido, DNI, email y contraseña, aplica las mismas validaciones (el DNI no puede ser de otra cuenta, ni de integrante ni de cliente) y crea el administrador con `esPrincipal = true` y `debeCambiarContrasena = false`.
 - **Si ya hay principal**: solo ofrece restablecer su contraseña (queda pendiente el cambio y se revoca su sesión). No crea otros administradores.
 
 ## Frontend
@@ -361,12 +368,13 @@ En `web/.env.example`: `VITE_API_URL` (vacía en desarrollo; URL de la API en pr
 ### api — unitarios (Vitest)
 - Validadores: DNI, CUIT (dígito verificador válido e inválido, con puntos y guiones), email, longitudes, y contraseñas con tildes, ñ y emojis rechazadas [RF-5, RF-6, RF-39].
 - `contrasenas.service`: hash y verificación; el hash nunca aparece en los DTO de salida [RF-40].
-- `limitador-intentos.service`: 5 por email e IP, 30 por IP, ventana fija y que los rechazos no extiendan la ventana [RF-10].
+- `limitador-intentos.service`: 5 por DNI o CUIT e IP, 30 por IP, ventana fija y que los rechazos no extiendan la ventana [RF-10].
 - `usuarios.service` con repositorios simulados: permisos del abogado, protección y transferencia del principal, cambios de rol permitidos, reglas de email, DNI y CUIT, reactivación y liberación de email [RF-21 a RF-34].
 
 ### api — e2e (Vitest + Supertest, base de tests)
 Cada suite corre las migraciones sobre la base de tests y vacía las tablas antes de empezar. Se ejecutan en serie (`fileParallelism: false`).
-- Ingreso correcto, credenciales incorrectas, cuenta desactivada y 429, simulando IPs con `X-Forwarded-For` [RF-8 a RF-10].
+- Ingreso con DNI (integrante y persona física) y con CUIT (persona jurídica), también de un cliente sin email; credenciales incorrectas, un email en lugar del DNI, cuenta desactivada, integrante sin DNI y 429, simulando IPs con `X-Forwarded-For` [RF-8 a RF-10]. Las utilidades de los e2e identifican cada cuenta de prueba por su email e ingresan con su DNI o CUIT.
+- Migración `AgregarDniAIntegrantes`: `up` agrega la columna y su índice único, el esquema queda igual a las entidades y `down` los quita.
 - Restricciones con cambio pendiente [RF-11].
 - Sesión única: un segundo ingreso invalida el primero [RF-13].
 - Rotación de la renovación y detección de reúso [RF-12, RF-15].
@@ -392,7 +400,7 @@ Cada suite corre las migraciones sobre la base de tests y vacía las tablas ante
 |---|---|---|
 | RF-1 a RF-4 | Entidades y migración | e2e de gestión |
 | RF-5, RF-6 | `usuarios/validadores`, DTO, `servicios/validaciones.ts` | Unitarios de api y web |
-| RF-7 | DTO de `PATCH` sin DNI, CUIT ni tipo de persona | e2e de gestión |
+| RF-7 | DTO de `PATCH` sin DNI, CUIT ni tipo de persona de cliente; el DNI de afuera solo para integrantes | e2e de gestión |
 | RF-8, RF-9 | `autenticacion.service` (ingresar), `PaginaIngreso` | e2e de ingreso, Vitest |
 | RF-10 | `limitador-intentos.service`, `trust proxy` | Unitario y e2e 429 |
 | RF-11 | Guard de cambio pendiente, `RutaProtegida` | e2e, Vitest |

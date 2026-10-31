@@ -14,6 +14,7 @@ function user(rol: Rol, debeCambiarContrasena = false): UsuarioPropio {
     rol,
     esPrincipal: false,
     email: 'usuario@estudio.com',
+    dni: rol === 'cliente' ? null : '20111222',
     nombre: 'Ana',
     apellido: 'Gómez',
     debeCambiarContrasena,
@@ -131,18 +132,18 @@ describe('servicio de sesión', () => {
     };
   }
 
-  it('ingresa con email y contraseña', async () => {
+  it('ingresa con DNI o CUIT y contraseña', async () => {
     const http = fakeClient();
     http.post.mockResolvedValueOnce(lawyer);
 
     const result = await createSessionService(http as unknown as HttpClient).login(
-      'juan@estudio.com',
+      '20.111.222',
       'clave del estudio 2026',
     );
 
     expect(result).toBe(lawyer);
     expect(http.post).toHaveBeenCalledWith('/sesion/ingresar', {
-      email: 'juan@estudio.com',
+      documento: '20.111.222',
       contrasena: 'clave del estudio 2026',
     });
   });

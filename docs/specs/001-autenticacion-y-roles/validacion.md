@@ -96,8 +96,34 @@ Contra la base de **desarrollo**, que ya tiene la migración aplicada.
 8. Ingresar como cada cliente: cambio de contraseña obligatorio y después **Mis causas**. Escribir `/panel` en la barra de direcciones: lleva de vuelta al portal.
 9. **Sesión única:** con un cliente abierto en una ventana, ingresar con el mismo cliente en una ventana privada; al navegar en la primera, vuelve al ingreso.
 10. **Desactivación con sesión abierta:** con un cliente abierto en una ventana, desactivarlo desde el panel; en la ventana del cliente, la siguiente acción lleva al ingreso y ya no puede entrar.
-11. **Protección del principal:** con el otro administrador, abrir el detalle del principal: no ofrece acciones, y cambiarle el email desde el formulario responde "No se puede modificar al administrador principal".
+11. **Protección del principal:** con el otro administrador, abrir el detalle del principal: no ofrece acciones, y cambiarle el DNI desde el formulario responde "No se puede modificar al administrador principal" (desde el 30/10/2026; antes era el email).
 
 ## Veredicto
 
 La spec 001 está **cumplida**: los 42 RF y los RNF tienen tests en verde, `pnpm test` y `pnpm lint` pasan, y la demo manual se completó sin errores el 2026-10-04.
+
+## Cambio del 30/10/2026 — Ingreso con DNI o CUIT y email opcional del cliente
+
+Tareas T45 a T50. Se ingresa con DNI (integrantes y personas físicas) o CUIT (personas jurídicas), y el email del cliente es opcional.
+
+| RF | Qué se verifica | Tests |
+|---|---|---|
+| RF-1, RF-25 | Un DNI no es de un integrante y de un cliente a la vez | E `alta-usuarios`, `modificacion-usuarios`; U `administrador-principal.service.spec.ts` |
+| RF-2 | DNI y email obligatorios para integrantes | U `dto.spec.ts`; E `alta-usuarios`, `modificacion-usuarios`; W `formulario-cuenta.test.ts`, `PanelUsuarioNuevo.test.tsx` |
+| RF-3 | Cliente sin email: alta, ingreso, borrado y reactivación | U `dto.spec.ts`; E `alta-usuarios`, `ingreso`, `modificacion-usuarios`, `desactivacion-usuarios`, `restablecimiento-y-email`; W `formulario-cuenta.test.ts`, `PanelUsuarioNuevo.test.tsx`, `PanelUsuarioDetalle.test.tsx` |
+| RF-7, RF-27 | El DNI de un integrante se cambia y cierra su sesión; el de un cliente no se cambia | E `modificacion-usuarios`; W `PanelUsuarioDetalle.test.tsx` |
+| RF-8, RF-9 | Ingreso con DNI o CUIT, con separadores; un email, un texto que no es documento o un integrante sin DNI reciben el 401 genérico | U `autenticacion.service.spec.ts`; E `ingreso`; W `PaginaIngreso.test.tsx`, `sesion.test.ts` |
+| RF-10 | 5 intentos por DNI o CUIT e IP | U `limitador-intentos.service.spec.ts`; E `ingreso` |
+| RF-31 | Nadie más que el principal le cambia el DNI | U `permisos-gestion.spec.ts`; E `modificacion-usuarios`, `administrador-principal` |
+| RF-41 | El comando de consola pide el DNI | U `administrador-principal.service.spec.ts` |
+| Migración | `usuarios.dni` con índice único; `down` la quita | E `migracion-dni-integrantes` |
+
+Corrida del 2026-10-30: pasan los unitarios de la api (50 archivos, 1299 tests), los e2e de la api (77 archivos, 863 tests) y la web (118 archivos, 1826 tests), y `pnpm lint` también. En la primera corrida de los e2e falló solo `migraciones`, que lista los índices únicos y no tenía el nuevo `UQ_usuarios_dni`; se agregó y pasa. Falta la demo manual para cerrar T50.
+
+Demo manual del cambio:
+1. Con la migración aplicada, crear el principal por consola: ahora pide el DNI.
+2. Ingresar con el DNI escrito con puntos (`20.111.222`): entra. Con el email en lugar del DNI: "DNI/CUIT o contraseña incorrectos".
+3. Crear un abogado: el alta pide DNI y email. Crear un cliente persona física sin email y uno persona jurídica.
+4. Ingresar como el cliente físico con su DNI y como la persona jurídica con su CUIT.
+5. Cambiarle el DNI al abogado con su sesión abierta: la sesión se cierra y entra con el DNI nuevo.
+6. Borrar el email de un cliente y, desactivado, reactivarlo sin email.

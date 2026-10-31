@@ -44,7 +44,7 @@ describe('PanelUsuarioNuevo (RF-3, RF-21, RF-22)', () => {
         'Nombre',
         'Apellido',
         'DNI',
-        'Email',
+        'Email (opcional)',
         'Teléfono',
         'Domicilio',
         'Contraseña temporal',
@@ -63,7 +63,7 @@ describe('PanelUsuarioNuevo (RF-3, RF-21, RF-22)', () => {
         'CUIT',
         'Nombre del contacto',
         'Apellido del contacto',
-        'Email',
+        'Email (opcional)',
         'Teléfono',
         'Domicilio',
         'Contraseña temporal',
@@ -75,7 +75,14 @@ describe('PanelUsuarioNuevo (RF-3, RF-21, RF-22)', () => {
 
       await userEvent.setup().selectOptions(screen.getByLabelText('Rol'), 'abogado');
 
-      expect(fieldLabels()).toEqual(['Rol', 'Nombre', 'Apellido', 'Email', 'Contraseña temporal']);
+      expect(fieldLabels()).toEqual([
+        'Rol',
+        'Nombre',
+        'Apellido',
+        'DNI',
+        'Email',
+        'Contraseña temporal',
+      ]);
     });
 
     it('un abogado solo crea clientes: no ve el selector de rol', async () => {
@@ -97,7 +104,6 @@ describe('PanelUsuarioNuevo (RF-3, RF-21, RF-22)', () => {
         .getAllByRole('listitem')
         .map((item) => item.textContent),
     ).toEqual([
-      'El email es obligatorio',
       'El nombre es obligatorio',
       'El apellido es obligatorio',
       'La contraseña temporal es obligatoria',
@@ -113,7 +119,7 @@ describe('PanelUsuarioNuevo (RF-3, RF-21, RF-22)', () => {
     await user.type(screen.getByLabelText('Nombre'), 'Ana');
     await user.type(screen.getByLabelText('Apellido'), 'Gómez');
     await user.type(screen.getByLabelText('DNI'), '30.123.456');
-    await user.type(screen.getByLabelText('Email'), 'ana@correo.com');
+    await user.type(screen.getByLabelText('Email (opcional)'), 'ana@correo.com');
     await user.type(screen.getByLabelText('Contraseña temporal'), 'clave temporal 2026');
     await user.click(screen.getByRole('button', { name: 'Crear cuenta' }));
 
@@ -128,13 +134,34 @@ describe('PanelUsuarioNuevo (RF-3, RF-21, RF-22)', () => {
     });
   });
 
-  it('crea un abogado sin datos de cliente', async () => {
+  it('crea un cliente sin email (RF-3)', async () => {
+    const users = await openForm();
+    const user = userEvent.setup();
+
+    await user.type(screen.getByLabelText('Nombre'), 'Ana');
+    await user.type(screen.getByLabelText('Apellido'), 'Gómez');
+    await user.type(screen.getByLabelText('DNI'), '30123456');
+    await user.type(screen.getByLabelText('Contraseña temporal'), 'clave temporal 2026');
+    await user.click(screen.getByRole('button', { name: 'Crear cuenta' }));
+
+    await screen.findByRole('heading', { name: 'Detalle de la cuenta' });
+    expect(users.createUser).toHaveBeenCalledWith({
+      rol: 'cliente',
+      nombre: 'Ana',
+      apellido: 'Gómez',
+      contrasenaTemporal: 'clave temporal 2026',
+      cliente: { tipoPersona: 'fisica', dni: '30123456' },
+    });
+  });
+
+  it('crea un abogado con su DNI y sin datos de cliente', async () => {
     const users = await openForm();
     const user = userEvent.setup();
 
     await user.selectOptions(screen.getByLabelText('Rol'), 'abogado');
     await user.type(screen.getByLabelText('Nombre'), 'Marcos');
     await user.type(screen.getByLabelText('Apellido'), 'Díaz');
+    await user.type(screen.getByLabelText('DNI'), '25.666.777');
     await user.type(screen.getByLabelText('Email'), 'marcos@estudio.com');
     await user.type(screen.getByLabelText('Contraseña temporal'), 'clave temporal 2026');
     await user.click(screen.getByRole('button', { name: 'Crear cuenta' }));
@@ -143,6 +170,7 @@ describe('PanelUsuarioNuevo (RF-3, RF-21, RF-22)', () => {
     expect(users.createUser).toHaveBeenCalledWith({
       rol: 'abogado',
       email: 'marcos@estudio.com',
+      dni: '25.666.777',
       nombre: 'Marcos',
       apellido: 'Díaz',
       contrasenaTemporal: 'clave temporal 2026',
@@ -163,7 +191,7 @@ describe('PanelUsuarioNuevo (RF-3, RF-21, RF-22)', () => {
     await user.type(screen.getByLabelText('Nombre'), 'Ana');
     await user.type(screen.getByLabelText('Apellido'), 'Gómez');
     await user.type(screen.getByLabelText('DNI'), '30123456');
-    await user.type(screen.getByLabelText('Email'), 'ana@correo.com');
+    await user.type(screen.getByLabelText('Email (opcional)'), 'ana@correo.com');
     await user.type(screen.getByLabelText('Contraseña temporal'), 'clave temporal 2026');
     await user.click(screen.getByRole('button', { name: 'Crear cuenta' }));
 

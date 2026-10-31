@@ -15,7 +15,7 @@ describe('respuestas sin caché', () => {
   beforeAll(async () => {
     app = await createTestApp();
     await clearTables(app);
-    await createTestUser(app);
+    await createTestUser(app, { dni: '20111222' });
   }, 60_000);
 
   afterAll(async () => {
@@ -49,7 +49,7 @@ describe('respuestas sin caché', () => {
     const response = await request(app.getHttpServer())
       .post('/api/sesion/ingresar')
       .set('X-Forwarded-For', '198.51.100.252')
-      .send({ email: 'juan@estudio.com', contrasena: TEST_PASSWORD })
+      .send({ documento: '20111222', contrasena: TEST_PASSWORD })
       .expect(200);
 
     expect(response.headers['cache-control']).toBe('no-store');

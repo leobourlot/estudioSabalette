@@ -51,6 +51,11 @@ describe('entidades de usuarios', () => {
     expect(isUniqueIndex(Usuario, 'email')).toBe(true);
   });
 
+  it('guarda el DNI de los integrantes, opcional en la base y único (RF-1, RF-2)', () => {
+    expect(columnOptions(Usuario, 'dni')).toMatchObject({ nullable: true, length: 8 });
+    expect(isUniqueIndex(Usuario, 'dni')).toBe(true);
+  });
+
   it('mantiene únicos el DNI y el CUIT de los clientes (RF-25)', () => {
     expect(isUniqueIndex(Cliente, 'dni')).toBe(true);
     expect(isUniqueIndex(Cliente, 'cuit')).toBe(true);

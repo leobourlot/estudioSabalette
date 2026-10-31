@@ -42,7 +42,7 @@ describe('PATCH /api/panel/usuarios/:id (modificación)', () => {
       nombre: 'Mario',
       apellido: 'Rossi',
     });
-    lawyer = await createTestUser(app, { email: 'juan@estudio.com' });
+    lawyer = await createTestUser(app, { email: 'juan@estudio.com', dni: '20111222' });
     naturalClient = await createTestUser(app, {
       rol: 'cliente',
       email: 'ana@correo.com',
@@ -103,29 +103,88 @@ describe('PATCH /api/panel/usuarios/:id (modificación)', () => {
     expect(response.body.cliente.razonSocial).toBe('Zeta Argentina S.A.');
   });
 
-  describe('email', () => {
-    it('al cambiar el email de otra cuenta, cierra su sesión (RF-27)', async () => {
-      await update(adminSession, lawyer.id, { email: 'juan.perez@estudio.com' }).expect(200);
+  describe('DNI de un integrante (RF-7, RF-27)', () => {
+    it('al cambiar el DNI de otro integrante, cierra su sesión y ingresa con el nuevo', async () => {
+      const response = await update(adminSession, lawyer.id, { dni: '20.111.333' });
+      expect(response.status).toBe(200);
+      expect(response.body.dni).toBe('20111333');
 
       await ownUser(lawyerSession).expect(401);
+      const login = (documento: string) =>
+        request(app.getHttpServer())
+          .post('/api/sesion/ingresar')
+          .set('X-Forwarded-For', nextTestIp())
+          .send({ documento, contrasena: TEST_PASSWORD });
+      await login('20111222').expect(401);
+      await login('20111333').expect(200);
+    });
+
+    it('si un administrador cambia su propio DNI, su sesión sigue', async () => {
+      await update(adminSession, admin.id, { dni: '27333444' }).expect(200);
+
+      const response = await ownUser(adminSession).expect(200);
+      expect(response.body.dni).toBe('27333444');
+    });
+
+    it('guardar el mismo DNI no cierra la sesión', async () => {
+      await update(adminSession, lawyer.id, { dni: '20.111.222' }).expect(200);
+
+      await ownUser(lawyerSession).expect(200);
+    });
+
+    it('responde 409 si el DNI es de otra cuenta, de integrante o de cliente (RF-1, RF-25)', async () => {
+      const staff = await update(adminSession, lawyer.id, { dni: admin.dni });
+      expect(staff.status).toBe(409);
+      expect(staff.body.message).toBe('Ya existe un integrante del estudio con ese DNI');
+
+      const client = await update(adminSession, lawyer.id, { dni: '30123456' });
+      expect(client.status).toBe(409);
+      expect(client.body.message).toBe('Ya existe un cliente con ese DNI o CUIT');
+    });
+
+    it('un integrante sin DNI cargado lo recibe y ya puede ingresar (RF-8)', async () => {
+      const withoutDni = await createTestUser(app, { email: 'vieja@estudio.com', dni: null });
+
+      await update(adminSession, withoutDni.id, { dni: '25666777' }).expect(200);
+
       await request(app.getHttpServer())
         .post('/api/sesion/ingresar')
         .set('X-Forwarded-For', nextTestIp())
-        .send({ email: 'juan.perez@estudio.com', contrasena: TEST_PASSWORD })
+        .send({ documento: '25666777', contrasena: TEST_PASSWORD })
         .expect(200);
     });
 
-    it('si un administrador cambia su propio email, su sesión sigue', async () => {
-      await update(adminSession, admin.id, { email: 'mario@estudio.com' }).expect(200);
+    it('rechaza cambiar el DNI de un cliente, que va en sus datos de cliente (RF-7)', async () => {
+      const response = await update(adminSession, naturalClient.id, { dni: '30123457' });
 
-      const response = await ownUser(adminSession).expect(200);
-      expect(response.body.email).toBe('mario@estudio.com');
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe('El DNI de un cliente no se puede modificar');
     });
+  });
 
-    it('guardar el mismo email no cierra la sesión', async () => {
-      await update(adminSession, lawyer.id, { email: 'JUAN@estudio.com' }).expect(200);
+  describe('email', () => {
+    it('cambiar el email de otra cuenta no cierra su sesión, porque no sirve para ingresar (RF-27)', async () => {
+      const response = await update(adminSession, lawyer.id, { email: 'juan.perez@estudio.com' });
+      expect(response.status).toBe(200);
+      expect(response.body.email).toBe('juan.perez@estudio.com');
 
       await ownUser(lawyerSession).expect(200);
+    });
+
+    it('se puede borrar el email de un cliente (RF-3)', async () => {
+      const response = await update(lawyerSession, naturalClient.id, { email: null });
+
+      expect(response.status).toBe(200);
+      expect(response.body.email).toBeNull();
+    });
+
+    it('no se puede borrar el email de un integrante (RF-2)', async () => {
+      const response = await update(adminSession, lawyer.id, { email: '' });
+
+      expect(response.status).toBe(400);
+      expect(response.body.message).toBe(
+        'El email es obligatorio para los integrantes del estudio',
+      );
     });
 
     it('responde 409 si el email ya está en uso (RF-23, RF-24)', async () => {
@@ -173,7 +232,7 @@ describe('PATCH /api/panel/usuarios/:id (modificación)', () => {
 
   describe('administrador principal (RF-31)', () => {
     it.each([
-      ['el email', { email: 'otro@estudio.com' }],
+      ['el DNI', { dni: '27999888' }],
       ['el rol', { rol: 'abogado' }],
     ])('otro administrador no puede cambiarle %s', async (_case, body) => {
       const response = await update(adminSession, principal.id, body);
@@ -182,8 +241,13 @@ describe('PATCH /api/panel/usuarios/:id (modificación)', () => {
       expect(response.body.message).toBe('No se puede modificar al administrador principal');
     });
 
-    it('otro administrador sí puede corregirle el nombre', async () => {
+    it('otro administrador sí puede corregirle el nombre y el email', async () => {
       await update(adminSession, principal.id, { nombre: 'Carla Inés' }).expect(200);
+      await update(adminSession, principal.id, { email: 'carla@estudio.com' }).expect(200);
+    });
+
+    it('el principal sí puede cambiar su propio DNI', async () => {
+      await update(principalSession, principal.id, { dni: '27999888' }).expect(200);
     });
 
     it('el principal no puede quitarse el rol', async () => {

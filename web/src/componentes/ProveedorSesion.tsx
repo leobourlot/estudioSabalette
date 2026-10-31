@@ -15,7 +15,7 @@ interface SessionContextValue {
   usuario: UsuarioPropio | null;
   /** True hasta saber si hay sesión (la primera consulta a la API). */
   cargando: boolean;
-  login: (email: string, contrasena: string) => Promise<UsuarioPropio>;
+  login: (documento: string, contrasena: string) => Promise<UsuarioPropio>;
   logout: () => Promise<void>;
   /** Cambia la contraseña propia y quita el cambio pendiente del usuario en memoria (RF-36). */
   changePassword: (contrasenaActual: string, contrasenaNueva: string) => Promise<void>;
@@ -91,8 +91,8 @@ export function ProveedorSesion({
   }, [reload]);
 
   const login = useCallback(
-    async (email: string, contrasena: string) => {
-      const result = await service.login(email, contrasena);
+    async (documento: string, contrasena: string) => {
+      const result = await service.login(documento, contrasena);
       setUsuario(result);
       return result;
     },

@@ -2,6 +2,7 @@ import type { TransformFnParams } from 'class-transformer';
 import { registerDecorator, type ValidationArguments } from 'class-validator';
 import { PERSON_TYPES, type TipoPersona } from '../cliente.entity.js';
 import { ROLES } from '../usuario.entity.js';
+import { isValidDni } from '../validadores/documentos.js';
 import { isValidEmail } from '../validadores/email.js';
 import { fitsMaxLength, isBlank } from '../validadores/longitudes.js';
 import { normalizeDocumentNumber, normalizeEmail } from '../validadores/normalizar.js';
@@ -40,6 +41,8 @@ export const trimText = mapString((value) => value.trim());
 /** Recorta y convierte el texto vacío en null, para campos opcionales que se pueden borrar. */
 export const trimOptionalText = mapString((value) => (value.trim() === '' ? null : value.trim()));
 export const toNormalizedEmail = mapString(normalizeEmail);
+/** Email normalizado; el texto vacío pasa a null, para los emails opcionales (RF-3). */
+export const toOptionalEmail = mapString((value) => normalizeEmail(value) || null);
 export const toDocumentNumber = mapString(normalizeDocumentNumber);
 
 // --- Reglas ---
@@ -70,6 +73,24 @@ export const optionalText =
 export const emailRule: RuleFn = (value) => {
   if (typeof value !== 'string' || value === '') return 'El email es obligatorio';
   return isValidEmail(value) ? null : 'El email debe tener el formato texto@texto.texto';
+};
+
+/** Email obligatorio para los integrantes y opcional para los clientes (RF-2, RF-3). */
+export const emailForRoleRule: RuleFn = (value, object) => {
+  if (object.rol === 'cliente' && (value === undefined || value === null)) return null;
+  return emailRule(value, object);
+};
+
+export const dniFormatRule: RuleFn = (value) =>
+  typeof value === 'string' && isValidDni(value) ? null : 'El DNI debe tener 7 u 8 dígitos';
+
+/** DNI de un integrante: obligatorio. El de un cliente va en sus datos de cliente (RF-2, RF-3). */
+export const staffDniRule: RuleFn = (value, object) => {
+  if (object.rol === 'cliente') {
+    return isPresent(value) ? 'El DNI de un cliente se indica en sus datos de cliente' : null;
+  }
+  if (!isPresent(value)) return 'El DNI es obligatorio';
+  return dniFormatRule(value, object);
 };
 
 export const rolRule: RuleFn = (value) =>

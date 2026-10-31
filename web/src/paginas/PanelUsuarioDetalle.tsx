@@ -57,7 +57,8 @@ function auditRows(account: UsuarioDetalle): [string, string][] {
 
 /**
  * Detalle de una cuenta (RF-34): datos, auditoría con fechas en hora de Buenos Aires y
- * edición (RF-27, RF-28). DNI, CUIT y tipo de persona se muestran pero no se editan (RF-7).
+ * edición (RF-27, RF-28). El DNI de un integrante se edita; el DNI, el CUIT y el tipo de
+ * persona de un cliente se muestran pero no se editan (RF-7).
  */
 export function PanelUsuarioDetalle() {
   const users = useUsersService();
@@ -186,9 +187,12 @@ export function PanelUsuarioDetalle() {
               value={form.apellido}
               onChange={set('apellido')}
             />
+            {!account.cliente && (
+              <CampoTexto id="editar-dni" label="DNI" value={form.dni} onChange={set('dni')} />
+            )}
             <CampoTexto
               id="editar-email"
-              label="Email"
+              label={account.cliente ? 'Email (opcional)' : 'Email'}
               type="email"
               value={form.email}
               onChange={set('email')}

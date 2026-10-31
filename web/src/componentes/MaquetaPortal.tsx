@@ -7,8 +7,12 @@ const CARD = 'rounded-xl border border-slate-300 bg-white p-4 shadow-sm';
 const FIELD =
   'flex h-8 items-center rounded-md border border-slate-400 bg-white px-2 text-xs text-slate-800';
 
-const { email, largoContrasena } = INGRESO_EJEMPLO;
-const TIMELINE = mockupTimeline(email.length, largoContrasena, CAUSA_EJEMPLO.movimientos.length);
+const { documento, largoContrasena } = INGRESO_EJEMPLO;
+const TIMELINE = mockupTimeline(
+  documento.length,
+  largoContrasena,
+  CAUSA_EJEMPLO.movimientos.length,
+);
 
 /** Lo que aparece, como estilo en línea: la opacidad y lo que le falta subir. */
 function fadeStyle({ opacity, y }: MockupFade) {
@@ -88,7 +92,7 @@ export function MaquetaPortal() {
   const ref = useRef<HTMLDivElement>(null);
   const reduceMotion = useReducedMotion() ?? false;
   const t = useTiempoMaqueta(ref, reduceMotion);
-  const frame = mockupLoopFrame(t ?? Infinity, TIMELINE, email.length, largoContrasena);
+  const frame = mockupLoopFrame(t ?? Infinity, TIMELINE, documento.length, largoContrasena);
   const ventana = t === null ? mockupFrame(0, TIMELINE, 0, 0).ventana : frame.ventana;
   const { caratula, datos, movimientos } = CAUSA_EJEMPLO;
 
@@ -170,10 +174,12 @@ export function MaquetaPortal() {
               {INGRESO_EJEMPLO.titulo}
             </p>
             <div className="space-y-1">
-              <p className="text-xs font-medium text-slate-700">{INGRESO_EJEMPLO.etiquetaEmail}</p>
-              <p data-campo="email" className={FIELD}>
-                {email.slice(0, frame.emailChars)}
-                {frame.cursor === 'email' && <Cursor />}
+              <p className="text-xs font-medium text-slate-700">
+                {INGRESO_EJEMPLO.etiquetaDocumento}
+              </p>
+              <p data-campo="documento" className={FIELD}>
+                {documento.slice(0, frame.documentChars)}
+                {frame.cursor === 'documento' && <Cursor />}
               </p>
             </div>
             <div className="space-y-1">

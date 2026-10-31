@@ -65,7 +65,7 @@ export const ACTION_TEXTS: Record<AccountAction, ActionText> = {
   releaseEmail: {
     label: 'Liberar email',
     description:
-      'El email queda disponible para otra cuenta. Para reactivar esta, primero hay que asignarle un email nuevo.',
+      'El email queda disponible para otra cuenta. Para reactivar a un integrante, primero hay que asignarle un email nuevo.',
     needsTemporaryPassword: false,
     done: () => 'Email liberado',
   },

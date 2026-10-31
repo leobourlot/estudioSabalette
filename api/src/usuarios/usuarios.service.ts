@@ -44,6 +44,11 @@ export const USERS_MESSAGES = {
   documentTaken: 'Ya existe un cliente con ese DNI o CUIT',
   documentOfDeactivatedClient:
     'Ya existe un cliente con ese DNI o CUIT. Está desactivado: reactivalo en lugar de crear uno nuevo',
+  staffDniTaken: 'Ya existe un integrante del estudio con ese DNI',
+  staffDniOfDeactivatedAccount:
+    'Ya existe un integrante del estudio con ese DNI. Está desactivado: reactivalo en lugar de crear uno nuevo',
+  clientDniImmutable: 'El DNI de un cliente no se puede modificar',
+  staffEmailRequired: 'El email es obligatorio para los integrantes del estudio',
   notFound: 'No existe esa cuenta',
   clientDataOnStaff: 'Solo las cuentas de clientes llevan datos de cliente',
   businessNameOnNaturalPerson: 'La razón social solo corresponde a personas jurídicas',
@@ -117,16 +122,16 @@ export class UsersService {
   }
 
   /**
-   * Modificación parcial (RF-27, RF-28, RF-31). Registra quién modificó. Si cambia el email
-   * de otra cuenta, cierra su sesión; un cambio de rol no la cierra: rige en la siguiente
-   * petición porque el guard relee el usuario (RF-14).
+   * Modificación parcial (RF-7, RF-27, RF-28, RF-31). Registra quién modificó. Si cambia el
+   * DNI de otro integrante, cierra su sesión. Un cambio de email no la cierra, porque no
+   * sirve para ingresar, y un cambio de rol tampoco: rige en la siguiente petición porque el
+   * guard relee el usuario (RF-14).
    */
   async update(actor: Usuario, id: number, dto: UpdateUserDto): Promise<UsuarioDetalle> {
     const target = await this.findWithDetail(id);
     const emailChanged = dto.email !== undefined && dto.email !== target.email;
-    throwIfDenied(
-      checkAccountAction(actor, target, 'update', { email: emailChanged, rol: dto.rol }),
-    );
+    const dniChanged = dto.dni !== undefined && dto.dni !== target.dni;
+    throwIfDenied(checkAccountAction(actor, target, 'update', { dni: dniChanged, rol: dto.rol }));
 
     if (dto.cliente) {
       if (!target.cliente) throw new BadRequestException(USERS_MESSAGES.clientDataOnStaff);
@@ -134,7 +139,14 @@ export class UsersService {
         throw new BadRequestException(USERS_MESSAGES.businessNameOnNaturalPerson);
       }
     }
-    if (emailChanged) await this.assertEmailAvailable(dto.email!, target.id);
+    if (target.cliente && dto.dni !== undefined) {
+      throw new BadRequestException(USERS_MESSAGES.clientDniImmutable);
+    }
+    if (!target.cliente && dto.email === null) {
+      throw new BadRequestException(USERS_MESSAGES.staffEmailRequired);
+    }
+    if (emailChanged && dto.email) await this.assertEmailAvailable(dto.email, target.id);
+    if (dniChanged) await this.assertDocumentAvailable({ dni: dto.dni }, target.id);
 
     const now = new Date();
     try {
@@ -142,6 +154,7 @@ export class UsersService {
         await manager.update(Usuario, target.id, {
           ...definedOnly({
             email: dto.email,
+            dni: dto.dni,
             nombre: dto.nombre,
             apellido: dto.apellido,
             rol: dto.rol,
@@ -157,7 +170,7 @@ export class UsersService {
         if (Object.keys(clientChanges).length > 0) {
           await manager.update(Cliente, target.id, clientChanges);
         }
-        if (emailChanged && target.id !== actor.id) {
+        if (dniChanged && target.id !== actor.id) {
           await manager.update(
             Sesion,
             { usuarioId: target.id, revocadaEn: IsNull() },
@@ -197,13 +210,16 @@ export class UsersService {
 
   /**
    * Reactivación (RF-30): exige una contraseña temporal nueva, para que una contraseña que
-   * pudo verse comprometida no vuelva a servir, y deja pendiente el cambio.
+   * pudo verse comprometida no vuelva a servir, y deja pendiente el cambio. Un integrante
+   * necesita email (RF-2); un cliente puede no tenerlo (RF-3, RF-24).
    */
   async reactivate(actor: Usuario, id: number, temporaryPassword: string): Promise<void> {
     const target = await this.findWithDetail(id);
     throwIfDenied(checkAccountAction(actor, target, 'reactivate'));
     if (target.activo) throw new ConflictException(USERS_MESSAGES.alreadyActive);
-    if (target.email === null) throw new ConflictException(USERS_MESSAGES.reactivateWithoutEmail);
+    if (!target.cliente && target.email === null) {
+      throw new ConflictException(USERS_MESSAGES.reactivateWithoutEmail);
+    }
 
     const passwordViolation = this.passwords.findRuleViolation(temporaryPassword);
     if (passwordViolation) throw new BadRequestException(passwordViolation);
@@ -248,7 +264,7 @@ export class UsersService {
 
   /**
    * Liberación del email de una cuenta desactivada (RF-24), para poder usarlo en otra
-   * cuenta. Para reactivarla después hay que asignarle un email nuevo.
+   * cuenta. Para reactivar después a un integrante hay que asignarle un email nuevo.
    */
   async releaseEmail(actor: Usuario, id: number): Promise<void> {
     const target = await this.findWithDetail(id);
@@ -296,7 +312,8 @@ export class UsersService {
 
   /**
    * Busca en apellido, nombre y razón social. Si el texto parece un DNI o CUIT (solo dígitos
-   * una vez quitados puntos, guiones y espacios), busca también en esos campos.
+   * una vez quitados puntos, guiones y espacios), busca también en esos campos, de clientes
+   * e integrantes.
    */
   private applySearch(builder: SelectQueryBuilder<Usuario>, term: string): void {
     const text = `%${escapeLike(term)}%`;
@@ -310,6 +327,7 @@ export class UsersService {
         if (/^\d+$/.test(digits)) {
           const document = `%${digits}%`;
           where
+            .orWhere('usuario.dni LIKE :document', { document })
             .orWhere('cliente.dni LIKE :document', { document })
             .orWhere('cliente.cuit LIKE :document', { document });
         }
@@ -324,8 +342,8 @@ export class UsersService {
     const passwordViolation = this.passwords.findRuleViolation(dto.contrasenaTemporal);
     if (passwordViolation) throw new BadRequestException(passwordViolation);
 
-    await this.assertEmailAvailable(dto.email);
-    if (dto.cliente) await this.assertDocumentAvailable(dto.cliente.dni, dto.cliente.cuit);
+    if (dto.email) await this.assertEmailAvailable(dto.email);
+    await this.assertDocumentAvailable(dto.cliente ?? { dni: dto.dni });
 
     const contrasenaHash = await this.passwords.hash(dto.contrasenaTemporal);
     let id: number;
@@ -334,7 +352,8 @@ export class UsersService {
         const usuario = await manager.save(Usuario, {
           rol: dto.rol,
           esPrincipal: false,
-          email: dto.email,
+          email: dto.email ?? null,
+          dni: dto.cliente ? null : (dto.dni ?? null),
           nombre: dto.nombre,
           apellido: dto.apellido,
           contrasenaHash,
@@ -383,12 +402,31 @@ export class UsersService {
     );
   }
 
-  /** RF-25: DNI y CUIT únicos; si el dueño está desactivado, se sugiere reactivarlo. */
-  private async assertDocumentAvailable(dni?: string, cuit?: string): Promise<void> {
+  /**
+   * RF-1 y RF-25: cada DNI o CUIT corresponde a una sola cuenta, de integrante o de cliente,
+   * porque es con lo que se ingresa (RF-8). Si el dueño está desactivado, se sugiere
+   * reactivarlo. Los índices únicos cubren cada tabla; el cruce entre integrantes y clientes
+   * lo controla solo esta consulta.
+   */
+  private async assertDocumentAvailable(
+    { dni, cuit }: { dni?: string | null; cuit?: string | null },
+    exceptUserId?: number,
+  ): Promise<void> {
+    if (dni) {
+      const staff = await this.users.findOne({
+        where: { dni },
+        select: { id: true, activo: true },
+      });
+      if (staff && staff.id !== exceptUserId) {
+        throw new ConflictException(
+          staff.activo ? USERS_MESSAGES.staffDniTaken : USERS_MESSAGES.staffDniOfDeactivatedAccount,
+        );
+      }
+    }
     const where = dni ? { dni } : cuit ? { cuit } : null;
     if (!where) return;
     const existing = await this.clients.findOne({ where, relations: { usuario: true } });
-    if (!existing) return;
+    if (!existing || existing.usuarioId === exceptUserId) return;
     throw new ConflictException(
       existing.usuario.activo
         ? USERS_MESSAGES.documentTaken
@@ -406,6 +444,8 @@ export class UsersService {
     const message = String(driverError.message);
     if (message.includes('UQ_usuarios_email'))
       return new ConflictException(USERS_MESSAGES.emailTaken);
+    if (message.includes('UQ_usuarios_dni'))
+      return new ConflictException(USERS_MESSAGES.staffDniTaken);
     if (message.includes('UQ_clientes_dni') || message.includes('UQ_clientes_cuit')) {
       return new ConflictException(USERS_MESSAGES.documentTaken);
     }

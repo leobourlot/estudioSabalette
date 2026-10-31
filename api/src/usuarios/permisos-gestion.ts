@@ -21,7 +21,7 @@ export type AccountAction =
 
 /** Qué cambia una modificación, para las reglas que dependen del campo. */
 export interface AccountChange {
-  email?: boolean;
+  dni?: boolean;
   rol?: Rol;
 }
 
@@ -79,11 +79,11 @@ export function checkAccountAction(
   }
 
   // El principal no pierde el rol ni se desactiva, ni siquiera por decisión propia; los
-  // demás administradores tampoco pueden cambiarle el email ni la contraseña (RF-31).
+  // demás administradores tampoco pueden cambiarle el DNI ni la contraseña (RF-31).
   if (target.esPrincipal) {
     const isSelf = target.id === actor.id;
     if (action === 'deactivate' || changesRole) return conflict(MANAGEMENT_MESSAGES.principal);
-    if (!isSelf && (action === 'resetPassword' || (action === 'update' && change.email))) {
+    if (!isSelf && (action === 'resetPassword' || (action === 'update' && change.dni))) {
       return conflict(MANAGEMENT_MESSAGES.principal);
     }
   }

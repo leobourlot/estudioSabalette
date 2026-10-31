@@ -189,7 +189,7 @@ REFRESH_COOKIE_MAX_AGE_MS = 60 min + ACCESS_TOKEN_TTL (15 min)
 ### Extensión en cada consulta
 ```
 ingresar(...):                         // como en la spec 001, salvo:
-  credenciales = buscar por email (id, contrasenaHash, activo, rol)
+  credenciales = buscar por DNI o CUIT (id, contrasenaHash, activo, rol)
   crear sesión(..., venceEn = ahora + sessionTtlMs(credenciales.rol))
 
 guard de autenticación (cada petición que no es @Public):

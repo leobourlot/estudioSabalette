@@ -39,7 +39,7 @@ describe('desactivación y reactivación de cuentas', () => {
       nombre: 'Mario',
       apellido: 'Rossi',
     });
-    lawyer = await createTestUser(app, { email: 'juan@estudio.com' });
+    lawyer = await createTestUser(app, { email: 'juan@estudio.com', dni: '20111222' });
     client = await createTestUser(app, {
       rol: 'cliente',
       email: 'ana@correo.com',
@@ -57,11 +57,11 @@ describe('desactivación y reactivación de cuentas', () => {
   const reactivate = (session: TestSession, id: number, body: object = {}) =>
     withAccess(request(server()).post(`${USERS}/${id}/reactivar`), session).send(body);
   const detail = (id: number) => withAccess(request(server()).get(`${USERS}/${id}`), adminSession);
-  const login = (email: string, contrasena: string) =>
+  const login = (documento: string, contrasena: string) =>
     request(server())
       .post('/api/sesion/ingresar')
       .set('X-Forwarded-For', nextTestIp())
-      .send({ email, contrasena });
+      .send({ documento, contrasena });
 
   describe('desactivar (RF-29)', () => {
     it('cierra la sesión abierta y bloquea el ingreso, sin borrar la cuenta', async () => {
@@ -72,9 +72,9 @@ describe('desactivación y reactivación de cuentas', () => {
         .post('/api/sesion/renovar')
         .set('Cookie', `refresh_token=${lawyerSession.refreshToken}`)
         .expect(401);
-      const relogin = await login('juan@estudio.com', TEST_PASSWORD);
+      const relogin = await login('20111222', TEST_PASSWORD);
       expect(relogin.status).toBe(401);
-      expect(relogin.body.message).toBe('Email o contraseña incorrectos');
+      expect(relogin.body.message).toBe('DNI/CUIT o contraseña incorrectos');
 
       const response = await detail(lawyer.id).expect(200);
       expect(response.body).toMatchObject({
@@ -111,8 +111,8 @@ describe('desactivación y reactivación de cuentas', () => {
         204,
       );
 
-      await login('juan@estudio.com', TEST_PASSWORD).expect(401);
-      const response = await login('juan@estudio.com', TEMPORARY_PASSWORD);
+      await login('20111222', TEST_PASSWORD).expect(401);
+      const response = await login('20111222', TEMPORARY_PASSWORD);
       expect(response.status).toBe(200);
       expect(response.body.debeCambiarContrasena).toBe(true);
       expect((await detail(lawyer.id)).body.activo).toBe(true);
@@ -137,7 +137,21 @@ describe('desactivación y reactivación de cuentas', () => {
       expect(response.body.message).toBe('La cuenta ya está activa');
     });
 
-    it('responde 409 si la cuenta no tiene email (RF-24)', async () => {
+    it('reactiva un cliente sin email (RF-3, RF-24)', async () => {
+      const withoutEmail = await createTestUser(app, {
+        rol: 'cliente',
+        email: null,
+        activo: false,
+        cliente: { tipoPersona: 'fisica', dni: '30123457' },
+      });
+
+      await reactivate(adminSession, withoutEmail.id, {
+        contrasenaTemporal: TEMPORARY_PASSWORD,
+      }).expect(204);
+      await login('30123457', TEMPORARY_PASSWORD).expect(200);
+    });
+
+    it('responde 409 si un integrante no tiene email (RF-24)', async () => {
       const withoutEmail = await createTestUser(app, { email: null, activo: false });
 
       const response = await reactivate(adminSession, withoutEmail.id, {

@@ -32,7 +32,7 @@ const ACTIONS: AccountAction[] = [
 
 /**
  * Matriz de RF-21, RF-31 y RF-32: actor × destino × acción. Cada fila sigue el orden de
- * ACTIONS. "update" es una modificación sin cambio de email ni de rol.
+ * ACTIONS. "update" es una modificación sin cambio de DNI ni de rol.
  */
 const MATRIX: [string, Actor, string, Target, Expected[]][] = [
   // view, update, deactivate, reactivate, resetPassword, transferPrincipal
@@ -77,13 +77,13 @@ describe('checkAccountAction — matriz de permisos', () => {
   });
 });
 
-describe('checkAccountAction — modificación de email y rol', () => {
-  it('ningún otro administrador puede cambiar el email del principal (RF-31)', () => {
-    expect(checkAccountAction(admin, principal, 'update', { email: true })).toEqual({
+describe('checkAccountAction — modificación de DNI y rol', () => {
+  it('ningún otro administrador puede cambiar el DNI del principal (RF-31)', () => {
+    expect(checkAccountAction(admin, principal, 'update', { dni: true })).toEqual({
       status: 409,
       message: MANAGEMENT_MESSAGES.principal,
     });
-    expect(checkAccountAction(principal, principal, 'update', { email: true })).toBeNull();
+    expect(checkAccountAction(principal, principal, 'update', { dni: true })).toBeNull();
   });
 
   it('nadie puede quitarle el rol al principal, ni el propio principal (RF-31)', () => {

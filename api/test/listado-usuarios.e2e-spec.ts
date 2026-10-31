@@ -35,6 +35,7 @@ describe('GET /api/panel/usuarios (listado y consulta)', () => {
     });
     lawyer = await createTestUser(app, {
       email: 'juan@estudio.com',
+      dni: '27555666',
       nombre: 'Juan',
       apellido: 'Pérez',
     });
@@ -105,6 +106,7 @@ describe('GET /api/panel/usuarios (listado y consulta)', () => {
       ['razón social', 'acme', ['Acme SRL']],
       ['DNI con puntos', '30.123.456', ['Gómez']],
       ['parte del DNI', '28.999', ['Álvarez']],
+      ['DNI de un integrante', '27.555.666', ['Pérez']],
       ['CUIT con guiones', '30-71234567-1', ['Zeta S.A.']],
     ])('busca por %s', async (_case, term, expected) => {
       const response = await list(adminSession, `?buscar=${encodeURIComponent(term)}`).expect(200);

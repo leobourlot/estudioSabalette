@@ -146,7 +146,7 @@ Hoy un cliente que quiere saber en qué está su causa tiene que llamar o escrib
   - Cliente que lee un movimiento largo durante más de 20 minutos sin hacer ninguna acción: su sesión se cierra. Al volver a ingresar, vuelve al inicio del portal y no a la causa que estaba mirando (RF-4; spec 001, RF-8 y RF-17).
   - Cliente que cierra sesión y vuelve atrás con el navegador: no ve ningún dato; va a la pantalla de ingreso (RF-5, RF-6).
   - Otro cliente ingresa en el mismo navegador: no ve nada de la sesión anterior (RF-5).
-  - Cambio de la persona de contacto de un cliente persona jurídica (otro email en la cuenta): la nueva persona ve todo el historial visible de la empresa. Se acepta por ahora (spec 001).
+  - Cambio de la persona de contacto de un cliente persona jurídica (otro nombre en la cuenta, que sigue ingresando con el CUIT de la empresa): la nueva persona ve todo el historial visible de la empresa. Se acepta por ahora (spec 001).
 - **Datos de la causa:**
   - Causa sin número de expediente o sin juzgado: se muestra "Sin asignar" (RF-9, RF-13).
   - Incidente: se muestra "Vinculado al expte. principal Nº …", sin acceso a la causa principal. Si el cliente también está vinculado a la principal, la ve como otra causa de su lista (RF-13; spec 003, casos límite).

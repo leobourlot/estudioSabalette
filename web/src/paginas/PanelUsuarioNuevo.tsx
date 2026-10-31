@@ -138,13 +138,13 @@ export function PanelUsuarioNuevo() {
           onChange={set('apellido')}
         />
 
-        {isClient && !isLegalPerson && (
+        {!isLegalPerson && (
           <CampoTexto id="dni" label="DNI" value={form.dni} onChange={set('dni')} />
         )}
 
         <CampoTexto
           id="email"
-          label="Email"
+          label={isClient ? 'Email (opcional)' : 'Email'}
           type="email"
           value={form.email}
           onChange={set('email')}

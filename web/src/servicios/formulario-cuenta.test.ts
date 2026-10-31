@@ -35,6 +35,7 @@ const lawyer: NewAccountForm = {
   ...naturalPerson,
   rol: 'abogado',
   email: 'marcos@estudio.com',
+  dni: '20.111.222',
 };
 
 describe('validateNewAccount (RF-6, RF-39)', () => {
@@ -46,11 +47,10 @@ describe('validateNewAccount (RF-6, RF-39)', () => {
     expect(validateNewAccount(form)).toEqual([]);
   });
 
-  it('pide los datos obligatorios de una persona física', () => {
+  it('pide los datos obligatorios de una persona física, que no incluyen el email (RF-3)', () => {
     expect(
       validateNewAccount({ ...EMPTY_ACCOUNT_FORM, rol: 'cliente', tipoPersona: 'fisica' }),
     ).toEqual([
-      'El email es obligatorio',
       'El nombre es obligatorio',
       'El apellido es obligatorio',
       'La contraseña temporal es obligatoria',
@@ -82,8 +82,15 @@ describe('validateNewAccount (RF-6, RF-39)', () => {
     ]);
   });
 
-  it('a un integrante no le pide datos de cliente', () => {
-    expect(validateNewAccount({ ...lawyer, dni: '' })).toEqual([]);
+  it('a un integrante le pide DNI y email, y no datos de cliente (RF-2)', () => {
+    expect(validateNewAccount({ ...lawyer, cuit: '', razonSocial: '' })).toEqual([]);
+    expect(validateNewAccount({ ...lawyer, email: ' ', dni: '' })).toEqual([
+      'El email es obligatorio',
+      'El DNI es obligatorio',
+    ]);
+    expect(validateNewAccount({ ...lawyer, dni: '123' })).toEqual([
+      'El DNI debe tener 7 u 8 dígitos',
+    ]);
   });
 });
 
@@ -99,6 +106,10 @@ describe('buildCreateUserData', () => {
     });
   });
 
+  it('arma el alta de un cliente sin email, sin el campo', () => {
+    expect(buildCreateUserData({ ...naturalPerson, email: ' ' })).not.toHaveProperty('email');
+  });
+
   it('arma el alta de una persona jurídica', () => {
     expect(buildCreateUserData(legalPerson).cliente).toEqual({
       tipoPersona: 'juridica',
@@ -108,10 +119,11 @@ describe('buildCreateUserData', () => {
     });
   });
 
-  it('arma el alta de un integrante, sin datos de cliente aunque se hayan escrito', () => {
+  it('arma el alta de un integrante con su DNI, sin datos de cliente aunque se hayan escrito', () => {
     expect(buildCreateUserData(lawyer)).toEqual({
       rol: 'abogado',
       email: 'marcos@estudio.com',
+      dni: '20.111.222',
       nombre: 'Ana',
       apellido: 'Gómez',
       contrasenaTemporal: 'clave temporal 2026',
@@ -125,6 +137,7 @@ describe('edición de una cuenta (RF-27, RF-28)', () => {
     rol: 'cliente' as const,
     esPrincipal: false,
     email: 'ana@correo.com',
+    dni: null,
     nombre: 'Ana',
     apellido: 'Gómez',
     debeCambiarContrasena: false,
@@ -149,6 +162,7 @@ describe('edición de una cuenta (RF-27, RF-28)', () => {
       nombre: 'Ana',
       apellido: 'Gómez',
       email: 'ana@correo.com',
+      dni: '',
       rol: 'cliente',
       razonSocial: 'Acme SRL',
       telefono: '3415551234',
@@ -175,6 +189,13 @@ describe('edición de una cuenta (RF-27, RF-28)', () => {
     });
   });
 
+  it('el email borrado de un cliente se envía como null (RF-3)', () => {
+    expect(buildUpdateData({ ...editFormFrom(account), email: ' ' }, account)).toEqual({
+      email: null,
+    });
+    expect(validateAccountEdit({ ...editFormFrom(account), email: '' }, account)).toEqual([]);
+  });
+
   it('el mismo email escrito distinto no es un cambio', () => {
     expect(
       buildUpdateData({ ...editFormFrom(account), email: ' ANA@correo.com' }, account),
@@ -192,5 +213,32 @@ describe('edición de una cuenta (RF-27, RF-28)', () => {
       'El nombre es obligatorio',
       'La razón social es obligatoria para personas jurídicas',
     ]);
+  });
+
+  describe('de un integrante', () => {
+    const staff = { ...account, rol: 'abogado' as const, dni: '20111222', cliente: null };
+
+    it('envía el DNI solo si cambió, sin contar puntos ni espacios', () => {
+      expect(buildUpdateData({ ...editFormFrom(staff), dni: '20.111.222' }, staff)).toEqual({});
+      expect(buildUpdateData({ ...editFormFrom(staff), dni: '27333444' }, staff)).toEqual({
+        dni: '27333444',
+      });
+    });
+
+    it('exige el email y el DNI', () => {
+      expect(validateAccountEdit({ ...editFormFrom(staff), email: '', dni: '' }, staff)).toEqual([
+        'El email es obligatorio',
+        'El DNI es obligatorio',
+      ]);
+    });
+
+    it('a un integrante sin DNI cargado lo deja guardar sin DNI hasta que se lo asignen', () => {
+      const withoutDni = { ...staff, dni: null };
+
+      expect(validateAccountEdit(editFormFrom(withoutDni), withoutDni)).toEqual([]);
+      expect(validateAccountEdit({ ...editFormFrom(withoutDni), dni: '123' }, withoutDni)).toEqual([
+        'El DNI debe tener 7 u 8 dígitos',
+      ]);
+    });
   });
 });

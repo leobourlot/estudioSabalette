@@ -10,7 +10,7 @@ import {
   APPEAR_SHOWN,
   appearTransition,
   MAX_DURATION_S,
-  MOCKUP_EMAIL_CHAR_S,
+  MOCKUP_DOCUMENT_CHAR_S,
   MOCKUP_FADE_S,
   MOCKUP_HOLD_S,
   MOCKUP_MOVEMENT_GAP_S,
@@ -109,19 +109,19 @@ describe('sin el código de la página (RF-35, RF-45)', () => {
 });
 
 describe('secuencia de la maqueta del portal (spec 007, RF-45 y RF-47)', () => {
-  const EMAIL = 21;
+  const DOCUMENT = 10;
   const PASSWORD = 8;
-  const timeline = mockupTimeline(EMAIL, PASSWORD, 3);
-  const at = (t: number) => mockupFrame(t, timeline, EMAIL, PASSWORD);
-  const { emailStart, passwordStart, pointerStart, pressStart, portalStart, movementStarts } =
+  const timeline = mockupTimeline(DOCUMENT, PASSWORD, 3);
+  const at = (t: number) => mockupFrame(t, timeline, DOCUMENT, PASSWORD);
+  const { documentStart, passwordStart, pointerStart, pressStart, portalStart, movementStarts } =
     timeline;
 
-  it('va en orden: ventana, email, contraseña, puntero, clic, causa y movimientos', () => {
-    const steps = [0, emailStart, passwordStart, pointerStart, pressStart, portalStart];
+  it('va en orden: ventana, DNI, contraseña, puntero, clic, causa y movimientos', () => {
+    const steps = [0, documentStart, passwordStart, pointerStart, pressStart, portalStart];
 
     expect(steps).toEqual([...steps].sort((a, b) => a - b));
-    expect(emailStart).toBeGreaterThanOrEqual(MOCKUP_WINDOW_S);
-    expect(passwordStart).toBeGreaterThanOrEqual(emailStart + EMAIL * MOCKUP_EMAIL_CHAR_S);
+    expect(documentStart).toBeGreaterThanOrEqual(MOCKUP_WINDOW_S);
+    expect(passwordStart).toBeGreaterThanOrEqual(documentStart + DOCUMENT * MOCKUP_DOCUMENT_CHAR_S);
     expect(pointerStart).toBeGreaterThanOrEqual(passwordStart + PASSWORD * MOCKUP_PASSWORD_CHAR_S);
     expect(Math.min(...movementStarts)).toBeGreaterThan(portalStart);
   });
@@ -142,23 +142,23 @@ describe('secuencia de la maqueta del portal (spec 007, RF-45 y RF-47)', () => {
 
     expect(frame.ventana).toEqual({ opacity: 0, y: 16 });
     expect([frame.ingreso, frame.portal]).toEqual([1, 0]);
-    expect([frame.emailChars, frame.passwordChars]).toEqual([0, 0]);
+    expect([frame.documentChars, frame.passwordChars]).toEqual([0, 0]);
     expect(frame.puntero.opacity).toBe(0);
   });
 
-  it('el email se tipea letra por letra, con el cursor en su campo', () => {
-    const middle = at(emailStart + 5.5 * MOCKUP_EMAIL_CHAR_S);
+  it('el DNI se tipea carácter por carácter, con el cursor en su campo', () => {
+    const middle = at(documentStart + 5.5 * MOCKUP_DOCUMENT_CHAR_S);
 
     expect(middle.ventana).toEqual({ opacity: 1, y: 0 });
-    expect(middle.emailChars).toBe(5);
+    expect(middle.documentChars).toBe(5);
     expect(middle.passwordChars).toBe(0);
-    expect(middle.cursor).toBe('email');
+    expect(middle.cursor).toBe('documento');
   });
 
-  it('después la contraseña, con el email completo y el cursor en la contraseña', () => {
+  it('después la contraseña, con el DNI completo y el cursor en la contraseña', () => {
     const middle = at(passwordStart + 3.5 * MOCKUP_PASSWORD_CHAR_S);
 
-    expect(middle.emailChars).toBe(EMAIL);
+    expect(middle.documentChars).toBe(DOCUMENT);
     expect(middle.passwordChars).toBe(3);
     expect(middle.cursor).toBe('contrasena');
   });
@@ -204,12 +204,12 @@ describe('secuencia de la maqueta del portal (spec 007, RF-45 y RF-47)', () => {
 });
 
 describe('bucle de la maqueta del portal (spec 007, RF-47)', () => {
-  const EMAIL = 21;
+  const DOCUMENT = 10;
   const PASSWORD = 8;
-  const timeline = mockupTimeline(EMAIL, PASSWORD, 3);
+  const timeline = mockupTimeline(DOCUMENT, PASSWORD, 3);
   const cycle = mockupCycle(timeline);
-  const loop = (t: number) => mockupLoopFrame(t, timeline, EMAIL, PASSWORD);
-  const once = (t: number) => mockupFrame(t, timeline, EMAIL, PASSWORD);
+  const loop = (t: number) => mockupLoopFrame(t, timeline, DOCUMENT, PASSWORD);
+  const once = (t: number) => mockupFrame(t, timeline, DOCUMENT, PASSWORD);
 
   it('cada vuelta es la secuencia más la causa quieta', () => {
     expect(cycle).toBeCloseTo(timeline.end + MOCKUP_HOLD_S);
@@ -217,7 +217,7 @@ describe('bucle de la maqueta del portal (spec 007, RF-47)', () => {
   });
 
   it('la primera vuelta es la secuencia tal cual, con la aparición de la ventana', () => {
-    for (const t of [0, 0.2, timeline.emailStart, timeline.portalStart, cycle - 0.01]) {
+    for (const t of [0, 0.2, timeline.documentStart, timeline.portalStart, cycle - 0.01]) {
       expect(loop(t)).toEqual(once(t));
     }
   });
@@ -233,7 +233,7 @@ describe('bucle de la maqueta del portal (spec 007, RF-47)', () => {
     expect(back.ingreso + back.portal).toBeCloseTo(1);
     expect(back.portal).toBeGreaterThan(0);
     expect(back.movimientos.every((m) => m.opacity === 1)).toBe(true);
-    expect([back.emailChars, back.passwordChars]).toEqual([0, 0]);
+    expect([back.documentChars, back.passwordChars]).toEqual([0, 0]);
   });
 
   it('después de volver, repite la secuencia con la ventana a la vista', () => {
@@ -241,14 +241,14 @@ describe('bucle de la maqueta del portal (spec 007, RF-47)', () => {
     const visible = (frame: ReturnType<typeof loop>) => ({
       ventana: frame.ventana.opacity,
       ingreso: Math.round(frame.ingreso * 100),
-      emailChars: frame.emailChars,
+      documentChars: frame.documentChars,
       passwordChars: frame.passwordChars,
       cursor: frame.cursor,
       presionado: frame.presionado,
       movimientos: frame.movimientos.map((m) => Math.round(m.opacity * 100)),
     });
     const offsets = [
-      timeline.emailStart + 5.5 * MOCKUP_EMAIL_CHAR_S,
+      timeline.documentStart + 5.5 * MOCKUP_DOCUMENT_CHAR_S,
       timeline.pressStart + 0.1,
       timeline.end + 1,
     ];

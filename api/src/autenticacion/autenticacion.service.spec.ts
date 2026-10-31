@@ -18,6 +18,7 @@ const storedUser = {
   id: 7,
   rol: 'abogado',
   email: 'juan@estudio.com',
+  dni: '20111222',
   nombre: 'Juan',
   apellido: 'Pérez',
   activo: true,
@@ -70,21 +71,40 @@ describe('AuthenticationService.login', () => {
   });
 
   it('usa el mensaje exacto de RF-9', () => {
-    expect(INVALID_CREDENTIALS_MESSAGE).toBe('Email o contraseña incorrectos');
+    expect(INVALID_CREDENTIALS_MESSAGE).toBe('DNI/CUIT o contraseña incorrectos');
   });
 
-  it('busca el email normalizado (RF-5)', async () => {
-    await service.login('  Juan@Estudio.COM ', 'clave correcta');
+  it('busca un DNI normalizado entre los integrantes y los clientes personas físicas (RF-5, RF-8)', async () => {
+    await service.login(' 20.111-222 ', 'clave correcta');
 
     expect(users.findOne).toHaveBeenCalledWith(
-      expect.objectContaining({ where: { email: 'juan@estudio.com' } }),
+      expect.objectContaining({ where: [{ dni: '20111222' }, { cliente: { dni: '20111222' } }] }),
     );
   });
 
-  it('rechaza un email inexistente con el mensaje genérico, comparando igual contra un hash ficticio', async () => {
+  it('busca un CUIT normalizado entre los clientes personas jurídicas (RF-5, RF-8)', async () => {
+    await service.login('30-71234567-1', 'clave correcta');
+
+    expect(users.findOne).toHaveBeenCalledWith(
+      expect.objectContaining({ where: [{ cliente: { cuit: '30712345671' } }] }),
+    );
+  });
+
+  it.each(['juan@estudio.com', '123456', '1234567890', ''])(
+    'rechaza "%s", que no puede ser un DNI ni un CUIT, sin consultar la base y comparando igual contra un hash ficticio (RF-9)',
+    async (document) => {
+      await expect(service.login(document, 'clave correcta')).rejects.toThrow(
+        new UnauthorizedException(INVALID_CREDENTIALS_MESSAGE),
+      );
+      expect(users.findOne).not.toHaveBeenCalled();
+      expect(passwords.verify).toHaveBeenCalledWith('clave correcta', '$2b$12$hash-ficticio');
+    },
+  );
+
+  it('rechaza un DNI inexistente con el mensaje genérico, comparando igual contra un hash ficticio', async () => {
     givenUser(null);
 
-    await expect(service.login('nadie@estudio.com', 'clave correcta')).rejects.toThrow(
+    await expect(service.login('99888777', 'clave correcta')).rejects.toThrow(
       new UnauthorizedException(INVALID_CREDENTIALS_MESSAGE),
     );
     expect(passwords.verify).toHaveBeenCalledWith('clave correcta', '$2b$12$hash-ficticio');
@@ -92,7 +112,7 @@ describe('AuthenticationService.login', () => {
   });
 
   it('rechaza una contraseña incorrecta con el mensaje genérico', async () => {
-    await expect(service.login('juan@estudio.com', 'otra clave')).rejects.toThrow(
+    await expect(service.login('20111222', 'otra clave')).rejects.toThrow(
       new UnauthorizedException(INVALID_CREDENTIALS_MESSAGE),
     );
     expect(passwords.verify).toHaveBeenCalledWith('otra clave', STORED_HASH);
@@ -102,14 +122,14 @@ describe('AuthenticationService.login', () => {
   it('rechaza una cuenta desactivada con el mensaje genérico, aunque la contraseña sea correcta', async () => {
     givenUser({ contrasenaHash: STORED_HASH, activo: false });
 
-    await expect(service.login('juan@estudio.com', 'clave correcta')).rejects.toThrow(
+    await expect(service.login('20111222', 'clave correcta')).rejects.toThrow(
       new UnauthorizedException(INVALID_CREDENTIALS_MESSAGE),
     );
     expect(sessions.save).not.toHaveBeenCalled();
   });
 
   it('al ingresar cierra la sesión anterior del usuario (RF-13)', async () => {
-    await service.login('juan@estudio.com', 'clave correcta');
+    await service.login('20111222', 'clave correcta');
 
     expect(sessions.delete).toHaveBeenCalledWith({ usuarioId: 7 });
     expect(sessions.delete.mock.invocationCallOrder[0]).toBeLessThan(
@@ -118,7 +138,7 @@ describe('AuthenticationService.login', () => {
   });
 
   it('pide el rol junto con las credenciales, para fijar la duración de la sesión', async () => {
-    await service.login('juan@estudio.com', 'clave correcta');
+    await service.login('20111222', 'clave correcta');
 
     expect(users.findOne.mock.calls[0][0]).toMatchObject({
       select: { id: true, contrasenaHash: true, activo: true, rol: true },
@@ -126,7 +146,7 @@ describe('AuthenticationService.login', () => {
   });
 
   it('crea una sesión que guarda solo el hash del secreto de renovación (RF-12)', async () => {
-    const result = await service.login('juan@estudio.com', 'clave correcta');
+    const result = await service.login('20111222', 'clave correcta');
 
     const [sessionId, secret] = result.refreshToken.split('.');
     expect(sessionId).toBe('40');
@@ -139,7 +159,7 @@ describe('AuthenticationService.login', () => {
   });
 
   it('la sesión de un integrante vence en 1 hora sin uso (spec 001, RF-12)', async () => {
-    await service.login('juan@estudio.com', 'clave correcta');
+    await service.login('20111222', 'clave correcta');
 
     const saved = sessions.save.mock.calls[0][0] as Partial<Sesion>;
     expect(saved.venceEn).toEqual(new Date(NOW.getTime() + 60 * MINUTE));
@@ -148,14 +168,14 @@ describe('AuthenticationService.login', () => {
   it('la sesión de un cliente vence en 20 minutos sin uso (RF-4; spec 001, RF-12)', async () => {
     givenUser({ contrasenaHash: STORED_HASH, activo: true, rol: 'cliente' });
 
-    await service.login('juan@estudio.com', 'clave correcta');
+    await service.login('20111222', 'clave correcta');
 
     const saved = sessions.save.mock.calls[0][0] as Partial<Sesion>;
     expect(saved.venceEn).toEqual(new Date(NOW.getTime() + 20 * MINUTE));
   });
 
   it('emite un token de acceso con el usuario y la sesión', async () => {
-    const result = await service.login('juan@estudio.com', 'clave correcta');
+    const result = await service.login('20111222', 'clave correcta');
 
     const payload = await jwt.verifyAsync<AccessTokenPayload & { exp: number; iat: number }>(
       result.accessToken,
@@ -166,21 +186,21 @@ describe('AuthenticationService.login', () => {
   });
 
   it('registra la fecha de último ingreso (RF-8)', async () => {
-    await service.login('juan@estudio.com', 'clave correcta');
+    await service.login('20111222', 'clave correcta');
 
     expect(users.update).toHaveBeenCalledWith(7, { ultimoIngreso: NOW });
   });
 
   it('devuelve el usuario sin el hash de la contraseña (RF-40)', async () => {
-    const result = await service.login('juan@estudio.com', 'clave correcta');
+    const result = await service.login('20111222', 'clave correcta');
 
     expect(result.usuario).toBe(storedUser);
     expect(result.usuario).not.toHaveProperty('contrasenaHash');
   });
 
   it('genera secretos distintos en cada ingreso', async () => {
-    const first = await service.login('juan@estudio.com', 'clave correcta');
-    const second = await service.login('juan@estudio.com', 'clave correcta');
+    const first = await service.login('20111222', 'clave correcta');
+    const second = await service.login('20111222', 'clave correcta');
 
     expect(first.refreshToken).not.toBe(second.refreshToken);
   });

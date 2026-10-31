@@ -134,7 +134,7 @@ describe('Sesión por rol', () => {
     const login = await request(app.getHttpServer())
       .post('/api/sesion/ingresar')
       .set('X-Forwarded-For', '198.51.100.251')
-      .send({ email: CLIENT_EMAIL, contrasena: TEST_PASSWORD })
+      .send({ documento: '30111222', contrasena: TEST_PASSWORD })
       .expect(200);
     const refreshCookie = (response: request.Response) =>
       setCookieHeaders(response).find((cookie) => cookie.startsWith('refresh_token='));
